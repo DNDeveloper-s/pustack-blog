@@ -1,0 +1,9 @@
+export { default as circlesBlue } from "./svgs/circles-blue.svg";
+export { default as earthSpinning } from "./images/spinning-earth.gif";
+export { default as logo } from "./images/logo.webp";
+export { default as navClose } from "./svgs/nav-close.svg";
+export { default as navOpen } from "./svgs/nav-open.svg";
+export { default as avatar } from "./images/avatar.webp";
+export { default as imageOne } from "./images/image-1.webp";
+export { default as arrowSignalBlue } from "./svgs/arrow-signal-blue.svg";
+export { default as navYouAreHere } from "./svgs/nav-you-are-here.svg";

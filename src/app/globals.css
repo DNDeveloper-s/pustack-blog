@@ -8,6 +8,26 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+@font-face {
+  font-family: FeatureFlatHeadline;
+  src: url(/assets/fonts/FeatureFlatHeadline.woff2);
+}
+
+@font-face {
+  font-family: FeatureFlatBold;
+  src: url(/assets/fonts/FeatureFlatText-Bold.otf);
+}
+
+@font-face {
+  font-family: FeatureFlatRegular;
+  src: url(/assets/fonts/FeatureFlatText-Regular.otf);
+}
+
+@font-face {
+  font-family: LarkenExtraBold;
+  src: url(/assets/fonts/LarkenDEMO-ExtraBold.otf);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -16,18 +36,190 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+  .bg-animation {
+    background: linear-gradient(0deg, #fffaeb, #fffaeb) no-repeat 100% 100%/0
+      100%;
+  }
+
+  .bg-hover-animation {
+    transition: background-size 0.3s;
+    background-size: 100% 100%;
+    background-position-x: left;
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+body {
+  font-family: FeatureFlatRegular, sans-serif;
+  background-color: #f8f5d7;
+}
+
+.widget {
+  padding: 24px;
+  margin: 24px;
+}
+.widget.clock {
+  position: relative;
+  width: 384px;
+  height: 384px;
+  border-radius: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  zoom: 0.09;
+}
+.widget.clock#okinawa,
+.widget.clock#amalfi {
+  width: 240px;
+  height: 240px;
+}
+.widget.clock#okinawa:before,
+.widget.clock#amalfi:before {
+  border-width: 3px;
+}
+.widget.clock#okinawa .hand,
+.widget.clock#amalfi .hand {
+  height: 3px;
+  top: 118.5px;
+  transform-origin: right 1.5px;
+}
+.widget.clock#okinawa .hand.seconds,
+.widget.clock#amalfi .hand.seconds {
+  display: none;
+}
+.widget.clock:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 6px dashed #000;
+  border-radius: 100%;
+  box-sizing: border-box;
+}
+.widget.clock .shadow {
+  content: "";
+  width: 100%;
+  height: 500px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  transform: rotate(-45deg);
+  transform-origin: 50% 0%;
+  opacity: 0.3;
+  z-index: -1;
+}
+.widget.clock .hand {
+  height: 6px;
+  position: absolute;
+  top: 189px;
+  background-color: #000;
+  border-radius: 100% 0% 0% 100%;
+  transform-origin: right 3px;
+  transition: all 0.05s cubic-bezier(0, 0, 0.52, 2.51) 0s;
+}
+.widget.clock .hand.seconds {
+  width: 45%;
+  left: 5%;
+  opacity: 0.25;
+}
+.widget.clock .hand.minutes {
+  width: 35%;
+  left: 15%;
+  opacity: 0.5;
+}
+.widget.clock .hand.hours {
+  width: 25%;
+  left: 25%;
+  opacity: 0.75;
+}
+.widget.clock .hand-cap {
+  width: 5%;
+  height: 5%;
+  position: absolute;
+  top: 47.5%;
+  left: 47.5%;
+  background-color: #fff;
+  border-radius: 100%;
+}
+.widget label {
+  display: block;
+  width: 100%;
+  position: absolute;
+  top: -24px;
+  left: 0;
+  font-family: sans-serif;
+  font-weight: 200;
+  font-size: 12px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 4px;
+  color: #fff;
+  opacity: 0.5;
+}
+
+.jodit-container {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.jodit-react-container {
+  height: 600px;
+  max-width: 1100px;
+  margin: 30px auto;
+}
+
+.jodit-toolbar__box {
+  background-color: #f8f5d7 !important;
+  flex-shrink: 0 !important;
+}
+
+.jodit-workplace {
+  height: 100% !important;
+  background-color: #f8f5d7 !important;
+}
+
+.jodit-status-bar {
+  background-color: #f8f5d7 !important;
+}
+
+.jodit-status-bar .jodit-status-bar__item:last-child {
+  display: none;
+}
+
+blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 40px;
+  margin-inline-end: 40px;
+  unicode-bidi: isolate;
+}
+
+ol {
+  display: block;
+  list-style-type: decimal;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  unicode-bidi: isolate;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  unicode-bidi: isolate;
 }
