@@ -125,8 +125,6 @@ export default function BlogWithAuthor({
             <iframe
               width="100%"
               src={post.snippetData?.iframe}
-              frameborder="0"
-              allowfullscreen=""
               className="mt-2 aspect-video"
             ></iframe>
           )}
