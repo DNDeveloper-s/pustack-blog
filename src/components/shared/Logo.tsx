@@ -23,8 +23,10 @@ const styles = {
 
 export default function Logo({
   size = "sm",
+  style = {},
 }: {
   size: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+  style?: React.CSSProperties;
 }) {
   return (
     <Link href="/">
@@ -32,6 +34,7 @@ export default function Logo({
         className={
           "font-larkenExtraBold leading-[120%] " + styles[size].className
         }
+        style={style}
       >
         MINERVA
       </p>

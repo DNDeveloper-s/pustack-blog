@@ -37,7 +37,7 @@ const footerData = [
 
 export default function Footer() {
   return (
-    <div className="border-t-2 border-appBlack mx-3 md:mx-4 pb-8 md:pb-2">
+    <div className="border-t border-appBlack md:mx-4 pb-8 py-4 md:pb-8">
       <div className="flex gap-1 md:gap-4 md:justify-between flex-wrap items-center">
         <div className="w-full md:w-auto">
           <Logo size="sm" />
@@ -45,7 +45,7 @@ export default function Footer() {
         {footerData.map((item) => (
           <div
             key={item.key}
-            className="text-white px-4 font-featureHeadline"
+            className="text-appBlack px-4 font-featureHeadline text-[16px]"
             style={{
               fontVariationSettings: '"wght" 500,"opsz" 10',
             }}

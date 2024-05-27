@@ -57,7 +57,7 @@ export default function Navbar() {
   const showCreatePostButton = !pathname.includes("/admin");
 
   return (
-    <header className="w-full max-w-[1100px] mx-auto py-2 px-3">
+    <header className="w-full max-w-[1440px] mx-auto py-2">
       <div className="flex">
         <div className="flex-1 ">
           <div className="flex items-center uppercase font-helvetica gap-2 text-[10px]">
@@ -75,7 +75,14 @@ export default function Navbar() {
           <WorldClockWithLabel timezone="-4" label="D.C." />
           <WorldClockWithLabel timezone="+2" label="BXL" />
           <WorldClockWithLabel timezone="+1" label="LAGOS" />
-          <Logo size="xxl" />
+          <Logo
+            size="xxl"
+            style={{
+              fontSize: "65px",
+              lineHeight: 0,
+              marginTop: "10px",
+            }}
+          />
           <WorldClockWithLabel timezone="+4" label="DUBAI" />
           <WorldClockWithLabel timezone="+8" label="BEIJING" />
           <WorldClockWithLabel timezone="+8" label="SG" />
@@ -97,7 +104,7 @@ export default function Navbar() {
       <div className="flex justify-center items-center relative w-full my-3">
         <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
           <Link
-            className="text-primaryText leading-[120%] text-[1rem] font-featureHeadline"
+            className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
             style={{
               fontWeight: 395,
@@ -107,7 +114,7 @@ export default function Navbar() {
             Events
           </Link>
           <Link
-            className="text-primaryText leading-[120%] text-[1rem] font-featureHeadline"
+            className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
             style={{
               fontWeight: 395,
@@ -118,30 +125,30 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="flex-1 flex font-helvetica justify-center items-center gap-2 text-[10px]">
-          <span className="text-primaryText leading-[120%]">INTELLIGENT</span>
-          <div className="w-1 h-1 rounded-full bg-primaryText" />
-          <span className="text-primaryText leading-[120%]">TRANSPARENT</span>
-          <div className="w-1 h-1 rounded-full bg-primaryText" />
-          <span className="text-primaryText leading-[120%]">GLOBAL</span>
+          <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
+          <div className="w-1 h-1 rounded-full bg-appBlack" />
+          <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
+          <div className="w-1 h-1 rounded-full bg-appBlack" />
+          <span className="text-appBlack leading-[120%]">GLOBAL</span>
         </div>
         <div className="flex items-center gap-2 absolute right-0 -bottom-[8px] text-[10px]">
           <Image src={navOpen} alt="Open Navigation" />
         </div>
       </div>
-      <hr />
-      <hr className="border-dashed mt-0.5" />
+      <hr className="border-appBlack" />
+      <hr className="border-dashed border-[#1f1d1a4d] border-[#1f1d1a4d] mt-0.5" />
       <nav className="flex justify-between py-2">
         {navLinks.map((link) => (
           <Link
             key={link.key}
-            href={link.key}
-            className="text-primaryText font-featureBold"
+            href={link.href}
+            className="text-appBlack font-featureBold"
           >
             {link.label}
           </Link>
         ))}
       </nav>
-      <hr className="border-dashed" />
+      <hr className="border-dashed border-[#1f1d1a4d] border-[#1f1d1a4d]" />
     </header>
   );
 }
@@ -189,7 +196,7 @@ export function NavbarMobile() {
       <div className="flex justify-center items-center relative w-full mt-9">
         <div className="flex items-center gap-5 absolute left-3 bottom-0 text-[10px]">
           <Link
-            className="text-primaryText leading-[120%] text-[1rem] font-featureHeadline"
+            className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
             style={{
               fontWeight: 395,
@@ -199,7 +206,7 @@ export function NavbarMobile() {
             Events
           </Link>
           <Link
-            className="text-primaryText leading-[120%] text-[1rem] font-featureHeadline"
+            className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
             style={{
               fontWeight: 395,
@@ -222,13 +229,13 @@ export function NavbarMobile() {
           maxHeight: isNavOpen ? "450px" : 0,
         }}
       >
-        <div className="flex px-3 gap-2 divide-x divide-dashed divide-secondary py-4">
-          <nav className="flex flex-1 flex-col gap-1 justify-between py-2 divide-y divide-dashed divide-secondary">
+        <div className="flex px-3 gap-2 divide-x divide-dashed divide-[#1f1d1a4d] py-4">
+          <nav className="flex flex-1 flex-col gap-1 justify-between py-2 divide-y divide-dashed divide-[#1f1d1a4d]">
             {navLinks.map((link, i) => (
               <Link
                 key={link.key}
-                href={link.key}
-                className="text-primaryText font-featureBold flex items-center gap-2"
+                href={link.href}
+                className="text-appBlack font-featureBold flex items-center gap-2"
               >
                 <span
                   className="font-featureHeadline text-[1.5rem] text-appBlack"
@@ -280,7 +287,7 @@ export function NavbarMobile() {
           </div>
         </div>
       </div>
-      <hr className="border-dashed mt-3 mb-1 mx-3 border-secondary" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1 mx-3 border-secondary" />
       <div className="flex-1 flex items-center gap-3 justify-evenly py-2 ">
         {/* <Logo className="w-[310px] h-[auto]" /> */}
         <WorldClockWithLabel timezone="-4" label="D.C." />
@@ -296,15 +303,15 @@ export function NavbarMobile() {
         </p>
       </div>
       <div className="flex-1 flex font-helvetica justify-center items-center gap-2 text-[10px]">
-        <span className="text-primaryText leading-[120%]">INTELLIGENT</span>
-        <div className="w-1 h-1 rounded-full bg-primaryText" />
-        <span className="text-primaryText leading-[120%]">TRANSPARENT</span>
-        <div className="w-1 h-1 rounded-full bg-primaryText" />
-        <span className="text-primaryText leading-[120%]">GLOBAL</span>
+        <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
+        <div className="w-1 h-1 rounded-full bg-appBlack" />
+        <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
+        <div className="w-1 h-1 rounded-full bg-appBlack" />
+        <span className="text-appBlack leading-[120%]">GLOBAL</span>
       </div>
-      {/* <hr className="border-dashed mt-0.5" /> */}
+      {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 
-      {/* <hr className="border-dashed" /> */}
+      {/* <hr className="border-dashed border-[#1f1d1a4d]" /> */}
     </header>
   );
 }

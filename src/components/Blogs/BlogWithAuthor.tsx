@@ -30,7 +30,7 @@ const defaultBlogWithAuthor = (size = "lg") => (
           </p>
         </div>
       </div>
-      <hr className="border-dashed my-4" />
+      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
       <div>
         <h2
           className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
@@ -95,7 +95,7 @@ export default function BlogWithAuthor({
             </p>
           </div>
         </div>
-        <hr className="border-dashed my-4" />
+        <hr className="border-dashed border-[#1f1d1a4d] my-4" />
         <div>
           <h2
             className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
@@ -166,7 +166,7 @@ const defaultBlogWithAuthorV2 = (size = "lg") => (
           </p>
         </div>
       </div>
-      <hr className="border-dashed my-4" />
+      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
       <div>
         <Image
           src={circlesBlue}
@@ -259,7 +259,7 @@ export function BlogWithAuthorV2({
             </p>
           </div>
         </div>
-        <hr className="border-dashed my-4" />
+        <hr className="border-dashed border-[#1f1d1a4d] my-4" />
         <div>
           <Image
             src={circlesBlue}

@@ -223,3 +223,8 @@ ul {
   padding-inline-start: 40px;
   unicode-bidi: isolate;
 }
+
+.article-dynamic-container iframe,
+.article-dynamic-container img {
+  max-width: 100%;
+}

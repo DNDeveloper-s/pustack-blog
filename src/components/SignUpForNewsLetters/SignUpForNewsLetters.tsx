@@ -162,11 +162,19 @@ export default function SignUpForNewsLetters() {
   return (
     <div className="my-4">
       <div className="border-t border-appBlack py-1">
-        <h2 className="text-[20px]">Sign up for our Newsletters</h2>
+        <h2
+          className="text-[18px] font-featureHeadline"
+          style={{
+            fontVariationSettings: '"wght" 495,"opsz" 10',
+            fontWeight: 395,
+          }}
+        >
+          Sign up for our Newsletters
+        </h2>
       </div>
-      <div className="flex">
+      <div className="flex mt-1">
         <input
-          className="border text-[16px] flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
           placeholder="Email address"
           type="text"
           style={{
@@ -178,7 +186,7 @@ export default function SignUpForNewsLetters() {
           Sign Up
         </button>
       </div>
-      <div className="flex flex-col divide-y divide-dashed divide-secondary my-4">
+      <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
         <div className="text-center mb-2">
           <p>{checkedCount} newsletters selected</p>
         </div>

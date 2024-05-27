@@ -23,7 +23,7 @@ export default function PoliticsCard() {
             className="leading-[120%] group-hover:text-appBlue"
             style={{
               fontSize: "16px",
-              paddingTop: "8px",
+              paddingTop: "10px",
             }}
           >
             Senate Majority Leader Chuck Schumer is eager to put Republicans on
