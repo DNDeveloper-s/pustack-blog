@@ -6,6 +6,7 @@ import { Post } from "@/firebase/post";
 import { useCreatePost } from "@/api/post";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
+import { MathJax } from "better-react-mathjax";
 
 const dummyAuthor = {
   name: "John Doe",

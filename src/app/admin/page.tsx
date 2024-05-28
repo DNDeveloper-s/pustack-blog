@@ -1,6 +1,8 @@
 "use client";
 
+import DraftEditor from "@/components/AdminEditor/DraftEditor";
 import { NavbarMobile } from "@/components/Navbar/Navbar";
+import { MathJaxContext } from "better-react-mathjax";
 import dynamic from "next/dynamic";
 import { useMediaQuery } from "react-responsive";
 const JoditWrapper = dynamic(
@@ -20,7 +22,11 @@ export default function Admin() {
   return (
     <main className="h-screen overflow-auto">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <JoditWrapper />
+      <MathJaxContext>
+        <JoditWrapper />
+      </MathJaxContext>
+
+      {/* <DraftEditor /> */}
       {/* <button onClick={() => copyIt()}>Copy it</button> */}
     </main>
   );
