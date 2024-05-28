@@ -13,22 +13,6 @@ interface JoditEditorProps {
 export default function JoditEditor({ content, setContent }: JoditEditorProps) {
   const editor = useRef<Jodit | null>(null);
 
-  useEffect(() => {
-    if (!editor.current) return () => {};
-    Jodit.make(editor.current, {
-      buttons: [
-        ...Jodit.defaultOptions.buttons,
-        {
-          name: "insertDate",
-          tooltip: "Insert current Date",
-          exec: (editor) => {
-            editor.s.insertHTML(new Date().toDateString());
-          },
-        },
-      ],
-    });
-  }, []);
-
   return (
     <AppJoditEditor
       ref={editor}

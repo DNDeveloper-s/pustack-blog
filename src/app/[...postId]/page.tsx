@@ -24,6 +24,7 @@ export default function PostId() {
       const arr = Array.from(doc.body.childNodes);
       const _elements = arr.reduce((acc: any, node) => {
         if (node.nodeName === "PRE") {
+          // @ts-ignore
           const htmlContent = node.innerHTML.replace(/<br\s*\/?>/gi, "\n");
           const doc1 = document.createElement("div");
           doc1.innerHTML = htmlContent.trim();
@@ -64,6 +65,7 @@ export default function PostId() {
             ),
           });
         } else {
+          // @ts-ignore
           acc.push(node.outerHTML);
         }
         return acc;
