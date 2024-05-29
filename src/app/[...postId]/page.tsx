@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
 import { useEffect, useState } from "react";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 export default function PostId() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -80,31 +81,36 @@ export default function PostId() {
   return (
     <main className="h-screen overflow-auto max-w-[900px] mx-auto">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5">
-        {isFetching && (
-          <div className="my-10 text-sm text-center">Loading...</div>
-        )}
-        {hasPost &&
-          elements.map((element, index) =>
-            element.tsx ? (
-              element.tsx
-            ) : (
-              <div
-                key={post.content + " - " + index}
-                className="w-full article-dynamic-container"
-                dangerouslySetInnerHTML={{ __html: element }}
-              ></div>
-            )
+
+      <MathJaxContext>
+        <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5">
+          {isFetching && (
+            <div className="my-10 text-sm text-center">Loading...</div>
           )}
-        {hasNoPost && (
-          <div className="my-10 text-xl text-center text-red-500 uppercase">
-            Post not found,{" "}
-            <span className="underline text-appBlue">
-              <Link href="/">Go back</Link>
-            </span>
-          </div>
-        )}
-      </div>
+          <MathJax>
+            {hasPost &&
+              elements.map((element, index) =>
+                element.tsx ? (
+                  element.tsx
+                ) : (
+                  <div
+                    key={post.content + " - " + index}
+                    className="w-full article-dynamic-container"
+                    dangerouslySetInnerHTML={{ __html: element }}
+                  ></div>
+                )
+              )}
+          </MathJax>
+          {hasNoPost && (
+            <div className="my-10 text-xl text-center text-red-500 uppercase">
+              Post not found,{" "}
+              <span className="underline text-appBlue">
+                <Link href="/">Go back</Link>
+              </span>
+            </div>
+          )}
+        </div>
+      </MathJaxContext>
     </main>
   );
 }
