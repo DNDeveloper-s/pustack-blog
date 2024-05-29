@@ -13,6 +13,7 @@
     "@draft-js-plugins/hashtag": "^4.2.2",
     "@draft-js-plugins/linkify": "^4.2.2",
     "@nextui-org/button": "^2.0.31",
+    "@nextui-org/modal": "^2.0.34",
     "@nextui-org/system": "^2.1.2",
     "@nextui-org/theme": "^2.2.3",
     "@tanstack/react-query": "^5.37.1",

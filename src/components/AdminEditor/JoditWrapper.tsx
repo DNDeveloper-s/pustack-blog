@@ -7,6 +7,13 @@ import { useCreatePost } from "@/api/post";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import { MathJax } from "better-react-mathjax";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/modal";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -33,6 +40,7 @@ export default function JoditWrapper() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { mutate: postCreatePost, isPending } = useCreatePost({
     onSuccess: () => {
@@ -119,6 +127,9 @@ export default function JoditWrapper() {
           ))}
         </select>
       </div>
+      <div className="mt-5">
+        <Button onClick={onOpen}>Create Maths Formula</Button>
+      </div>
       <JoditEditor content={content} setContent={setContent} />
       <div className="flex justify-end gap-4 mb-10">
         <Button
@@ -132,6 +143,28 @@ export default function JoditWrapper() {
           Create Post
         </Button>
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        classNames={{
+          wrapper: "bg-black bg-opacity-50",
+          base: "!max-w-[900px] !w-[90vw]",
+        }}
+      >
+        <ModalContent>
+          <ModalHeader>Mathematics Formula</ModalHeader>
+          <ModalBody>
+            <iframe
+              src="https://www.imatheq.com/imatheq/com/imatheq/math-equation-editor-latex-mathml.html"
+              style={{
+                width: "100%",
+                height: "80vh",
+                maxHeight: "800px",
+              }}
+            ></iframe>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
