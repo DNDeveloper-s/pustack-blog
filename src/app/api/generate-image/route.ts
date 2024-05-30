@@ -50,25 +50,27 @@ export async function GET(request: any) {
   const baseImage = await sharp(imageBuffer);
 
   // Get dimensions of the overlay image
-  const overlayImage = await sharp(overlayImagePath).resize(250, 250);
+  const overlayImage = await sharp(overlayImagePath)
+    .resize(300, 300)
+    .modulate({ brightness: 1 });
 
-  const shadowBuffer = await sharp(overlayImagePath)
-    .resize(270, 270)
-    .blur(3) // Adjust blur radius for the shadow effect
-    .modulate({ brightness: 0.5 })
-    .toBuffer();
+  // const shadowBuffer = await sharp(overlayImagePath)
+  //   .resize(320, 320)
+  //   .blur(3) // Adjust blur radius for the shadow effect
+  //   .modulate({ brightness: 0.5 })
+  //   .toBuffer();
 
-  const topPosition = -90;
-  const leftPosition = 290;
+  const topPosition = 300 / 2 - 300 / 2;
+  const leftPosition = 450 / 2 - 300 / 2;
 
   const image = await baseImage
     .resize(450, 300)
     .composite([
-      {
-        input: shadowBuffer,
-        left: leftPosition - 10, // Adjust the shadow position
-        top: topPosition - 10, // Adjust the shadow position
-      },
+      // {
+      //   input: shadowBuffer,
+      //   left: leftPosition - 10, // Adjust the shadow position
+      //   top: topPosition - 10, // Adjust the shadow position
+      // },
       {
         input: await overlayImage.toBuffer(),
         left: leftPosition,
