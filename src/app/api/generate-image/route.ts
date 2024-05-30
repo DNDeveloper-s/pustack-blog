@@ -3,7 +3,7 @@ import sharp from "sharp";
 import path from "path";
 import { promises as fs } from "fs";
 
-export async function GET(request: any) {
+export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get("imageUrl");
 
@@ -47,39 +47,28 @@ export async function GET(request: any) {
   await fs.access(overlayImagePath);
 
   // Get dimensions of the base image
-  const baseImage = await sharp(imageBuffer).resize(1200, 630);
-  const baseMetadata = await baseImage.metadata();
+  const baseImage = await sharp(imageBuffer);
 
   // Get dimensions of the overlay image
-  const overlayImage = sharp(overlayImagePath);
-  const overlayMetadata = await overlayImage.metadata();
+  const overlayImage = await sharp(overlayImagePath).resize(400, 400);
 
-  // Calculate position
-  const rightOffset = -80; // pixels from the right
-  const bottomOffset = -220; // pixels from the bottom
-
-  if (
-    !baseMetadata.width ||
-    !overlayMetadata.width ||
-    !baseMetadata.height ||
-    !overlayMetadata.height
-  ) {
-    return new NextResponse("Failed to get image metadata", {
-      status: 500,
-    });
-  }
-
-  const leftPosition = baseMetadata.width - rightOffset;
-  const topPosition =
-    baseMetadata.height - overlayMetadata.height - bottomOffset;
+  const shadowBuffer = await sharp(overlayImagePath)
+    .resize(440, 440)
+    .blur(5) // Adjust blur radius for the shadow effect
+    .toBuffer();
 
   const image = await baseImage
-    .resize(1200, 630)
+    .resize(800, 600)
     .composite([
       {
+        input: shadowBuffer,
+        left: 800 - 320 - 20, // Adjust the shadow position
+        top: 600 - 300 - 20, // Adjust the shadow position
+      },
+      {
         input: await overlayImage.toBuffer(),
-        left: leftPosition,
-        top: topPosition,
+        left: 800 - 320,
+        top: 600 - 300,
       },
     ])
     .png()
