@@ -6,17 +6,36 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import Image from "next/image";
 import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
+import { DocumentData } from "firebase/firestore";
 
-export default function BlogPost({ post }: { post?: Post }) {
+export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const params = useParams();
   const [elements, setElements] = useState<any[]>([]);
+  const [post, setPost] = useState<Post | null>(null);
+
+  useEffect(() => {
+    if (_post) {
+      setPost(
+        new Post(
+          _post.title,
+          _post.content,
+          _post.author,
+          _post.topic,
+          _post.id,
+          new Date(_post.timestamp.seconds * 1000).toISOString()
+        )
+      );
+    } else {
+      setPost(null);
+    }
+  }, [_post]);
 
   const hasPost = post;
   const hasNoPost = !post;

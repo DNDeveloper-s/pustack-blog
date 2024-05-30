@@ -56,6 +56,13 @@ export default async function PostId(props: { params: { postId: string[] } }) {
   // const post = await Post.get(props.params.postId[0], true);
 
   // console.log("post - ", post.title);
+  const docRef = doc(db, "posts", props.params.postId[0]);
+  const data = await getDoc(docRef);
+  const post = flattenDocumentData(data);
 
-  return <div>{/* <BlogPost post={post} /> */}</div>;
+  return (
+    <div>
+      <BlogPost _post={post} />
+    </div>
+  );
 }
