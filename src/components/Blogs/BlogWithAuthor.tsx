@@ -98,7 +98,7 @@ export default function BlogWithAuthor({
         <hr className="border-dashed border-[#1f1d1a4d] my-4" />
         <div>
           <h2
-            className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
             style={{
               fontSize: size === "sm" ? "24px" : "32px",
               fontWeight: "395",
@@ -108,7 +108,7 @@ export default function BlogWithAuthor({
             {post.snippetData?.title}
           </h2>
           <p
-            className="leading-[120%] group-hover:text-appBlue"
+            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
@@ -121,7 +121,7 @@ export default function BlogWithAuthor({
               <img src={post.snippetData?.image} alt="Image One" />
             </figure>
           )}
-          {post.snippetData?.iframe && (
+          {!post.snippetData?.image && post.snippetData?.iframe && (
             <iframe
               width="100%"
               src={post.snippetData?.iframe}
@@ -267,7 +267,7 @@ export function BlogWithAuthorV2({
             className="w-[21px] h-[17px] float-left mt-[4px] mr-[5px]"
           />
           <h2
-            className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
             style={{
               fontSize: size === "sm" ? "24px" : "32px",
               fontWeight: "395",
@@ -277,7 +277,7 @@ export function BlogWithAuthorV2({
             {post.snippetData?.title}
           </h2>
           <p
-            className="leading-[120%] group-hover:text-appBlue"
+            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
