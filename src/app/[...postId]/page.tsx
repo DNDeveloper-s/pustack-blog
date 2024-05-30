@@ -28,6 +28,10 @@ export async function generateMetadata(
     dom.window.document.getElementsByTagName("img")
   ).reduce(srcReducer, []);
 
+  const imageUrl = _images[0];
+
+  const processedImageUrl = `http://localhost:3000/api/generate-image?imageUrl=${imageUrl}`;
+
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || [];
 
@@ -39,11 +43,13 @@ export async function generateMetadata(
       description: post.content,
       url: "https://pustack-blog.vercel.app/",
       siteName: "Minerva",
-      images: _images?.map((image: string) => ({
-        url: image,
-        width: 800,
-        height: 600,
-      })),
+      images: [
+        {
+          url: processedImageUrl,
+          width: 800,
+          height: 600,
+        },
+      ],
       locale: "en_US",
       type: "website",
     },

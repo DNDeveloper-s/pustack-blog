@@ -34,6 +34,7 @@
     "react-icons": "^5.2.1",
     "react-quill": "^2.0.0",
     "react-responsive": "^10.0.0",
+    "sharp": "^0.33.4",
     "tls": "^0.0.1"
   },
   "devDependencies": {
