@@ -58,7 +58,7 @@ export async function GET(request: any) {
     .toBuffer();
 
   const image = await baseImage
-    .resize(800, 600)
+    .resize(900, 600)
     .composite([
       {
         input: shadowBuffer,
