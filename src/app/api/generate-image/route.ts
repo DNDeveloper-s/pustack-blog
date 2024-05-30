@@ -63,12 +63,12 @@ export async function GET(request: any) {
       {
         input: shadowBuffer,
         left: 800 - 320 - 20, // Adjust the shadow position
-        top: 600 - 300 - 20, // Adjust the shadow position
+        top: -140, // Adjust the shadow position
       },
       {
         input: await overlayImage.toBuffer(),
         left: 800 - 320,
-        top: 600 - 300,
+        top: -120,
       },
     ])
     .png()
