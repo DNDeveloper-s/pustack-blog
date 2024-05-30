@@ -3,7 +3,7 @@ import sharp from "sharp";
 import path from "path";
 import { promises as fs } from "fs";
 
-export async function GET(request) {
+export async function GET(request: any) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get("imageUrl");
 
