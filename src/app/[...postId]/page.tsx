@@ -30,7 +30,7 @@ export async function generateMetadata(
 
   const imageUrl = _images[0];
 
-  const processedImageUrl = `http://localhost:3000/api/generate-image?imageUrl=${imageUrl}`;
+  const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
 
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || [];
