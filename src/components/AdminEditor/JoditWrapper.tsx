@@ -51,15 +51,6 @@ export default function JoditWrapper() {
     },
   });
 
-  useEffect(() => {
-    Post.get("thanks-to-the-title-4", true)
-      .then((snapshot) => {
-        if (inputRef.current) inputRef.current.value = snapshot.title;
-        setContent(snapshot.content);
-      })
-      .catch((error) => console.error("Error getting document:", error));
-  }, []);
-
   async function handleCreatePost() {
     if (isPending) return;
 

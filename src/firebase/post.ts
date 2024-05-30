@@ -43,7 +43,7 @@ function textContentReducer(acc: any, curr: any) {
   return acc;
 }
 
-function srcReducer(acc: any, curr: any) {
+export function srcReducer(acc: any, curr: any) {
   acc.push(curr.src);
   return acc;
 }
@@ -52,7 +52,7 @@ function toDashCase(str: string) {
   return str.toLowerCase().split(" ").join("-");
 }
 
-function flattenDocumentData<T>(data: DocumentSnapshot<T>) {
+export function flattenDocumentData<T>(data: DocumentSnapshot<T>) {
   if (data.exists()) {
     return data.data();
   }
@@ -103,6 +103,7 @@ export class Post {
   readonly html: Document;
   readonly images: string[];
   readonly quotes: string[];
+  readonly timestamp: string | undefined = undefined;
   private _position: PostPosition | undefined = undefined;
   private _snippetData: {
     title?: string;
@@ -135,7 +136,8 @@ export class Post {
     content: string,
     author: Author,
     topic: string,
-    id?: string
+    id?: string,
+    timestamp?: string
   ) {
     this.title = title;
     this.content = content;
@@ -149,6 +151,7 @@ export class Post {
     );
     this.preparePostSnippetData();
     this._id = id;
+    this.timestamp = timestamp;
   }
 
   private parseContent(): Document {
@@ -306,6 +309,7 @@ export class Post {
   static async get(id: string, flatten: false): Promise<PostDocumentSnapshot>;
   static async get(id: string, flatten: true): Promise<Post>;
   static async get(id: string, flatten: boolean = false) {
+    console.log("id - ", id);
     const docRef = doc(db, "posts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
@@ -378,7 +382,8 @@ export const postConverter = {
       data.content,
       data.author,
       data.topic,
-      snapshot.id
+      snapshot.id,
+      data.timestamp.toDate().toISOString()
     );
   },
 };

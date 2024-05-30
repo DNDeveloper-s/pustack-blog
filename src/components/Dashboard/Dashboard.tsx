@@ -13,8 +13,6 @@ export default function Dashboard() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const { posts } = usePosts();
 
-  console.log("posts - ", posts);
-
   const fullCPosts = posts?.filter(
     (post) => post.position === PostPosition.Full_C
   );

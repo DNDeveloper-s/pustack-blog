@@ -52,6 +52,8 @@
 body {
   font-family: FeatureFlatRegular, sans-serif;
   background-color: #f8f5d7;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .widget {

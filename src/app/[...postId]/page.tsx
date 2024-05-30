@@ -1,116 +1,61 @@
-"use client";
+import BlogPost from "@/components/BlogPost/BlogPost";
+import { Post, flattenDocumentData, srcReducer } from "@/firebase/post";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { Metadata, ResolvingMetadata } from "next";
+import { JSDOM } from "jsdom";
 
-import { useGetPostById } from "@/api/post";
-import Navbar, { NavbarMobile } from "@/components/Navbar/Navbar";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useMediaQuery } from "react-responsive";
-import { Highlight, themes } from "prism-react-renderer";
-import { useEffect, useState } from "react";
-import { MathJax, MathJaxContext } from "better-react-mathjax";
+type Props = {
+  params: { postId: [string] };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export default function PostId() {
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
-  const params = useParams();
-  const { data: post, isFetching } = useGetPostById(params.postId[0] as string);
-  const [elements, setElements] = useState<any[]>([]);
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // fetch data
+  // const post = await Post.get(params.postId[0], true);
+  const docRef = doc(db, "posts", params.postId[0]);
+  const data = await getDoc(docRef);
+  const post = flattenDocumentData(data);
 
-  const hasPost = post && !isFetching;
-  const hasNoPost = !post && !isFetching;
+  const dom = new JSDOM(post.content, {
+    contentType: "text/html",
+  });
 
-  useEffect(() => {
-    if (post?.content) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(post.content, "text/html");
-      const arr = Array.from(doc.body.childNodes);
-      const _elements = arr.reduce((acc: any, node) => {
-        if (node.nodeName === "PRE") {
-          // @ts-ignore
-          const htmlContent = node.innerHTML.replace(/<br\s*\/?>/gi, "\n");
-          const doc1 = document.createElement("div");
-          doc1.innerHTML = htmlContent.trim();
-          const code = doc1.textContent || doc1.innerText;
+  const _images = Array.from(
+    dom.window.document.getElementsByTagName("img")
+  ).reduce(srcReducer, []);
 
-          acc.push({
-            tsx: (
-              <Highlight theme={themes.vsDark} code={code} language="tsx">
-                {({
-                  className,
-                  style,
-                  tokens,
-                  getLineProps,
-                  getTokenProps,
-                }) => {
-                  return (
-                    <pre
-                      style={{
-                        ...style,
-                        width: "100%",
-                        overflow: "auto",
-                        padding: "10px",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      {tokens.map((line, i) => (
-                        <div key={i} {...getLineProps({ line })}>
-                          {/* <span>{i + 1}</span> */}
-                          {line.map((token, key) => (
-                            <span key={key} {...getTokenProps({ token })} />
-                          ))}
-                        </div>
-                      ))}
-                    </pre>
-                  );
-                }}
-              </Highlight>
-            ),
-          });
-        } else {
-          // @ts-ignore
-          acc.push(node.outerHTML);
-        }
-        return acc;
-      }, []);
+  // optionally access and extend (rather than replace) parent metadata
+  // const previousImages = (await parent).openGraph?.images || [];
 
-      setElements(_elements);
-    }
-  }, [post?.content]);
+  return {
+    title: post.title,
+    description: post.content,
+    openGraph: {
+      title: post.title,
+      description: post.content,
+      url: "https://pustack-blog.vercel.app/",
+      siteName: "Minerva",
+      images: _images?.map((image: string) => ({
+        url: image,
+        width: 800,
+        height: 600,
+      })),
+      locale: "en_US",
+      type: "website",
+    },
+  };
+}
 
-  console.log("elements - ", elements);
+export default async function PostId(props: { params: { postId: string[] } }) {
+  // console.log("props", props);
 
-  return (
-    <main className="h-screen overflow-auto max-w-[900px] mx-auto">
-      {isTabletScreen ? <NavbarMobile /> : <Navbar />}
+  // const post = await Post.get(props.params.postId[0], true);
 
-      <MathJaxContext>
-        <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5">
-          {isFetching && (
-            <div className="my-10 text-sm text-center">Loading...</div>
-          )}
-          <MathJax>
-            {hasPost &&
-              elements.map((element, index) =>
-                element.tsx ? (
-                  element.tsx
-                ) : (
-                  <div
-                    key={post.content + " - " + index}
-                    className="w-full article-dynamic-container"
-                    dangerouslySetInnerHTML={{ __html: element }}
-                  ></div>
-                )
-              )}
-          </MathJax>
-          {hasNoPost && (
-            <div className="my-10 text-xl text-center text-red-500 uppercase">
-              Post not found,{" "}
-              <span className="underline text-appBlue">
-                <Link href="/">Go back</Link>
-              </span>
-            </div>
-          )}
-        </div>
-      </MathJaxContext>
-    </main>
-  );
+  // console.log("post - ", post.title);
+
+  return <div>{/* <BlogPost post={post} /> */}</div>;
 }
