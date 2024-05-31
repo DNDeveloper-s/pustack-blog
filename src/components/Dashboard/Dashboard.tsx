@@ -34,6 +34,8 @@ export default function Dashboard() {
     2
   );
 
+  console.log("posts - ", posts);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] py-2">
       <div className="pr-0 md:pr-7">

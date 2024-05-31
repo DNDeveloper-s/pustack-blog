@@ -97,25 +97,29 @@ export default function BlogWithAuthor({
         </div>
         <hr className="border-dashed border-[#1f1d1a4d] my-4" />
         <div>
-          <h2
-            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-            style={{
-              fontSize: size === "sm" ? "24px" : "32px",
-              fontWeight: "395",
-              fontVariationSettings: '"wght" 495,"opsz" 10',
-            }}
-          >
-            {post.snippetData?.title}
-          </h2>
-          <p
-            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
-            style={{
-              fontSize: size === "sm" ? "16px" : "18px",
-              paddingTop: size === "sm" ? "8px" : "10px",
-            }}
-          >
-            {post.snippetData?.content}
-          </p>
+          {post.snippetData?.title && (
+            <h2
+              className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+              style={{
+                fontSize: size === "sm" ? "24px" : "32px",
+                fontWeight: "395",
+                fontVariationSettings: '"wght" 495,"opsz" 10',
+              }}
+            >
+              {post.snippetData?.title}
+            </h2>
+          )}
+          {post.snippetData?.content && (
+            <p
+              className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
+              style={{
+                fontSize: size === "sm" ? "16px" : "18px",
+                paddingTop: size === "sm" ? "8px" : "10px",
+              }}
+            >
+              {post.snippetData?.content}
+            </p>
+          )}
           {post.snippetData?.image && (
             <figure className="mt-2">
               <img src={post.snippetData?.image} alt="Image One" />
@@ -266,25 +270,29 @@ export function BlogWithAuthorV2({
             alt="circles blue"
             className="w-[21px] h-[17px] float-left mt-[4px] mr-[5px]"
           />
-          <h2
-            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-            style={{
-              fontSize: size === "sm" ? "24px" : "32px",
-              fontWeight: "395",
-              fontVariationSettings: '"wght" 495,"opsz" 10',
-            }}
-          >
-            {post.snippetData?.title}
-          </h2>
-          <p
-            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
-            style={{
-              fontSize: size === "sm" ? "16px" : "18px",
-              paddingTop: size === "sm" ? "8px" : "10px",
-            }}
-          >
-            {post.snippetData?.content}
-          </p>
+          {post.snippetData?.title && (
+            <h2
+              className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+              style={{
+                fontSize: size === "sm" ? "24px" : "32px",
+                fontWeight: "395",
+                fontVariationSettings: '"wght" 495,"opsz" 10',
+              }}
+            >
+              {post.snippetData?.title}
+            </h2>
+          )}
+          {post.snippetData?.content && (
+            <p
+              className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
+              style={{
+                fontSize: size === "sm" ? "16px" : "18px",
+                paddingTop: size === "sm" ? "8px" : "10px",
+              }}
+            >
+              {post.snippetData?.content}
+            </p>
+          )}
           <div className="flex mt-3">
             <Image
               src={arrowSignalBlue}

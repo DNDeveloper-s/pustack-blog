@@ -224,8 +224,7 @@ export class Post {
     this._snippetData = snippetData;
 
     if (
-      snippetData.content &&
-      snippetData.title &&
+      (snippetData.content || snippetData.title) &&
       (snippetData.image || snippetData.iframe) &&
       snippetData.author &&
       snippetData.topic
@@ -235,8 +234,7 @@ export class Post {
     }
 
     if (
-      snippetData.content &&
-      snippetData.title &&
+      (snippetData.content || snippetData.title) &&
       snippetData.quote &&
       snippetData.author &&
       snippetData.topic
