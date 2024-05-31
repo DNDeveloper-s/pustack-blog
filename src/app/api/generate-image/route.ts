@@ -64,8 +64,16 @@ export async function GET(request: any) {
   //   .modulate({ brightness: 0.5 })
   //   .toBuffer();
 
-  const topPosition = +(height ?? 300) / 2 - +(overlayWidth ?? 300) / 2;
-  const leftPosition = +(width ?? 450) / 2 - +(overlayHeight ?? 300) / 2;
+  const _width = +(width ?? 450);
+  const _height = +(height ?? 300);
+  const _overlayWidth = +(overlayWidth ?? 200);
+  const _overlayHeight = +(overlayHeight ?? 200);
+
+  // const topPosition = +(height ?? 300) / 2 - +(overlayWidth ?? 300) / 2;
+  // const leftPosition = +(width ?? 450) / 2 - +(overlayHeight ?? 300) / 2;
+
+  const topPosition = -70;
+  const leftPosition = _width - _overlayWidth + 70;
 
   const image = await baseImage
     .resize(+(width ?? 450), +(height ?? 300))

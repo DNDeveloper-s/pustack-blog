@@ -46,14 +46,14 @@ export async function generateMetadata(
       siteName: "Minerva",
       images: [
         {
-          url: processedImageUrl,
-          width: 450,
-          height: 300,
-        },
-        {
           url: processedImageUrl2,
           width: 450,
           height: 235,
+        },
+        {
+          url: processedImageUrl,
+          width: 450,
+          height: 300,
         },
       ],
       locale: "en_US",
