@@ -10,6 +10,9 @@ export async function GET(request: any) {
   const height = searchParams.get("height");
   const overlayWidth = searchParams.get("overlayWidth");
   const overlayHeight = searchParams.get("overlayHeight");
+  const overlayTop = searchParams.get("overlayTop");
+  const overlayLeft = searchParams.get("overlayLeft");
+  console.log("width - ", +(width ?? 0));
 
   if (!imageUrl) {
     return new NextResponse("Missing imageUrl query parameter", {
@@ -55,7 +58,7 @@ export async function GET(request: any) {
 
   // Get dimensions of the overlay image
   const overlayImage = await sharp(overlayImagePath)
-    .resize(+(overlayWidth ?? 300), +(overlayHeight ?? 300))
+    .resize(+(overlayWidth ?? 200), +(overlayHeight ?? 200))
     .modulate({ brightness: 1 });
 
   // const shadowBuffer = await sharp(overlayImagePath)
