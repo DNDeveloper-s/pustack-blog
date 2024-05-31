@@ -6,6 +6,10 @@ import { promises as fs } from "fs";
 export async function GET(request: any) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get("imageUrl");
+  const width = searchParams.get("width");
+  const height = searchParams.get("height");
+  const overlayWidth = searchParams.get("overlayWidth");
+  const overlayHeight = searchParams.get("overlayHeight");
 
   if (!imageUrl) {
     return new NextResponse("Missing imageUrl query parameter", {
@@ -51,7 +55,7 @@ export async function GET(request: any) {
 
   // Get dimensions of the overlay image
   const overlayImage = await sharp(overlayImagePath)
-    .resize(300, 300)
+    .resize(+(overlayWidth ?? 300), +(overlayHeight ?? 300))
     .modulate({ brightness: 1 });
 
   // const shadowBuffer = await sharp(overlayImagePath)
@@ -60,11 +64,11 @@ export async function GET(request: any) {
   //   .modulate({ brightness: 0.5 })
   //   .toBuffer();
 
-  const topPosition = 300 / 2 - 300 / 2;
-  const leftPosition = 450 / 2 - 300 / 2;
+  const topPosition = +(height ?? 300) / 2 - +(overlayWidth ?? 300) / 2;
+  const leftPosition = +(width ?? 450) / 2 - +(overlayHeight ?? 300) / 2;
 
   const image = await baseImage
-    .resize(450, 300)
+    .resize(+(width ?? 450), +(height ?? 300))
     .composite([
       // {
       //   input: shadowBuffer,
@@ -73,8 +77,8 @@ export async function GET(request: any) {
       // },
       {
         input: await overlayImage.toBuffer(),
-        left: leftPosition,
-        top: topPosition,
+        left: parseInt(leftPosition.toString()),
+        top: parseInt(topPosition.toString()),
       },
     ])
     .png()
