@@ -32,6 +32,7 @@ export async function generateMetadata(
 
   const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
   const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
 
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || [];
@@ -54,6 +55,11 @@ export async function generateMetadata(
           url: processedImageUrl,
           width: 450,
           height: 300,
+        },
+        {
+          url: processedImageUrl3,
+          width: 400,
+          height: 400,
         },
       ],
       locale: "en_US",
