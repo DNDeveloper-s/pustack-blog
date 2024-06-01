@@ -104,10 +104,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   console.log("elements - ", elements);
 
   return (
-    <main className="max-w-[900px] mx-auto">
+    <main className="max-w-[900px] mx-auto md:px-2 px-6">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <div className="grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-[2fr_1fr] my-6">
-        <div className="pr-5">
+      <div className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6">
+        <div className="pb-5 md:pb-0 md:pr-5">
           <div className="flex items-center">
             <div className="mr-2">
               <img
@@ -319,7 +319,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             </div>
           </div>
         </div>
-        <div className="pl-5 flex flex-col justify-between">
+        <div className="pt-5 md:pt-0 md:pl-5 flex flex-col justify-between">
           <div>
             <div className="py-1">
               <h2
