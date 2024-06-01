@@ -12,7 +12,6 @@ export async function GET(request: any) {
   const overlayHeight = searchParams.get("overlayHeight");
   const overlayTop = searchParams.get("overlayTop");
   const overlayLeft = searchParams.get("overlayLeft");
-  console.log("width - ", +(width ?? 0));
 
   if (!imageUrl) {
     return new NextResponse("Missing imageUrl query parameter", {

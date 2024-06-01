@@ -78,7 +78,11 @@ export default function BlogWithAuthor({
       <div className="py-3 group">
         <div className="flex">
           <div className="mr-2">
-            <Image className="w-[38px] h-[38px]" src={avatar} alt="avatar" />
+            <img
+              className="w-[38px] h-[38px]"
+              src={post.author.photoURL ?? avatar.src}
+              alt="avatar"
+            />
           </div>
           <div>
             <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">

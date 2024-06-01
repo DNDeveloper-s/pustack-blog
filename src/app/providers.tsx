@@ -5,6 +5,8 @@
 // extracting this part out into it's own file with 'use client' on top
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { UserProvider } from "@/context/UserContext";
+import { User } from "firebase/auth";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -59,7 +61,13 @@ function getPersistor() {
   }
 }
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({
+  children,
+  currentUser,
+}: {
+  children: React.ReactNode;
+  currentUser: User | null;
+}) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
   //       suspend because React will throw away the client on the initial
@@ -67,6 +75,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserProvider currentUser={currentUser}>{children}</UserProvider>
+    </QueryClientProvider>
   );
 }

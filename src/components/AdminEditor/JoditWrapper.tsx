@@ -14,6 +14,8 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/modal";
+import useUserSession from "@/hooks/useUserSession";
+import { useUser } from "@/context/UserContext";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -41,6 +43,7 @@ export default function JoditWrapper() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { user } = useUser();
 
   const { mutate: postCreatePost, isPending } = useCreatePost({
     onSuccess: () => {
@@ -52,7 +55,7 @@ export default function JoditWrapper() {
   });
 
   async function handleCreatePost() {
-    if (isPending) return;
+    if (isPending || !user) return;
 
     const isValid = inputRef.current?.value && content && topic;
 
@@ -64,7 +67,11 @@ export default function JoditWrapper() {
     const post = new Post(
       inputRef.current?.value || "Untitled",
       content,
-      dummyAuthor,
+      {
+        name: user?.name || dummyAuthor.name,
+        email: user?.email || dummyAuthor.email,
+        photoURL: user?.image_url || dummyAuthor.photoURL,
+      },
       topic
     );
 

@@ -4,6 +4,8 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Metadata, ResolvingMetadata } from "next";
 import { JSDOM } from "jsdom";
+import useUserSession from "@/hooks/useUserSession";
+import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 
 type Props = {
   params: { postId: [string] };
@@ -78,6 +80,7 @@ export default async function PostId(props: { params: { postId: string[] } }) {
   const docRef = doc(db, "posts", props.params.postId[0]);
   const data = await getDoc(docRef);
   const post = flattenDocumentData(data);
+  const doc1 = await getAuthenticatedAppForUser();
 
   return (
     <div>

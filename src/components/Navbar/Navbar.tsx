@@ -12,6 +12,9 @@ import dayjs from "dayjs";
 import { url } from "@/constants";
 import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
+import { signInWithGoogle, signOut } from "@/lib/firebase/auth";
+import useUserSession from "@/hooks/useUserSession";
+import { useUser } from "@/context/UserContext";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -35,6 +38,8 @@ interface CurrentTime {
 }
 
 export default function Navbar() {
+  const { user } = useUser();
+
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
     time: dayjs().format("h:mm A"),
@@ -54,7 +59,7 @@ export default function Navbar() {
     };
   }, []);
 
-  const showCreatePostButton = !pathname.includes("/admin");
+  const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
   return (
     <header className="w-full max-w-[1440px] mx-auto py-2">
@@ -96,9 +101,25 @@ export default function Navbar() {
               <span>CREATE POST</span>
             </Link>
           )}
-          <div className="text-[10px] flex justify-end font-helvetica">
-            <span>SIGN IN</span>
-          </div>
+          {!user ? (
+            <div
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              onClick={() => {
+                signInWithGoogle();
+              }}
+            >
+              <span>SIGN IN</span>
+            </div>
+          ) : (
+            <div
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              onClick={() => {
+                signOut();
+              }}
+            >
+              <span>SIGN OUT</span>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex justify-center items-center relative w-full my-3">

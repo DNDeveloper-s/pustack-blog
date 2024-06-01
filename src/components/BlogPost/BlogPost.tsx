@@ -6,13 +6,26 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import Image from "next/image";
 import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
-import { DocumentData } from "firebase/firestore";
+import {
+  DocumentData,
+  deleteDoc,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import readingTime from "reading-time";
+import usePageTime from "@/hooks/usePageTime";
+import { useUser } from "@/context/UserContext";
+import { db } from "@/lib/firebase";
+import { FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa6";
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -20,9 +33,14 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const [elements, setElements] = useState<any[]>([]);
   const [post, setPost] = useState<Post | null>(null);
   const [copied, setCopied] = useState(false);
+  const pageTimeSpent = usePageTime();
+  const { user } = useUser();
+  const readDoc = useRef(false);
+  const [isBookMarked, setIsBookMarked] = useState(false);
 
   useEffect(() => {
     if (_post) {
+      console.log("Reading time - ", readingTime(_post.content));
       setPost(
         new Post(
           _post.title,
@@ -38,10 +56,33 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     }
   }, [_post]);
 
-  console.log("post - ", post);
-
   const hasPost = post;
   const hasNoPost = !post;
+
+  useEffect(() => {
+    if (!user || !post?.id) return;
+    const docRef = doc(db, "users", user.uid, "history", post.id);
+    getDoc(docRef).then((doc) => {
+      if (doc.exists()) {
+        readDoc.current = true;
+      }
+    });
+  }, [user, post?.id]);
+
+  useEffect(() => {
+    if (!post?.content || !user || !post?.id || readDoc.current) return;
+    const readingTimeInSeconds = readingTime(post.content).minutes * 60;
+    // Check if the pageTimespent is 20% more than the reading time
+    if (pageTimeSpent > readingTimeInSeconds * 0.2) {
+      const docRef = doc(db, "users", user.uid, "history", post.id);
+      setDoc(docRef, {
+        id: post.id,
+        read_at: serverTimestamp(),
+        read: true,
+      });
+      readDoc.current = true;
+    }
+  }, [pageTimeSpent, post?.content, post?.id, user]);
 
   useEffect(() => {
     if (post?.content) {
@@ -101,14 +142,42 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     }
   }, [post?.content]);
 
-  console.log("elements - ", elements);
+  function handleBookMark(bookmarked: boolean) {
+    if (!post?.id || !user?.uid) return;
+    const oldState = isBookMarked;
+    setIsBookMarked(bookmarked);
+    try {
+      const docRef = doc(db, "users", user.uid, "bookmarks", post.id);
+      if (bookmarked) {
+        setDoc(docRef, {
+          id: post.id,
+          bookmarked_at: serverTimestamp(),
+        });
+      } else {
+        deleteDoc(docRef);
+      }
+    } catch (e) {
+      console.log("Error while bookmarking - ", e);
+      setIsBookMarked(oldState);
+    }
+  }
+
+  useEffect(() => {
+    if (!post?.id || !user?.uid) return;
+    const docRef = doc(db, "users", user.uid, "bookmarks", post.id);
+    getDoc(docRef).then((doc) => {
+      if (doc.exists()) {
+        setIsBookMarked(true);
+      }
+    });
+  }, [post?.id, user?.uid]);
 
   return (
     <main className="max-w-[900px] mx-auto md:px-2 px-6">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
       <div className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6">
         <div className="pb-5 md:pb-0 md:pr-5">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             <div className="mr-2">
               <img
                 className="w-[38px] h-[38px]"
@@ -116,7 +185,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 alt="avatar"
               />
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
                 {post?.author?.name}
               </h3>
@@ -129,6 +198,20 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 >
                   POLITICS
                 </p> */}
+            </div>
+            <div className="flex items-center gap-3">
+              {post?.content && <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">{readingTime(post?.content).text}</span>}
+              {!isBookMarked ? (
+                <FaRegStar
+                  className="cursor-pointer"
+                  onClick={() => handleBookMark(true)}
+                />
+              ) : (
+                <FaStar
+                  className="text-[#d9c503] cursor-pointer"
+                  onClick={() => handleBookMark(false)}
+                />
+              )}
             </div>
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] my-2" />

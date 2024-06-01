@@ -27,6 +27,7 @@
     "lodash": "^4.17.21",
     "net": "^1.0.2",
     "next": "14.2.3",
+    "next-auth": "^4.24.7",
     "prism-react-renderer": "^2.3.1",
     "react": "^18",
     "react-dom": "^18",
@@ -34,6 +35,7 @@
     "react-icons": "^5.2.1",
     "react-quill": "^2.0.0",
     "react-responsive": "^10.0.0",
+    "reading-time": "^1.5.0",
     "sharp": "^0.33.4",
     "tls": "^0.0.1"
   },

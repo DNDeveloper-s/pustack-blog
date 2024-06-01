@@ -307,7 +307,6 @@ export class Post {
   static async get(id: string, flatten: false): Promise<PostDocumentSnapshot>;
   static async get(id: string, flatten: true): Promise<Post>;
   static async get(id: string, flatten: boolean = false) {
-    console.log("id - ", id);
     const docRef = doc(db, "posts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
