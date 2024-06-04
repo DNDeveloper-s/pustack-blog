@@ -180,6 +180,8 @@ export function NavbarMobile() {
     date: dayjs().format("dddd MMMM DD, YYYY"),
   });
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const { user } = useUser();
+  const pathname = usePathname();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -193,6 +195,7 @@ export function NavbarMobile() {
       clearInterval(interval);
     };
   }, []);
+  const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
   return (
     <header className="w-full max-w-[1100px] mx-auto py-2">
@@ -208,10 +211,37 @@ export function NavbarMobile() {
             <span>{currentTime.date}</span>
           </div>
         </div>
-        <div className="flex-1">
-          <div className="text-[10px] flex justify-end font-helvetica">
+        <div className="flex-1 flex items-start gap-5 justify-end">
+          {showCreatePostButton && (
+            <Link
+              href="/admin"
+              className="text-[10px] flex justify-end font-helvetica"
+            >
+              <span>CREATE POST</span>
+            </Link>
+          )}
+          {!user ? (
+            <div
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              onClick={() => {
+                signInWithGoogle();
+              }}
+            >
+              <span>SIGN IN</span>
+            </div>
+          ) : (
+            <div
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              onClick={() => {
+                signOut();
+              }}
+            >
+              <span>SIGN OUT</span>
+            </div>
+          )}
+          {/* <div className="text-[10px] flex justify-end font-helvetica">
             <span>SIGN IN</span>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex justify-center items-center relative w-full mt-9">
@@ -319,9 +349,7 @@ export function NavbarMobile() {
         <WorldClockWithLabel timezone="+8" label="SG" />
       </div>
       <div className="text-center">
-        <p className="font-larkenExtraBold text-[70px] leading-[120%]">
-          MINERVA
-        </p>
+        <Logo size="xxl" />
       </div>
       <div className="flex-1 flex font-helvetica justify-center items-center gap-2 text-[10px]">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
