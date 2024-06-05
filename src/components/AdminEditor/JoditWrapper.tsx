@@ -36,7 +36,11 @@ const TOPICS = [
   { key: "others", value: "Others" },
 ];
 
-export default function JoditWrapper() {
+export default function JoditWrapper({
+  handleContinue,
+}: {
+  handleContinue: (post: Post) => void;
+}) {
   const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -54,7 +58,7 @@ export default function JoditWrapper() {
     },
   });
 
-  async function handleCreatePost() {
+  async function handleContinuePost() {
     if (isPending || !user) return;
 
     const isValid = inputRef.current?.value && content && topic;
@@ -75,7 +79,8 @@ export default function JoditWrapper() {
       topic
     );
 
-    postCreatePost(post);
+    // postCreatePost(post);
+    handleContinue(post);
   }
 
   return (
@@ -130,7 +135,7 @@ export default function JoditWrapper() {
       </div>
       <JoditEditor content={content} setContent={setContent} />
       <div className="flex justify-end gap-4 mb-10">
-        <Button
+        {/* <Button
           isDisabled={isPending}
           className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
           onClick={handleCreatePost}
@@ -139,6 +144,17 @@ export default function JoditWrapper() {
           isLoading={isPending}
         >
           Create Post
+        </Button> */}
+        <Button
+          // isDisabled={isPending}
+          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
+          // onClick={handleCreatePost}
+          onClick={handleContinuePost}
+          variant="flat"
+          color="primary"
+          // isLoading={isPending}
+        >
+          Continue
         </Button>
       </div>
       <Modal
