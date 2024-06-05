@@ -67,7 +67,7 @@ body {
   border-radius: 100%;
   box-sizing: border-box;
   background-color: transparent;
-  zoom: 0.09;
+  zoom: 0.085;
 }
 .widget.clock#okinawa,
 .widget.clock#amalfi {
@@ -95,7 +95,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  border: 6px dashed #000;
+  border: 6px dotted #000;
   border-radius: 100%;
   box-sizing: border-box;
 }
@@ -120,7 +120,6 @@ body {
   height: 6px;
   position: absolute;
   top: 189px;
-  background-color: #000;
   border-radius: 100% 0% 0% 100%;
   transform-origin: right 3px;
   transition: all 0.05s cubic-bezier(0, 0, 0.52, 2.51) 0s;
@@ -128,17 +127,17 @@ body {
 .widget.clock .hand.seconds {
   width: 45%;
   left: 5%;
-  opacity: 0.25;
+  background-color: #af1f1b;
 }
 .widget.clock .hand.minutes {
   width: 35%;
   left: 15%;
-  opacity: 0.5;
+  background-color: #1f1d1a;
 }
 .widget.clock .hand.hours {
   width: 25%;
   left: 25%;
-  opacity: 0.75;
+  background-color: #1f1d1a;
 }
 .widget.clock .hand-cap {
   width: 5%;

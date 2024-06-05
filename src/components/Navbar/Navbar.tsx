@@ -70,6 +70,10 @@ export default function Navbar() {
               src={earthSpinning}
               alt="Spinning Earth"
               className="w-[12px] h-[12px]"
+              style={{
+                mixBlendMode: "multiply",
+                transform: "translateZ(0)",
+              }}
             />
             <span>{currentTime.time}</span>
             <span>{currentTime.date}</span>
@@ -96,25 +100,37 @@ export default function Navbar() {
           {showCreatePostButton && (
             <Link
               href="/admin"
-              className="text-[10px] flex justify-end font-helvetica"
+              className="text-[10px] flex justify-end font-helvetica text-primaryText"
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
+              }}
             >
               <span>CREATE POST</span>
             </Link>
           )}
           {!user ? (
             <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
                 signInWithGoogle();
+              }}
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
               }}
             >
               <span>SIGN IN</span>
             </div>
           ) : (
             <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
                 signOut();
+              }}
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
               }}
             >
               <span>SIGN OUT</span>
@@ -145,7 +161,7 @@ export default function Navbar() {
             Newsletters
           </Link>
         </div>
-        <div className="flex-1 flex font-helvetica justify-center items-center gap-2 text-[10px]">
+        <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px]">
           <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
           <div className="w-1 h-1 rounded-full bg-appBlack" />
           <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
@@ -157,7 +173,7 @@ export default function Navbar() {
         </div>
       </div>
       <hr className="border-appBlack" />
-      <hr className="border-dashed border-[#1f1d1a4d] border-[#1f1d1a4d] mt-0.5" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" />
       <nav className="flex justify-between py-2">
         {navLinks.map((link) => (
           <Link
@@ -169,7 +185,7 @@ export default function Navbar() {
           </Link>
         ))}
       </nav>
-      <hr className="border-dashed border-[#1f1d1a4d] border-[#1f1d1a4d]" />
+      <hr className="border-dashed border-[#1f1d1a4d]" />
     </header>
   );
 }
@@ -206,6 +222,10 @@ export function NavbarMobile() {
               src={earthSpinning}
               alt="Spinning Earth"
               className="w-[12px] h-[12px]"
+              style={{
+                mixBlendMode: "multiply",
+                transform: "translateZ(0)",
+              }}
             />
             <span>{currentTime.time}</span>
             <span>{currentTime.date}</span>
@@ -215,25 +235,37 @@ export function NavbarMobile() {
           {showCreatePostButton && (
             <Link
               href="/admin"
-              className="text-[10px] flex justify-end font-helvetica"
+              className="text-[10px] flex justify-end font-helvetica text-primaryText"
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
+              }}
             >
               <span>CREATE POST</span>
             </Link>
           )}
           {!user ? (
             <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
                 signInWithGoogle();
+              }}
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
               }}
             >
               <span>SIGN IN</span>
             </div>
           ) : (
             <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer"
+              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
                 signOut();
+              }}
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
               }}
             >
               <span>SIGN OUT</span>
@@ -349,9 +381,23 @@ export function NavbarMobile() {
         <WorldClockWithLabel timezone="+8" label="SG" />
       </div>
       <div className="text-center">
-        <Logo size="xxl" />
+        <Link href="/">
+          <span
+            className={
+              "font-larkenExtraBold leading-[100%] text-[70px] flex items-center justify-evenly px-3"
+            }
+          >
+            <span>M</span>
+            <span>I</span>
+            <span>N</span>
+            <span>E</span>
+            <span>R</span>
+            <span>V</span>
+            <span>A</span>
+          </span>
+        </Link>
       </div>
-      <div className="flex-1 flex font-helvetica justify-center items-center gap-2 text-[10px]">
+      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px]">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
