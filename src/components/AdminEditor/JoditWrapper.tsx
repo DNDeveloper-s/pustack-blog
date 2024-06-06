@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import JoditEditor from "./JoditEditor";
 import { Post } from "@/firebase/post";
 import { useCreatePost } from "@/api/post";
@@ -14,7 +20,6 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/modal";
-import useUserSession from "@/hooks/useUserSession";
 import { useUser } from "@/context/UserContext";
 
 const dummyAuthor = {
@@ -36,11 +41,14 @@ const TOPICS = [
   { key: "others", value: "Others" },
 ];
 
-export default function JoditWrapper({
-  handleContinue,
-}: {
-  handleContinue: (post: Post) => void;
-}) {
+function JoditWrapper(
+  {
+    handleContinue,
+  }: {
+    handleContinue: (post: Post) => void;
+  },
+  ref: any
+) {
   const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -49,17 +57,27 @@ export default function JoditWrapper({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { user } = useUser();
 
-  const { mutate: postCreatePost, isPending } = useCreatePost({
-    onSuccess: () => {
+  useEffect(() => {
+    const getContent = localStorage.getItem("editor_state") ?? "{}";
+    const storageContent = JSON.parse(getContent);
+
+    if (storageContent) {
+      setContent(storageContent.content);
+      setTopic(storageContent.topic);
+      if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
+    }
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
       setTopic("");
       setContent("");
       if (inputRef.current) inputRef.current.value = "";
-      router.push("/");
     },
-  });
+  }));
 
   async function handleContinuePost() {
-    if (isPending || !user) return;
+    if (!user) return;
 
     const isValid = inputRef.current?.value && content && topic;
 
@@ -83,6 +101,19 @@ export default function JoditWrapper({
     handleContinue(post);
   }
 
+  const updateLocalStorage = (key: string, value: any) => {
+    const getContent = localStorage.getItem("editor_state") ?? "{}";
+    const storageContent = JSON.parse(getContent);
+
+    localStorage.setItem(
+      "editor_state",
+      JSON.stringify({
+        ...storageContent,
+        [key]: value,
+      })
+    );
+  };
+
   return (
     <div className="w-full max-w-[1100px] mx-auto py-2 px-3">
       <div>
@@ -96,7 +127,7 @@ export default function JoditWrapper({
           Post Title
         </h4>
         <input
-          disabled={isPending}
+          // disabled={isPending}
           className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
           placeholder="Enter the Post Title"
           type="text"
@@ -105,6 +136,7 @@ export default function JoditWrapper({
             borderInlineEnd: 0,
           }}
           ref={inputRef}
+          onChange={(e) => updateLocalStorage("title", e.target.value)}
         />
       </div>
       <div className="mt-5">
@@ -112,9 +144,11 @@ export default function JoditWrapper({
           Topic
         </h4>
         <select
-          disabled={isPending}
+          // disabled={isPending}
+          value={topic}
           onChange={(e) => {
             setTopic(e.target.value);
+            updateLocalStorage("topic", e.target.value);
           }}
           className="border text-[16px] w-full flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
         >
@@ -133,7 +167,15 @@ export default function JoditWrapper({
       <div className="mt-5">
         <Button onClick={onOpen}>Create Maths Formula</Button>
       </div>
-      <JoditEditor content={content} setContent={setContent} />
+      <JoditEditor
+        content={content}
+        setContent={(_content) => {
+          setContent(_content);
+        }}
+        updateLiveContent={(content) => {
+          updateLocalStorage("content", content);
+        }}
+      />
       <div className="flex justify-end gap-4 mb-10">
         {/* <Button
           isDisabled={isPending}
@@ -182,3 +224,5 @@ export default function JoditWrapper({
     </div>
   );
 }
+
+export default forwardRef(JoditWrapper);

@@ -5,26 +5,57 @@ import Navbar, { NavbarMobile } from "../Navbar/Navbar";
 import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Post } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
+import { useCreatePost } from "@/api/post";
+import { useRouter } from "next/navigation";
+import WorldClock2 from "../shared/WorldClock2";
 
 export default function AdminPage() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const [step, setStep] = useState(1);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
+  const joditRef = useRef<any>(null);
+  const router = useRouter();
+
+  const { mutate: postCreatePost, isPending } = useCreatePost({
+    onSuccess: () => {
+      joditRef.current.reset();
+      window.localStorage.removeItem("editor_state");
+      router.push("/");
+    },
+  });
 
   const handleContinue = (post: Post) => {
     setStep(2);
     setCurrentPost(post);
   };
 
+  // useEffect(() => {
+  //   // Ask the user before leaving
+  //   window.onbeforeunload = function () {
+  //     return "Are you sure you want to leave? Your changes will be lost.";
+  //   };
+  //   return () => {
+  //     window.onbeforeunload = null;
+  //   };
+  // }, []);
+
+  const handleCreatePost = () => {
+    if (!currentPost) return;
+    postCreatePost(currentPost);
+  };
+
   return (
     <main className="h-screen overflow-auto">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
+
+      <WorldClock2 />
+
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
-          <JoditWrapper handleContinue={handleContinue} />
+          <JoditWrapper ref={joditRef} handleContinue={handleContinue} />
         </MathJaxContext>
       </div>
       <div
@@ -53,12 +84,12 @@ export default function AdminPage() {
             Back
           </Button>
           <Button
-            // isDisabled={isPending}
+            isDisabled={isPending}
             className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-            // onClick={handleCreatePost}
+            onClick={handleCreatePost}
             variant="flat"
             color="primary"
-            // isLoading={isPending}
+            isLoading={isPending}
           >
             Create Post
           </Button>

@@ -19,13 +19,20 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import InsertImage from "./InsertImage";
+import { Irish_Grover } from "next/font/google";
+import { handleUpload } from "@/lib/firebase/upload";
 
 interface JoditEditorProps {
   content: string;
   setContent: React.Dispatch<React.SetStateAction<string>>;
+  updateLiveContent: (content: string) => void;
 }
 
-export default function JoditEditor({ content, setContent }: JoditEditorProps) {
+export default function JoditEditor({
+  content,
+  setContent,
+  updateLiveContent,
+}: JoditEditorProps) {
   const editor = useRef<any>(null);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   // const [editorData, setEditorData] = useState("");
@@ -62,33 +69,140 @@ export default function JoditEditor({ content, setContent }: JoditEditorProps) {
             // @ts-ignore
             ...Jodit.defaultOptions.buttons,
             {
+              name: "Insert Image",
+              icon: "image",
+              tooltip: "Insert Image",
               group: "insert",
-              name: "insertImage",
-              iconURL: "https://pustack-blog.vercel.app/vercel.svg",
-              tooltip: "Insert Image",
-              exec: async (editor: Jodit) => {
-                const url = prompt("Enter the image URL");
-                if (url) {
-                  editor.selection.insertHTML(
-                    `<img src="${url}" alt="image" />`
-                  );
-                }
-              },
-            },
-            {
-              name: "Enter Code",
-              tooltip: "Insert Image",
-              popup: (editor: Jodit, current: any, self: any, close: any) => {
+              popup: (
+                editor: Jodit,
+                current: any,
+                close: any,
+                _button: any
+              ) => {
+                const para1 = editor.create.element(
+                  "p",
+                  { class: "font-bold" },
+                  "Drop Image"
+                );
+                const para2 = editor.create.element(
+                  "p",
+                  {},
+                  "or click to upload"
+                );
+                const textAreaContainer = editor.create.element(
+                  "div",
+                  {
+                    class:
+                      "pointer-events-none cursor-pointer text-center w-[150px] py-4 px-2",
+                  },
+                  [para1, para2]
+                );
                 const input = editor.create.element(
                   "input",
                   {
                     type: "file",
-                    class: "jodit-input",
+                    accept: "image/*",
+                    class:
+                      "cursor-pointer w-full top-0 left-0 h-full opacity-0",
+                    style: "position: absolute;",
                   },
                   ""
                 );
-                const child = editor.create.span("active", "Hello World");
-                editor.create.div("active w-[200px]", child);
+                const inputContainer = editor.create.div(
+                  "cursor-pointer relative flex items-center justify-center border border-dashed",
+                  [input, textAreaContainer]
+                );
+
+                const hr = editor.create.element("hr", {
+                  class: "my-2 border-dashed border-gray-400",
+                });
+
+                const urlInput = editor.create.element(
+                  "input",
+                  {
+                    class:
+                      "border text-[13px] flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]",
+                    placeholder: "Insert Image URL",
+                    type: "text",
+                    style:
+                      'fontVariationSettings: "wght" 400,"opsz" 10; borderInlineEnd: 0;',
+                  },
+                  ""
+                );
+
+                const urlButton = editor.create.element(
+                  "button",
+                  {
+                    class:
+                      "h-7 px-5 ml-2 rounded bg-appBlue text-primary text-xs font-featureRegular",
+                    style:
+                      "border: none; letter-spacing: 1px; cursor: pointer;",
+                  },
+                  "Insert"
+                );
+
+                urlButton.addEventListener("click", () => {
+                  editor.selection.insertHTML(
+                    `<img src="${urlInput.value}" alt="image" />`
+                  );
+                  close();
+                });
+
+                textAreaContainer.addEventListener("drop", (e) => {
+                  e.preventDefault();
+                  // @ts-ignore
+                  const file = e.dataTransfer.files[0];
+                  handleUpload(file, {
+                    setIsPending: (value: boolean) => {
+                      if (value) {
+                        textAreaContainer.innerHTML = "Uploading...";
+                      }
+                    },
+                    setProgress: (value: number) => {
+                      textAreaContainer.innerHTML = `Uploading ${value}%`;
+                    },
+                    handleComplete: (url: string) => {
+                      textAreaContainer.innerHTML = "";
+                      textAreaContainer.append(para1, para2);
+                      editor.selection.insertHTML(
+                        `<img src="${url}" alt="image" />`
+                      );
+                      close();
+                    },
+                  });
+                });
+
+                const wrapper = editor.create.div("relative active w-[200px]", [
+                  inputContainer,
+                  hr,
+                  urlInput,
+                  urlButton,
+                ]);
+
+                input.addEventListener("change", (e) => {
+                  // @ts-ignore
+                  const file = e.target?.files[0];
+                  handleUpload(file, {
+                    setIsPending: (value: boolean) => {
+                      if (value) {
+                        textAreaContainer.innerHTML = "Uploading...";
+                      }
+                    },
+                    setProgress: (value: number) => {
+                      textAreaContainer.innerHTML = `Uploading ${value}%`;
+                    },
+                    handleComplete: (url: string) => {
+                      textAreaContainer.innerHTML = "";
+                      textAreaContainer.append(para1, para2);
+                      editor.selection.insertHTML(
+                        `<img src="${url}" alt="image" />`
+                      );
+                      close();
+                    },
+                  });
+                });
+
+                return wrapper;
               },
               // exec: async (edtr: Jodit) => {
               //   editor.current = edtr;
@@ -103,7 +217,9 @@ export default function JoditEditor({ content, setContent }: JoditEditorProps) {
         }}
         //   tabIndex={1} // tabIndex of textarea
         onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-        onChange={(newContent) => {}}
+        onChange={(newContent) => {
+          updateLiveContent(newContent);
+        }}
       />
       {/* <Modal
         isOpen={isOpen}

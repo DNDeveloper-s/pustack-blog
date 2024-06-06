@@ -7,6 +7,8 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/context/UserContext";
 import { User } from "firebase/auth";
+import { LinkContextProvider } from "@/context/LinkContext";
+import { RouteChangeProvider } from "nextjs13-router-events";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -76,7 +78,11 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserProvider currentUser={currentUser}>{children}</UserProvider>
+      <RouteChangeProvider>
+        <LinkContextProvider>
+          <UserProvider currentUser={currentUser}>{children}</UserProvider>
+        </LinkContextProvider>
+      </RouteChangeProvider>
     </QueryClientProvider>
   );
 }
