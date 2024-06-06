@@ -50,9 +50,6 @@ export default function AdminPage() {
   return (
     <main className="h-screen overflow-auto">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-
-      <WorldClock2 />
-
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
           <JoditWrapper ref={joditRef} handleContinue={handleContinue} />

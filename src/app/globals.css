@@ -237,20 +237,21 @@ ul {
   right: 0;
   bottom: 50%;
   left: 0; */
-  width: 250px;
-  height: 250px;
+  width: 280px;
+  height: 280px;
   margin: auto;
-  padding: 5px;
-  background-image: linear-gradient(#f7f7f7, #e0e0e0);
+  /* padding: 5px; */
+  /* background-image: linear-gradient(#f7f7f7, #e0e0e0); */
   border-radius: 50%;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 2px 2px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 2px 2px rgba(0, 0, 0, 0.2); */
+  border: 1px dotted black;
 }
 .clock-base {
-  width: 250px;
+  /* width: 250px;
   height: 250px;
   background-color: #eee;
   border-radius: 50%;
-  box-shadow: 0 0 5px #eee;
+  box-shadow: 0 0 5px #eee; */
 }
 .clock-dial {
   position: absolute;
@@ -352,17 +353,17 @@ ul {
   -moz-animation: rotate-second 60s linear infinite;
 }
 .clock-second:after {
-  content: "";
+  /* content: "";
   display: block;
   position: absolute;
-  left: -5px;
-  bottom: 14px;
+  left: -3px;
+  bottom: 16px;
   width: 8px;
   height: 8px;
   background-color: #a00;
   border: solid 2px #a00;
   border-radius: 50%;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); */
 }
 .clock-center {
   position: absolute;

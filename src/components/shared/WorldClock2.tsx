@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import styled, { keyframes } from "styled-components";
 
 const generateKeyframes = (deg: number) => keyframes`
@@ -27,8 +27,8 @@ const generateKeyframes = (deg: number) => keyframes`
 const AnimatedHourDiv = styled.div`
   position: absolute;
   z-index: 2;
-  top: 80px;
-  left: 128px;
+  top: 90px;
+  left: 139px;
   width: 4px;
   height: 65px;
   background-color: #555;
@@ -45,8 +45,8 @@ const AnimatedHourDiv = styled.div`
 const AnimatedMinuteDiv = styled.div`
   position: absolute;
   z-index: 3;
-  top: 60px;
-  left: 128px;
+  top: 70px;
+  left: 139px;
   width: 4px;
   height: 85px;
   background-color: #555;
@@ -63,8 +63,8 @@ const AnimatedMinuteDiv = styled.div`
 const AnimatedSecondDiv = styled.div`
   position: absolute;
   z-index: 4;
-  top: 20px;
-  left: 129px;
+  top: 30px;
+  left: 140px;
   width: 2px;
   height: 130px;
   background-color: #a00;
@@ -76,70 +76,52 @@ const AnimatedSecondDiv = styled.div`
   animation: ${(props: any) => generateKeyframes(props.deg)} 60s linear infinite;
 `;
 
-export default function WorldClock2() {
-  useEffect(() => {
-    var now = new Date(),
-      hourDeg = (now.getHours() / 12) * 360 + (now.getMinutes() / 60) * 30,
-      minuteDeg = (now.getMinutes() / 60) * 360 + (now.getSeconds() / 60) * 6,
-      secondDeg = (now.getSeconds() / 60) * 360,
-      stylesDeg = [
-        "@-webkit-keyframes rotate-hour{from{transform:rotate(" +
-          hourDeg +
-          "deg);}to{transform:rotate(" +
-          (hourDeg + 360) +
-          "deg);}}",
-        "@-webkit-keyframes rotate-minute{from{transform:rotate(" +
-          minuteDeg +
-          "deg);}to{transform:rotate(" +
-          (minuteDeg + 360) +
-          "deg);}}",
-        "@-webkit-keyframes rotate-second{from{transform:rotate(" +
-          secondDeg +
-          "deg);}to{transform:rotate(" +
-          (secondDeg + 360) +
-          "deg);}}",
-        "@-moz-keyframes rotate-hour{from{transform:rotate(" +
-          hourDeg +
-          "deg);}to{transform:rotate(" +
-          (hourDeg + 360) +
-          "deg);}}",
-        "@-moz-keyframes rotate-minute{from{transform:rotate(" +
-          minuteDeg +
-          "deg);}to{transform:rotate(" +
-          (minuteDeg + 360) +
-          "deg);}}",
-        "@-moz-keyframes rotate-second{from{transform:rotate(" +
-          secondDeg +
-          "deg);}to{transform:rotate(" +
-          (secondDeg + 360) +
-          "deg);}}",
-      ].join("");
+function getTimeForOffset(offsetInMinutes: number) {
+  const date = new Date();
+  const utcTime = date.getTime() + date.getTimezoneOffset() * 60000; // Convert local time to UTC
+  const targetTime = new Date(utcTime + offsetInMinutes * 60000); // Apply the offset in minutes
+  return targetTime;
+}
 
-    // document.getElementById("clock-animations").innerHTML = stylesDeg;
-  }, []);
+export default function WorldClock2({ timezone }: { timezone: number }) {
+  const hourDeg = useMemo(() => {
+    var now = getTimeForOffset(timezone);
+    return (now.getHours() / 12) * 360 + (now.getMinutes() / 60) * 30;
+  }, [timezone]);
+
+  const minuteDeg = useMemo(() => {
+    var now = getTimeForOffset(timezone);
+    return (now.getMinutes() / 60) * 360 + (now.getSeconds() / 60) * 6;
+  }, [timezone]);
+
+  const secondDeg = useMemo(() => {
+    var now = getTimeForOffset(timezone);
+    return (now.getSeconds() / 60) * 360;
+  }, [timezone]);
 
   return (
-    <div className="clock-wrapper" style={{}}>
-      <div className="clock-base">
-        <div className="clock-dial">
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-          <div className="clock-indicator"></div>
-        </div>
-        <AnimatedHourDiv className="clock-hour"></AnimatedHourDiv>
-        <AnimatedMinuteDiv className="clock-minute"></AnimatedMinuteDiv>
-        <AnimatedSecondDiv className="clock-second"></AnimatedSecondDiv>
-        <div className="clock-center"></div>
-      </div>
+    <div className="clock-wrapper" style={{ zoom: 0.12 }}>
+      {/* @ts-ignore */}
+      <AnimatedHourDiv deg={hourDeg} className="clock-hour"></AnimatedHourDiv>
+      <AnimatedMinuteDiv
+        // @ts-ignore
+        deg={minuteDeg}
+        className="clock-minute"
+      ></AnimatedMinuteDiv>
+      <AnimatedSecondDiv
+        // @ts-ignore
+        deg={secondDeg}
+        className="clock-second"
+      ></AnimatedSecondDiv>
     </div>
   );
 }
+
+export const WorldClockWithLabel = ({ timezone = -4, label = "D.C." }) => {
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <p className="text-[8px] font-helvetica">{label}</p>
+      <WorldClock2 timezone={timezone} />
+    </div>
+  );
+};

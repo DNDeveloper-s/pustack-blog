@@ -6,7 +6,7 @@ import earthSpinning from "@/assets/images/spinning-earth.gif";
 import navOpen from "@/assets/svgs/nav-open.svg";
 import navClose from "@/assets/svgs/nav-close.svg";
 import Link from "next/link";
-import { WorldClockWithLabel } from "../shared/WorldClock";
+import { WorldClockWithLabel } from "../shared/WorldClock2";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { url } from "@/constants";
