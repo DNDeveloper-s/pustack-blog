@@ -10,7 +10,6 @@ import { Post } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
 import { useCreatePost } from "@/api/post";
 import { useRouter } from "next/navigation";
-import WorldClock2 from "../shared/WorldClock2";
 
 export default function AdminPage() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });

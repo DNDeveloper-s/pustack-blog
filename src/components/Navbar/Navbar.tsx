@@ -81,9 +81,9 @@ export default function Navbar() {
         </div>
         <div className="flex-1 flex items-center gap-3 justify-center ">
           {/* <Logo className="w-[310px] h-[auto]" /> */}
-          <WorldClockWithLabel timezone="-4" label="D.C." />
-          <WorldClockWithLabel timezone="+2" label="BXL" />
-          <WorldClockWithLabel timezone="+1" label="LAGOS" />
+          <WorldClockWithLabel timezone={-4} label="D.C." />
+          <WorldClockWithLabel timezone={2} label="BXL" />
+          <WorldClockWithLabel timezone={1} label="LAGOS" />
           <Logo
             size="xxl"
             style={{
@@ -92,9 +92,9 @@ export default function Navbar() {
               marginTop: "10px",
             }}
           />
-          <WorldClockWithLabel timezone="+4" label="DUBAI" />
-          <WorldClockWithLabel timezone="+8" label="BEIJING" />
-          <WorldClockWithLabel timezone="+8" label="SG" />
+          <WorldClockWithLabel timezone={4} label="DUBAI" />
+          <WorldClockWithLabel timezone={8} label="BEIJING" />
+          <WorldClockWithLabel timezone={8} label="SG" />
         </div>
         <div className="flex-1 flex items-start gap-5 justify-end">
           {showCreatePostButton && (
@@ -373,12 +373,12 @@ export function NavbarMobile() {
       <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1 mx-3 border-secondary" />
       <div className="flex-1 flex items-center gap-3 justify-evenly py-2 ">
         {/* <Logo className="w-[310px] h-[auto]" /> */}
-        <WorldClockWithLabel timezone="-4" label="D.C." />
-        <WorldClockWithLabel timezone="+2" label="BXL" />
-        <WorldClockWithLabel timezone="+1" label="LAGOS" />
-        <WorldClockWithLabel timezone="+4" label="DUBAI" />
-        <WorldClockWithLabel timezone="+8" label="BEIJING" />
-        <WorldClockWithLabel timezone="+8" label="SG" />
+        <WorldClockWithLabel timezone={-4} label="D.C." />
+        <WorldClockWithLabel timezone={2} label="BXL" />
+        <WorldClockWithLabel timezone={1} label="LAGOS" />
+        <WorldClockWithLabel timezone={4} label="DUBAI" />
+        <WorldClockWithLabel timezone={8} label="BEIJING" />
+        <WorldClockWithLabel timezone={8} label="SG" />
       </div>
       <div className="text-center">
         <Link href="/">
