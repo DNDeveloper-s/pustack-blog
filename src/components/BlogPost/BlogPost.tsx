@@ -200,7 +200,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 </p> */}
             </div>
             <div className="flex items-center gap-3">
-              {post?.content && <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">{readingTime(post?.content).text}</span>}
+              {post?.content && (
+                <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
+                  {readingTime(post?.content).text}
+                </span>
+              )}
               {!isBookMarked ? (
                 <FaRegStar
                   className="cursor-pointer"
@@ -503,7 +507,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
 
       <MathJaxContext>
-        <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5">
+        <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5 no-preflight">
           {/* {isFetching && (
             <div className="my-10 text-sm text-center">Loading...</div>
           )} */}

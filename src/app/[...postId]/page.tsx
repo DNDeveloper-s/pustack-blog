@@ -30,7 +30,9 @@ export async function generateMetadata(
     dom.window.document.getElementsByTagName("img")
   ).reduce(srcReducer, []);
 
-  const imageUrl = _images[0];
+  const _imageUrl = _images[0];
+
+  const imageUrl = encodeURIComponent(_imageUrl);
 
   const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
   const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;

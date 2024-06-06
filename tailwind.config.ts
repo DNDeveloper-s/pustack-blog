@@ -1,4 +1,4 @@
-import {nextui} from '@nextui-org/theme';
+import { nextui } from "@nextui-org/theme";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -7,7 +7,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "!./src/components/AdminEditor/JoditEditor.tsx",
-    "./node_modules/@nextui-org/theme/dist/components/(button|modal|progress|tabs|ripple|spinner).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|modal|progress|tabs|ripple|spinner).js",
   ],
   theme: {
     extend: {
