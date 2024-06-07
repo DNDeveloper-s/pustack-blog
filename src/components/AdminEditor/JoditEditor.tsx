@@ -213,6 +213,25 @@ export default function JoditEditor({
               //   onOpen();
               // },
             },
+            {
+              name: "Insert Section",
+              tooltip: "Insert Section",
+              group: "insert",
+              exec: async (edtr: Jodit) => {
+                // onOpen();
+                edtr.selection.insertHTML(
+                  `<section class="">
+                    <div class="styles_divider"></div>
+                    <div class="styles_title">
+                      <h2>Title</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>Text</p>
+                    </div>
+                  </section>`
+                );
+              },
+            },
           ],
         }}
         //   tabIndex={1} // tabIndex of textarea

@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/context/UserContext";
 import { User } from "firebase/auth";
 import { LinkContextProvider } from "@/context/LinkContext";
+import { BlogImageContextProvider } from "@/context/BlogImageContext";
+import { ImageModalPreview } from "@/components/shared/BlogImage";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -77,9 +79,12 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LinkContextProvider>
-        <UserProvider currentUser={currentUser}>{children}</UserProvider>
-      </LinkContextProvider>
+      <BlogImageContextProvider>
+        <>
+          <UserProvider currentUser={currentUser}>{children}</UserProvider>
+          <ImageModalPreview />
+        </>
+      </BlogImageContextProvider>
     </QueryClientProvider>
   );
 }

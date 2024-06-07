@@ -210,7 +210,7 @@ export class Post {
     );
 
     const snippetData = {
-      title: textElements[titleTag]?.[0] || "",
+      title: this.title,
       content: contentTag
         ? textElements[contentTag]?.[0]
         : textElements[titleTag]?.[1] ?? "",

@@ -76,10 +76,10 @@ const AnimatedSecondDiv = styled.div`
   animation: ${(props: any) => generateKeyframes(props.deg)} 60s linear infinite;
 `;
 
-function getTimeForOffset(offsetInMinutes: number) {
+function getTimeForOffset(offsetInHours: number) {
   const date = new Date();
   const utcTime = date.getTime() + date.getTimezoneOffset() * 60000; // Convert local time to UTC
-  const targetTime = new Date(utcTime + offsetInMinutes * 60000); // Apply the offset in minutes
+  const targetTime = new Date(utcTime + offsetInHours * 60 * 60000); // Apply the offset in minutes
   return targetTime;
 }
 

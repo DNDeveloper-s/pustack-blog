@@ -3,6 +3,8 @@ import { url } from "@/constants";
 import { Post } from "@/firebase/post";
 import Image from "next/image";
 import Link from "next/link";
+import TrimmedPara from "../shared/TrimmedPara";
+import BlogImage from "../shared/BlogImage";
 
 export interface BlogBaseProps {
   size?: "lg" | "sm";
@@ -116,7 +118,7 @@ export default function BlogWithAuthor({
           </h2>
         )}
         {post.snippetData?.content && (
-          <p
+          <TrimmedPara
             className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
@@ -124,12 +126,10 @@ export default function BlogWithAuthor({
             }}
           >
             {post.snippetData?.content}
-          </p>
+          </TrimmedPara>
         )}
         {post.snippetData?.image && (
-          <figure className="mt-2">
-            <img src={post.snippetData?.image} alt="Image One" />
-          </figure>
+          <BlogImage className="mt-2" src={post.snippetData?.image} />
         )}
         {!post.snippetData?.image && post.snippetData?.iframe && (
           <iframe
@@ -299,7 +299,7 @@ export function BlogWithAuthorV2({
           </h2>
         )}
         {post.snippetData?.content && (
-          <p
+          <TrimmedPara
             className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
@@ -307,7 +307,7 @@ export function BlogWithAuthorV2({
             }}
           >
             {post.snippetData?.content}
-          </p>
+          </TrimmedPara>
         )}
         <div className="flex mt-3">
           <Image
@@ -329,9 +329,7 @@ export function BlogWithAuthorV2({
         </div>
         {!noImage && post.snippetData?.image && (
           <>
-            <figure className="mt-2">
-              <img src={post.snippetData?.image} alt="Image One" />
-            </figure>
+            <BlogImage className="mt-2" src={post.snippetData?.image} />
             <p
               className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
               style={{

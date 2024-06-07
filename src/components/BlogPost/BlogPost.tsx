@@ -85,6 +85,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   }, [pageTimeSpent, post?.content, post?.id, user]);
 
   useEffect(() => {
+    console.log("post- content changed");
     if (post?.content) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(post.content, "text/html");
@@ -117,14 +118,16 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         borderRadius: "10px",
                       }}
                     >
-                      {tokens.map((line, i) => (
-                        <div key={i} {...getLineProps({ line })}>
-                          {/* <span>{i + 1}</span> */}
-                          {line.map((token, key) => (
-                            <span key={key} {...getTokenProps({ token })} />
-                          ))}
-                        </div>
-                      ))}
+                      <code>
+                        {tokens.map((line, i) => (
+                          <div key={i} {...getLineProps({ line })}>
+                            {/* <span>{i + 1}</span> */}
+                            {line.map((token, key) => (
+                              <span key={key} {...getTokenProps({ token })} />
+                            ))}
+                          </div>
+                        ))}
+                      </code>
                     </pre>
                   );
                 }}
