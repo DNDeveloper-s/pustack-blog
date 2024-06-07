@@ -35,13 +35,19 @@ export function ImageModalPreview() {
 
 interface BlogImageProps extends React.HTMLAttributes<HTMLElement> {
   src: string;
+  imageProps?: React.ImgHTMLAttributes<HTMLImageElement>;
 }
 /**
  * @description Providing onClick in props will remove the functionality of the image preview
  * @param src Image source
  * @returns {JSX.Element}
  */
-export default function BlogImage({ src, style, ...props }: BlogImageProps) {
+export default function BlogImage({
+  src,
+  style,
+  imageProps = {},
+  ...props
+}: BlogImageProps) {
   const { openPreview } = useBlogImage();
   return (
     <figure
@@ -64,6 +70,39 @@ export default function BlogImage({ src, style, ...props }: BlogImageProps) {
         className="w-full h-full object-cover"
         src={src}
         alt="Image One"
+        {...imageProps}
+      />
+    </figure>
+  );
+}
+
+export function BlogImageDefault({
+  src,
+  style,
+  imageProps = {},
+  ...props
+}: BlogImageProps) {
+  const { openPreview } = useBlogImage();
+  return (
+    <figure
+      //   className="mt-2"
+      style={{
+        cursor: "pointer",
+        ...(style ?? {}),
+      }}
+      {...props}
+    >
+      <img
+        onClick={(e: any) => {
+          e.stopPropagation();
+          e.preventDefault();
+          openPreview(src);
+          console.log("src - ", src);
+        }}
+        className="w-full h-full object-cover"
+        src={src}
+        alt="Image One"
+        {...imageProps}
       />
     </figure>
   );

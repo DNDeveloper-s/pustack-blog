@@ -1868,12 +1868,12 @@ ul {
 .no-preflight menu {
   list-style-type: disc;
   margin: 1em 0;
-  padding: 0 0 0 40px;
+  padding: 0 0 0 20px;
 }
 .no-preflight ol {
   list-style-type: decimal;
   margin: 1em 0;
-  padding: 0 0 0 40px;
+  padding: 0 0 0 20px;
 }
 .no-preflight ul ul,
 .no-preflight ol ul {
@@ -2027,4 +2027,15 @@ ul {
   border-top: 1px dashed rgba(31, 29, 26, 0.302);
   margin-bottom: 10px;
   height: 1px;
+}
+
+.blog-post-container iframe {
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  height: auto;
+}
+
+.blog-post-container p {
+  overflow-x: auto;
+  overflow-y: hidden;
 }

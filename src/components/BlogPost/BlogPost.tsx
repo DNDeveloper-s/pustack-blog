@@ -6,12 +6,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import Image from "next/image";
 import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
+import parse, { DOMNode } from "html-react-parser";
 import {
   DocumentData,
   deleteDoc,
@@ -26,7 +27,7 @@ import { useUser } from "@/context/UserContext";
 import { db } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
-import BlogImage from "../shared/BlogImage";
+import BlogImage, { BlogImageDefault } from "../shared/BlogImage";
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -86,12 +87,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   }, [pageTimeSpent, post?.content, post?.id, user]);
 
   useEffect(() => {
-    console.log("post- content changed");
     if (post?.content) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(post.content, "text/html");
       const arr = Array.from(doc.body.childNodes);
-      const _elements = arr.reduce((acc: any, node) => {
+      const _elements = arr.reduce((acc: any, node, ind) => {
         if (node.nodeName === "PRE") {
           // @ts-ignore
           const htmlContent = node.innerHTML.replace(/<br\s*\/?>/gi, "\n");
@@ -136,8 +136,36 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             ),
           });
         } else {
-          // @ts-ignore
-          acc.push(node.outerHTML);
+          acc.push({
+            // @ts-ignore
+            content: parse(node.outerHTML, {
+              replace: (domNode: DOMNode) => {
+                // @ts-ignore
+                if (domNode.name === "img") {
+                  return (
+                    // @ts-ignore
+                    // eslint-disable-next-line @next/next/no-img-element
+                    // <img
+                    //   className="mx-auto max-w-full max-h-[500px]"
+                    //   // @ts-ignore
+                    //   src={domNode.attribs.src}
+                    //   // @ts-ignore
+                    //   alt={domNode.attribs.alt}
+                    // />
+                    <BlogImageDefault
+                      className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+                      // @ts-ignore
+                      src={domNode.attribs.src}
+                      imageProps={{
+                        className: "max-h-[500px] object-contain max-w-full",
+                      }}
+                    />
+                  );
+                }
+              },
+            }),
+            id: ind,
+          });
         }
         return acc;
       }, []);
@@ -145,6 +173,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       setElements(_elements);
     }
   }, [post?.content]);
+
+  useEffect(() => {
+    console.log("elements - ", elements);
+  }, [elements]);
 
   function handleBookMark(bookmarked: boolean) {
     if (!post?.id || !user?.uid) return;
@@ -176,10 +208,27 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     });
   }, [post?.id, user?.uid]);
 
+  const renderElement = useCallback((element: any, index: number) => {
+    if (element.tsx) {
+      return element.tsx;
+    } else {
+      return (
+        // <div
+        //   key={`post.content_${element.id}`}
+        //   className="w-full article-dynamic-container"
+        //   // dangerouslySetInnerHTML={{ __html: element.content }}
+        // >
+        //   parse(element.content)
+        // </div>
+        element.content
+      );
+    }
+  }, []);
+
   return (
     <main className="max-w-[1440px] mx-auto md:px-2 px-3">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <div className="max-w-[900px] mx-auto px-3">
+      <div className="max-w-[900px] mx-auto">
         <div className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6">
           <div className="pb-5 md:pb-0 md:pr-5">
             <div className="flex items-center justify-between">
@@ -524,24 +573,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
 
         <MathJaxContext>
-          <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5 no-preflight">
-            {/* {isFetching && (
-            <div className="my-10 text-sm text-center">Loading...</div>
-          )} */}
-            <MathJax>
-              {hasPost &&
-                elements.map((element, index) =>
-                  element.tsx ? (
-                    element.tsx
-                  ) : (
-                    <div
-                      key={post.content + " - " + index}
-                      className="w-full article-dynamic-container"
-                      dangerouslySetInnerHTML={{ __html: element }}
-                    ></div>
-                  )
-                )}
-            </MathJax>
+          <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5 no-preflight blog-post-container">
+            <MathJax>{hasPost && elements.map(renderElement)}</MathJax>
             {hasNoPost && (
               <div className="my-10 text-xl text-center text-red-500 uppercase">
                 Post not found,{" "}
