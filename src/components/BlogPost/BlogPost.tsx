@@ -472,7 +472,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               </div>
             </div>
           </div>
-          <div className="pt-5 md:pt-0 md:pl-5 flex flex-col justify-between">
+          <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-2 justify-between">
             <div>
               <div className="py-1">
                 <h2
