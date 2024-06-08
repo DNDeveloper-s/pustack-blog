@@ -6,13 +6,20 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import Image from "next/image";
 import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
-import parse, { DOMNode, domToReact } from "html-react-parser";
+import parse, { DOMNode, domToReact, htmlToDOM } from "html-react-parser";
 import {
   DocumentData,
   deleteDoc,
@@ -93,7 +100,12 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(post.content, "text/html");
       const arr = Array.from(doc.body.childNodes);
+
+      console.log("htmlToDOM - ", htmlToDOM(post?.content));
+
+      console.log("arr - ", arr);
       const _elements = arr.reduce((acc: any, node, ind) => {
+        console.log("node - ", node.nodeName);
         if (node.nodeName === "PRE") {
           // @ts-ignore
           const htmlContent = node.innerHTML.replace(/<br\s*\/?>/gi, "\n");
@@ -141,43 +153,132 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           acc.push({
             // @ts-ignore
             content: parse(node.outerHTML, {
-              replace: (domNode: any) => {
-                // @ts-ignore
-                if (domNode.name === "img") {
-                  return (
-                    // @ts-ignore
-                    // eslint-disable-next-line @next/next/no-img-element
-                    // <img
-                    //   className="mx-auto max-w-full max-h-[500px]"
-                    //   // @ts-ignore
-                    //   src={domNode.attribs.src}
-                    //   // @ts-ignore
-                    //   alt={domNode.attribs.alt}
-                    // />
-                    <BlogImageDefault
-                      className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
-                      // @ts-ignore
-                      src={domNode.attribs.src}
-                      imageProps={{
-                        className: "max-h-[500px] object-contain max-w-full",
-                      }}
-                    />
-                  );
-                }
-                // @ts-ignore
-                if (domNode.name === "section") {
-                  const title = domNode.children
-                    .find((c: any) => c.attribs?.class.includes("styles_title"))
-                    ?.children.find((c: any) => c.name === "h2")
-                    .children[0].data;
-                  title && setTitles((prev) => [...prev, title]);
-                  return (
-                    <section id={title}>
-                      {/* @ts-ignore */}
-                      {domToReact(domNode.children, {})}
-                    </section>
-                  );
-                }
+              // replace: (domNode: any) => {
+              //   console.log("domNode - ", domNode);
+              //   // @ts-ignore
+              //   if (domNode.name === "img") {
+              //     return (
+              //       // @ts-ignore
+              //       // eslint-disable-next-line @next/next/no-img-element
+              //       // <img
+              //       //   className="mx-auto max-w-full max-h-[500px]"
+              //       //   // @ts-ignore
+              //       //   src={domNode.attribs.src}
+              //       //   // @ts-ignore
+              //       //   alt={domNode.attribs.alt}
+              //       // />
+              //       <BlogImageDefault
+              //         className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+              //         // @ts-ignore
+              //         src={domNode.attribs.src}
+              //         imageProps={{
+              //           className: "max-h-[500px] object-contain max-w-full",
+              //         }}
+              //       />
+              //     );
+              //   }
+              //   // @ts-ignore
+              //   if (domNode.name === "section") {
+              //     const title = domNode.children
+              //       .find((c: any) => c.attribs?.class.includes("styles_title"))
+              //       ?.children.find((c: any) => c.name === "h2")
+              //       .children[0].data;
+              //     title && setTitles((prev) => [...prev, title]);
+              //     return (
+              //       <section id={title}>
+              //         {/* @ts-ignore */}
+              //         {domToReact(domNode.children, {})}
+              //       </section>
+              //     );
+              //   }
+
+              //   if (domNode) {
+              //   }
+              // },
+              library: {
+                createElement(type, props, ...children) {
+                  if (type === "pre") {
+                    console.log("Pre - ", props, children[0][0]);
+                    return (
+                      <Highlight
+                        theme={themes.oneDark}
+                        code={children[0][0]}
+                        language="tsx"
+                      >
+                        {({
+                          className,
+                          style,
+                          tokens,
+                          getLineProps,
+                          getTokenProps,
+                        }) => {
+                          console.log("tokens - ", tokens);
+                          return (
+                            <pre
+                              style={{
+                                ...style,
+                                width: "100%",
+                                overflow: "auto",
+                                padding: "10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              <code style={{ fontSize: "14px" }}>
+                                {tokens.map((line, i) => (
+                                  <div key={i} {...getLineProps({ line })}>
+                                    {/* <span>{i + 1}</span> */}
+                                    {line.map((token, key) => (
+                                      <span
+                                        key={key}
+                                        {...getTokenProps({ token })}
+                                      />
+                                    ))}
+                                  </div>
+                                ))}
+                              </code>
+                            </pre>
+                          );
+                        }}
+                      </Highlight>
+                    );
+                  }
+
+                  if (type === "img") {
+                    return (
+                      <BlogImageDefault
+                        className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+                        // @ts-ignore
+                        src={props.src}
+                        imageProps={{
+                          className: "max-h-[500px] object-contain max-w-full",
+                        }}
+                      />
+                    );
+                  }
+
+                  if (type === "section") {
+                    console.log("section - ", props, children);
+                    const title = children[0]
+                      .find((c) => c.props?.className?.includes("styles_title"))
+                      ?.props?.children.find((c) => c.type === "h2")
+                      .props.children;
+                    title && setTitles((prev) => [...prev, title]);
+                    return createElement(
+                      type,
+                      { id: title, ...props },
+                      ...children
+                    );
+                  }
+
+                  return createElement(type, props, ...children);
+                  // return <div>Create Element</div>;
+                },
+                cloneElement(element, props, ...children) {
+                  return <div>Clone Element</div>;
+                },
+                isValidElement(element) {
+                  return true;
+                },
               },
             }),
             id: ind,

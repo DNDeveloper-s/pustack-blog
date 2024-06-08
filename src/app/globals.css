@@ -2021,7 +2021,7 @@ ul {
 
 .styles_text,
 .styles_text p,
-.styles_text span {
+.styles_text {
   font-family: FeatureFlatRegular;
   font-size: 18px;
   line-height: 27px;
