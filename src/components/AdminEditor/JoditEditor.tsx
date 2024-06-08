@@ -43,8 +43,6 @@ export default function JoditEditor({
 
   const handleInsertImageUrl = (url: string) => {
     onClose();
-    // editor.current?.focus();
-    console.log("editor.current - ", editor.current?.selection, editorRef);
     editor.current?.selection?.insertHTML(`<img src="${url}" alt="image" />`);
   };
 
@@ -218,6 +216,11 @@ export default function JoditEditor({
               tooltip: "Insert Section",
               group: "insert",
               exec: async (edtr: Jodit) => {
+                console.log("edtr.places - ", edtr.editor.childNodes[0]);
+                // @ts-ignore
+                edtr.selection.setCursorAfter(
+                  edtr.editor.childNodes[edtr.editor.childNodes.length - 1]
+                );
                 // onOpen();
                 edtr.selection.insertHTML(
                   `<section class="">

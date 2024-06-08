@@ -3,7 +3,7 @@
 import { useGetPostById } from "@/api/post";
 import Navbar, { NavbarMobile } from "@/components/Navbar/Navbar";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -12,7 +12,7 @@ import Image from "next/image";
 import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
-import parse, { DOMNode } from "html-react-parser";
+import parse, { DOMNode, domToReact } from "html-react-parser";
 import {
   DocumentData,
   deleteDoc,
@@ -39,6 +39,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const { user } = useUser();
   const readDoc = useRef(false);
   const [isBookMarked, setIsBookMarked] = useState(false);
+  const [titles, setTitles] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (_post) {
@@ -139,7 +141,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           acc.push({
             // @ts-ignore
             content: parse(node.outerHTML, {
-              replace: (domNode: DOMNode) => {
+              replace: (domNode: any) => {
                 // @ts-ignore
                 if (domNode.name === "img") {
                   return (
@@ -160,6 +162,20 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         className: "max-h-[500px] object-contain max-w-full",
                       }}
                     />
+                  );
+                }
+                // @ts-ignore
+                if (domNode.name === "section") {
+                  const title = domNode.children
+                    .find((c: any) => c.attribs?.class.includes("styles_title"))
+                    ?.children.find((c: any) => c.name === "h2")
+                    .children[0].data;
+                  title && setTitles((prev) => [...prev, title]);
+                  return (
+                    <section id={title}>
+                      {/* @ts-ignore */}
+                      {domToReact(domNode.children, {})}
+                    </section>
                   );
                 }
               },
@@ -504,18 +520,44 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 </button>
               </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <h3
-                className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                style={{
-                  fontWeight: 400,
-                  fontVariationSettings: '"wght" 500,"opsz" 10',
-                }}
-              >
-                In this article:
-              </h3>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-2 items-center">
+            {titles.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <h3
+                  className="text-[#1f1d1a] text-[16px] font-featureHeadline"
+                  style={{
+                    fontWeight: 400,
+                    fontVariationSettings: '"wght" 500,"opsz" 10',
+                  }}
+                >
+                  In this article:
+                </h3>
+                {titles.map((title, index) => (
+                  <>
+                    <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+                    <div
+                      className="flex gap-2 items-center cursor-pointer"
+                      onClick={() => {
+                        router.push("#" + title);
+                      }}
+                    >
+                      <Image
+                        className="w-[20px] flex-shrink-0"
+                        src={dotImage}
+                        alt="i-image"
+                      />
+                      <h3
+                        className="text-[#1f1d1a] text-[16px] font-featureHeadline"
+                        style={{
+                          fontWeight: 400,
+                          fontVariationSettings: '"wght" 500,"opsz" 10',
+                        }}
+                      >
+                        {title}
+                      </h3>
+                    </div>
+                  </>
+                ))}
+                {/* <div className="flex gap-2 items-center">
                 <Image
                   className="w-[20px] flex-shrink-0"
                   src={iImage}
@@ -564,8 +606,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 >
                   Notable
                 </h3>
+              </div> */}
               </div>
-            </div>
+            )}
           </div>
         </div>
 
