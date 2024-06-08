@@ -660,6 +660,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         style={{
                           fontWeight: 400,
                           fontVariationSettings: '"wght" 500,"opsz" 10',
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
                         {title}
