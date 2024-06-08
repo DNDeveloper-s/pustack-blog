@@ -259,13 +259,15 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   if (type === "section") {
                     console.log("section - ", props, children);
                     const title = children[0]
-                      .find((c) => c.props?.className?.includes("styles_title"))
-                      ?.props?.children.find((c) => c.type === "h2")
+                      .find((c: any) =>
+                        c.props?.className?.includes("styles_title")
+                      )
+                      ?.props?.children.find((c: any) => c.type === "h2")
                       .props.children;
                     title && setTitles((prev) => [...prev, title]);
                     return createElement(
                       type,
-                      { id: title, ...props },
+                      { id: title, style: { paddingTop: "10px" }, ...props },
                       ...children
                     );
                   }
@@ -447,6 +449,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   href={`https://twitter.com/intent/tweet?url=${
                     "https://pustack-blog.vercel.app/" + post?.id
                   }&text=${post?.snippetData?.title}`}
+                  target="_blank"
                 >
                   <div className="flex gap-1 items-center">
                     <svg
@@ -469,6 +472,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   href={`mailto:?subject=${post?.snippetData?.title}&body=${
                     "https://pustack-blog.vercel.app/" + post?.id
                   }`}
+                  target="_blank"
                 >
                   <div className="flex gap-1 items-center">
                     <svg
@@ -499,6 +503,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   href={`https://wa.me/?text=${post?.snippetData?.title} ${
                     "https://pustack-blog.vercel.app/" + post?.id
                   }`}
+                  target="_blank"
                 >
                   <div className="flex gap-1 items-center">
                     <svg
