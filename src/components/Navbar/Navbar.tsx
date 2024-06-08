@@ -79,7 +79,7 @@ export default function Navbar() {
             <span>{currentTime.date}</span>
           </div>
         </div>
-        <div className="flex-1 flex items-center gap-3 justify-center ">
+        <div className="flex-1 flex items-center gap-3 justify-center mt-[10px] ">
           {/* <Logo className="w-[310px] h-[auto]" /> */}
           <WorldClockWithLabel timezone={-4} label="D.C." />
           <WorldClockWithLabel timezone={2} label="BXL" />
@@ -87,9 +87,13 @@ export default function Navbar() {
           <Logo
             size="xxl"
             style={{
-              fontSize: "65px",
+              fontSize: "60px",
               lineHeight: 0,
               marginTop: "10px",
+            }}
+            linkStyle={{
+              marginTop: "-10px",
+              margin: "0 5px",
             }}
           />
           <WorldClockWithLabel timezone={4} label="DUBAI" />

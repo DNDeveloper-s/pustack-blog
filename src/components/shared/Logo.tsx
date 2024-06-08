@@ -24,12 +24,14 @@ const styles = {
 export default function Logo({
   size = "sm",
   style = {},
+  linkStyle = {},
 }: {
   size: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   style?: React.CSSProperties;
+  linkStyle?: React.CSSProperties;
 }) {
   return (
-    <Link href="/">
+    <Link href="/" style={linkStyle}>
       <p
         className={
           "font-larkenExtraBold leading-[120%] " + styles[size].className

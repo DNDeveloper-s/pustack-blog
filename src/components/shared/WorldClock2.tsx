@@ -26,54 +26,44 @@ const generateKeyframes = (deg: number) => keyframes`
 
 const AnimatedHourDiv = styled.div`
   position: absolute;
-  z-index: 2;
-  top: 90px;
-  left: 139px;
-  width: 4px;
-  height: 65px;
-  background-color: #555;
-  border-radius: 2px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-  transform-origin: 2px 50px;
-  transition: 0.5s;
-  -webkit-animation: ${(props: any) => generateKeyframes(props.deg)} 43200s
-    linear infinite;
-  animation: ${(props: any) => generateKeyframes(props.deg)} 43200s linear
-    infinite;
+  top: 50%;
+  transform-origin: center 0;
+  animation-name: styles_rotation;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  height: 0.375rem;
+  width: 0.0625rem;
+  left: calc(50% - 0.0625rem / 2);
+  background-color: #1f1d1a;
+  animation-duration: 43200s;
 `;
 
 const AnimatedMinuteDiv = styled.div`
   position: absolute;
-  z-index: 3;
-  top: 70px;
-  left: 139px;
-  width: 4px;
-  height: 85px;
-  background-color: #555;
-  border-radius: 2px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-  transform-origin: 2px 70px;
-  transition: 0.5s;
-  -webkit-animation: ${(props: any) => generateKeyframes(props.deg)} 3600s
-    linear infinite;
-  animation: ${(props: any) => generateKeyframes(props.deg)} 3600s linear
-    infinite;
+  top: 50%;
+  transform-origin: center 0;
+  animation-name: styles_rotation;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  height: 0.625rem;
+  width: 0.0625rem;
+  left: calc(50% - 0.0625rem / 2);
+  background-color: #1f1d1a;
+  animation-duration: 3600s;
 `;
 
 const AnimatedSecondDiv = styled.div`
   position: absolute;
-  z-index: 4;
-  top: 30px;
-  left: 140px;
-  width: 2px;
-  height: 130px;
-  background-color: #a00;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-  transform-origin: 1px 110px;
-  transition: 0.5s;
-  -webkit-animation: ${(props: any) => generateKeyframes(props.deg)} 60s linear
-    infinite;
-  animation: ${(props: any) => generateKeyframes(props.deg)} 60s linear infinite;
+  top: 50%;
+  transform-origin: center 0;
+  animation-name: styles_rotation;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  height: 0.75rem;
+  width: 0.03125rem;
+  left: calc(50% - 0.03125rem / 2);
+  background-color: #af1f1b;
+  animation-duration: 60s;
 `;
 
 function getTimeForOffset(offsetInHours: number) {
@@ -83,45 +73,63 @@ function getTimeForOffset(offsetInHours: number) {
   return targetTime;
 }
 
-export default function WorldClock2({ timezone }: { timezone: number }) {
-  const hourDeg = useMemo(() => {
-    var now = getTimeForOffset(timezone);
-    return (now.getHours() / 12) * 360 + (now.getMinutes() / 60) * 30;
-  }, [timezone]);
+function calculateDelays(timezoneOffset: number) {
+  const now = getTimeForOffset(timezoneOffset);
 
-  const minuteDeg = useMemo(() => {
-    var now = getTimeForOffset(timezone);
-    return (now.getMinutes() / 60) * 360 + (now.getSeconds() / 60) * 6;
-  }, [timezone]);
+  const hours = now.getHours() % 12; // Get hours in 12-hour format
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
 
-  const secondDeg = useMemo(() => {
-    var now = getTimeForOffset(timezone);
-    return (now.getSeconds() / 60) * 360;
-  }, [timezone]);
+  const hourDelay = -((hours * 3600 + minutes * 60 + seconds) % 43200); // Total seconds in 12 hours
+  const minuteDelay = -((minutes * 60 + seconds) % 3600); // Total seconds in an hour
+  const secondDelay = -(seconds % 60); // Total seconds in a minute
+
+  return {
+    hourDelay,
+    minuteDelay,
+    secondDelay,
+  };
+}
+
+export default function WorldClock2({
+  timezone,
+  delay,
+}: {
+  timezone: number;
+  delay?: number;
+}) {
+  const { hourDelay, minuteDelay, secondDelay } = useMemo(
+    () => calculateDelays(timezone),
+    [timezone]
+  );
 
   return (
-    <div className="clock-wrapper" style={{ zoom: 0.12 }}>
-      {/* @ts-ignore */}
-      <AnimatedHourDiv deg={hourDeg} className="clock-hour"></AnimatedHourDiv>
+    <div className="clock-wrapper">
+      <AnimatedHourDiv
+        style={{ animationDelay: `${hourDelay}s` }}
+        className="clock-hour"
+      />
       <AnimatedMinuteDiv
-        // @ts-ignore
-        deg={minuteDeg}
+        style={{ animationDelay: `${minuteDelay}s` }}
         className="clock-minute"
-      ></AnimatedMinuteDiv>
+      />
       <AnimatedSecondDiv
-        // @ts-ignore
-        deg={secondDeg}
+        style={{ animationDelay: `${secondDelay}s` }}
         className="clock-second"
-      ></AnimatedSecondDiv>
+      />
     </div>
   );
 }
 
-export const WorldClockWithLabel = ({ timezone = -4, label = "D.C." }) => {
+export const WorldClockWithLabel = ({
+  timezone = -4,
+  delay = 0,
+  label = "D.C.",
+}) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <p className="text-[8px] font-helvetica">{label}</p>
-      <WorldClock2 timezone={timezone} />
+      <WorldClock2 timezone={timezone} delay={delay} />
     </div>
   );
 };

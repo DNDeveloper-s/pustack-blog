@@ -231,20 +231,17 @@ ul {
 }
 
 .clock-wrapper {
-  position: relative;
   /* position: absolute;
   top: 50%;
   right: 0;
   bottom: 50%;
   left: 0; */
-  width: 280px;
-  height: 280px;
-  margin: auto;
-  /* padding: 5px; */
-  /* background-image: linear-gradient(#f7f7f7, #e0e0e0); */
+  width: 29px;
+  height: 29px;
+  border: 1px dotted #1f1d1a;
+  position: relative;
   border-radius: 50%;
-  /* box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 2px 2px rgba(0, 0, 0, 0.2); */
-  border: 1px dotted black;
+  transform: rotate(180deg);
 }
 .clock-base {
   /* width: 250px;
@@ -308,7 +305,7 @@ ul {
   transform: rotate(360deg) translateY(-113px);
   background-color: #c00;
 }
-.clock-hour {
+/* .clock-hour {
   position: absolute;
   z-index: 2;
   top: 80px;
@@ -322,8 +319,8 @@ ul {
   transition: 0.5s;
   -webkit-animation: rotate-hour 43200s linear infinite;
   -moz-animation: rotate-hour 43200s linear infinite;
-}
-.clock-minute {
+} */
+/* .clock-minute {
   position: absolute;
   z-index: 3;
   top: 60px;
@@ -337,8 +334,29 @@ ul {
   transition: 0.5s;
   -webkit-animation: rotate-minute 3600s linear infinite;
   -moz-animation: rotate-minute 3600s linear infinite;
+} */
+
+.clock-minute:after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: -0.0625rem;
+  width: 0.0625rem;
+  height: 0.0625rem;
+  background-color: #1f1d1a;
 }
-.clock-second {
+
+.clock-hour:after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: -0.0625rem;
+  width: 0.0625rem;
+  height: 0.0625rem;
+  background-color: #1f1d1a;
+}
+
+/* .clock-second {
   position: absolute;
   z-index: 4;
   top: 20px;
@@ -351,19 +369,15 @@ ul {
   transition: 0.5s;
   -webkit-animation: rotate-second 60s linear infinite;
   -moz-animation: rotate-second 60s linear infinite;
-}
+} */
 .clock-second:after {
-  /* content: "";
-  display: block;
   position: absolute;
-  left: -3px;
-  bottom: 16px;
-  width: 8px;
-  height: 8px;
-  background-color: #a00;
-  border: solid 2px #a00;
-  border-radius: 50%;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); */
+  content: "";
+  left: 0;
+  top: -0.0625rem;
+  width: 0.03125rem;
+  height: 0.0625rem;
+  background-color: #af1f1b;
 }
 .clock-center {
   position: absolute;
@@ -384,6 +398,15 @@ ul {
   margin: 65px;
   background-color: #ddd;
   border-radius: 50%;
+}
+
+@keyframes styles_rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
 }
 
 .no-preflight {
