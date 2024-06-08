@@ -44,7 +44,7 @@ function textContentReducer(acc: any, curr: any) {
 }
 
 export function srcReducer(acc: any, curr: any) {
-  acc.push(curr.src);
+  if (curr.classList.contains("blog-image")) acc.push(curr.src);
   return acc;
 }
 

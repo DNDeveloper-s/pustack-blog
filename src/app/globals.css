@@ -2057,9 +2057,15 @@ ul {
   aspect-ratio: 16 / 9;
   max-width: 100%;
   height: auto;
+  border: none;
+  border-radius: 5px;
 }
 
 .blog-post-container p {
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+.blog-post-container > span > section:first-child .styles_divider {
+  border-top: 1px solid rgb(31 29 26 / 87%);
 }

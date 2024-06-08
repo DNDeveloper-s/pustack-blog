@@ -141,7 +141,7 @@ export default function JoditEditor({
 
                 urlButton.addEventListener("click", () => {
                   editor.selection.insertHTML(
-                    `<img src="${urlInput.value}" alt="image" />`
+                    `<img class="blog-image" src="${urlInput.value}" alt="image" />`
                   );
                   close();
                 });
@@ -163,7 +163,7 @@ export default function JoditEditor({
                       textAreaContainer.innerHTML = "";
                       textAreaContainer.append(para1, para2);
                       editor.selection.insertHTML(
-                        `<img src="${url}" alt="image" />`
+                        `<img class="blog-image" src="${url}" alt="image" />`
                       );
                       close();
                     },
@@ -193,7 +193,7 @@ export default function JoditEditor({
                       textAreaContainer.innerHTML = "";
                       textAreaContainer.append(para1, para2);
                       editor.selection.insertHTML(
-                        `<img src="${url}" alt="image" />`
+                        `<img class="blog-image" src="${url}" alt="image" />`
                       );
                       close();
                     },
@@ -234,6 +234,82 @@ export default function JoditEditor({
                   </section>`
                 );
               },
+            },
+            {
+              name: "Insert Icon",
+              iconURL: "http://localhost:3000/assets/images/selection.png",
+              tooltip: "Insert Icon",
+              group: "insert",
+              popup: (
+                editor: Jodit,
+                current: any,
+                close: any,
+                _button: any
+              ) => {
+                const imageNames = [
+                  "furtherreading",
+                  "github",
+                  "google-maps",
+                  "google",
+                  "link",
+                  "linkedin",
+                  "quiz",
+                  "reporterstake",
+                  "selection",
+                  "social",
+                  "thenews",
+                  "viewfrom",
+                  "youtube",
+                ];
+
+                const images = imageNames.map((name) => {
+                  const image = editor.create.element("img", {
+                    src: `http://localhost:3000/assets/images/${name}.png`,
+                    alt: "icon",
+                    style: "width: 20px; height: auto",
+                  });
+
+                  const imageDiv = editor.create.div(
+                    "cursor-pointer w-6 h-6 flex justify-center items-center",
+                    {},
+                    [image]
+                  );
+
+                  imageDiv.addEventListener("click", () => {
+                    editor.selection.insertHTML(
+                      `<span style="display: inline-flex;"><img src="http://localhost:3000/assets/images/${name}.png" alt="icon" style="height: 16px; width: auto; display: inline;" /></span>`,
+                      true
+                    );
+                    close();
+                  });
+
+                  return imageDiv;
+                });
+
+                const grid = editor.create.div(
+                  "grid gap-2",
+                  {
+                    style:
+                      "grid-template-columns: repeat(4, 1fr); gap: 0.85rem;",
+                  },
+                  images
+                );
+
+                const wrapper = editor.create.div(
+                  "relative active w-[200px] p-1",
+                  [grid]
+                );
+
+                return wrapper;
+              },
+              // exec: async (edtr: Jodit) => {
+              //   editor.current = edtr;
+              //   // const url = `https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-04%20at%2011.53.47%E2%80%AFAM.png?alt=media&token=5182d10a-bddb-4c9e-85f8-44481d5edbbc`;
+              //   // editor.current.selection.insertHTML(
+              //   //   `<img src="${url}" alt="image" />`
+              //   // );
+              //   onOpen();
+              // },
             },
           ],
         }}

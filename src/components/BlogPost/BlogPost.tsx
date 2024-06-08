@@ -243,7 +243,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                     );
                   }
 
-                  if (type === "img") {
+                  if (
+                    type === "img" &&
+                    // @ts-ignore
+                    props?.className?.includes("blog-image")
+                  ) {
                     return (
                       <BlogImageDefault
                         className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
@@ -646,11 +650,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         router.push("#" + title);
                       }}
                     >
-                      <Image
+                      {/* <Image
                         className="w-[20px] flex-shrink-0"
                         src={dotImage}
                         alt="i-image"
-                      />
+                      /> */}
                       <h3
                         className="text-[#1f1d1a] text-[16px] font-featureHeadline"
                         style={{
