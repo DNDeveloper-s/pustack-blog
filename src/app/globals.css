@@ -2045,6 +2045,7 @@ ul {
   margin-bottom: 8px;
   font-weight: 400;
   font-variation-settings: "wght" 500, "opsz" 10;
+  text-transform: uppercase;
 }
 
 .styles_divider {
