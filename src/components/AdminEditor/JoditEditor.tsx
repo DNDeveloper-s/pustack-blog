@@ -237,7 +237,8 @@ export default function JoditEditor({
             },
             {
               name: "Insert Icon",
-              iconURL: "http://localhost:3000/assets/images/selection.png",
+              iconURL:
+                "https://pustack-blog.vercel.app/assets/images/selection.png",
               tooltip: "Insert Icon",
               group: "insert",
               popup: (
@@ -264,7 +265,7 @@ export default function JoditEditor({
 
                 const images = imageNames.map((name) => {
                   const image = editor.create.element("img", {
-                    src: `http://localhost:3000/assets/images/${name}.png`,
+                    src: `https://pustack-blog.vercel.app/assets/images/${name}.png`,
                     alt: "icon",
                     style: "width: 20px; height: auto",
                   });
@@ -277,7 +278,7 @@ export default function JoditEditor({
 
                   imageDiv.addEventListener("click", () => {
                     editor.selection.insertHTML(
-                      `<span style="display: inline-flex;"><img src="http://localhost:3000/assets/images/${name}.png" alt="icon" style="height: 16px; width: auto; display: inline;" /></span>`,
+                      `<span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/${name}.png" alt="icon" style="height: 16px; width: auto; display: inline;" /></span>`,
                       true
                     );
                     close();

@@ -726,7 +726,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
 
         <MathJaxContext>
-          <div className="w-full max-w-[1440px] mx-auto py-2 px-3 mt-5 no-preflight blog-post-container">
+          <div className="w-full max-w-[1440px] mx-auto py-2 mt-5 no-preflight blog-post-container">
             <MathJax>{hasPost && elements.map(renderElement)}</MathJax>
             {hasNoPost && (
               <div className="my-10 text-xl text-center text-red-500 uppercase">

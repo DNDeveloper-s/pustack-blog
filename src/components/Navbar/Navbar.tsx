@@ -219,7 +219,7 @@ export function NavbarMobile() {
 
   return (
     <header className="w-full max-w-[1100px] mx-auto py-2">
-      <div className="flex px-3">
+      <div className="flex">
         <div className="flex-1 ">
           <div className="flex items-center uppercase whitespace-nowrap font-helvetica gap-2 text-[10px]">
             <Image
@@ -235,7 +235,7 @@ export function NavbarMobile() {
             <span>{currentTime.date}</span>
           </div>
         </div>
-        <div className="flex-1 flex items-start gap-5 justify-end">
+        <div className="flex-1 flex items-start gap-3 justify-end">
           {showCreatePostButton && (
             <Link
               href="/admin"
@@ -281,7 +281,7 @@ export function NavbarMobile() {
         </div>
       </div>
       <div className="flex justify-center items-center relative w-full mt-9">
-        <div className="flex items-center gap-5 absolute left-3 bottom-0 text-[10px]">
+        <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
           <Link
             className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
@@ -304,7 +304,7 @@ export function NavbarMobile() {
           </Link>
         </div>
         <div
-          className="flex items-center gap-2 absolute right-0 -bottom-[8px] text-[10px]"
+          className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px]"
           onClick={() => setIsNavOpen((c) => !c)}
         >
           <Image src={isNavOpen ? navClose : navOpen} alt="Open Navigation" />
@@ -375,7 +375,7 @@ export function NavbarMobile() {
         </div>
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1 mx-3 border-secondary" />
-      <div className="flex-1 flex items-center gap-3 justify-evenly py-2 ">
+      <div className="flex-1 flex items-center gap-3 justify-between py-2 ">
         {/* <Logo className="w-[310px] h-[auto]" /> */}
         <WorldClockWithLabel timezone={-4} label="D.C." />
         <WorldClockWithLabel timezone={2} label="BXL" />
@@ -388,7 +388,7 @@ export function NavbarMobile() {
         <Link href="/">
           <span
             className={
-              "font-larkenExtraBold leading-[100%] text-[70px] flex items-center justify-evenly px-3"
+              "font-larkenExtraBold leading-[100%] text-[70px] flex items-center justify-between"
             }
           >
             <span>M</span>
