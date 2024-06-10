@@ -2070,3 +2070,7 @@ ul {
 .blog-post-container > span > section:first-child .styles_divider {
   border-top: 1px solid rgb(31 29 26 / 87%);
 }
+
+[data-rmiz-modal-overlay="visible"] {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}

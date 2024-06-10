@@ -388,7 +388,7 @@ export function NavbarMobile() {
         <Link href="/">
           <span
             className={
-              "font-larkenExtraBold leading-[100%] text-[70px] flex items-center justify-between"
+              "font-larkenExtraBold leading-[100%] text-[77px] flex items-center justify-center"
             }
           >
             <span>M</span>
@@ -396,12 +396,12 @@ export function NavbarMobile() {
             <span>N</span>
             <span>E</span>
             <span>R</span>
-            <span>V</span>
-            <span>A</span>
+            <span className="inline-block -ml-1">V</span>
+            <span className="inline-block -ml-2">A</span>
           </span>
         </Link>
       </div>
-      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px]">
+      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[11px]">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">TRANSPARENT</span>

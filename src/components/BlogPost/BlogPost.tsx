@@ -35,6 +35,7 @@ import { db } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../shared/BlogImage";
+import { HiOutlineExternalLink } from "react-icons/hi";
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -153,48 +154,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           acc.push({
             // @ts-ignore
             content: parse(node.outerHTML, {
-              // replace: (domNode: any) => {
-              //   console.log("domNode - ", domNode);
-              //   // @ts-ignore
-              //   if (domNode.name === "img") {
-              //     return (
-              //       // @ts-ignore
-              //       // eslint-disable-next-line @next/next/no-img-element
-              //       // <img
-              //       //   className="mx-auto max-w-full max-h-[500px]"
-              //       //   // @ts-ignore
-              //       //   src={domNode.attribs.src}
-              //       //   // @ts-ignore
-              //       //   alt={domNode.attribs.alt}
-              //       // />
-              //       <BlogImageDefault
-              //         className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
-              //         // @ts-ignore
-              //         src={domNode.attribs.src}
-              //         imageProps={{
-              //           className: "max-h-[500px] object-contain max-w-full",
-              //         }}
-              //       />
-              //     );
-              //   }
-              //   // @ts-ignore
-              //   if (domNode.name === "section") {
-              //     const title = domNode.children
-              //       .find((c: any) => c.attribs?.class.includes("styles_title"))
-              //       ?.children.find((c: any) => c.name === "h2")
-              //       .children[0].data;
-              //     title && setTitles((prev) => [...prev, title]);
-              //     return (
-              //       <section id={title}>
-              //         {/* @ts-ignore */}
-              //         {domToReact(domNode.children, {})}
-              //       </section>
-              //     );
-              //   }
-
-              //   if (domNode) {
-              //   }
-              // },
               library: {
                 createElement(type, props, ...children) {
                   if (type === "pre") {
@@ -348,6 +307,20 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     }
   }, []);
 
+  async function handleShare() {
+    try {
+      const shareData = {
+        title: "Minerva",
+        text: post?.snippetData?.title,
+        url: "https://pustack-blog.vercel.app/" + post?.id,
+      };
+      await navigator.share(shareData);
+      console.log("Successfully shared");
+    } catch (err) {
+      console.error("Error: " + err);
+    }
+  }
+
   return (
     <main className="max-w-[1440px] mx-auto md:px-2 px-3">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
@@ -398,26 +371,34 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               </div>
             </div>
             <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-            <div className="flex gap-8 items-center">
-              <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                {/* Updated May 29, 2024, 3:10 am GMT+5:30 {''} */}
-                Updated{" "}
-                {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                  " " +
-                  " GMT " +
-                  dayjs(post?.timestamp).format("Z")}
-              </p>
-              <p
-                className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]"
-                style={
-                  {
-                    // fontWeight: "300",
-                    // fontVariationSettings: '"wght" 400,"opsz" 10',
+            <div className="flex gap-5 items-center justify-between">
+              <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
+                <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
+                  {/* Updated May 29, 2024, 3:10 am GMT+5:30 {''} */}
+                  Updated{" "}
+                  {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
+                    " " +
+                    " GMT " +
+                    dayjs(post?.timestamp).format("Z")}
+                </p>
+                <p
+                  className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]"
+                  style={
+                    {
+                      // fontWeight: "300",
+                      // fontVariationSettings: '"wght" 400,"opsz" 10',
+                    }
                   }
-                }
-              >
-                POLITICS
-              </p>
+                >
+                  POLITICS
+                </p>
+              </div>
+              <div className="flex gap-2 items-center" onClick={handleShare}>
+                <button className="text-[13px] font-helvetica font-bold text-appBlue underline uppercase leading-[1px]">
+                  Share
+                </button>
+                <HiOutlineExternalLink className="text-appBlue" />
+              </div>
             </div>
             <div className="mt-4">
               <h2
