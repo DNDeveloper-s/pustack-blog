@@ -2074,3 +2074,57 @@ ul {
 [data-rmiz-modal-overlay="visible"] {
   background-color: rgba(0, 0, 0, 0.9) !important;
 }
+
+.email_input {
+  font-size: 1rem;
+  line-height: 120%;
+  background-color: #fcfae4;
+  border: 1px solid #1f1d1a;
+  border-inline-end: 0;
+  padding: 8px 11px;
+  width: 100%;
+  z-index: 2;
+  margin: 0;
+  /* font-family: inherit; */
+  border-radius: 0;
+  font-weight: 300;
+  font-variation-settings: "wght" 400, "opsz" 10;
+}
+
+.email_input:focus {
+  outline: 1px solid #1f1d1a;
+  outline-offset: -2px;
+  border-inline-end: 1px solid #1f1d1a;
+}
+
+.email_button {
+  position: relative;
+  left: -1px;
+  background-color: #f8f5d7;
+  border: 1px solid #000;
+  /* font-family: inherit; */
+  border-radius: 0;
+  font-size: 1rem;
+  line-height: 120%;
+  letter-spacing: 0.02em;
+  color: #1f1d1a;
+  cursor: pointer;
+  padding: 0 10px;
+  z-index: 2;
+  min-width: 84px;
+  margin: 0;
+  font-weight: 500;
+  font-variation-settings: "wght" 600, "opsz" 10;
+}
+
+.style_bold {
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  font-variation-settings: "wght" 600, "opsz" 10;
+}
+
+.style_intro {
+  letter-spacing: 0.02em;
+  font-weight: 300;
+  font-variation-settings: "wght" 400, "opsz" 10;
+}

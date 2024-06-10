@@ -16,23 +16,25 @@ import { useMediaQuery } from "react-responsive";
 export default function Home() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   return (
-    <main className="w-full max-w-[1440px] mx-auto">
+    <main className="w-full max-w-[1440px] mx-auto px-0 md:px-3">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <div className="px-3">
+      <div className="">
         <Dashboard />
-        <Politics />
-        <Business />
-        <Technology />
-        <Africa />
-        <NetZero />
-        <Security />
-        <Media />
-        {isTabletScreen && (
-          <div className="px-3">
-            <SignUpForNewsLetters />
-          </div>
-        )}
-        <Footer />
+        <div className="px-3 md:px-0">
+          <Politics />
+          <Business />
+          <Technology />
+          <Africa />
+          <NetZero />
+          <Security />
+          <Media />
+          {isTabletScreen && (
+            <div className="px-3">
+              <SignUpForNewsLetters />
+            </div>
+          )}
+          <Footer />
+        </div>
       </div>
     </main>
   );

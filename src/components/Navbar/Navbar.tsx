@@ -87,9 +87,9 @@ export default function Navbar() {
           <Logo
             size="xxl"
             style={{
-              fontSize: "60px",
+              fontSize: "65px",
               lineHeight: 0,
-              marginTop: "10px",
+              marginTop: "5px",
             }}
             linkStyle={{
               marginTop: "-10px",
@@ -218,7 +218,7 @@ export function NavbarMobile() {
   const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
   return (
-    <header className="w-full max-w-[1100px] mx-auto py-2">
+    <header className="w-full max-w-[1100px] mx-auto py-2 px-3 md:px-0">
       <div className="flex">
         <div className="flex-1 ">
           <div className="flex items-center uppercase whitespace-nowrap font-helvetica gap-2 text-[10px]">
@@ -374,7 +374,7 @@ export function NavbarMobile() {
           </div>
         </div>
       </div>
-      <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1 mx-3 border-secondary" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1" />
       <div className="flex-1 flex items-center gap-3 justify-between py-2 ">
         {/* <Logo className="w-[310px] h-[auto]" /> */}
         <WorldClockWithLabel timezone={-4} label="D.C." />
@@ -401,7 +401,7 @@ export function NavbarMobile() {
           </span>
         </Link>
       </div>
-      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[11px]">
+      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px]">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">TRANSPARENT</span>

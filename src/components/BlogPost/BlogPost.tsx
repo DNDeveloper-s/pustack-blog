@@ -322,12 +322,12 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   }
 
   return (
-    <main className="max-w-[1440px] mx-auto md:px-2 px-3">
+    <main className="max-w-[1440px] mx-auto md:px-2">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
-      <div className="max-w-[900px] mx-auto">
+      <div className="max-w-[900px] mx-auto px-3">
         <div className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6">
           <div className="pb-5 md:pb-0 md:pr-5">
-            <div className="flex items-center justify-between">
+            <div className="flex items-end justify-between">
               <div className="mr-2">
                 <img
                   className="w-[38px] h-[38px]"
@@ -529,7 +529,21 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   <div
                     className="flex gap-1 items-center cursor-pointer"
                     onClick={() => {
-                      setCopied(true);
+                      navigator.clipboard
+                        .writeText(
+                          "https://pustack-blog.vercel.app/" + post?.id
+                        )
+                        .then(
+                          () => {
+                            setCopied(true);
+                            console.log(
+                              "Async: Copying to clipboard was successful!"
+                            );
+                          },
+                          (err) => {
+                            console.error("Async: Could not copy text: ", err);
+                          }
+                        );
                     }}
                   >
                     <svg
@@ -588,7 +602,14 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-2 justify-between">
             <div>
               <div className="py-1">
-                <h2
+                <p className="font-featureHeadline style_intro leading-[120%]">
+                  <b className="style_bold">Sign up for Minerva Principals:</b>
+                  {" What the White House is reading. "}
+                  <Link href="#" className="underline whitespace-nowrap">
+                    Read it now.
+                  </Link>
+                </p>
+                {/* <h2
                   className="text-[16px] font-bold font-featureHeadline"
                   style={{
                     fontVariationSettings: '"wght" 495,"opsz" 10',
@@ -600,11 +621,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 <p>What the White House is reading.</p>
                 <Link href="#" className="underline">
                   Read it now.
-                </Link>
+                </Link> */}
               </div>
               <div className="flex mt-1">
                 <input
-                  className="border text-[16px] outline-black border-black flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                  className="font-featureHeadline email_input"
                   placeholder="Your Email address"
                   type="text"
                   style={{
@@ -612,7 +633,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                     borderInlineEnd: 0,
                   }}
                 />
-                <button className="outline-black border-black border text-[16px] py-1 px-3 whitespace-nowrap">
+                <button className="font-featureHeadline email_button">
                   Sign Up
                 </button>
               </div>

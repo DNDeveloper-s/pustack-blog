@@ -40,15 +40,15 @@ export default function Dashboard() {
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] py-2">
       <div className="pr-0 md:pr-7">
         {/* <Flagship /> */}
-        <div className="pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
+        <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {Array.from({ length: 9 }).map((_, i) => (
-            <div key={i} className="md:px-0 px-3 min-w-[170px]">
+            <div key={i} className="md:px-0 px-3 min-w-[170px] my-2 md:my-0">
               <BlueCircleBlog />
             </div>
           ))}
         </div>
       </div>
-      <div className="md:border-x border-dashed border-[#1f1d1a4d] px-7">
+      <div className="md:border-x border-dashed border-[#1f1d1a4d] px-3 md:px-7">
         <BlogWithAuthor post={fullCPosts?.[0]} />
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
           {oldPosts?.map((postChunkOf2, i) => (
@@ -76,7 +76,7 @@ export default function Dashboard() {
           </div> */}
         </div>
       </div>
-      <div className="px-5 md:pl-7 md:pr-0">
+      <div className="px-3 md:pl-7 md:pr-0">
         <BlogWithAuthor post={fullCPosts?.[1]} size="sm" />
         {!isTabletScreen && (
           <div>

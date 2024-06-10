@@ -174,17 +174,15 @@ export default function SignUpForNewsLetters() {
       </div>
       <div className="flex mt-1">
         <input
-          className="border text-[16px] flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-          placeholder="Email address"
+          className="font-featureHeadline email_input"
+          placeholder="Your Email address"
           type="text"
           style={{
             fontVariationSettings: '"wght" 400,"opsz" 10',
             borderInlineEnd: 0,
           }}
         />
-        <button className="border text-[16px] py-1 px-3 whitespace-nowrap">
-          Sign Up
-        </button>
+        <button className="font-featureHeadline email_button">Sign Up</button>
       </div>
       <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
         <div className="text-center mb-2">
