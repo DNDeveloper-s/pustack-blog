@@ -393,12 +393,18 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   POLITICS
                 </p>
               </div>
-              <div className="flex gap-2 items-center" onClick={handleShare}>
-                <button className="text-[13px] font-helvetica font-bold text-appBlue underline uppercase leading-[1px]">
-                  Share
-                </button>
-                <HiOutlineExternalLink className="text-appBlue" />
-              </div>
+              {typeof navigator?.canShare === "function" &&
+                navigator?.canShare() && (
+                  <div
+                    className="flex gap-2 items-center"
+                    onClick={handleShare}
+                  >
+                    <button className="text-[13px] font-helvetica font-bold text-appBlue underline uppercase leading-[1px]">
+                      Share
+                    </button>
+                    <HiOutlineExternalLink className="text-appBlue" />
+                  </div>
+                )}
             </div>
             <div className="mt-4">
               <h2
