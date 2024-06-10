@@ -47,7 +47,7 @@ export default function AdminPage() {
   };
 
   return (
-    <main className="max-w-[1440px] h-screen overflow-auto px-3">
+    <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
       {isTabletScreen ? <NavbarMobile /> : <Navbar />}
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
