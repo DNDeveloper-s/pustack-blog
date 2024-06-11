@@ -40,7 +40,7 @@ import { HiOutlineExternalLink } from "react-icons/hi";
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const params = useParams();
-  const [elements, setElements] = useState<any[]>([]);
+  const [elements, setElements] = useState<any>(null);
   const [post, setPost] = useState<Post | null>(null);
   const [copied, setCopied] = useState(false);
   const pageTimeSpent = usePageTime();
@@ -98,161 +98,106 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
 
   useEffect(() => {
     if (post?.content) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(post.content, "text/html");
-      const arr = Array.from(doc.body.childNodes);
+      let index = 0;
+      let firstContentEncountered = false;
+      const content = parse(post?.content, {
+        library: {
+          createElement(type, props, ...children) {
+            console.log("type - ", type, props, children);
 
-      console.log("htmlToDOM - ", htmlToDOM(post?.content));
-
-      console.log("arr - ", arr);
-      const _elements = arr.reduce((acc: any, node, ind) => {
-        console.log("node - ", node.nodeName);
-        if (node.nodeName === "PRE") {
-          // @ts-ignore
-          const htmlContent = node.innerHTML.replace(/<br\s*\/?>/gi, "\n");
-          const doc1 = document.createElement("div");
-          doc1.innerHTML = htmlContent.trim();
-          const code = doc1.textContent || doc1.innerText;
-
-          acc.push({
-            tsx: (
-              <Highlight theme={themes.vsDark} code={code} language="tsx">
-                {({
-                  className,
-                  style,
-                  tokens,
-                  getLineProps,
-                  getTokenProps,
-                }) => {
-                  return (
-                    <pre
-                      style={{
-                        ...style,
-                        width: "100%",
-                        overflow: "auto",
-                        padding: "10px",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <code>
-                        {tokens.map((line, i) => (
-                          <div key={i} {...getLineProps({ line })}>
-                            {/* <span>{i + 1}</span> */}
-                            {line.map((token, key) => (
-                              <span key={key} {...getTokenProps({ token })} />
-                            ))}
-                          </div>
-                        ))}
-                      </code>
-                    </pre>
-                  );
-                }}
-              </Highlight>
-            ),
-          });
-        } else {
-          acc.push({
-            // @ts-ignore
-            content: parse(node.outerHTML, {
-              library: {
-                createElement(type, props, ...children) {
-                  if (type === "pre") {
-                    console.log("Pre - ", props, children[0][0]);
+            if (type === "pre") {
+              console.log("Pre - ", props, children[0][0]);
+              return (
+                <Highlight
+                  theme={themes.oneDark}
+                  code={children[0][0]}
+                  language="tsx"
+                >
+                  {({
+                    className,
+                    style,
+                    tokens,
+                    getLineProps,
+                    getTokenProps,
+                  }) => {
+                    console.log("tokens - ", tokens);
                     return (
-                      <Highlight
-                        theme={themes.oneDark}
-                        code={children[0][0]}
-                        language="tsx"
+                      <pre
+                        style={{
+                          ...style,
+                          width: "100%",
+                          overflow: "auto",
+                          padding: "10px",
+                          borderRadius: "10px",
+                        }}
                       >
-                        {({
-                          className,
-                          style,
-                          tokens,
-                          getLineProps,
-                          getTokenProps,
-                        }) => {
-                          console.log("tokens - ", tokens);
-                          return (
-                            <pre
-                              style={{
-                                ...style,
-                                width: "100%",
-                                overflow: "auto",
-                                padding: "10px",
-                                borderRadius: "10px",
-                              }}
-                            >
-                              <code style={{ fontSize: "14px" }}>
-                                {tokens.map((line, i) => (
-                                  <div key={i} {...getLineProps({ line })}>
-                                    {/* <span>{i + 1}</span> */}
-                                    {line.map((token, key) => (
-                                      <span
-                                        key={key}
-                                        {...getTokenProps({ token })}
-                                      />
-                                    ))}
-                                  </div>
-                                ))}
-                              </code>
-                            </pre>
-                          );
-                        }}
-                      </Highlight>
+                        <code style={{ fontSize: "14px" }}>
+                          {tokens.map((line, i) => (
+                            <div key={i} {...getLineProps({ line })}>
+                              {/* <span>{i + 1}</span> */}
+                              {line.map((token, key) => (
+                                <span key={key} {...getTokenProps({ token })} />
+                              ))}
+                            </div>
+                          ))}
+                        </code>
+                      </pre>
                     );
-                  }
+                  }}
+                </Highlight>
+              );
+            }
 
-                  if (
-                    type === "img" &&
-                    // @ts-ignore
-                    props?.className?.includes("blog-image")
-                  ) {
-                    return (
-                      <BlogImageDefault
-                        className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
-                        // @ts-ignore
-                        src={props.src}
-                        imageProps={{
-                          className: "max-h-[500px] object-contain max-w-full",
-                        }}
-                      />
-                    );
-                  }
+            if (
+              type === "img" &&
+              // @ts-ignore
+              props?.className?.includes("blog-image")
+            ) {
+              return (
+                <BlogImageDefault
+                  className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+                  // @ts-ignore
+                  src={props.src}
+                  imageProps={{
+                    className: "max-h-[500px] object-contain max-w-full",
+                  }}
+                />
+              );
+            }
 
-                  if (type === "section") {
-                    console.log("section - ", props, children);
-                    const title = children[0]
-                      .find((c: any) =>
-                        c.props?.className?.includes("styles_title")
-                      )
-                      ?.props?.children.find((c: any) => c.type === "h2")
-                      .props.children;
-                    title && setTitles((prev) => [...prev, title]);
-                    return createElement(
-                      type,
-                      { id: title, style: { paddingTop: "10px" }, ...props },
-                      ...children
-                    );
-                  }
+            if (type === "section") {
+              const title = children[0]
+                .find((c: any) => c.props?.className?.includes("styles_title"))
+                ?.props?.children.find((c: any) => c.type === "h2")
+                .props.children;
+              title && setTitles((prev) => [...prev, title]);
 
-                  return createElement(type, props, ...children);
-                  // return <div>Create Element</div>;
+              const isFirstSection = index === 0;
+              index++;
+              return createElement(
+                type,
+                {
+                  id: title,
+                  ...props,
+                  style: { paddingTop: "10px" },
+                  className: isFirstSection ? "first_section" : "",
                 },
-                cloneElement(element, props, ...children) {
-                  return <div>Clone Element</div>;
-                },
-                isValidElement(element) {
-                  return true;
-                },
-              },
-            }),
-            id: ind,
-          });
-        }
-        return acc;
-      }, []);
+                ...children
+              );
+            }
 
-      setElements(_elements);
+            return createElement(type, props, ...children);
+            // return <div>Create Element</div>;
+          },
+          cloneElement(element, props, ...children) {
+            return <div>Clone Element</div>;
+          },
+          isValidElement(element) {
+            return true;
+          },
+        },
+      });
+      setElements(content);
     }
   }, [post?.content]);
 
@@ -599,7 +544,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               </div>
             </div>
           </div>
-          <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-2 justify-between">
+          <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-6 justify-between">
             <div>
               <div className="py-1">
                 <p className="font-featureHeadline style_intro leading-[120%]">
@@ -733,12 +678,12 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           </div>
         </div>
 
-        <hr className="border-dashed border-[#1f1d1a4d] mt-2" />
-        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+        {/* <hr className="border-dashed border-[#1f1d1a4d] mt-2" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" /> */}
 
         <MathJaxContext>
           <div className="w-full max-w-[1440px] mx-auto py-2 mt-5 no-preflight blog-post-container">
-            <MathJax>{hasPost && elements.map(renderElement)}</MathJax>
+            <MathJax>{hasPost && elements}</MathJax>
             {hasNoPost && (
               <div className="my-10 text-xl text-center text-red-500 uppercase">
                 Post not found,{" "}

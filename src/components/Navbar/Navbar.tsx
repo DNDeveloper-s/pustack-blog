@@ -388,7 +388,7 @@ export function NavbarMobile() {
         <Link href="/">
           <span
             className={
-              "font-larkenExtraBold leading-[100%] text-[77px] flex items-center justify-center"
+              "font-larkenExtraBold leading-[100%] text-[81px] flex items-center justify-center"
             }
           >
             <span>M</span>

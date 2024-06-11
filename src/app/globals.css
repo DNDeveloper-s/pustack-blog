@@ -2054,6 +2054,15 @@ ul {
   height: 1px;
 }
 
+.first_section > .styles_divider {
+  border-left-color: #000;
+  border-right-color: #000;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-bottom: 0 solid #000;
+  border-top: 1px solid #000;
+}
+
 .blog-post-container iframe {
   aspect-ratio: 16 / 9;
   max-width: 100%;
@@ -2127,4 +2136,11 @@ ul {
   letter-spacing: 0.02em;
   font-weight: 300;
   font-variation-settings: "wght" 400, "opsz" 10;
+}
+
+input::placeholder {
+  letter-spacing: 0.02em;
+  font-weight: 300;
+  font-variation-settings: "wght" 400, "opsz" 10;
+  color: #1f1d1a;
 }
