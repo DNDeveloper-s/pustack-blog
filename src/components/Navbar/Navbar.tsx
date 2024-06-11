@@ -653,7 +653,7 @@ export function NavbarMobile() {
           display: "block",
         }}
       />
-      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-2">
+      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-3">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">TRANSPARENT</span>

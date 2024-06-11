@@ -37,15 +37,22 @@ const footerData = [
 
 export default function Footer() {
   return (
-    <div className="border-t border-appBlack md:mx-4 pb-8 py-4 md:pb-8">
-      <div className="flex gap-1 md:gap-4 md:justify-between flex-wrap items-center">
+    <div className="border-t border-appBlack md:mx-0 pb-8 py-4 md:pb-8">
+      <div className="flex gap-x-4 gap-y-2 md:justify-between flex-wrap items-center">
         <div className="w-full md:w-auto">
-          <Logo size="sm" />
+          <Logo
+            size="sm"
+            linkStyle={{
+              width: "150px",
+              display: "block",
+            }}
+            linkClassName="md:my-0 my-2"
+          />
         </div>
         {footerData.map((item) => (
           <div
             key={item.key}
-            className="text-appBlack px-4 font-featureHeadline text-[16px]"
+            className="text-appBlack font-featureHeadline text-[16px]"
             style={{
               fontVariationSettings: '"wght" 500,"opsz" 10',
             }}

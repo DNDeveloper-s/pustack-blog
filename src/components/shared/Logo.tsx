@@ -28,14 +28,16 @@ export default function Logo({
   style = {},
   linkStyle = {},
   className = "",
+  linkClassName = "",
 }: {
   size: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   style?: React.CSSProperties;
   linkStyle?: React.CSSProperties;
   className?: string;
+  linkClassName?: string;
 }) {
   return (
-    <Link href="/" style={linkStyle}>
+    <Link href="/" style={linkStyle} className={linkClassName}>
       {/* <p
         className={
           "font-larkenExtraBold leading-[120%] " + styles[size].className
