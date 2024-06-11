@@ -4,7 +4,7 @@ import Africa from "@/components/Africa/Africa";
 import Business from "@/components/Business/Business";
 import Dashboard from "@/components/Dashboard/Dashboard";
 import Media from "@/components/Media/Media";
-import Navbar, { NavbarMobile } from "@/components/Navbar/Navbar";
+import Navbar from "@/components/Navbar/Navbar";
 import NetZero from "@/components/NetZero/NetZero";
 import Politics from "@/components/Politics/Politics";
 import Security from "@/components/Security/Security";
@@ -17,7 +17,7 @@ export default function Home() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   return (
     <main className="w-full max-w-[1440px] mx-auto px-0 md:px-3">
-      {isTabletScreen ? <NavbarMobile /> : <Navbar />}
+      <Navbar />
       <div className="">
         <Dashboard />
         <div className="px-3 md:px-0">

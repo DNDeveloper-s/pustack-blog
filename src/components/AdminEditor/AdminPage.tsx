@@ -1,11 +1,11 @@
 "use client";
 
 import { useMediaQuery } from "react-responsive";
-import Navbar, { NavbarMobile } from "../Navbar/Navbar";
+import Navbar from "../Navbar/Navbar";
 import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Post } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
 import { useCreatePost } from "@/api/post";
@@ -48,7 +48,7 @@ export default function AdminPage() {
 
   return (
     <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
-      {isTabletScreen ? <NavbarMobile /> : <Navbar />}
+      <Navbar />
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
           <JoditWrapper ref={joditRef} handleContinue={handleContinue} />

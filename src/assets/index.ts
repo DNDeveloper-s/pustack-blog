@@ -10,3 +10,4 @@ export { default as navYouAreHere } from "./svgs/nav-you-are-here.svg";
 export { default as iImage } from "./images/i-image.png";
 export { default as notableImage } from "./images/notable.png";
 export { default as dotImage } from "./images/dot-image.png";
+export { default as minervaImage } from "./images/minerva.svg";

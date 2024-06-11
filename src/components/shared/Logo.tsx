@@ -1,3 +1,5 @@
+import { minervaImage } from "@/assets";
+import Image from "next/image";
 import Link from "next/link";
 
 const styles = {
@@ -25,21 +27,29 @@ export default function Logo({
   size = "sm",
   style = {},
   linkStyle = {},
+  className = "",
 }: {
   size: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   style?: React.CSSProperties;
   linkStyle?: React.CSSProperties;
+  className?: string;
 }) {
   return (
     <Link href="/" style={linkStyle}>
-      <p
+      {/* <p
         className={
           "font-larkenExtraBold leading-[120%] " + styles[size].className
         }
         style={style}
       >
         MINERVA
-      </p>
+      </p> */}
+      <Image
+        className={"w-full " + className}
+        style={style}
+        src={minervaImage}
+        alt="Minerva"
+      />
     </Link>
   );
 }

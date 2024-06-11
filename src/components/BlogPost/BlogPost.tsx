@@ -1,7 +1,7 @@
 "use client";
 
 import { useGetPostById } from "@/api/post";
-import Navbar, { NavbarMobile } from "@/components/Navbar/Navbar";
+import Navbar from "@/components/Navbar/Navbar";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
@@ -268,7 +268,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
 
   return (
     <main className="max-w-[1440px] mx-auto md:px-2">
-      {isTabletScreen ? <NavbarMobile /> : <Navbar />}
+      <Navbar />
       <div className="max-w-[900px] mx-auto px-3">
         <div className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6">
           <div className="pb-5 md:pb-0 md:pr-5">
