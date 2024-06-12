@@ -24,13 +24,11 @@ const styles = {
 };
 
 export default function Logo({
-  size = "sm",
   style = {},
   linkStyle = {},
   className = "",
   linkClassName = "",
 }: {
-  size: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   style?: React.CSSProperties;
   linkStyle?: React.CSSProperties;
   className?: string;

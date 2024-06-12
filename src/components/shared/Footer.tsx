@@ -41,7 +41,6 @@ export default function Footer() {
       <div className="flex gap-x-4 gap-y-2 md:justify-between flex-wrap items-center">
         <div className="w-full md:w-auto">
           <Logo
-            size="sm"
             linkStyle={{
               width: "150px",
               display: "block",

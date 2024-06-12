@@ -100,11 +100,36 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     if (post?.content) {
       let index = 0;
       let firstContentEncountered = false;
-      const content = parse(post?.content, {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(post?.content, "text/html");
+      const body = doc.body;
+      function trimArray(arr: ChildNode[]) {
+        let index = 0;
+        while (true) {
+          const el = arr[index];
+          if (el.textContent?.trim() !== "") {
+            break;
+          }
+          index++;
+        }
+        return arr.slice(index);
+      }
+      function nodesToInnerHTMLString(nodes: any[]) {
+        const container = document.createElement("div");
+        nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
+        return container.innerHTML;
+      }
+      function trimEmptyElements(parentNode: HTMLElement) {
+        const children = Array.from(parentNode.childNodes);
+        const arr = trimArray(children);
+        const finalArray = trimArray(arr.reverse());
+
+        return nodesToInnerHTMLString(finalArray);
+      }
+      const trimmedContent = trimEmptyElements(body);
+      const content = parse(trimmedContent, {
         library: {
           createElement(type, props, ...children) {
-            console.log("type - ", type, props, children);
-
             if (type === "pre") {
               console.log("Pre - ", props, children[0][0]);
               return (
@@ -200,10 +225,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       setElements(content);
     }
   }, [post?.content]);
-
-  useEffect(() => {
-    console.log("elements - ", elements);
-  }, [elements]);
 
   function handleBookMark(bookmarked: boolean) {
     if (!post?.id || !user?.uid) return;
