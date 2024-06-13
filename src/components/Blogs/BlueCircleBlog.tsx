@@ -8,9 +8,8 @@ import { Post } from "@/firebase/post";
 const defaultBlueCircleBlog = () => {
   return (
     <div className="py-0 md:py-3 group">
-      <div className="flex group-hover:text-appBlue items-center gap-3 text-[12px] font-featureHeadline mb-1">
-        <span>10 HR</span>
-        <span>UK</span>
+      <div className="flex group-hover:text-appBlue uppercase items-center gap-3 text-[12px] font-featureHeadline mb-1">
+        <span>TECHNOLOGY</span>
       </div>
       <div>
         <Image
@@ -42,9 +41,8 @@ export default function BlueCircleBlog({
 
   const content = (
     <div className="py-0 md:py-3 group">
-      <div className="flex group-hover:text-appBlue items-center gap-3 text-[12px] font-featureHeadline mb-1">
-        <span>10 HR</span>
-        <span>UK</span>
+      <div className="flex group-hover:text-appBlue uppercase items-center gap-3 text-[12px] font-featureHeadline mb-1">
+        <span>TECHNOLOGY</span>
       </div>
       <div>
         <Image

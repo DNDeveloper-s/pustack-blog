@@ -3,6 +3,7 @@ import { db } from "@/lib/firebase";
 import { QueryClient } from "@tanstack/react-query";
 import {
   CollectionReference,
+  DocumentData,
   DocumentSnapshot,
   QueryLimitConstraint,
   QueryOrderByConstraint,
@@ -18,6 +19,7 @@ import {
   serverTimestamp,
   setDoc,
   startAfter,
+  where,
 } from "firebase/firestore";
 import { compact, keysIn } from "lodash";
 
@@ -34,6 +36,20 @@ export enum PostPosition {
   TEXT_CONTENT = "text-content",
 }
 
+export enum SnippetPosition {
+  TITLE = "title",
+  RIGHT = "right",
+  LEFT = "left",
+  MID_CONTENT = "mid-content",
+}
+
+export enum SnippetDesign {
+  CLASSIC_CARD = "classic-card",
+  DETAILED_CARD = "detailed-card",
+  COMPACT_CARD = "compact-card",
+  SIMPLE_LIST = "simple-list",
+}
+
 function defaultExtractReducer(acc: any, curr: any) {
   return [...acc, curr];
 }
@@ -48,7 +64,7 @@ export function srcReducer(acc: any, curr: any) {
   return acc;
 }
 
-function toDashCase(str: string) {
+export function toDashCase(str: string) {
   return str.toLowerCase().split(" ").join("-");
 }
 
@@ -59,8 +75,14 @@ export function flattenDocumentData<T>(data: DocumentSnapshot<T>) {
   throw new Error("Document does not exist");
 }
 
-function flattenQueryData<T>(data: QuerySnapshot<T>) {
+export function flattenQueryData<T>(data: QuerySnapshot<T>) {
   return compact(data.docs.map((doc) => doc.data()));
+}
+
+export function flattenQueryDataWithId<T>(data: QuerySnapshot<T>) {
+  return compact(
+    data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  ) as (T & { id: string })[];
 }
 
 interface GetWithoutFlatten {
@@ -104,7 +126,10 @@ export class Post {
   readonly images: string[];
   readonly quotes: string[];
   readonly timestamp: string | undefined = undefined;
+  private _flagship: boolean = false;
   private _position: PostPosition | undefined = undefined;
+  snippetPosition: SnippetPosition = SnippetPosition.TITLE;
+  snippetDesign: SnippetDesign = SnippetDesign.CLASSIC_CARD;
   private _snippetData: {
     title?: string;
     content?: string;
@@ -112,6 +137,10 @@ export class Post {
     quote?: string;
     iframe?: string;
   } | null = null;
+
+  get isFlagship() {
+    return this._flagship;
+  }
 
   get id(): string | undefined {
     if (this._id) return this._id;
@@ -137,7 +166,10 @@ export class Post {
     author: Author,
     topic: string,
     id?: string,
-    timestamp?: string
+    timestamp?: string,
+    position?: SnippetPosition,
+    design?: SnippetDesign,
+    isFlagship?: boolean
   ) {
     this.title = title;
     this.content = content;
@@ -152,6 +184,9 @@ export class Post {
     this.preparePostSnippetData();
     this._id = id;
     this.timestamp = timestamp;
+    this.snippetDesign = design ?? SnippetDesign.CLASSIC_CARD;
+    this.snippetPosition = position ?? SnippetPosition.TITLE;
+    this._flagship = isFlagship ?? false;
   }
 
   private parseContent(): Document {
@@ -276,6 +311,18 @@ export class Post {
 
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
     setDoc(postRef, this);
+
+    return postId;
+  }
+
+  markAsFlagship() {
+    // Mark the post as flagged
+    this._flagship = true;
+  }
+
+  unMarkAsFlagship() {
+    // Mark the post as flagged
+    this._flagship = false;
   }
 
   /**
@@ -310,6 +357,22 @@ export class Post {
     const docRef = doc(db, "posts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
+  }
+
+  static async getFlagship(): Promise<PostQuerySnapshot>;
+  static async getFlagship(raw: false): Promise<PostQuerySnapshot>;
+  static async getFlagship(
+    raw: true
+  ): Promise<QuerySnapshot<DocumentData, DocumentData>>;
+  static async getFlagship(raw?: boolean) {
+    const postsRef = raw
+      ? collection(db, "posts")
+      : collection(db, "posts").withConverter(postConverter);
+    const _query = query(postsRef, where("isFlagship", "==", true), limit(1));
+
+    const docs = await getDocs(_query);
+
+    return docs;
   }
 
   static async getAll(): Promise<PostQuerySnapshot>;
@@ -369,6 +432,8 @@ export const postConverter = {
       author: post.author,
       topic: post.topic,
       timestamp: serverTimestamp(),
+      position: post.snippetPosition,
+      design: post.snippetDesign,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -380,7 +445,10 @@ export const postConverter = {
       data.author,
       data.topic,
       snapshot.id,
-      data.timestamp.toDate().toISOString()
+      data.timestamp.toDate().toISOString(),
+      data.position,
+      data.design,
+      data.isFlagship
     );
   },
 };

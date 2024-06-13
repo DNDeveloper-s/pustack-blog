@@ -1,17 +1,34 @@
 "use client";
 
+import { useSignupNewsLetters } from "@/api/newsletter";
 import { url } from "@/constants";
+import { Spinner } from "@nextui-org/spinner";
 import Link from "next/link";
-import { useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-function Checkbox({
-  onChange,
-  id,
-}: {
-  onChange: (checked: boolean) => void;
-  id: string;
-}) {
+function CheckboxControl(
+  {
+    onChange,
+    id,
+  }: {
+    onChange?: (checked: boolean) => void;
+    id: string;
+  },
+  ref: any
+) {
   const [checked, setChecked] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    isChecked: checked,
+  }));
+
   return (
     <div className="relative">
       <svg
@@ -56,13 +73,15 @@ function Checkbox({
         checked={checked}
         onChange={(e) => {
           setChecked(e.target.checked);
-          onChange(e.target.checked);
+          onChange && onChange(e.target.checked);
         }}
         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
       />
     </div>
   );
 }
+
+export const Checkbox = forwardRef(CheckboxControl);
 
 function NewsLetterItem({
   onChange,
@@ -157,8 +176,61 @@ const newsLettersList = [
   },
 ];
 
+function isValidEmail(email: string) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+
+interface Status {
+  error: string | null;
+  sucess: string | null;
+  loading: boolean;
+}
+
 export default function SignUpForNewsLetters() {
-  const [checkedCount, setCheckedCount] = useState(0);
+  const [checkedLetters, setCheckedLetters] = useState<NewsLetterItem[]>([]);
+  const {
+    isPending,
+    mutate: postSignUpNewsLetters,
+    isSuccess,
+  } = useSignupNewsLetters();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [status, setStatus] = useState<Status>({
+    error: null,
+    sucess: null,
+    loading: false,
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setStatus({
+        error: null,
+        sucess: "You are on the list",
+        loading: false,
+      });
+    }
+  }, [isSuccess]);
+
+  const handleSignUpNewsLetters = () => {
+    if (!isValidEmail(inputRef.current?.value ?? "")) {
+      return setStatus({
+        error: "Please enter a valid email",
+        sucess: null,
+        loading: false,
+      });
+    }
+
+    postSignUpNewsLetters({
+      email: inputRef.current?.value ?? "",
+      newsLetters: checkedLetters.map((item) => ({
+        id: item.key,
+        title: item.title,
+        description: item.description,
+        frequency: item.frequency,
+      })),
+    });
+  };
+
   return (
     <div className="my-4">
       <div className="border-t border-appBlack py-1">
@@ -172,7 +244,7 @@ export default function SignUpForNewsLetters() {
           Sign up for our Newsletters
         </h2>
       </div>
-      <div className="flex mt-1">
+      <div className="flex mt-1 relative">
         <input
           className="font-featureHeadline email_input"
           placeholder="Your Email address"
@@ -181,19 +253,49 @@ export default function SignUpForNewsLetters() {
             fontVariationSettings: '"wght" 400,"opsz" 10',
             borderInlineEnd: 0,
           }}
+          ref={inputRef}
+          onChange={() => {
+            setStatus({
+              error: null,
+              sucess: null,
+              loading: false,
+            });
+          }}
         />
-        <button className="font-featureHeadline email_button">Sign Up</button>
+        <button
+          className="font-featureHeadline email_button w-[84] flex items-center justify-center"
+          onClick={handleSignUpNewsLetters}
+        >
+          {isPending ? <Spinner size="sm" color="warning" /> : "Sign Up"}
+        </button>
+        <div
+          className={
+            "input-feedback " +
+            (status.sucess
+              ? " show success"
+              : status.error
+              ? " show error"
+              : "")
+          }
+        >
+          {status.error || status.sucess}
+        </div>
       </div>
       <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
         <div className="text-center mb-2">
-          <p>{checkedCount} newsletters selected</p>
+          <p>{checkedLetters.length} newsletters selected</p>
         </div>
         {newsLettersList.map((newsLetter, i) => (
           <NewsLetterItem
             key={newsLetter.key}
             item={newsLetter}
             onChange={(checked) => {
-              setCheckedCount((prev) => (checked ? prev + 1 : prev - 1));
+              setCheckedLetters((prev) =>
+                checked
+                  ? [...prev, newsLetter]
+                  : prev.filter((item) => item.key !== newsLetter.key)
+              );
+              // setCheckedCount((prev) => (checked ? prev + 1 : prev - 1));
             }}
           />
         ))}

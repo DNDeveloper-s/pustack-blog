@@ -1,14 +1,17 @@
 import { API_QUERY } from "@/config/api-query";
 import { Post } from "@/firebase/post";
+import { db } from "@/lib/firebase";
 import {
   QueryFunctionContext,
   UseMutationOptions,
+  UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 
-export const useQueryPosts = () => {
+export const useQueryPosts = ({ initialData }: { initialData: any }) => {
   const queryPosts = async () => {
     const posts = await Post.getAll({ _flatten: true });
 
@@ -19,6 +22,7 @@ export const useQueryPosts = () => {
     queryKey: API_QUERY.QUERY_POSTS,
     queryFn: queryPosts,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    initialData,
   });
 };
 
@@ -40,14 +44,39 @@ export const useGetPostById = (postId?: string | null) => {
   });
 };
 
+const handleFlagshipPost = async (postId: string, isFlagship: boolean) => {
+  const posts = await Post.getFlagship(true);
+
+  const batch = writeBatch(db);
+
+  posts.forEach((post) => {
+    if (post.id !== postId)
+      batch.update(post.ref, {
+        isFlagship: false,
+        unflagged_at: serverTimestamp(),
+      });
+  });
+
+  const newFlagshipPostRef = doc(db, "posts", postId);
+  batch.update(newFlagshipPostRef, {
+    isFlagship: isFlagship,
+    flagged_at: serverTimestamp(),
+  });
+
+  await batch.commit();
+};
+
 export const useCreatePost = (
   options?: UseMutationOptions<any, Error, Post>
 ) => {
   const qc = useQueryClient();
 
   const createPost = async (post: Post) => {
-    const newPost = await post.saveToFirestore();
-    return newPost;
+    const newPostId = await post.saveToFirestore();
+    if (post.isFlagship) {
+      await handleFlagshipPost(newPostId, true);
+    }
+    return newPostId;
   };
 
   return useMutation({
@@ -58,5 +87,18 @@ export const useCreatePost = (
       });
     },
     ...(options ?? {}),
+  });
+};
+
+export const useGetFlagshipPost = () => {
+  const getFlagshipPost = async () => {
+    const posts = await Post.getFlagship();
+    return posts.docs[0];
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_FLAGSHIP_POST,
+    queryFn: getFlagshipPost,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };

@@ -143,12 +143,12 @@ function JoditWrapper(
   };
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto py-2 px-3">
-      <div>
+    <div className="w-full max-w-[1100px] mx-auto py-2">
+      {/* <div>
         <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
           Create Post
         </h2>
-      </div>
+      </div> */}
       {error && <p className="text-red-500 text-sm my-2">{error}</p>}
       <div className="mt-5">
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">

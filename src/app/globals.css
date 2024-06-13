@@ -2144,3 +2144,33 @@ input::placeholder {
   font-variation-settings: "wght" 400, "opsz" 10;
   color: #1f1d1a;
 }
+
+.input-feedback {
+  font-family: FeatureFlatRegular;
+  font-size: 1rem;
+  line-height: 120%;
+  letter-spacing: 0.02em;
+  padding: 4px;
+  min-width: 136px;
+  z-index: 1;
+  position: absolute;
+  opacity: 1;
+  bottom: 85%;
+  transition: all 0.3s;
+  right: 0;
+}
+
+.input-feedback.success {
+  color: #f8f5d7;
+  background-color: #1f1d1a;
+}
+
+.input-feedback.show {
+  bottom: 100%;
+  opacity: 1;
+}
+
+.input-feedback.error {
+  color: #1f1d1a;
+  background-color: #d79987;
+}

@@ -6,10 +6,11 @@ import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
 import { useRef, useState } from "react";
-import { Post } from "@/firebase/post";
+import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
 import { useCreatePost } from "@/api/post";
 import { useRouter } from "next/navigation";
+import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 
 export default function AdminPage() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -17,6 +18,11 @@ export default function AdminPage() {
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const joditRef = useRef<any>(null);
   const router = useRouter();
+  const snippetRef = useRef<{
+    selectedPosition: SnippetPosition;
+    selectedSnippet: SnippetDesign;
+  }>(null);
+  const checkBoxRef = useRef<{ isChecked: boolean }>(null);
 
   const { mutate: postCreatePost, isPending } = useCreatePost({
     onSuccess: () => {
@@ -43,28 +49,58 @@ export default function AdminPage() {
 
   const handleCreatePost = () => {
     if (!currentPost) return;
+
+    const selectedPosition = snippetRef.current?.selectedPosition;
+    const selectedSnippet = snippetRef.current?.selectedSnippet;
+
+    if (!selectedPosition || !selectedSnippet) return;
+
+    currentPost.snippetPosition = selectedPosition;
+    currentPost.snippetDesign = selectedSnippet;
+
+    if (checkBoxRef.current?.isChecked) {
+      currentPost.markAsFlagship();
+    } else {
+      currentPost.unMarkAsFlagship();
+    }
+
     postCreatePost(currentPost);
   };
+
+  const handleFalshipChange = () => {};
 
   return (
     <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
       <Navbar />
+      <div className="flex items-center justify-between max-w-[1100px] mx-auto">
+        <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
+          {step === 1 ? "Create Post" : "Choose Design and Position"}
+        </h2>
+        <label
+          htmlFor={"today-flagship"}
+          className="flex gap-2 py-1 cursor-pointer group"
+        >
+          <div>
+            <Checkbox id={"today-flagship"} ref={checkBoxRef} />
+          </div>
+          <div>
+            <p className="text-[16px] text-[#1f1d1a]">
+              Mark it as Today&apos;s Flagship
+            </p>
+          </div>
+        </label>
+      </div>
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
           <JoditWrapper ref={joditRef} handleContinue={handleContinue} />
         </MathJaxContext>
       </div>
       <div
-        className="w-full max-w-[1100px] mx-auto py-2 px-3 mt-4"
+        className="w-full max-w-[1100px] mx-auto py-2 mt-4"
         style={{ display: step === 2 ? "block" : "none" }}
       >
-        <div>
-          <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
-            Choose Design and Position
-          </h2>
-        </div>
         <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
-        <SnippetForm post={currentPost} />
+        <SnippetForm ref={snippetRef} post={currentPost} />
         <div className="flex gap-4 justify-end items-center">
           <Button
             // isDisabled={isPending}

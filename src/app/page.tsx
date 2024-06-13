@@ -1,40 +1,34 @@
-"use client";
-
-import Africa from "@/components/Africa/Africa";
-import Business from "@/components/Business/Business";
 import Dashboard from "@/components/Dashboard/Dashboard";
-import Media from "@/components/Media/Media";
+import LandingPageSections from "@/components/LandingPage/LandingPageSections";
 import Navbar from "@/components/Navbar/Navbar";
-import NetZero from "@/components/NetZero/NetZero";
-import Politics from "@/components/Politics/Politics";
-import Security from "@/components/Security/Security";
-import SignUpForNewsLetters from "@/components/SignUpForNewsLetters/SignUpForNewsLetters";
-import Technology from "@/components/Technology/Technology";
-import Footer from "@/components/shared/Footer";
-import { useMediaQuery } from "react-responsive";
+import { flattenQueryData, flattenQueryDataWithId } from "@/firebase/post";
+import { db } from "@/lib/firebase";
+import { collection, limit, query, orderBy, getDocs } from "firebase/firestore";
 
-export default function Home() {
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
+export default async function Home() {
+  // const posts = await Post.getAll({ _flatten: true });
+
+  const postsRef = collection(db, "posts");
+  let _query = query(postsRef, orderBy("timestamp", "desc"), limit(50));
+
+  const docs = await getDocs(_query);
+
+  const posts = flattenQueryDataWithId(docs).map((doc) => ({
+    ...doc,
+    timestamp: doc.timestamp.toDate().toISOString(),
+  }));
+
+  // const docRef = doc(db, "posts", props.params.postId[0]);
+  // const data = await getDoc(docRef);
+  // const post = flattenDocumentData(data);
+  // const doc1 = await getAuthenticatedAppForUser();
+
   return (
     <main className="w-full max-w-[1440px] mx-auto px-0 md:px-3">
       <Navbar />
       <div className="">
-        <Dashboard />
-        <div className="px-3 md:px-0">
-          <Politics />
-          <Business />
-          <Technology />
-          <Africa />
-          <NetZero />
-          <Security />
-          <Media />
-          {isTabletScreen && (
-            <div className="px-3">
-              <SignUpForNewsLetters />
-            </div>
-          )}
-          <Footer />
-        </div>
+        <Dashboard posts={posts} />
+        <LandingPageSections />
       </div>
     </main>
   );

@@ -1,14 +1,40 @@
 "use client";
 
-import { Post } from "@/firebase/post";
+import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post";
 import BlogWithAuthor, { BlogWithAuthorV2 } from "../Blogs/BlogWithAuthor";
 import BlueCircleBlog from "../Blogs/BlueCircleBlog";
 import Dashboard from "../Dashboard/Dashboard";
-import { useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import { GoCheckCircleFill } from "react-icons/go";
 import Image from "next/image";
 import { avatar, imageOne } from "@/assets";
 import { TbCaretDownFilled } from "react-icons/tb";
+import { Tooltip } from "antd";
+
+const snippetPositionConfig = {
+  [SnippetDesign.CLASSIC_CARD]: [
+    SnippetPosition.MID_CONTENT,
+    SnippetPosition.RIGHT,
+    SnippetPosition.TITLE,
+  ],
+  [SnippetDesign.DETAILED_CARD]: [
+    SnippetPosition.MID_CONTENT,
+    SnippetPosition.RIGHT,
+    SnippetPosition.TITLE,
+  ],
+  [SnippetDesign.COMPACT_CARD]: [
+    SnippetPosition.MID_CONTENT,
+    SnippetPosition.RIGHT,
+  ],
+  [SnippetDesign.SIMPLE_LIST]: [SnippetPosition.LEFT],
+};
 
 function SnippetPositionControl<T = string>({
   children,
@@ -17,54 +43,84 @@ function SnippetPositionControl<T = string>({
   isSelected,
   containerStyle,
   iconStyle,
+  disabled,
 }: {
   children: React.ReactNode;
-  handleChange?: (value: T | null) => void;
+  handleChange?: (value: T) => void;
   value?: T;
   isSelected?: boolean;
   containerStyle?: React.CSSProperties;
   iconStyle?: React.CSSProperties;
+  disabled?: boolean;
 }) {
   return (
-    <div
-      className={
-        "group/snippet-control relative border border-dashed border-tertiary border-opacity-30 hover:border-opacity-100 rounded transition-all bg-gray-500 bg-opacity-5 hover:bg-opacity-20 px-3 py-3 " +
-        (isSelected
-          ? "!border-opacity-100 !bg-opacity-20"
-          : "border-opacity-30 bg-opacity-5")
+    <Tooltip
+      title={
+        disabled
+          ? "Selected snippet style cannot be placed in this position."
+          : ""
       }
-      onClick={() => {
-        value && handleChange?.(isSelected ? null : value);
-      }}
-      style={containerStyle}
+      placement="bottom"
     >
-      {children}
-      {isSelected && (
-        <div
-          style={iconStyle}
-          className="absolute bottom-full left-full transform -translate-x-1/2 translate-y-1/2 text-[14px]"
-        >
-          <GoCheckCircleFill className="text-[36px] text-appBlue" />
-        </div>
-      )}
-    </div>
+      <div
+        className={
+          "group/snippet-control relative border border-dashed border-tertiary border-opacity-30 hover:border-opacity-100 rounded transition-all bg-gray-500 bg-opacity-5 hover:bg-opacity-20 px-3 py-3 " +
+          (!disabled && isSelected
+            ? "!border-opacity-100 !bg-opacity-20"
+            : "border-opacity-30 bg-opacity-5") +
+          (disabled
+            ? " !opacity-30 !pointer-events-none !cursor-not-allowed"
+            : "")
+        }
+        onClick={() => {
+          !disabled && value && handleChange?.(value);
+        }}
+        style={containerStyle}
+      >
+        {children}
+        {isSelected && (
+          <div
+            style={iconStyle}
+            className="absolute bottom-full left-full transform -translate-x-1/2 translate-y-1/2 text-[14px]"
+          >
+            <GoCheckCircleFill className="text-[36px] text-appBlue" />
+          </div>
+        )}
+      </div>
+    </Tooltip>
   );
 }
 
-export default function SnippetForm({ post }: { post?: Post | null }) {
-  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
-  const [selectedSnippet, setSelectedSnippet] = useState<number | null>(null);
+function SnippetForm({ post }: { post?: Post | null }, ref: any) {
+  const [selectedPosition, setSelectedPosition] = useState<SnippetPosition>(
+    SnippetPosition.MID_CONTENT
+  );
+  const [selectedSnippet, setSelectedSnippet] = useState<SnippetDesign>(
+    SnippetDesign.CLASSIC_CARD
+  );
   const [openDropdown, setOpenDropdown] = useState<
     "design" | "position" | null
   >("design");
 
-  function handleChangePosition(position: number | null) {
+  function handleChangePosition(position: SnippetPosition) {
     setSelectedPosition(position);
   }
 
-  function handleChangeSnippet(snippet: number | null) {
+  function handleChangeSnippet(snippet: SnippetDesign) {
     setSelectedSnippet(snippet);
   }
+
+  useImperativeHandle(ref, () => ({
+    selectedPosition,
+    selectedSnippet,
+  }));
+
+  const isPositionAllowed = useCallback(
+    (position: SnippetPosition) => {
+      return snippetPositionConfig[selectedSnippet].includes(position);
+    },
+    [selectedSnippet]
+  );
 
   if (!post)
     return (
@@ -218,8 +274,10 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div style={{ zoom: 0.6 }}>
                     <SnippetPositionControl
                       handleChange={handleChangeSnippet}
-                      value={1}
-                      isSelected={selectedSnippet === 1}
+                      value={SnippetDesign.CLASSIC_CARD}
+                      isSelected={
+                        selectedSnippet === SnippetDesign.CLASSIC_CARD
+                      }
                     >
                       <div className="pointer-events-none">
                         <BlogWithAuthor post={post} noLink />
@@ -230,8 +288,10 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div style={{ zoom: 0.6 }}>
                     <SnippetPositionControl
                       handleChange={handleChangeSnippet}
-                      value={2}
-                      isSelected={selectedSnippet === 2}
+                      value={SnippetDesign.COMPACT_CARD}
+                      isSelected={
+                        selectedSnippet === SnippetDesign.COMPACT_CARD
+                      }
                     >
                       <div className="pointer-events-none">
                         <BlogWithAuthorV2 post={post} noLink noImage />
@@ -243,8 +303,10 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div style={{ zoom: 0.6 }}>
                     <SnippetPositionControl
                       handleChange={handleChangeSnippet}
-                      value={3}
-                      isSelected={selectedSnippet === 3}
+                      value={SnippetDesign.DETAILED_CARD}
+                      isSelected={
+                        selectedSnippet === SnippetDesign.DETAILED_CARD
+                      }
                     >
                       <div className="pointer-events-none">
                         <BlogWithAuthorV2 post={post} noLink />
@@ -255,9 +317,9 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div style={{ zoom: 0.9 }}>
                     <SnippetPositionControl
                       handleChange={handleChangeSnippet}
-                      value={4}
+                      value={SnippetDesign.SIMPLE_LIST}
                       iconStyle={{ zoom: 0.6 }}
-                      isSelected={selectedSnippet === 4}
+                      isSelected={selectedSnippet === SnippetDesign.SIMPLE_LIST}
                     >
                       <div className="pointer-events-none">
                         <BlueCircleBlog post={post} noLink />
@@ -290,8 +352,9 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                     <div className="pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-visible">
                       <SnippetPositionControl
                         handleChange={handleChangePosition}
-                        value={4}
-                        isSelected={selectedPosition === 4}
+                        value={SnippetPosition.LEFT}
+                        isSelected={selectedPosition === SnippetPosition.LEFT}
+                        disabled={!isPositionAllowed(SnippetPosition.LEFT)}
                       >
                         {Array.from({ length: 9 }).map((_, i) => (
                           <div
@@ -307,8 +370,12 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div className="md:border-x border-dashed border-[#1f1d1a4d] px-4">
                     <SnippetPositionControl
                       handleChange={handleChangePosition}
-                      value={1}
-                      isSelected={selectedPosition === 1}
+                      value={SnippetPosition.TITLE}
+                      isSelected={selectedPosition === SnippetPosition.TITLE}
+                      disabled={
+                        !isPositionAllowed(SnippetPosition.TITLE) ||
+                        !post.snippetData?.image
+                      }
                     >
                       <div className="pointer-events-none">
                         <BlogWithAuthor post={post} noLink />
@@ -316,8 +383,11 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                     </SnippetPositionControl>
                     <SnippetPositionControl
                       handleChange={handleChangePosition}
-                      value={3}
-                      isSelected={selectedPosition === 3}
+                      value={SnippetPosition.MID_CONTENT}
+                      disabled={!isPositionAllowed(SnippetPosition.MID_CONTENT)}
+                      isSelected={
+                        selectedPosition === SnippetPosition.MID_CONTENT
+                      }
                     >
                       <div
                         className="grid divide-y divide-dashed divide-[#1f1d1a4d]"
@@ -354,8 +424,9 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
                   <div className="px-5 md:pl-7 md:pr-0">
                     <SnippetPositionControl
                       handleChange={handleChangePosition}
-                      value={2}
-                      isSelected={selectedPosition === 2}
+                      value={SnippetPosition.RIGHT}
+                      disabled={!isPositionAllowed(SnippetPosition.RIGHT)}
+                      isSelected={selectedPosition === SnippetPosition.RIGHT}
                     >
                       <div className="pointer-events-none">
                         <BlogWithAuthor post={post} noLink size="sm" />
@@ -371,3 +442,5 @@ export default function SnippetForm({ post }: { post?: Post | null }) {
     </div>
   );
 }
+
+export default forwardRef(SnippetForm);
