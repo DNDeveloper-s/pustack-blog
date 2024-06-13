@@ -36,6 +36,8 @@ import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../shared/BlogImage";
 import { HiOutlineExternalLink } from "react-icons/hi";
+import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
+import { newsLettersList } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
@@ -589,7 +591,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   Read it now.
                 </Link> */}
               </div>
-              <div className="flex mt-1">
+              {/* <div className="flex mt-1">
                 <input
                   className="font-featureHeadline email_input"
                   placeholder="Your Email address"
@@ -602,7 +604,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 <button className="font-featureHeadline email_button">
                   Sign Up
                 </button>
-              </div>
+              </div> */}
+              <SignUpForNewsLettersButton
+                containerClassName="flex mt-1"
+                checkedLetters={newsLettersList}
+              />
             </div>
             {titles.length > 0 && (
               <div className="flex flex-col gap-1">

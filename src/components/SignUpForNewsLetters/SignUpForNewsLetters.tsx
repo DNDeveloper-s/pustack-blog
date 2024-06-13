@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
 
 function CheckboxControl(
   {
@@ -117,7 +118,7 @@ interface NewsLetterItem {
   action: string;
 }
 
-const newsLettersList = [
+export const newsLettersList = [
   {
     key: "1",
     title: "Flagship",
@@ -203,6 +204,7 @@ export default function SignUpForNewsLetters() {
 
   useEffect(() => {
     if (isSuccess) {
+      if (inputRef.current) inputRef.current.value = "";
       setStatus({
         error: null,
         sucess: "You are on the list",
@@ -244,7 +246,11 @@ export default function SignUpForNewsLetters() {
           Sign up for our Newsletters
         </h2>
       </div>
-      <div className="flex mt-1 relative">
+      <SignUpForNewsLettersButton
+        containerClassName="flex mt-1"
+        checkedLetters={checkedLetters}
+      />
+      {/* <div className="flex mt-1 relative">
         <input
           className="font-featureHeadline email_input"
           placeholder="Your Email address"
@@ -280,7 +286,7 @@ export default function SignUpForNewsLetters() {
         >
           {status.error || status.sucess}
         </div>
-      </div>
+      </div> */}
       <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
         <div className="text-center mb-2">
           <p>{checkedLetters.length} newsletters selected</p>
