@@ -285,7 +285,7 @@ export default function JoditEditor({
 
                   imageDiv.addEventListener("click", () => {
                     editor.selection.insertHTML(
-                      `<span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/${name}.png" alt="icon" style="height: 16px; width: auto; display: inline;" /></span>`,
+                      `<span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg" alt="icon" style="height: 16px; width: auto; display: inline;" /></span>`,
                       true
                     );
                     close();

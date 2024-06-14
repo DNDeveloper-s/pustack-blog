@@ -110,6 +110,8 @@ function JoditWrapper(
       const arr = trimArray(children);
       const finalArray = trimArray(arr.reverse());
 
+      finalArray.reverse();
+
       return nodesToInnerHTMLString(finalArray);
     }
     const trimmedContent = trimEmptyElements(body);

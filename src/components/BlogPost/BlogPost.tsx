@@ -126,6 +126,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         const arr = trimArray(children);
         const finalArray = trimArray(arr.reverse());
 
+        finalArray.reverse();
+
         return nodesToInnerHTMLString(finalArray);
       }
       const trimmedContent = trimEmptyElements(body);
@@ -725,3 +727,240 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     </main>
   );
 }
+
+const str = `
+<section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/network.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> Scoop</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>If you’ve ever read a blog post, you’ve consumed content from a thought leader that is an expert in their <span style="color: rgb(0, 0, 255);">industry</span>. Chances are if the blog post was written effectively, you came away with helpful knowledge and a positive opinion about the writer or brand that produced the content.&nbsp;</p><p>Anyone can connect with their audience through blogging and enjoy the myriad benefits that <span style="color: rgb(0, 0, 255);">blogging</span> provides: organic traffic from search engines, promotional content for social media, and recognition from a new audience you haven’t tapped into yet.</p><p>If you’ve heard about blogging but are a beginner and don’t know where to start, the time for excuses is over. Not only can you&nbsp;create an SEO-friendly blog, but I’ll cover <em><u>how to write and manage your business's blog</u></em> as well as provide helpful templates to simplify your blogging efforts.</p><p><br></p><p><img class="blog-image" src="https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-14%20at%201.22.47%E2%80%AFPM.png?alt=media&amp;token=c1847f19-db07-4ef1-ab6b-946e3cad0b58" alt="image" style="display: block; margin-left: auto; margin-right: auto;"></p>
+                    </div>
+                  </section><section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/bulb.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> HOW TO write a blog post</h2>
+                    </div>
+                    <div class="styles_text">
+                      <ol><li>Understand your audience.</li><li>Check out your competition.</li><li>Determine what topics you'll cover.</li><li>Identify your unique angle.</li><li>Name your blog.</li><li>Create your blog domain.</li><li>Choose a CMS and set up your blog.</li><li>Customize the look of your blog.</li><li>Write your first blog post.  </li></ol><p><br></p>
+                    <br></div>
+                  </section><section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/github.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> CODE</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>This is an example of useEffect.</p><pre>useEffect(() =&gt; {
+    if (post?.content) {
+      let index = 0;
+      let firstContentEncountered = false;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(post?.content, "text/html");
+      const body = doc.body;
+      function trimArray(arr: ChildNode[]) {
+        let index = 0;
+        while (true) {
+          const el = arr[index];
+          if (el.textContent?.trim() !== "") {
+            break;
+          }
+          index++;
+        }
+        return arr.slice(index);
+      }
+      function nodesToInnerHTMLString(nodes: any[]) {
+        const container = document.createElement("div");
+        nodes.forEach((node) =&gt; container.appendChild(node.cloneNode(true)));
+        return container.innerHTML;
+      }
+      function trimEmptyElements(parentNode: HTMLElement) {
+        const children = Array.from(parentNode.childNodes);
+        const arr = trimArray(children);
+        const finalArray = trimArray(arr.reverse());
+
+        finalArray.reverse();
+
+        return nodesToInnerHTMLString(finalArray);
+      }
+      const trimmedContent = trimEmptyElements(body);
+      const content = parse(trimmedContent, {
+        library: {
+          createElement(type, props, ...children) {
+            if (type === "pre") {
+              console.log("Pre - ", props, children[0][0]);
+              return (
+                <highlight theme="{themes.oneDark}" code="{children[0][0]}" language="tsx">
+                  {({
+                    className,
+                    style,
+                    tokens,
+                    getLineProps,
+                    getTokenProps,
+                  }) =&gt; {
+                    console.log("tokens - ", tokens);
+                    return (
+                                              <code style="{{" fontsize:="" "14px"="" }}="">
+                          {tokens.map((line, i) =&gt; (
+                            <div key="{i}" {...getlineprops({="" line="" })}="">
+                              {/* <span>{i + 1}</span> */}
+                              {line.map((token, key) =&gt; (
+                                <span key="{key}" {...gettokenprops({="" token="" })}="">
+                              ))}
+                            </span></div>
+                          ))}
+                        </code>
+                      
+                    );
+                  }}
+                </highlight>
+              );
+            }
+
+            if (
+              type === "img" &amp;&amp;
+              // @ts-ignore
+              props?.className?.includes("blog-image")
+            ) {
+              return (
+                <blogimagedefault classname="mx-auto max-w-full max-h-[500px] flex items-center justify-center" @ts-ignore="" src="{props.src}" imageprops="{{" classname:="" "max-h-[500px]="" object-contain="" max-w-full",="" }}="">
+              );
+            }
+
+            if (type === "section") {
+              const title = children[0]
+                .find((c: any) =&gt; c.props?.className?.includes("styles_title"))
+                ?.props?.children.find((c: any) =&gt; c.type === "h2")
+                .props.children;
+              title &amp;&amp; setTitles((prev) =&gt; [...prev, title]);
+
+              const isFirstSection = index === 0;
+              index++;
+              return createElement(
+                type,
+                {
+                  id: title,
+                  ...props,
+                  style: { paddingTop: "10px" },
+                  className: isFirstSection ? "first_section" : "",
+                },
+                ...children
+              );
+            }
+
+            return createElement(type, props, ...children);
+            // return <div>Create Element</div>;
+          },
+          cloneElement(element, props, ...children) {
+            return <div>Clone Element</div>;
+          },
+          isValidElement(element) {
+            return true;
+          },
+        },
+      });
+      setElements(content);
+    }
+  }, [post?.content]);<br></blogimagedefault></pre><p><br></p><p><br></p><p><br></p><p><br></p>
+                    </div>
+                  </section><section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/youtube.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> Detailed ViDEO</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>PuStack provides answers to all the questions like what is maths? How is it solved? What are the general tips? and much more. For written PDF solutions, and lectures on all the topics of <span style="color: rgb(255, 0, 255);">Class 9 </span>and <span style="color: rgb(255, 0, 255);">Class 10,</span> download the PuStack app.</p><p><br></p><p><iframe width="567px" height="351px" src="https://www.youtube.com/embed/1SccVele8VA" frameborder="0" allowfullscreen="" style="display: block; margin-left: auto; margin-right: auto;"></iframe></p><p><br></p><p><br></p>
+                    </div>
+                  </section><section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/formula.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> Maths Formula</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>LaTeX is capable of displaying any mathematical notation. It’s possible to typeset integrals, fractions and more. Every command has a specific syntax to use. I will demonstrate some of the most common LaTeX math features:</p><p><br></p><p style="text-align: center;"><math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0em 2em 0em 2em 0em 2em 0em 2em 0em 2em 0em" displaystyle="true">
+    <mtr>
+      <mtd>
+        <mi>f</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mi></mi>
+        <mo>=</mo>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>g</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mi></mi>
+        <mo>=</mo>
+        <mfrac>
+          <mn>1</mn>
+          <mi>x</mi>
+        </mfrac>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>F</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+      </mtd>
+      <mtd>
+        <mi></mi>
+        <mo>=</mo>
+        <msubsup>
+          <mo>∫<!-- ∫ --></mo>
+          <mi>b</mi>
+          <mi>a</mi>
+        </msubsup>
+        <mfrac>
+          <mn>1</mn>
+          <mn>3</mn>
+        </mfrac>
+        <msup>
+          <mi>x</mi>
+          <mn>3</mn>
+        </msup>
+      </mtd>
+    </mtr>
+  </mtable>
+</math></p><p><br></p><p><br></p><p><br></p>
+                    </div>
+                  </section><section class="">
+                    <div class="styles_divider"><br></div>
+                    <div class="styles_title">
+                      <h2><span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/network.svg" alt="icon" style="height: 16px; width: auto; display: inline;"></span> Table</h2>
+                    </div>
+                    <div class="styles_text">
+                      <p>The&nbsp;align&nbsp;environment will align the equations at the&nbsp;ampersand &amp;. Single equations have to be&nbsp;seperated&nbsp;by a&nbsp;linebreak \\. There is no alignment when using the simple&nbsp;<span style="background-color: rgb(106, 168, 79); color: rgb(255, 255, 255);">equation&nbsp;environment</span>. Furthermore it is not even possible to enter two equations in that environment, it will result in a&nbsp;compilation error. The asterisk (e.g. equation*) only indicates, that I don’t want the equations to be numbered.</p><table style="border-collapse:collapse;width: 100%;"><tbody>
+<tr>
+	<td style="width: 12.4769%;">Column 1.1</td><td style="width: 12.4769%;">Column 1.2</td>
+	<td style="width: 25%;">Column 2</td>
+	<td style="width: 25%;">Column 3</td>
+	<td style="width: 25%;">Column 4</td></tr>
+<tr>
+	<td style="width: 25%; background-color: rgb(152, 0, 0); color: rgb(255, 255, 255);" colspan="2">Row 2</td>
+	<td style="width: 25%;">Random Text</td>
+	<td style="width: 25%;">Random Text</td>
+	<td style="width: 25%;">Random Text</td></tr>
+<tr>
+	<td style="width: 25%;" colspan="2">Random Text</td>
+	<td style="width: 25%;">Random Text</td>
+	<td style="width: 25%;">Random Text</td>
+	<td style="width: 25%;">Random Text</td></tr></tbody></table><p><br></p><p><br></p><p><br></p>
+                    </div>
+                  </section>
+`;
