@@ -248,24 +248,31 @@ export default function JoditEditor({
                 _button: any
               ) => {
                 const imageNames = [
-                  "furtherreading",
-                  "github",
-                  "google-maps",
-                  "google",
-                  "link",
-                  "linkedin",
-                  "quiz",
-                  "reporterstake",
-                  "selection",
-                  "social",
-                  "thenews",
-                  "viewfrom",
                   "youtube",
+                  "whatsapp",
+                  "Twitter",
+                  "reddit",
+                  "problem",
+                  "network",
+                  "maps",
+                  "linkedin",
+                  "ladder",
+                  "label",
+                  "handshake",
+                  "google",
+                  "github",
+                  "function",
+                  "formula",
+                  "discussion",
+                  "chemical",
+                  "chemical-bond",
+                  "bulb",
+                  "broken-bulb",
                 ];
 
                 const images = imageNames.map((name) => {
                   const image = editor.create.element("img", {
-                    src: `https://pustack-blog.vercel.app/assets/images/${name}.png`,
+                    src: `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`,
                     alt: "icon",
                     style: "width: 20px; height: auto",
                   });

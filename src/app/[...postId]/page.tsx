@@ -6,6 +6,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { JSDOM } from "jsdom";
 import useUserSession from "@/hooks/useUserSession";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
+import { redirect } from "next/navigation";
 
 type Props = {
   params: { postId: [string] };
@@ -20,6 +21,7 @@ export async function generateMetadata(
   // const post = await Post.get(params.postId[0], true);
   const docRef = doc(db, "posts", params.postId[0]);
   const data = await getDoc(docRef);
+
   const post = flattenDocumentData(data);
 
   const dom = new JSDOM(post.content, {
@@ -81,6 +83,11 @@ export default async function PostId(props: { params: { postId: string[] } }) {
   // console.log("post - ", post.title);
   const docRef = doc(db, "posts", props.params.postId[0]);
   const data = await getDoc(docRef);
+
+  if (data.exists() === false) {
+    return redirect("/");
+  }
+
   const post = flattenDocumentData(data);
   const doc1 = await getAuthenticatedAppForUser();
 
