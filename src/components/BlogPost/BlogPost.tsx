@@ -378,7 +378,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   return (
     <main className="max-w-[1440px] min-h-screen mx-auto md:px-2">
       <Navbar />
-      {!isInView && post && <BlogPostStickyNavbar post={post} />}
+      {!isInView && post && !isMobileScreen && (
+        <BlogPostStickyNavbar post={post} />
+      )}
       <div className="max-w-[720px] mx-auto px-3 pb-10">
         <div
           ref={ref}
