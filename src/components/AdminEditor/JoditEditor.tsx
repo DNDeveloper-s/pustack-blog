@@ -21,6 +21,7 @@ import {
 import InsertImage from "./InsertImage";
 import { Irish_Grover } from "next/font/google";
 import { handleUpload } from "@/lib/firebase/upload";
+import hljs from "highlight.js";
 
 interface JoditEditorProps {
   content: string;
@@ -55,6 +56,37 @@ export default function JoditEditor({
           // placeholder: "Start typings...",
           removeButtons: ["image"],
           toolbar: true,
+          extraPlugins: ["pasteCode"],
+          // @ts-ignore
+          pasteCode: {
+            globalHighlightLib: true,
+            insertTemplate: (jodit: any, language: any, value: any) =>
+              `<pre><code class="hljs language-${language}">${Jodit.modules.Helpers.htmlspecialchars(
+                value
+              )}</code></pre>`,
+            highlightLib: {
+              js: [
+                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js",
+              ],
+
+              isLangLoaded(lang: any) {
+                if (lang === "html") {
+                  return true;
+                }
+                return Boolean(hljs.listLanguages()[lang]);
+              },
+
+              langUrl: (lang: any) =>
+                `//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/languages/${lang}.min.js`,
+              css: [
+                "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css",
+              ],
+
+              highlight: (code: any, language: any) => {
+                return hljs.highlight(code, { language: language }).value;
+              },
+            },
+          },
           controls: {
             font: {
               list: {
