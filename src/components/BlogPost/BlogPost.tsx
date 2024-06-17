@@ -254,6 +254,16 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               );
             }
 
+            if (type === "table") {
+              return createElement(
+                "div",
+                {
+                  className: "overflow-x-auto",
+                },
+                children[0]
+              );
+            }
+
             if (
               type === "img" &&
               // @ts-ignore
