@@ -39,6 +39,43 @@ import { HiOutlineExternalLink } from "react-icons/hi";
 import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
 import { newsLettersList } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 
+function transformObjectToCodeString(object: any) {
+  // Initialize an array to hold the lines of code
+  let codeLines = [];
+
+  // Helper function to extract text from the object
+  function extractText(node: any) {
+    if (typeof node === "string") {
+      return node;
+    } else if (node?.props?.children) {
+      return node.props.children.map(extractText).join("");
+    } else if (node?.type === "br") {
+      return "\n"; // Handle line breaks
+    } else {
+      return "";
+    }
+  }
+
+  // Iterate over the object array
+  for (let i = 0; i < object.length; i++) {
+    const line = object[i];
+    const text = extractText(line);
+    codeLines.push(text);
+  }
+
+  // Join the lines of code into a single string
+  const codeString = codeLines.join("");
+
+  return codeString;
+}
+
+function filterAndTrimStrings(arr: any[]) {
+  return (
+    arr?.map((c: any) => (typeof c === "string" ? c.trim() : "")).join(" ") ??
+    ""
+  );
+}
+
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const params = useParams();
@@ -49,7 +86,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const { user } = useUser();
   const readDoc = useRef(false);
   const [isBookMarked, setIsBookMarked] = useState(false);
-  const [titles, setTitles] = useState<string[]>([]);
+  const [titles, setTitles] = useState<
+    { titleWithIcons: any; title: string }[]
+  >([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -106,9 +145,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       const doc = parser.parseFromString(post?.content, "text/html");
       const body = doc.body;
 
-      const preElement = body.querySelector("pre");
-
-      console.log("preElement - ", preElement?.innerText);
+      // const preElement = body.querySelector("pre");
 
       function trimArray(arr: ChildNode[]) {
         let index = 0;
@@ -148,7 +185,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               return (
                 <Highlight
                   theme={themes.oneDark}
-                  code={preElement?.innerText ?? ""}
+                  code={transformObjectToCodeString(children[0])}
                   language="tsx"
                 >
                   {({
@@ -204,16 +241,16 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             }
 
             if (type === "section") {
-              let _title = children[0]
+              let title = children[0]
                 .find((c: any) => c.props?.className?.includes("styles_title"))
                 ?.props?.children.find((c: any) => c.type === "h2")
                 .props.children;
 
-              const title = _title
-                .map((c: any) => (typeof c === "string" ? c.trim() : ""))
-                .join(" ");
-
-              title && setTitles((prev) => [...prev, title]);
+              title &&
+                setTitles((prev) => [
+                  ...prev,
+                  { titleWithIcons: title, title: filterAndTrimStrings(title) },
+                ]);
 
               console.log("title | |||| - ", title);
 
@@ -222,7 +259,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               return createElement(
                 type,
                 {
-                  id: title,
+                  id: filterAndTrimStrings(title),
                   ...props,
                   style: { paddingTop: "10px" },
                   className: isFirstSection ? "first_section" : "",
@@ -639,13 +676,13 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 >
                   In this article:
                 </h3>
-                {titles.map((title, index) => (
+                {titles.map((titleMap, index) => (
                   <>
                     <hr className="border-dashed border-[#1f1d1a4d] my-2" />
                     <div
                       className="flex gap-2 items-center cursor-pointer"
                       onClick={() => {
-                        router.push("#" + title);
+                        router.push("#" + titleMap.title);
                       }}
                     >
                       {/* <Image
@@ -658,12 +695,13 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         style={{
                           fontWeight: 400,
                           fontVariationSettings: '"wght" 500,"opsz" 10',
-                          display: "flex",
                           alignItems: "center",
                           gap: "4px",
+                          display: "grid",
+                          gridTemplateColumns: "16px 1fr",
                         }}
                       >
-                        {title}
+                        {titleMap.titleWithIcons}
                       </h3>
                     </div>
                   </>
