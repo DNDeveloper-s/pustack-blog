@@ -102,3 +102,25 @@ export const useGetFlagshipPost = () => {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
+
+interface UseGetPostsByCategoryOptions {
+  category?: string | null;
+}
+export const useGetPostsByCategory = ({
+  category,
+}: UseGetPostsByCategoryOptions) => {
+  const getPostsByCategory = async ({ queryKey }: QueryFunctionContext) => {
+    const [, category] = queryKey as [string, string];
+    if (!category || typeof category !== "string") {
+      throw new Error("Category is required");
+    }
+    const posts = await Post.getByCategory(category);
+    return posts;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_POSTS_BY_CATEGORY(category),
+    queryFn: getPostsByCategory,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};

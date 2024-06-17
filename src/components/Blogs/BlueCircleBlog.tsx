@@ -63,11 +63,5 @@ export default function BlueCircleBlog({
     </div>
   );
 
-  return noLink ? (
-    content
-  ) : (
-    <Link href={`/${post.id}`}>
-      <a>{content}</a>
-    </Link>
-  );
+  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
 }

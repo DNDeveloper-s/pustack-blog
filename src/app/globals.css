@@ -1869,6 +1869,7 @@ ul {
   border-collapse: separate;
   border-spacing: 2px;
   border-color: gray;
+  border: 1px solid #dadada;
 }
 .no-preflight thead,
 .no-preflight tbody,
@@ -1881,6 +1882,11 @@ ul {
 .no-preflight th {
   padding: 1px;
   vertical-align: inherit;
+  border: 1px solid #dadada;
+  min-width: 2em;
+  padding: 0.4em;
+  user-select: text;
+  vertical-align: middle;
 }
 .no-preflight th {
   font-weight: bold;
@@ -2173,4 +2179,47 @@ input::placeholder {
 .input-feedback.error {
   color: #1f1d1a;
   background-color: #d79987;
+}
+
+.sticky_navbar_title {
+  color: #1f1d1a;
+  font-family: FeatureFlatHeadline;
+  font-size: 0.875rem;
+  margin-left: 10px;
+  position: relative;
+  white-space: nowrap;
+  font-weight: 395;
+  font-variation-settings: "wght" 495, "opsz" 10;
+}
+
+.styles_divider_vertical {
+  width: 1px;
+  border-top: 0;
+  border-left: 1px dashed rgba(31, 29, 26, 0.302);
+  height: unset;
+  margin: 10px 0;
+}
+
+.sticky_navbar {
+  animation: animStickyNavbar 0.35s linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes animStickyNavbar {
+  0% {
+    top: -12.5rem;
+    visibility: hidden;
+  }
+  1% {
+    visibility: visible;
+    top: -12.5rem;
+  }
+  50% {
+    visibility: visible;
+    top: -6.25rem;
+  }
+  100% {
+    visibility: visible;
+    top: 0;
+  }
 }

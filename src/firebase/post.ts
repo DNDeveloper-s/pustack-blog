@@ -375,6 +375,22 @@ export class Post {
     return docs;
   }
 
+  static async getByCategory(
+    category: string,
+    _limit: QueryParams["_limit"] = 4
+  ): Promise<Post[]> {
+    const postsRef = collection(db, "posts").withConverter(postConverter);
+    const _query = query(
+      postsRef,
+      where("topic", "==", category),
+      limit(_limit)
+    );
+
+    const docs = await getDocs(_query);
+
+    return compact(flattenQueryData(docs));
+  }
+
   static async getAll(): Promise<PostQuerySnapshot>;
   static async getAll({
     _startAfter,
