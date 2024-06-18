@@ -190,8 +190,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       }
       const trimmedContent = trimEmptyElements(body);
 
-      console.log("trimmedContent - ", trimmedContent);
-
       const content = parse(trimmedContent, {
         library: {
           createElement(type, props, ...children) {

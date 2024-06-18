@@ -71,10 +71,6 @@ export default function BlogPostCode({ code }: { code: any }) {
     }, 2000);
   };
 
-  useEffect(() => {
-    console.log("code | 123 | 1234 - ", code);
-  }, [code]);
-
   return (
     <Highlight
       theme={themes.oneDark}
