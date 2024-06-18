@@ -1,3 +1,5 @@
+"use client";
+
 import useScreenSize from "@/hooks/useScreenSize";
 import { Highlight, themes } from "prism-react-renderer";
 import { useEffect, useState } from "react";
@@ -9,22 +11,30 @@ function transformObjectToCodeString(object: any) {
   let codeLines = [];
 
   // Helper function to extract text from the object
-  function extractText(node: any) {
+  function extractText(node: any): string {
     if (typeof node === "string") {
       return node;
     } else if (node?.props?.children) {
       return node.props.children.map(extractText).join("");
     } else if (node?.type === "br") {
       return "\n"; // Handle line breaks
+    } else if (node?.props?.code?.length > 0) {
+      return transformObjectToCodeString(node.props.code);
     } else {
       return "";
     }
   }
 
-  // Iterate over the object array
-  for (let i = 0; i < object.length; i++) {
-    const line = object[i];
-    const text = extractText(line);
+  if (object instanceof Array) {
+    // Iterate over the object array
+    for (let i = 0; i < object.length; i++) {
+      const line = object[i];
+      const text = extractText(line);
+      codeLines.push(text);
+    }
+  } else if (object instanceof Object) {
+    // Extract text from the object
+    const text = extractText(object);
     codeLines.push(text);
   }
 
@@ -60,6 +70,10 @@ export default function BlogPostCode({ code }: { code: any }) {
       setCopied(false);
     }, 2000);
   };
+
+  useEffect(() => {
+    console.log("code | 123 | 1234 - ", code);
+  }, [code]);
 
   return (
     <Highlight

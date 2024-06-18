@@ -65,7 +65,7 @@ export function srcReducer(acc: any, curr: any) {
 }
 
 export function toDashCase(str: string) {
-  return str.toLowerCase().split(" ").join("-");
+  return str.toLowerCase().trim().split(" ").join("-");
 }
 
 export function flattenDocumentData<T>(data: DocumentSnapshot<T>) {
