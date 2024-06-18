@@ -33,7 +33,7 @@ import usePageTime from "@/hooks/usePageTime";
 import { useUser } from "@/context/UserContext";
 import { db } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
-import { FaStar } from "react-icons/fa6";
+import { FaCopy, FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../shared/BlogImage";
 import { HiOutlineExternalLink } from "react-icons/hi";
 import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
@@ -44,6 +44,8 @@ import BlogPostShareLinks from "./BlogPostShareLinks";
 import BlogPostStickyNavbar from "./BlogPostStickyNavbar";
 import useInView from "@/hooks/useInView";
 import MoreFromMinerva from "./MoreFromMinerva";
+import BlogPostCode from "./BlogPostCode";
+import ScrollableContent from "../shared/ScrollableComponent";
 
 function transformObjectToCodeString(object: any) {
   // Initialize an array to hold the lines of code
@@ -194,74 +196,18 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         library: {
           createElement(type, props, ...children) {
             if (type === "pre") {
-              console.log("children - ", children);
-
-              return (
-                <Highlight
-                  theme={themes.oneDark}
-                  code={transformObjectToCodeString(children[0])}
-                  language="tsx"
-                >
-                  {({
-                    className,
-                    style,
-                    tokens,
-                    getLineProps,
-                    getTokenProps,
-                  }) => {
-                    console.log("tokens - ", tokens);
-                    return (
-                      <pre
-                        style={{
-                          ...style,
-                          width: "100%",
-                          overflow: "auto",
-                          padding: "10px",
-                          borderRadius: "10px",
-                          height:
-                            calculatePreHeightByLineNumber(
-                              isDesktopScreen
-                                ? 20
-                                : isTabletScreen
-                                ? 10
-                                : isMobileScreen
-                                ? 5
-                                : 10
-                            ) + "px",
-                        }}
-                      >
-                        <code style={{ fontSize: "14px" }}>
-                          {tokens.map((line, i) => (
-                            <div key={i} {...getLineProps({ line })} style={{}}>
-                              <span
-                                style={{
-                                  color: "#9d9d9d",
-                                  marginRight: "15px",
-                                }}
-                              >
-                                {i + 1}
-                              </span>
-                              {line.map((token, key) => (
-                                <span key={key} {...getTokenProps({ token })} />
-                              ))}
-                            </div>
-                          ))}
-                        </code>
-                      </pre>
-                    );
-                  }}
-                </Highlight>
-              );
+              return <BlogPostCode code={children[0]} />;
             }
 
             if (type === "table") {
-              return createElement(
-                "div",
-                {
-                  className: "overflow-x-auto",
-                },
-                children[0]
-              );
+              return <ScrollableContent>{children[0]}</ScrollableContent>;
+              // return createElement(
+              //   "div",
+              //   {
+              //     className: "overflow-x-auto",
+              //   },
+              //   children[0]
+              // );
             }
 
             if (
@@ -391,10 +337,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       {!isInView && post && !isMobileScreen && (
         <BlogPostStickyNavbar post={post} />
       )}
-      <div className="max-w-[720px] mx-auto px-3 pb-10">
+      <div className="px-3 pb-10">
         <div
           ref={ref}
-          className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6"
+          className="grid divide-y max-w-[900px] mx-auto md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6"
         >
           <div className="pb-5 md:pb-0 md:pr-5">
             <div className="flex items-end justify-between">
@@ -653,7 +599,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" /> */}
 
         <MathJaxContext>
-          <div className="w-full max-w-[1440px] mx-auto py-2 mt-5 no-preflight blog-post-container">
+          <div className="w-full max-w-[720px] mx-auto py-2 mt-5 no-preflight blog-post-container">
             <MathJax>{hasPost && elements}</MathJax>
             {hasNoPost && (
               <div className="my-10 text-xl text-center text-red-500 uppercase">

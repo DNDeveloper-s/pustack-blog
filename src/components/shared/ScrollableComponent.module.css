@@ -1,0 +1,37 @@
+.wrapper {
+  position: relative;
+  overflow: hidden; /* Ensure shadows are contained within the wrapper */
+}
+
+.container {
+  overflow-x: auto;
+  position: relative;
+}
+
+.content {
+  display: inline-block;
+  white-space: nowrap; /* Ensure content is scrollable horizontally */
+}
+
+.shadow {
+  position: absolute; /* Position shadows relative to the wrapper */
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  pointer-events: none; /* Allow clicks to pass through */
+  display: none; /* Initially hidden */
+}
+
+.shadow.visible {
+  display: block;
+}
+
+.left {
+  left: 0;
+  box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.5);
+}
+
+.right {
+  right: 0;
+  box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.5);
+}
