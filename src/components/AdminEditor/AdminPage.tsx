@@ -24,13 +24,19 @@ export default function AdminPage() {
   }>(null);
   const checkBoxRef = useRef<{ isChecked: boolean }>(null);
 
-  const { mutate: postCreatePost, isPending } = useCreatePost({
+  const {
+    mutate: postCreatePost,
+    isPending,
+    error,
+  } = useCreatePost({
     onSuccess: () => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
       router.push("/");
     },
   });
+
+  console.log("error - ", error);
 
   const handleContinue = (post: Post) => {
     setStep(2);

@@ -12,3 +12,5 @@ export { default as notableImage } from "./images/notable.png";
 export { default as dotImage } from "./images/dot-image.png";
 export { default as minervaImage } from "./images/minerva.svg";
 export { default as ampersandImage } from "./images/ampersand.png";
+export { default as minervaMiniImage } from "./images/minerva-mini.svg";
+export { default as owlImage } from "./images/owl.svg";

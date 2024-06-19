@@ -338,9 +338,10 @@ export function NavbarDesktop() {
           <Logo
             linkStyle={{
               display: "block",
-              height: "60px",
-              marginBottom: "25px",
+              height: "40px",
+              marginBottom: "45px",
             }}
+            withMini
           />
         </div>
       </Drawer>
@@ -726,6 +727,7 @@ export function NavbarTablet() {
               height: "60px",
               marginBottom: "25px",
             }}
+            withMini
           />
         </div>
       </Drawer>

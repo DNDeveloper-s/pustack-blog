@@ -86,9 +86,11 @@ export default function BlogPostCode({ code }: { code: any }) {
               borderRadius: "10px",
               margin: "10px 0",
               overflow: "hidden",
+              position: "relative",
             }}
+            className="blog-post-code-container"
           >
-            <div
+            {/* <div
               style={{
                 display: "flex",
                 padding: "4px 10px",
@@ -98,31 +100,37 @@ export default function BlogPostCode({ code }: { code: any }) {
                 borderBottom: "1px dashed #535353",
               }}
             >
-              <div
-                style={{
-                  fontSize: "13px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "2px",
-                  cursor: copied ? "default" : "pointer",
-                  padding: "1px 2px",
-                  borderRadius: "5px",
-                  color: "#f8f5d7",
-                }}
-                onClick={handleCopyCode}
-              >
-                {!copied ? (
-                  <>
-                    <FaCopy />
-                    <span>Copy Code</span>
-                  </>
-                ) : (
-                  <>
-                    <MdOutlineDone />
-                    <span>Copied!</span>
-                  </>
-                )}
-              </div>
+              
+            </div> */}
+            <div
+              style={{
+                fontSize: "13px",
+                display: "flex",
+                alignItems: "center",
+                gap: "2px",
+                cursor: copied ? "default" : "pointer",
+                padding: "2px 4px",
+                borderRadius: "5px",
+                color: "#f8f5d7",
+                position: "absolute",
+                right: "8px",
+                top: "5px",
+                backgroundColor: copied ? "#2e2e2e" : "#3e3e3e",
+              }}
+              onClick={handleCopyCode}
+              className="blog-post-code-copy-button"
+            >
+              {!copied ? (
+                <>
+                  <FaCopy />
+                  <span>Copy Code</span>
+                </>
+              ) : (
+                <>
+                  <MdOutlineDone />
+                  <span>Copied!</span>
+                </>
+              )}
             </div>
             <pre
               style={{

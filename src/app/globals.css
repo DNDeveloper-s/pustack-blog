@@ -2223,3 +2223,17 @@ input::placeholder {
     top: 0;
   }
 }
+
+.blog-post-code-copy-button {
+  /* opacity: 0.2; */
+}
+
+.blog-post-code-container:hover .blog-post-code-copy-button {
+  /* opacity: 1; */
+}
+
+strong {
+  font-family: FeatureFlatBold;
+  font-weight: 495;
+  font-variation-settings: "wght" 595, "opsz" 10;
+}

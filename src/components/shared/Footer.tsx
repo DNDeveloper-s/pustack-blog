@@ -42,10 +42,11 @@ export default function Footer() {
         <div className="w-full md:w-auto">
           <Logo
             linkStyle={{
-              width: "150px",
+              height: "25px",
               display: "block",
             }}
             linkClassName="md:my-0 my-2"
+            withMini
           />
         </div>
         {footerData.map((item) => (

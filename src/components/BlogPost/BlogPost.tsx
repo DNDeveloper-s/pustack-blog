@@ -404,7 +404,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                     }
                   }
                 >
-                  POLITICS
+                  {post?.topic}
                 </p>
               </div>
               {typeof navigator?.canShare === "function" &&
@@ -609,7 +609,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             )}
           </div>
         </MathJaxContext>
-        {post?.topic && <MoreFromMinerva category={post?.topic} />}
+        {post?.topic && (
+          <div className="max-w-[720px] w-full mx-auto">
+            <MoreFromMinerva category={post?.topic} />
+          </div>
+        )}
       </div>
       <Footer />
     </main>

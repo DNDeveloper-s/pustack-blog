@@ -383,6 +383,8 @@ export class Post {
     const _query = query(
       postsRef,
       where("topic", "==", category),
+      where("hasTextMeta", "==", true),
+      orderBy("timestamp", "desc"),
       limit(_limit)
     );
 
@@ -450,6 +452,16 @@ export const postConverter = {
       timestamp: serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,
+      meta: {
+        description: post.snippetData?.content ?? null,
+        image: post.snippetData?.image ?? null,
+        quote: post.snippetData?.quote ?? null,
+      },
+      hasTextMeta: !!post.snippetData?.content && !!post.topic,
+      hasImageMeta:
+        !!post.topic &&
+        !!post.snippetData?.image &&
+        !!post.snippetData?.content,
     };
   },
   fromFirestore: (snapshot: any) => {

@@ -304,9 +304,33 @@ export default function JoditEditor({
                   "broken-bulb",
                 ];
 
-                const images = imageNames.map((name) => {
+                const imageUrls = imageNames.map((name) => {
+                  return `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`;
+                });
+
+                const pngImageNames = [
+                  "furtherreading",
+                  "github",
+                  "google-maps",
+                  "google",
+                  "link",
+                  "linkedin",
+                  "quiz",
+                  "reporterstake",
+                  "selection",
+                  "social",
+                  "thenews",
+                  "viewfrom",
+                  "youtube",
+                ];
+
+                const pngImageUrls = pngImageNames.map((name) => {
+                  return `https://pustack-blog.vercel.app/assets/images/${name}.png`;
+                });
+
+                const images = [...imageUrls, ...pngImageUrls].map((url) => {
                   const image = editor.create.element("img", {
-                    src: `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`,
+                    src: url,
                     alt: "icon",
                     style: "width: 20px; height: auto",
                   });
@@ -319,7 +343,7 @@ export default function JoditEditor({
 
                   imageDiv.addEventListener("click", () => {
                     editor.selection.insertHTML(
-                      `<span style="display: inline-flex;"><img src="https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg" alt="icon" style="height: 16px; width: auto; max-width: 16px display: inline;" /></span>`,
+                      `<span style="display: inline-flex;"><img src="${url}" alt="icon" style="height: 16px; width: auto; max-width: 16px display: inline;" /></span>`,
                       true
                     );
                     close();

@@ -1,21 +1,98 @@
 import { useGetPostsByCategory } from "@/api/post";
-import { ampersandImage } from "@/assets";
+import { ampersandImage, avatar } from "@/assets";
 import { chunk, sortBy } from "lodash";
 import Image from "next/image";
-import { useMemo } from "react";
-import DesignedBlog from "../Blogs/DesignedBlog";
+import { ReactNode, useMemo } from "react";
+import { Post } from "@/firebase/post";
+import TrimmedPara from "../shared/TrimmedPara";
+import Link from "next/link";
+
+function MinervaBlogPost({ post }: { post: Post }) {
+  const wrapper = (children: ReactNode) => (
+    <div className="py-3 group">{children}</div>
+  );
+
+  const content = (
+    <>
+      <div className="flex">
+        <div className="mr-2">
+          <img
+            className="w-[38px] h-[38px]"
+            src={post.author.photoURL ?? avatar.src}
+            alt="avatar"
+          />
+        </div>
+        <div>
+          <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
+            {post.author.name}
+          </h3>
+          <p
+            className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
+            style={{
+              fontWeight: "300",
+              fontVariationSettings: '"wght" 400,"opsz" 10',
+            }}
+          >
+            {post.topic}
+          </p>
+        </div>
+      </div>
+      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
+      <div>
+        {post.snippetData?.title && (
+          <h2
+            className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+            style={{
+              fontSize: "24px",
+              fontWeight: "395",
+              fontVariationSettings: '"wght" 495,"opsz" 10',
+            }}
+          >
+            {post.snippetData?.title}
+          </h2>
+        )}
+        {post.snippetData?.content && (
+          <TrimmedPara
+            className="leading-[120%] group-hover:text-appBlue"
+            style={{
+              fontSize: "16px",
+              paddingTop: "8px",
+            }}
+            wordLimit={70}
+          >
+            {post.snippetData?.content}
+          </TrimmedPara>
+        )}
+        {/* {post.snippetData?.image && (
+          <BlogImage className="mt-2" src={post.snippetData?.image} />
+        )} */}
+      </div>
+    </>
+  );
+
+  return wrapper(<Link href={`/${post.id}`}>{content}</Link>);
+
+  // return noLink ? content :  (
+  //   <Link href={`/${post.id}`}>{content}</Link>
+  // ) : (
+  //   defaultBlogWithAuthor(size)
+  // );
+}
 
 interface MoreFromMinervaProps {
   category: string;
 }
 export default function MoreFromMinerva(props: MoreFromMinervaProps) {
-  const { data: posts } = useGetPostsByCategory({ category: props.category });
+  const { data: posts, error } = useGetPostsByCategory({
+    category: props.category,
+  });
 
   const chunkedPosts = useMemo(() => {
-    return chunk(sortBy(posts ?? [], "post.timestamp"), 2);
+    return chunk(posts ?? [], 2);
   }, [posts]);
 
-  console.log("chunkedPosts - ", chunkedPosts);
+  console.log("posts - ", posts);
+  console.log("error - ", error);
 
   return (
     posts && (
@@ -38,7 +115,9 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
         />
         <div className="styles_title flex items-center gap-3">
           <Image src={ampersandImage} width={20} height={16} alt="Ampersand" />
-          <h2 style={{ marginBottom: 0 }}>More from Minerva</h2>
+          <h2 style={{ marginBottom: 0, marginTop: "4px" }}>
+            More from Minerva
+          </h2>
         </div>
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
           {chunkedPosts?.map((postChunkOf2, i) => (
@@ -48,7 +127,7 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
             >
               {postChunkOf2.map((post, j) => (
                 <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
-                  <DesignedBlog size="sm" post={post} />
+                  <MinervaBlogPost post={post} />
                 </div>
               ))}
             </div>

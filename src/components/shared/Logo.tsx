@@ -1,4 +1,4 @@
-import { minervaImage } from "@/assets";
+import { minervaImage, minervaMiniImage, owlImage } from "@/assets";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,6 +26,7 @@ const styles = {
 export default function Logo({
   style = {},
   linkStyle = {},
+  withMini = false,
   className = "",
   linkClassName = "",
 }: {
@@ -33,9 +34,14 @@ export default function Logo({
   linkStyle?: React.CSSProperties;
   className?: string;
   linkClassName?: string;
+  withMini?: boolean;
 }) {
   return (
-    <Link href="/" style={linkStyle} className={linkClassName}>
+    <Link
+      href="/"
+      style={linkStyle}
+      className={"!flex items-center gap-1 " + linkClassName}
+    >
       {/* <p
         className={
           "font-larkenExtraBold leading-[120%] " + styles[size].className
@@ -44,8 +50,11 @@ export default function Logo({
       >
         MINERVA
       </p> */}
+      {withMini && (
+        <Image className="h-full w-auto" src={owlImage} alt="Minerva" />
+      )}
       <Image
-        className={"w-full " + className}
+        className={"h-full w-auto " + className}
         style={style}
         src={minervaImage}
         alt="Minerva"
