@@ -6,4 +6,9 @@ export const API_QUERY = {
     "get-posts-by-category",
     category,
   ],
+  QUERY_SIGNALS: ["query-signals"],
+  GET_SIGNAL_BY_ID: (signalId?: string | null) => [
+    "get-signal-by-id",
+    signalId,
+  ],
 };

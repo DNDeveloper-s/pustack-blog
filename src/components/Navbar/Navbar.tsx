@@ -192,7 +192,10 @@ export function NavbarDesktop() {
           <Link
             key={link.key}
             href={link.href}
-            className="text-appBlack font-featureBold"
+            className={
+              "font-featureBold " +
+              (pathname === link.href ? "text-primaryText" : "text-appBlack")
+            }
           >
             {link.label}
           </Link>

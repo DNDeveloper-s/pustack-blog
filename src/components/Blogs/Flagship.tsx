@@ -8,12 +8,12 @@ export default function Flagship() {
   return flagshipPost?.data() &&
     (flagshipPost.data()?.snippetData?.content ||
       flagshipPost.data()?.title) ? (
-    <div className="bg-secondary py-3 px-3">
-      <h2 className="font-featureRegular text-[20px] leading-[110%] mb-[10px]">
+    <div className="bg-secondary p-[10px]">
+      <h2 className="font-featureRegular text-[24px] leading-[110%] mb-[10px]">
         Today&apos;s Flagship
       </h2>
       <TrimmedPara
-        className="leading-[120%] font-featureHeadline text-[17px]"
+        className="leading-[120%] font-featureHeadline text-[18px]"
         style={{
           fontVariationSettings: '"wght" 300,"opsz" 10',
         }}

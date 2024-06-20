@@ -20,7 +20,7 @@ export default function BlogPostStickyNavbar({
         }}
       >
         <div className="flex items-center justify-start">
-          <Logo linkClassName="!h-[14px]" className="!h-[14px]" />
+          <Logo linkClassName="!h-[14px]" className="!h-[14px]" withMini />
           <h2 className="sticky_navbar_title flex-1 text-[14px] capitalize ">
             {post?.snippetData?.title}
           </h2>

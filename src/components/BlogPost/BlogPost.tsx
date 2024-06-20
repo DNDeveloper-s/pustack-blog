@@ -16,7 +16,14 @@ import {
 } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import Image from "next/image";
-import { avatar, dotImage, iImage, imageOne, notableImage } from "@/assets";
+import {
+  avatar,
+  dotImage,
+  iImage,
+  imageOne,
+  minervaMiniImage,
+  notableImage,
+} from "@/assets";
 import dayjs from "dayjs";
 import { Post } from "@/firebase/post";
 import parse, { DOMNode, domToReact, htmlToDOM } from "html-react-parser";
@@ -335,10 +342,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       {!isInView && post && !isMobileScreen && (
         <BlogPostStickyNavbar post={post} />
       )}
-      <div className="px-3 pb-10">
+      <div className="max-w-[900px] mx-auto px-3 pb-10">
         <div
           ref={ref}
-          className="grid divide-y max-w-[900px] mx-auto md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[2fr_1fr] my-6"
+          className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem_1fr] my-6"
         >
           <div className="pb-5 md:pb-0 md:pr-5">
             <div className="flex items-end justify-between">
@@ -442,12 +449,15 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               /> 
               </figure> */}
               <BlogImage
-                className="mt-4 w-[70%]"
+                className="mt-4 w-[77%]"
                 src={
                   post?.snippetData?.image
                     ? post?.snippetData?.image
                     : imageOne.src
                 }
+                style={{
+                  aspectRatio: "auto 700 / 453",
+                }}
               />
               {post && (
                 <BlogPostShareLinks post={post} appendClassName="mt-4" />
@@ -528,7 +538,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                           fontWeight: 400,
                           fontVariationSettings: '"wght" 500,"opsz" 10',
                           alignItems: "center",
-                          gap: "4px",
+                          gap: "10px",
                           display: "grid",
                           gridTemplateColumns: "16px 1fr",
                         }}
@@ -593,11 +603,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           </div>
         </div>
 
-        {/* <hr className="border-dashed border-[#1f1d1a4d] mt-2" />
-        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" /> */}
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
 
         <MathJaxContext>
-          <div className="w-full max-w-[720px] mx-auto py-2 mt-5 no-preflight blog-post-container">
+          <div className="w-full py-2 mt-5 no-preflight blog-post-container">
             <MathJax>{hasPost && elements}</MathJax>
             {hasNoPost && (
               <div className="my-10 text-xl text-center text-red-500 uppercase">
@@ -609,10 +619,15 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             )}
           </div>
         </MathJaxContext>
+        <div>
+          <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
+          <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+          <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+        </div>
         {post?.topic && (
-          <div className="max-w-[720px] w-full mx-auto">
-            <MoreFromMinerva category={post?.topic} />
-          </div>
+          // <div className="max-w-[720px] w-full mx-auto">
+          <MoreFromMinerva category={post?.topic} />
+          // </div>
         )}
       </div>
       <Footer />

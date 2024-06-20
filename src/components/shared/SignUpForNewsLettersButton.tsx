@@ -71,6 +71,7 @@ export default function SignUpForNewsLettersButton({
         style={{
           fontVariationSettings: '"wght" 400,"opsz" 10',
           borderInlineEnd: 0,
+          color: "#1f1d1a",
         }}
         ref={inputRef}
         onChange={() => {

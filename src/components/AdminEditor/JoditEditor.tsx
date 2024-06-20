@@ -343,7 +343,7 @@ export default function JoditEditor({
 
                   imageDiv.addEventListener("click", () => {
                     editor.selection.insertHTML(
-                      `<span style="display: inline-flex;"><img src="${url}" alt="icon" style="height: 16px; width: auto; max-width: 16px display: inline;" /></span>`,
+                      `<span class="image-icon" style="display: inline-flex;"><img src="${url}" alt="icon" style="height: 100%; width: 100%; object-fit: contain; display: inline;" /></span>`,
                       true
                     );
                     close();
