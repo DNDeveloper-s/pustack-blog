@@ -125,7 +125,9 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
                 key={i}
                 className={
                   "grid divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
-                  (posts?.length === 1 ? " grid-cols-1" : " grid-cols-2")
+                  (posts?.length === 1
+                    ? " grid-cols-1 md:grid-cols-2"
+                    : " grid-cols-2")
                 }
               >
                 {postChunkOf2.map((post, j) => (
