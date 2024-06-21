@@ -84,7 +84,7 @@ export const useQuerySignals = ({
     const signals = await Signal.getAll({
       _flatten: true,
       _startAfter: pageParam,
-      _limit: 4,
+      _limit: 10,
     });
     return signals;
   };

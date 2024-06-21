@@ -90,7 +90,7 @@ export function NavbarDesktop() {
           boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
       >
-        <header className="w-full max-w-[1440px] mx-auto py-2">
+        <header className="w-full max-w-[1440px] mx-auto py-2 px-3">
           <div className="flex">
             <div className="flex-1 ">
               <div className="flex items-center uppercase font-helvetica gap-2 text-[10px]">
@@ -429,7 +429,7 @@ export function NavbarTablet() {
           boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
       >
-        <header className="w-full max-w-[1440px] mx-auto py-2">
+        <header className="w-full max-w-[1440px] mx-auto py-2 px-3">
           <div className="flex">
             <div className="flex-1 ">
               <div className="flex items-center uppercase whitespace-nowrap font-helvetica gap-2 text-[10px]">

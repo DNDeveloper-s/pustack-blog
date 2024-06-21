@@ -195,7 +195,7 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
   }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
 
   return (
-    <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px]">
+    <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] px-3">
       {hasSignals && (
         <>
           <div className="flex items-center">
