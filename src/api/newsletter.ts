@@ -1,6 +1,5 @@
 import { API_QUERY } from "@/config/api-query";
 import { useUser } from "@/context/UserContext";
-import { toDashCase } from "@/firebase/post";
 import { db } from "@/lib/firebase";
 import { SHA256 } from "crypto-js";
 import {
@@ -15,6 +14,7 @@ import {
   setDoc,
   writeBatch,
 } from "firebase/firestore";
+import { toDashCase } from "@/firebase/signal";
 
 interface SignUpNewsLetter {
   // id: item.key,

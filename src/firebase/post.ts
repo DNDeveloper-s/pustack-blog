@@ -22,6 +22,7 @@ import {
   where,
 } from "firebase/firestore";
 import { compact, keysIn } from "lodash";
+import { toDashCase } from "./signal";
 
 export interface Author {
   name: string;
@@ -62,10 +63,6 @@ function textContentReducer(acc: any, curr: any) {
 export function srcReducer(acc: any, curr: any) {
   if (curr.classList.contains("blog-image")) acc.push(curr.src);
   return acc;
-}
-
-export function toDashCase(str: string) {
-  return str.toLowerCase().trim().split(" ").join("-");
 }
 
 export function flattenDocumentData<T>(data: DocumentSnapshot<T>) {

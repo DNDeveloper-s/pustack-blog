@@ -7,7 +7,7 @@ import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 export default async function SignalPage() {
   // const signals = await Signal.getAll({ _flatten: true });
   const signalsRef = collection(db, "signals");
-  let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(50));
+  let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(4));
 
   const docs = await getDocs(_query);
 

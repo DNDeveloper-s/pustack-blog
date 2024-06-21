@@ -1,15 +1,23 @@
 "use client";
 
-import { arrowSignalBlue, twoCirclesBlack } from "@/assets";
+import { arrowSignalBlue, emptyBox, twoCirclesBlack } from "@/assets";
 import Image from "next/image";
 import classes from "./Signals.module.css";
 import { Signal } from "@/firebase/signal";
 import { useQuerySignals } from "@/api/signal";
-import { createElement, useEffect, useState } from "react";
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import parse from "html-react-parser";
 import BlogPostCode from "../BlogPost/BlogPostCode";
 import ScrollableContent from "../shared/ScrollableComponent";
 import { BlogImageDefault } from "../shared/BlogImage";
+import { Spinner } from "@nextui-org/spinner";
+import useInView from "@/hooks/useInView";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -68,13 +76,6 @@ function SignalComponent({ signal }: { signal: Signal }) {
 
             if (type === "table") {
               return <ScrollableContent>{children[0]}</ScrollableContent>;
-              // return createElement(
-              //   "div",
-              //   {
-              //     className: "overflow-x-auto",
-              //   },
-              //   children[0]
-              // );
             }
 
             if (
@@ -157,8 +158,18 @@ function SignalComponent({ signal }: { signal: Signal }) {
 }
 
 export default function Signals({ signals: _serverSignals }: { signals: any }) {
-  const { data: signals } = useQuerySignals({
-    initialData: _serverSignals.map(
+  const {
+    signals: _clientSignals,
+    isFetching,
+    isLoading,
+    fetchStatus,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useQuerySignals({});
+
+  const _serverFormedSignals = useMemo(() => {
+    return _serverSignals.map(
       (data: any) =>
         new Signal(
           data.title,
@@ -168,59 +179,48 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
           data.id,
           data.timestamp
         )
-    ),
-  });
+    );
+  }, [_serverSignals]);
 
-  console.log("signals - ", signals);
+  const signals = _clientSignals || _serverFormedSignals;
+  const hasSignals = signals?.length > 0;
+
+  const { ref, isInView } = useInView();
+
+  useEffect(() => {
+    if (!isFetching && !isFetchingNextPage && isInView) fetchNextPage();
+  }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
 
   return (
     <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px]">
-      <div className="flex items-center">
-        <div>
-          <Image alt="Signals" src={twoCirclesBlack} className="w-[20px]" />
-        </div>
-        <h3 className={classes.title}>SIGNALS</h3>
-      </div>
-      <div className={classes.label}>
-        <strong>Minerva Sinals:</strong>
-        {" Global insights on today's biggest stories."}
-      </div>
-      {signals.map((signal: Signal) => (
-        <SignalComponent key={signal._id} signal={signal} />
-      ))}
-      <div className={classes.body_block}>
-        <div className={classes.connector}>
-          <h3 className={classes.signal_title}>
-            Climate change affects athletes even before the games
-          </h3>
-          <div className={classes.signal_sources}>
-            <div className="flex items-center">
-              <div>
-                <Image
-                  className="w-[14px]"
-                  src={arrowSignalBlue}
-                  alt="Sources"
-                />
-              </div>
-              <span className="ml-[8px]">Sources: &nbsp;</span>
+      {hasSignals && (
+        <>
+          <div className="flex items-center">
+            <div>
+              <Image alt="Signals" src={twoCirclesBlack} className="w-[20px]" />
             </div>
-            <span>THe Washington Post , Euro News</span>
+            <h3 className={classes.title}>SIGNALS</h3>
           </div>
-          <p className={classes.signal_para}>
-            While athletes training for the Olympics use heat labs to factor in
-            high temperatures and humidity, it’s harder for team sports
-            participants and those training for knock-out competitions scheduled
-            throughout the day to prepare for such circumstances, the BBC’s
-            sports correspondent said. Athletes from countries most vulnerable
-            to climate change are also impacted: Rugby players can no longer
-            train on the beaches of Namatakula, Fiji, due to severe erosion;
-            Kenyan athletes can only train in the evenings or very early
-            mornings to escape the heat; and Pakistan’s sports fields took
-            several months to recover from devastating floods, a sport and
-            climate change expert wrote in The Guardian.
-          </p>
+          <div className={classes.label}>
+            <strong>Minerva Sinals:</strong>
+            {" Global insights on today's biggest stories."}
+          </div>
+          {signals.map((signal: Signal) => (
+            <SignalComponent key={signal._id} signal={signal} />
+          ))}
+        </>
+      )}
+      {!hasSignals && (
+        <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
+          <Image alt="No Signals Found" src={emptyBox} className="w-[150px]" />
+          <p>No Signals Found</p>
         </div>
-      </div>
+      )}
+      {hasNextPage && (
+        <div ref={ref} className="w-full flex items-center justify-center py-4">
+          <Spinner color="warning" size="lg" label="Fetching more signals..." />
+        </div>
+      )}
     </div>
   );
 }

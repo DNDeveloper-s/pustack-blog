@@ -24,7 +24,13 @@ export interface Author {
 }
 
 export function toDashCase(str: string) {
-  return str.toLowerCase().trim().split(" ").join("-");
+  // Convert title to lowercase
+  str = str.toLowerCase();
+  // Replace special characters with an empty string
+  str = str.replace(/[^a-z0-9\s-]/g, "");
+  // Replace spaces and consecutive hyphens with a single hyphen
+  str = str.replace(/[\s]+/g, "-");
+  return str.trim();
 }
 
 export function flattenDocumentData<T>(data: DocumentSnapshot<T>) {
@@ -60,8 +66,13 @@ type SignalQuerySnapshot = QuerySnapshot<
   ReturnType<typeof signalConverter.toFirestore>
 >;
 
+type GetAllReturnType<T> = {
+  data: T;
+  lastDoc: SignalDocumentSnapshot;
+};
+
 interface QueryParams {
-  _startAfter?: string;
+  _startAfter?: any;
   _limit?: number;
   _flatten?: boolean;
 }
@@ -171,14 +182,14 @@ export class Signal {
     return flatten ? flattenDocumentData(data) : data;
   }
 
-  static async getAll(): Promise<SignalQuerySnapshot>;
+  static async getAll(): Promise<GetAllReturnType<SignalQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
   }: {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
-  }): Promise<SignalQuerySnapshot>;
+  }): Promise<GetAllReturnType<SignalQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
@@ -186,7 +197,7 @@ export class Signal {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: false;
-  }): Promise<SignalQuerySnapshot>;
+  }): Promise<GetAllReturnType<SignalQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
@@ -194,12 +205,14 @@ export class Signal {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: true;
-  }): Promise<Signal[]>;
+  }): Promise<GetAllReturnType<Signal[]>>;
   static async getAll({
     _startAfter,
     _limit,
     _flatten,
-  }: QueryParams & { _flatten: false }): Promise<SignalQuerySnapshot>;
+  }: QueryParams & { _flatten: false }): Promise<
+    GetAllReturnType<SignalQuerySnapshot>
+  >;
   static async getAll(queryParams?: QueryParams) {
     const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
     const signalsRef = collection(db, "signals").withConverter(signalConverter);
@@ -216,7 +229,10 @@ export class Signal {
 
     const docs = await getDocs(_query);
 
-    return _flatten ? flattenQueryData(docs) : docs;
+    return {
+      data: _flatten ? flattenQueryData(docs) : docs,
+      lastDoc: docs.docs[docs.docs.length - 1],
+    };
   }
 }
 
