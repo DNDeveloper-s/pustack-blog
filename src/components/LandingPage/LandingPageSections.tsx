@@ -15,7 +15,7 @@ export default function LandingPageSections() {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
-    <div className="px-3 md:px-0">
+    <div className="">
       <Politics />
       <Business />
       <Technology />
@@ -23,11 +23,7 @@ export default function LandingPageSections() {
       <NetZero />
       <Security />
       <Media />
-      {isTabletScreen && (
-        <div className="px-3">
-          <SignUpForNewsLetters />
-        </div>
-      )}
+      {isTabletScreen && <SignUpForNewsLetters />}
       <Footer />
     </div>
   );

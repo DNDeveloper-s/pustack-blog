@@ -122,7 +122,7 @@ export default function Dashboard({ posts: _serverPosts }: { posts: any }) {
           ))}
         </div>
       </div>
-      <div className="md:border-x border-dashed border-[#1f1d1a4d] px-3 md:px-7">
+      <div className="md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
         <DesignedBlog post={postsByPosition.titlePost as Post} />
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
           {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
@@ -145,7 +145,7 @@ export default function Dashboard({ posts: _serverPosts }: { posts: any }) {
           </div> */}
         </div>
       </div>
-      <div className="px-3 md:pl-7 md:pr-0">
+      <div className="px-0 md:pl-7 md:pr-0">
         {postsByPosition.rightPosts?.map((post) => (
           <DesignedBlog key={post.id} post={post} />
         ))}

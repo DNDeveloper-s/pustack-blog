@@ -18,7 +18,7 @@ export default async function SignalPage() {
   }));
 
   return (
-    <main className="min-h-screen w-full max-w-[1440px] mx-auto">
+    <main className="min-h-screen w-full max-w-[1440px] px-3 mx-auto">
       <Navbar />
       <Signals signals={signals} />
     </main>

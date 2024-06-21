@@ -24,7 +24,7 @@ export default async function Home() {
   // const doc1 = await getAuthenticatedAppForUser();
 
   return (
-    <main className="w-full max-w-[1440px] mx-auto px-0 md:px-3">
+    <main className="w-full max-w-[1440px] mx-auto px-3">
       <Navbar />
       <div className="">
         <Dashboard posts={posts} />

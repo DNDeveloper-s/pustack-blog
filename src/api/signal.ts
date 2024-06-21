@@ -72,6 +72,19 @@ import { useMemo } from "react";
 //   });
 // };
 
+export const useGetFlagshipSignal = () => {
+  const getFlagshipSignal = async () => {
+    const posts = await Signal.getAll({ _limit: 1 });
+    return posts.data.docs[0];
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_FLAGSHIP_SIGNAL,
+    queryFn: getFlagshipSignal,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
 export const useQuerySignals = ({
   // initialData,
   initialPageParam,

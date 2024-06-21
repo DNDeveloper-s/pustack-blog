@@ -12,4 +12,5 @@ export const API_QUERY = {
     signalId,
   ],
   GET_RECENT_POSTS: ["get-recent-posts"],
+  GET_FLAGSHIP_SIGNAL: ["get-flagship-signal"],
 };

@@ -819,7 +819,7 @@ export function NavbarMobile() {
   const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
   return (
-    <header className="w-full max-w-[1100px] mx-auto py-2 px-3 md:px-0">
+    <header className="w-full max-w-[1100px] mx-auto py-2">
       <div className="flex">
         <div className="flex-1 ">
           <div className="flex items-center uppercase whitespace-nowrap font-helvetica gap-2 text-[10px]">

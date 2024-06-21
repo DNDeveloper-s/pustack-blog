@@ -337,12 +337,12 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   }
 
   return (
-    <main className="max-w-[1440px] min-h-screen mx-auto md:px-2">
+    <main className="max-w-[1440px] min-h-screen mx-auto px-3">
       <Navbar />
       {!isInView && post && !isMobileScreen && (
         <BlogPostStickyNavbar post={post} />
       )}
-      <div className="max-w-[900px] mx-auto px-3 pb-10">
+      <div className="max-w-[900px] mx-auto pb-10">
         <div
           ref={ref}
           className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem_1fr] my-6"
@@ -624,9 +624,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         </div>
         <MoreFromMinerva />
       </div>
-      <div className="px-3">
-        <Footer />
-      </div>
+      <Footer />
     </main>
   );
 }
