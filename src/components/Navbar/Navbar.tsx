@@ -46,12 +46,26 @@ export function NavbarDesktop() {
   const toggleDrawer = () => {
     setIsNavOpen((prevState) => !prevState);
   };
+  const [isOnTop, setIsOnTop] = useState(true);
 
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
     time: dayjs().format("h:mm A"),
     date: dayjs().format("dddd MMMM DD, YYYY"),
   });
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsOnTop(window.scrollY === 0);
+    }
+
+    handleScroll();
+    addEventListener("scroll", handleScroll);
+
+    return () => {
+      removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,7 +87,7 @@ export function NavbarDesktop() {
       <div
         className="w-full fixed top-0 left-0 bg-primary z-[1000]"
         style={{
-          boxShadow: "0 0 2px rgba(0,0,0,0.25)",
+          boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
       >
         <header className="w-full max-w-[1440px] mx-auto py-2">
@@ -372,12 +386,25 @@ export function NavbarTablet() {
   const toggleDrawer = () => {
     setIsNavOpen((prevState) => !prevState);
   };
+  const [isOnTop, setIsOnTop] = useState(true);
 
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
     time: dayjs().format("h:mm A"),
     date: dayjs().format("dddd MMMM DD, YYYY"),
   });
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsOnTop(window.scrollY === 0);
+    }
+
+    addEventListener("scroll", handleScroll);
+
+    return () => {
+      removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -399,7 +426,7 @@ export function NavbarTablet() {
       <div
         className="w-full fixed top-0 left-0 bg-primary z-[1000]"
         style={{
-          boxShadow: "0 0 2px rgba(0,0,0,0.25)",
+          boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
       >
         <header className="w-full max-w-[1440px] mx-auto py-2">
