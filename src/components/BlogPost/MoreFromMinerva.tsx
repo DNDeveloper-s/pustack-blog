@@ -123,7 +123,10 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
             {chunkedPosts?.map((postChunkOf2, i) => (
               <div
                 key={i}
-                className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+                className={
+                  "grid divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                  (posts?.length === 1 ? " grid-cols-1" : " grid-cols-2")
+                }
               >
                 {postChunkOf2.map((post, j) => (
                   <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>

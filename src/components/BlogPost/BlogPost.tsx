@@ -624,7 +624,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         </div>
         <MoreFromMinerva />
       </div>
-      <Footer />
+      <div className="px-3">
+        <Footer />
+      </div>
     </main>
   );
 }
