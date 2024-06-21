@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Signals from "@/components/Signals/Signals";
+import Footer from "@/components/shared/Footer";
 import { Signal, flattenQueryDataWithId } from "@/firebase/signal";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";

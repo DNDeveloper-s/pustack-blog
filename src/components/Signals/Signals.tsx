@@ -18,6 +18,7 @@ import ScrollableContent from "../shared/ScrollableComponent";
 import { BlogImageDefault } from "../shared/BlogImage";
 import { Spinner } from "@nextui-org/spinner";
 import useInView from "@/hooks/useInView";
+import Footer from "../shared/Footer";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -195,43 +196,57 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
   }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
 
   return (
-    <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] px-3">
-      {hasSignals && (
-        <>
-          <div className="flex items-center">
-            <div>
-              <Image alt="Signals" src={twoCirclesBlack} className="w-[20px]" />
+    <div className="px-3">
+      <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] mb-2">
+        {hasSignals && (
+          <>
+            <div className="flex items-center">
+              <div>
+                <Image
+                  alt="Signals"
+                  src={twoCirclesBlack}
+                  className="w-[20px]"
+                />
+              </div>
+              <h3 className={classes.title}>SIGNALS</h3>
             </div>
-            <h3 className={classes.title}>SIGNALS</h3>
+            <div className={classes.label}>
+              <strong>Minerva Sinals:</strong>
+              {" Global insights on today's biggest stories."}
+            </div>
+            {signals.map((signal: Signal) => (
+              <SignalComponent key={signal._id} signal={signal} />
+            ))}
+          </>
+        )}
+        {!hasSignals && (
+          <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
+            <Image
+              alt="No Signals Found"
+              src={emptyBox}
+              className="w-[150px]"
+            />
+            <p>No Signals Found</p>
           </div>
-          <div className={classes.label}>
-            <strong>Minerva Sinals:</strong>
-            {" Global insights on today's biggest stories."}
+        )}
+        {hasNextPage && (
+          <div
+            ref={ref}
+            className="w-full flex items-center justify-center py-4"
+          >
+            <Spinner
+              classNames={{
+                circle1: "blue-border-b",
+                circle2: "blue-border-b",
+              }}
+              color="warning"
+              size="lg"
+              label="Fetching more signals..."
+            />
           </div>
-          {signals.map((signal: Signal) => (
-            <SignalComponent key={signal._id} signal={signal} />
-          ))}
-        </>
-      )}
-      {!hasSignals && (
-        <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
-          <Image alt="No Signals Found" src={emptyBox} className="w-[150px]" />
-          <p>No Signals Found</p>
-        </div>
-      )}
-      {hasNextPage && (
-        <div ref={ref} className="w-full flex items-center justify-center py-4">
-          <Spinner
-            classNames={{
-              circle1: "blue-border-b",
-              circle2: "blue-border-b",
-            }}
-            color="warning"
-            size="lg"
-            label="Fetching more signals..."
-          />
-        </div>
-      )}
+        )}
+      </div>
+      {!hasNextPage && <Footer />}
     </div>
   );
 }
