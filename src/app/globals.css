@@ -2266,3 +2266,7 @@ strong {
 .blog-post-container ol li:not(:last-child) {
   margin-bottom: 9px;
 }
+
+.blue-border-b {
+  border-bottom-color: #243bb5;
+}

@@ -218,7 +218,15 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
       )}
       {hasNextPage && (
         <div ref={ref} className="w-full flex items-center justify-center py-4">
-          <Spinner color="warning" size="lg" label="Fetching more signals..." />
+          <Spinner
+            classNames={{
+              circle1: "blue-border-b",
+              circle2: "blue-border-b",
+            }}
+            color="warning"
+            size="lg"
+            label="Fetching more signals..."
+          />
         </div>
       )}
     </div>
