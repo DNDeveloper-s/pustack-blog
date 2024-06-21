@@ -99,7 +99,10 @@ function SignalJodit(props: any, ref: any) {
       let index = 0;
       while (true) {
         const el = arr[index];
-        if (el.textContent?.trim() !== "") {
+        if (
+          el.textContent?.trim() !== "" ||
+          !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
+        ) {
           break;
         }
         index++;
@@ -135,7 +138,8 @@ function SignalJodit(props: any, ref: any) {
 
     // // postCreatePost(post);
     // handleContinue(post);
-    postCreateSignal(signal);
+    console.log("trimmedContent - ", trimmedContent);
+    // postCreateSignal(signal);
   }
 
   const updateLocalStorage = (key: string, value: any) => {

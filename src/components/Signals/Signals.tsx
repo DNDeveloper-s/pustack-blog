@@ -44,7 +44,10 @@ function SignalComponent({ signal }: { signal: Signal }) {
         let index = 0;
         while (true) {
           const el = arr[index];
-          if (el.textContent?.trim() !== "") {
+          if (
+            el.textContent?.trim() !== "" ||
+            !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
+          ) {
             break;
           }
           index++;
@@ -85,11 +88,11 @@ function SignalComponent({ signal }: { signal: Signal }) {
             ) {
               return (
                 <BlogImageDefault
-                  className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+                  className="mx-auto max-w-full flex items-center justify-center"
                   // @ts-ignore
                   src={props.src}
                   imageProps={{
-                    className: "max-h-[500px] object-contain max-w-full",
+                    className: "object-contain max-w-full",
                   }}
                 />
               );

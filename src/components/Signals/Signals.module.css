@@ -100,3 +100,7 @@
   line-height: 1.6875rem;
   margin-bottom: 10px;
 }
+
+.signal_para > *:not(:first-child) {
+  margin-top: 5px;
+}
