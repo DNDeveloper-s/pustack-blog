@@ -229,7 +229,7 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
             <p>No Signals Found</p>
           </div>
         )}
-        {hasNextPage && (
+        {(hasNextPage || isFetching || isLoading) && (
           <div
             ref={ref}
             className="w-full flex items-center justify-center py-4"
@@ -246,7 +246,7 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
           </div>
         )}
       </div>
-      {!hasNextPage && <Footer />}
+      {!hasNextPage && !isFetching && !isLoading && <Footer />}
     </div>
   );
 }
