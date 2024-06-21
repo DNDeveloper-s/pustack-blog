@@ -23,7 +23,7 @@ export default function Flagship() {
           ""}
       </TrimmedPara>
       <Link
-        href={`/${flagshipPost.id}`}
+        href={`/signals`}
         className="font-helvetica text-[14px] mt-[10px] block"
       >
         READ IT →
