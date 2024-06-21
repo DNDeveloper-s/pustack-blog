@@ -19,6 +19,7 @@ import { BlogImageDefault } from "../shared/BlogImage";
 import { Spinner } from "@nextui-org/spinner";
 import useInView from "@/hooks/useInView";
 import Footer from "../shared/Footer";
+import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -245,8 +246,17 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
             />
           </div>
         )}
+        {!hasNextPage && !isFetching && !isLoading && (
+          <>
+            <MoreFromMinerva />
+          </>
+        )}
       </div>
-      {!hasNextPage && !isFetching && !isLoading && <Footer />}
+      {!hasNextPage && !isFetching && !isLoading && (
+        <>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

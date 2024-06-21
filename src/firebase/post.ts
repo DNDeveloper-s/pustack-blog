@@ -390,6 +390,22 @@ export class Post {
     return compact(flattenQueryData(docs));
   }
 
+  static async getRecentPosts(
+    _limit: QueryParams["_limit"] = 4
+  ): Promise<Post[]> {
+    const postsRef = collection(db, "posts").withConverter(postConverter);
+    const _query = query(
+      postsRef,
+      where("hasTextMeta", "==", true),
+      orderBy("timestamp", "desc"),
+      limit(_limit)
+    );
+
+    const docs = await getDocs(_query);
+
+    return compact(flattenQueryData(docs));
+  }
+
   static async getAll(): Promise<PostQuerySnapshot>;
   static async getAll({
     _startAfter,

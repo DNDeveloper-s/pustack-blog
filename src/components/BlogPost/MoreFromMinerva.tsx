@@ -1,4 +1,4 @@
-import { useGetPostsByCategory } from "@/api/post";
+import { useGetPostsByCategory, useGetRecentPosts } from "@/api/post";
 import { ampersandImage, avatar } from "@/assets";
 import { chunk, sortBy } from "lodash";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import { ReactNode, useMemo } from "react";
 import { Post } from "@/firebase/post";
 import TrimmedPara from "../shared/TrimmedPara";
 import Link from "next/link";
+import { Spinner } from "@nextui-org/spinner";
 
 function MinervaBlogPost({ post }: { post: Post }) {
   const wrapper = (children: ReactNode) => (
@@ -79,13 +80,9 @@ function MinervaBlogPost({ post }: { post: Post }) {
   // );
 }
 
-interface MoreFromMinervaProps {
-  category: string;
-}
+interface MoreFromMinervaProps {}
 export default function MoreFromMinerva(props: MoreFromMinervaProps) {
-  const { data: posts, error } = useGetPostsByCategory({
-    category: props.category,
-  });
+  const { data: posts, error, isLoading } = useGetRecentPosts();
 
   const chunkedPosts = useMemo(() => {
     return chunk(posts ?? [], 2);
@@ -94,8 +91,10 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
   console.log("posts - ", posts);
   console.log("error - ", error);
 
+  const hasNoPosts = !isLoading && !posts?.length;
+
   return (
-    posts && (
+    !hasNoPosts && (
       <div>
         <hr
           style={{
@@ -119,26 +118,38 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
             More from Minerva
           </h2>
         </div>
-        <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-          {chunkedPosts?.map((postChunkOf2, i) => (
-            <div
-              key={i}
-              className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
-            >
-              {postChunkOf2.map((post, j) => (
-                <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
-                  <MinervaBlogPost post={post} />
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* <div className="pr-3">
+        {!isLoading ? (
+          <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+            {chunkedPosts?.map((postChunkOf2, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+              >
+                {postChunkOf2.map((post, j) => (
+                  <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
+                    <MinervaBlogPost post={post} />
+                  </div>
+                ))}
+              </div>
+            ))}
+            {/* <div className="pr-3">
             <BlogWithAuthorV2 size="sm" />
           </div>
           <div className="pl-3">
             <BlogWithAuthor size="sm" />
           </div> */}
-        </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-4">
+            <Spinner
+              size="lg"
+              classNames={{
+                circle1: "blue-border-b",
+                circle2: "blue-border-b",
+              }}
+            />
+          </div>
+        )}
       </div>
     )
   );

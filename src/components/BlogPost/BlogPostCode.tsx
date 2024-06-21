@@ -142,7 +142,8 @@ export default function BlogPostCode({ code }: { code: any }) {
                 borderRadius: 0,
                 display: "flex",
                 justifyContent: "flex-start",
-                height:
+                height: "auto",
+                maxHeight:
                   calculatePreHeightByLineNumber(
                     isDesktopScreen
                       ? 20

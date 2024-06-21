@@ -11,4 +11,5 @@ export const API_QUERY = {
     "get-signal-by-id",
     signalId,
   ],
+  GET_RECENT_POSTS: ["get-recent-posts"],
 };

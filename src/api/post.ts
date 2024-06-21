@@ -124,3 +124,19 @@ export const useGetPostsByCategory = ({
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
+
+interface UseGetRecentPostsOptions {
+  limit?: number;
+}
+export const useGetRecentPosts = (props?: UseGetRecentPostsOptions) => {
+  const getRecentPosts = async () => {
+    const posts = await Post.getRecentPosts(props?.limit ?? 4);
+    return posts;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_RECENT_POSTS,
+    queryFn: getRecentPosts,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};

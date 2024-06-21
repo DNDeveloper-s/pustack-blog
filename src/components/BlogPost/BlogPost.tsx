@@ -602,10 +602,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
             )}
           </div>
         </div>
-
         <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
         <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-
         <MathJaxContext>
           <div className="w-full py-2 mt-5 no-preflight blog-post-container">
             <MathJax>{hasPost && elements}</MathJax>
@@ -624,11 +622,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
         </div>
-        {post?.topic && (
-          // <div className="max-w-[720px] w-full mx-auto">
-          <MoreFromMinerva category={post?.topic} />
-          // </div>
-        )}
+        <MoreFromMinerva />
       </div>
       <Footer />
     </main>
