@@ -18,6 +18,20 @@ export default async function Home() {
     timestamp: doc.timestamp.toDate().toISOString(),
   }));
 
+  const signalsRef = collection(db, "signals");
+  let _signals_query = query(
+    signalsRef,
+    orderBy("timestamp", "desc"),
+    limit(10)
+  );
+
+  const signal_docs = await getDocs(_signals_query);
+
+  const signals = flattenQueryDataWithId(signal_docs).map((doc) => ({
+    ...doc,
+    timestamp: doc.timestamp.toDate().toISOString(),
+  }));
+
   // const docRef = doc(db, "posts", props.params.postId[0]);
   // const data = await getDoc(docRef);
   // const post = flattenDocumentData(data);
@@ -27,7 +41,7 @@ export default async function Home() {
     <main className="w-full max-w-[1440px] mx-auto px-3">
       <Navbar />
       <div className="">
-        <Dashboard posts={posts} />
+        <Dashboard posts={posts} signals={signals} />
         <LandingPageSections />
       </div>
     </main>

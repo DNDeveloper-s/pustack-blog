@@ -6,14 +6,18 @@ import {
   QuerySnapshot,
   collection,
   doc,
+  endAt,
+  endBefore,
   getDoc,
   getDocs,
   limit,
+  limitToLast,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
   startAfter,
+  startAt,
 } from "firebase/firestore";
 import { compact } from "lodash";
 
@@ -67,6 +71,7 @@ type SignalQuerySnapshot = QuerySnapshot<
 >;
 
 type GetAllReturnType<T> = {
+  firstDoc: SignalDocumentSnapshot;
   data: T;
   lastDoc: SignalDocumentSnapshot;
 };
@@ -75,6 +80,8 @@ interface QueryParams {
   _startAfter?: any;
   _limit?: number;
   _flatten?: boolean;
+  _startAt?: string | string[];
+  _direction?: "forward" | "backward";
 }
 
 const headings = {
@@ -213,23 +220,66 @@ export class Signal {
   }: QueryParams & { _flatten: false }): Promise<
     GetAllReturnType<SignalQuerySnapshot>
   >;
+  static async getAll({
+    _startAfter,
+    _limit,
+    _flatten,
+    _startAt,
+    _direction,
+  }: QueryParams & { _flatten: true }): Promise<
+    GetAllReturnType<SignalQuerySnapshot>
+  >;
   static async getAll(queryParams?: QueryParams) {
-    const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
+    const {
+      _startAfter,
+      _limit = 50,
+      _flatten,
+      _startAt,
+      _direction = "forward",
+    } = queryParams ?? {};
     const signalsRef = collection(db, "signals").withConverter(signalConverter);
     let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(_limit));
 
-    if (_startAfter) {
-      _query = query(
-        signalsRef,
-        orderBy("timestamp", "desc"),
-        startAfter(_startAfter),
-        limit(_limit)
-      );
+    if (_direction === "forward") {
+      if (_startAfter) {
+        _query = query(
+          signalsRef,
+          orderBy("timestamp", "desc"),
+          startAfter(_startAfter),
+          limit(_limit)
+        );
+      } else if (_startAt) {
+        const _doc = await getDoc(doc(signalsRef, _startAt as string));
+        _query = query(
+          signalsRef,
+          orderBy("timestamp", "desc"),
+          startAt(_doc),
+          limit(_limit)
+        );
+      }
+    } else if (_direction === "backward") {
+      if (_startAfter) {
+        _query = query(
+          signalsRef,
+          orderBy("timestamp", "desc"),
+          endBefore(_startAfter),
+          limitToLast(_limit)
+        );
+      } else if (_startAt) {
+        const _doc = await getDoc(doc(signalsRef, _startAt as string));
+        _query = query(
+          signalsRef,
+          orderBy("timestamp", "desc"),
+          endAt(_doc),
+          limit(_limit)
+        );
+      }
     }
 
     const docs = await getDocs(_query);
 
     return {
+      firstDoc: docs.docs[0],
       data: _flatten ? flattenQueryData(docs) : docs,
       lastDoc: docs.docs[docs.docs.length - 1],
     };
@@ -244,6 +294,7 @@ export const signalConverter = {
       author: signal.author,
       source: signal.source,
       timestamp: serverTimestamp(),
+      id: signal.id,
     };
   },
   fromFirestore: (snapshot: any) => {

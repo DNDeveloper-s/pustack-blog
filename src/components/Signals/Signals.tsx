@@ -20,6 +20,7 @@ import { Spinner } from "@nextui-org/spinner";
 import useInView from "@/hooks/useInView";
 import Footer from "../shared/Footer";
 import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
+import { Button } from "@nextui-org/button";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -144,7 +145,7 @@ function SignalComponent({ signal }: { signal: Signal }) {
   }, [signal?.content]);
 
   return (
-    <div className={classes.body_block}>
+    <div className={classes.body_block} id={signal.id}>
       <div className={classes.connector}>
         <h3 className={classes.signal_title}>{signal.title}</h3>
         <div className={classes.signal_sources}>
@@ -162,16 +163,26 @@ function SignalComponent({ signal }: { signal: Signal }) {
   );
 }
 
-export default function Signals({ signals: _serverSignals }: { signals: any }) {
+export default function Signals({
+  signals: _serverSignals,
+  startAt,
+}: {
+  signals: any;
+  startAt: string | string[] | undefined;
+}) {
   const {
     signals: _clientSignals,
     isFetching,
     isLoading,
     fetchStatus,
     hasNextPage,
+    hasPreviousPage,
     fetchNextPage,
+    isFetchingPreviousPage,
     isFetchingNextPage,
-  } = useQuerySignals({});
+    fetchPreviousPage,
+    error,
+  } = useQuerySignals({ startAt: startAt, limit: 5 });
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -189,6 +200,8 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
 
   const signals = _clientSignals || _serverFormedSignals;
   const hasSignals = signals?.length > 0;
+
+  console.log("error - ", error);
 
   const { ref, isInView } = useInView();
 
@@ -211,10 +224,31 @@ export default function Signals({ signals: _serverSignals }: { signals: any }) {
               </div>
               <h3 className={classes.title}>SIGNALS</h3>
             </div>
-            <div className={classes.label}>
+            <div
+              className={
+                classes.label +
+                " " +
+                (hasPreviousPage ? classes.has_previous_page : "")
+              }
+            >
               <strong>Minerva Sinals:</strong>
               {" Global insights on today's biggest stories."}
             </div>
+            {hasPreviousPage && (
+              <div className={classes.button_holder}>
+                <Button
+                  className={classes.button}
+                  isLoading={isFetchingPreviousPage}
+                  onClick={() => {
+                    if (!isFetchingPreviousPage) fetchPreviousPage();
+                  }}
+                >
+                  {isFetchingPreviousPage
+                    ? "Loading Newer Posts..."
+                    : "Load Newer Posts"}
+                </Button>
+              </div>
+            )}
             {signals.map((signal: Signal) => (
               <SignalComponent key={signal._id} signal={signal} />
             ))}

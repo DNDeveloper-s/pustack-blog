@@ -4,12 +4,50 @@ import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useMediaQuery } from "react-responsive";
 import { Post, SnippetPosition } from "@/firebase/post";
 import { chunk, compact, difference, sortBy } from "lodash";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import { useQueryPosts } from "@/api/post";
+import { useQuerySignals } from "@/api/signal";
+import { Signal } from "@/firebase/signal";
+import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
+import { Spinner } from "@nextui-org/spinner";
+import useInView from "@/hooks/useInView";
 
-export default function Dashboard({ posts: _serverPosts }: { posts: any }) {
+export default function Dashboard({
+  posts: _serverPosts,
+  signals: _serverSignals,
+}: {
+  posts: any;
+  signals: any;
+}) {
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
+  const {
+    signals: _clientSignals,
+    isFetching,
+    isLoading,
+    fetchStatus,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useQuerySignals({ limit: 6 });
+
+  const _serverFormedSignals = useMemo(() => {
+    return _serverSignals.map(
+      (data: any) =>
+        new Signal(
+          data.title,
+          data.content,
+          data.author,
+          data.source,
+          data.id,
+          data.timestamp
+        )
+    );
+  }, [_serverSignals]);
+
+  const signals = _clientSignals || _serverFormedSignals;
+  const hasSignals = signals?.length > 0;
+
   const { data: posts } = useQueryPosts({
     initialData: _serverPosts.map(
       (data: any) =>
@@ -26,6 +64,14 @@ export default function Dashboard({ posts: _serverPosts }: { posts: any }) {
         )
     ),
   });
+
+  const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
+    useInView();
+
+  useEffect(() => {
+    if (!isFetching && !isFetchingNextPage && isSignalSpinnerInView)
+      fetchNextPage();
+  }, [fetchNextPage, isFetching, isFetchingNextPage, isSignalSpinnerInView]);
 
   // const serverPosts = useMemo(() => {
   //   if (!_serverPosts) return [];
@@ -112,14 +158,29 @@ export default function Dashboard({ posts: _serverPosts }: { posts: any }) {
       <div className="pr-0 md:pr-7">
         <Flagship />
         <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
-          {postsByPosition.listPosts.map((post, i) => (
+          {signals.map((signal: Signal) => (
             <div
-              key={post.id}
+              key={signal.id}
               className="md:px-0 px-3 min-w-[170px] my-2 md:my-0"
             >
-              <DesignedBlog post={post} />
+              <BlueSignalBlog signal={signal} />
             </div>
           ))}
+          {(hasNextPage || isFetching || isLoading) && (
+            <div
+              ref={signalSpinnerRef}
+              className="flex-shrink-0 px-3 flex items-center justify-center"
+            >
+              <Spinner
+                classNames={{
+                  circle1: "blue-border-b",
+                  circle2: "blue-border-b",
+                }}
+                color="warning"
+                size="sm"
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">

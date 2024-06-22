@@ -3,12 +3,40 @@ import Signals from "@/components/Signals/Signals";
 import Footer from "@/components/shared/Footer";
 import { Signal, flattenQueryDataWithId } from "@/firebase/signal";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  getDoc,
+  doc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+  startAt,
+} from "firebase/firestore";
 
-export default async function SignalPage() {
+export default async function SignalPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   // const signals = await Signal.getAll({ _flatten: true });
   const signalsRef = collection(db, "signals");
+
   let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(10));
+
+  console.log("searchParams - ", searchParams);
+
+  if (searchParams.id) {
+    const docRef = doc(db, "signals", searchParams.id as string);
+    const _doc = await getDoc(docRef);
+    _query = query(
+      signalsRef,
+      orderBy("timestamp", "desc"),
+      startAt(_doc),
+      limit(5)
+    );
+  }
 
   const docs = await getDocs(_query);
 
@@ -20,7 +48,7 @@ export default async function SignalPage() {
   return (
     <main className="min-h-screen w-full max-w-[1440px] px-3 mx-auto">
       <Navbar />
-      <Signals signals={signals} />
+      <Signals signals={signals} startAt={searchParams.id} />
     </main>
   );
 }

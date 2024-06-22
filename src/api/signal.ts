@@ -88,31 +88,49 @@ export const useGetFlagshipSignal = () => {
 export const useQuerySignals = ({
   // initialData,
   initialPageParam,
+  startAt,
+  limit = 10,
 }: {
   // initialData: Signal[];
   initialPageParam?: string;
-}) => {
-  const querySignals = async (pageParam: any) => {
-    console.log("pageParam - ", pageParam);
+  startAt?: string | string[];
+  limit?: number;
+}): any => {
+  const querySignals = async (
+    pageParam: any,
+    queryKey: QueryKey,
+    direction: "forward" | "backward"
+  ) => {
+    const [, limit, startAt] = queryKey;
+    console.log("pageParam - ", pageParam, direction);
     const signals = await Signal.getAll({
       _flatten: true,
       _startAfter: pageParam,
-      _limit: 10,
+      _limit: limit as number,
+      _startAt: startAt as string | string[],
+      _direction: direction,
     });
     return signals;
   };
 
   const query = useInfiniteQuery({
-    queryKey: API_QUERY.QUERY_SIGNALS,
-    queryFn: ({ pageParam }: any) => querySignals(pageParam),
+    queryKey: API_QUERY.QUERY_SIGNALS(limit, startAt),
+    queryFn: ({ pageParam, queryKey, direction }: any) =>
+      querySignals(pageParam, queryKey, direction),
     // initialData: {
     //   pages: [{ data: initialData, lastDoc: undefined as any }],
     //   pageParams: [],
     // },
     initialPageParam,
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.lastDoc) return undefined;
+      if (!lastPage.lastDoc || lastPage?.data?.docs?.length < limit)
+        return undefined;
       return lastPage.lastDoc as any;
+    },
+    getPreviousPageParam: (firstPage, allPages) => {
+      if (!firstPage.firstDoc || firstPage?.data?.docs?.length < limit)
+        return undefined;
+      return firstPage.firstDoc as any;
     },
   });
 
@@ -140,7 +158,7 @@ export const useCreateSignal = (
     mutationFn: createSignal,
     onSettled: () => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_SIGNALS,
+        queryKey: API_QUERY.QUERY_SIGNALS(10),
       });
     },
     ...(options ?? {}),

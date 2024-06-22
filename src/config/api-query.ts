@@ -6,7 +6,11 @@ export const API_QUERY = {
     "get-posts-by-category",
     category,
   ],
-  QUERY_SIGNALS: ["query-signals"],
+  QUERY_SIGNALS: (limit: number, startAt?: string | string[]) => [
+    "query-signals",
+    limit,
+    startAt,
+  ],
   GET_SIGNAL_BY_ID: (signalId?: string | null) => [
     "get-signal-by-id",
     signalId,
