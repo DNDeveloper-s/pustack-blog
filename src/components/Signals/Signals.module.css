@@ -127,3 +127,21 @@
   color: #f8f5d7;
   border-radius: 5px;
 }
+
+.quadrat {
+  -webkit-animation: blinkAnim 0.65s 5 forwards; /* Safari 4+ */
+  -moz-animation: blinkAnim 0.65s 5 forwards; /* Fx 5+ */
+  -o-animation: blinkAnim 0.65s 5 forwards; /* Opera 12+ */
+  animation: blinkAnim 0.65s 5 forwards; /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes blinkAnim {
+  0%,
+  49% {
+    background-color: transparent;
+  }
+  50%,
+  100% {
+    background-color: #f4efbe;
+  }
+}

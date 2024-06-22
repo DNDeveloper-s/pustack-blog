@@ -10,6 +10,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import parse from "html-react-parser";
@@ -182,7 +183,7 @@ export default function Signals({
     isFetchingNextPage,
     fetchPreviousPage,
     error,
-  } = useQuerySignals({ startAt: startAt, limit: 5 });
+  } = useQuerySignals({ limit: 10 });
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -201,13 +202,18 @@ export default function Signals({
   const signals = _clientSignals || _serverFormedSignals;
   const hasSignals = signals?.length > 0;
 
-  console.log("error - ", error);
-
   const { ref, isInView } = useInView();
+  const targetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isFetching && !isFetchingNextPage && isInView) fetchNextPage();
   }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
+
+  useEffect(() => {
+    if (!targetRef.current) return;
+    console.log("targetRef.current - ", targetRef.current);
+    targetRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [_serverFormedSignals]);
 
   return (
     <div className="">
@@ -250,7 +256,13 @@ export default function Signals({
               </div>
             )}
             {signals.map((signal: Signal) => (
-              <SignalComponent key={signal._id} signal={signal} />
+              <div
+                key={signal._id}
+                ref={signal.id === startAt ? targetRef : undefined}
+                className={signal.id === startAt ? classes.quadrat : ""}
+              >
+                <SignalComponent signal={signal} />
+              </div>
             ))}
           </>
         )}

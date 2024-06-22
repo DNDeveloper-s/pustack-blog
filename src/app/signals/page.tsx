@@ -13,6 +13,7 @@ import {
   query,
   setDoc,
   startAt,
+  endAt,
 } from "firebase/firestore";
 
 export default async function SignalPage({
@@ -30,12 +31,7 @@ export default async function SignalPage({
   if (searchParams.id) {
     const docRef = doc(db, "signals", searchParams.id as string);
     const _doc = await getDoc(docRef);
-    _query = query(
-      signalsRef,
-      orderBy("timestamp", "desc"),
-      startAt(_doc),
-      limit(5)
-    );
+    _query = query(signalsRef, orderBy("timestamp", "desc"), endAt(_doc));
   }
 
   const docs = await getDocs(_query);

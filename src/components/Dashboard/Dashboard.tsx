@@ -29,7 +29,7 @@ export default function Dashboard({
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useQuerySignals({ limit: 6 });
+  } = useQuerySignals({ limit: 10 });
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -65,13 +65,13 @@ export default function Dashboard({
     ),
   });
 
-  const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
-    useInView();
+  // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
+  //   useInView();
 
-  useEffect(() => {
-    if (!isFetching && !isFetchingNextPage && isSignalSpinnerInView)
-      fetchNextPage();
-  }, [fetchNextPage, isFetching, isFetchingNextPage, isSignalSpinnerInView]);
+  // useEffect(() => {
+  //   if (!isFetching && !isFetchingNextPage && isSignalSpinnerInView)
+  //     fetchNextPage();
+  // }, [fetchNextPage, isFetching, isFetchingNextPage, isSignalSpinnerInView]);
 
   // const serverPosts = useMemo(() => {
   //   if (!_serverPosts) return [];
@@ -166,7 +166,7 @@ export default function Dashboard({
               <BlueSignalBlog signal={signal} />
             </div>
           ))}
-          {(hasNextPage || isFetching || isLoading) && (
+          {/* {(hasNextPage || isFetching || isLoading) && (
             <div
               ref={signalSpinnerRef}
               className="flex-shrink-0 px-3 flex items-center justify-center"
@@ -180,7 +180,7 @@ export default function Dashboard({
                 size="sm"
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
       <div className="md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
