@@ -243,7 +243,7 @@ export default function Signals({
               <strong>Minerva Sinals:</strong>
               {" Global insights on today's biggest stories."}
             </div>
-            {hasPreviousPage && (
+            {/* {hasPreviousPage && (
               <div className={classes.button_holder}>
                 <Button
                   className={classes.button}
@@ -257,7 +257,7 @@ export default function Signals({
                     : "Load Newer Posts"}
                 </Button>
               </div>
-            )}
+            )} */}
             {signals.map((signal: Signal) => (
               <div
                 key={signal._id}
