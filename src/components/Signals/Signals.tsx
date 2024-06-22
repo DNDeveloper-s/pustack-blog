@@ -22,6 +22,7 @@ import useInView from "@/hooks/useInView";
 import Footer from "../shared/Footer";
 import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
 import { Button } from "@nextui-org/button";
+import useScreenSize from "@/hooks/useScreenSize";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -204,6 +205,7 @@ export default function Signals({
 
   const { ref, isInView } = useInView();
   const targetRef = useRef<HTMLDivElement>(null);
+  const { isMobileScreen } = useScreenSize();
 
   useEffect(() => {
     if (!isFetching && !isFetchingNextPage && isInView) fetchNextPage();
@@ -213,10 +215,14 @@ export default function Signals({
     if (!targetRef.current) return;
     const targetEl = targetRef.current;
     setTimeout(
-      () => targetEl?.scrollIntoView({ behavior: "smooth", block: "center" }),
+      () =>
+        targetEl?.scrollIntoView({
+          behavior: "smooth",
+          block: isMobileScreen ? "start" : "center",
+        }),
       400
     );
-  }, [_serverFormedSignals]);
+  }, [_serverFormedSignals, isMobileScreen]);
 
   return (
     <div className="">
