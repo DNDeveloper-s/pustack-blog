@@ -233,13 +233,7 @@ export default function Signals({
               </div>
               <h3 className={classes.title}>SIGNALS</h3>
             </div>
-            <div
-              className={
-                classes.label +
-                " " +
-                (hasPreviousPage ? classes.has_previous_page : "")
-              }
-            >
+            <div className={classes.label}>
               <strong>Minerva Sinals:</strong>
               {" Global insights on today's biggest stories."}
             </div>
