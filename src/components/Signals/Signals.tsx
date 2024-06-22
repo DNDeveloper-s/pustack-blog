@@ -211,8 +211,11 @@ export default function Signals({
 
   useEffect(() => {
     if (!targetRef.current) return;
-    console.log("targetRef.current - ", targetRef.current);
-    targetRef.current.scrollIntoView({ behavior: "smooth" });
+    const targetEl = targetRef.current;
+    setTimeout(
+      () => targetEl?.scrollIntoView({ behavior: "smooth", block: "center" }),
+      400
+    );
   }, [_serverFormedSignals]);
 
   return (
