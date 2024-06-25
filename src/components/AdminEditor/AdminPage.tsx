@@ -22,7 +22,6 @@ export default function AdminPage() {
     selectedPosition: SnippetPosition;
     selectedSnippet: SnippetDesign;
   }>(null);
-  const checkBoxRef = useRef<{ isChecked: boolean }>(null);
 
   const {
     mutate: postCreatePost,
@@ -64,12 +63,6 @@ export default function AdminPage() {
     currentPost.snippetPosition = selectedPosition;
     currentPost.snippetDesign = selectedSnippet;
 
-    if (checkBoxRef.current?.isChecked) {
-      currentPost.markAsFlagship();
-    } else {
-      currentPost.unMarkAsFlagship();
-    }
-
     postCreatePost(currentPost);
   };
 
@@ -82,7 +75,7 @@ export default function AdminPage() {
         <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
           {step === 1 ? "Create Post" : "Choose Design and Position"}
         </h2>
-        <label
+        {/* <label
           htmlFor={"today-flagship"}
           className="flex gap-2 py-1 cursor-pointer group"
         >
@@ -94,7 +87,7 @@ export default function AdminPage() {
               Mark it as Today&apos;s Flagship
             </p>
           </div>
-        </label>
+        </label> */}
       </div>
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>

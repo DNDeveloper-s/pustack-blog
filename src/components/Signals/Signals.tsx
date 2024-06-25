@@ -225,7 +225,12 @@ export default function Signals({
   }, [_serverFormedSignals, isMobileScreen]);
 
   return (
-    <div className="h-[calc(100vh-150px)] overflow-auto">
+    <div
+      className="h-[calc(100vh-150px)]"
+      style={{
+        overflow: isMobileScreen ? "unset" : "auto",
+      }}
+    >
       <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] mb-2">
         {hasSignals && (
           <>
