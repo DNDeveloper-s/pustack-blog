@@ -156,7 +156,7 @@ export default function Dashboard({
   return (
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] py-2">
       <div className="pr-0 md:pr-7">
-        <Flagship />
+        <Flagship title={(signals[0] as Signal).title} />
         <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {signals.map((signal: Signal) => (
             <div
