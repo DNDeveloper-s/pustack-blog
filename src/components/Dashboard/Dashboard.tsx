@@ -45,7 +45,7 @@ export default function Dashboard({
     );
   }, [_serverSignals]);
 
-  const signals = _clientSignals || _serverFormedSignals;
+  const signals = (_clientSignals || _serverFormedSignals)?.slice(0, 10);
   const hasSignals = signals?.length > 0;
 
   const { data: posts } = useQueryPosts({

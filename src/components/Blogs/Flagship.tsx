@@ -8,26 +8,23 @@ export default function Flagship() {
   return flagshipPost?.data() &&
     (flagshipPost.data()?.snippetData?.content ||
       flagshipPost.data()?.title) ? (
-    <div className="bg-secondary p-[10px]">
-      <h2 className="font-featureRegular text-[24px] leading-[110%] mb-[10px]">
-        Today&apos;s Flagship
-      </h2>
-      <TrimmedPara
-        className="leading-[120%] font-featureHeadline text-[18px]"
-        style={{
-          fontVariationSettings: '"wght" 300,"opsz" 10',
-        }}
-      >
-        {flagshipPost.data()?.snippetData?.content ??
-          flagshipPost.data()?.title ??
-          ""}
-      </TrimmedPara>
-      <Link
-        href={`/signals`}
-        className="font-helvetica text-[14px] mt-[10px] block"
-      >
-        READ IT →
-      </Link>
-    </div>
+    <Link href={`/signals`}>
+      <div className="bg-secondary p-[10px]">
+        <h2 className="font-featureRegular text-[24px] leading-[110%] mb-[10px]">
+          Today&apos;s Flagship
+        </h2>
+        <TrimmedPara
+          className="leading-[120%] font-featureHeadline text-[18px]"
+          style={{
+            fontVariationSettings: '"wght" 300,"opsz" 10',
+          }}
+        >
+          {flagshipPost.data()?.snippetData?.content ??
+            flagshipPost.data()?.title ??
+            ""}
+        </TrimmedPara>
+        <p className="font-helvetica text-[14px] mt-[10px] block">READ IT →</p>
+      </div>
+    </Link>
   ) : null;
 }
