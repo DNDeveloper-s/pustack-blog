@@ -81,38 +81,8 @@ export default function BlogWithAuthor({
 }: BlogBaseProps & { post?: Post }) {
   if (!post) return defaultBlogWithAuthor(size);
 
-  const wrapper = (children: ReactNode) => (
-    <div className="py-3 group">
-      {children}
-      {post.snippetData?.image && (
-        // <Zoom>
-        //   <img
-        //     onClick={(e: any) => {
-        //       e.stopPropagation();
-        //       e.preventDefault();
-        //       // openPreview(src);
-        //       // console.log("src - ", src);
-        //     }}
-        //     className="max-w-full max-h-full w-auto h-auto object-contain"
-        //     src={post.snippetData?.image}
-        //     alt="Image Preview"
-        //   />
-        // </Zoom>
-        <BlogImage className="mt-2" src={post.snippetData?.image} />
-      )}
-      {/* <p
-            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
-            style={{
-              fontFamily: "Courier,monospace",
-            }}
-          >
-            REUTERS/Leah Millis
-          </p> */}
-    </div>
-  );
-
   const content = (
-    <>
+    <div className="py-3 group ">
       <div className="flex">
         <div className="mr-2">
           <img
@@ -136,7 +106,7 @@ export default function BlogWithAuthor({
           </p>
         </div>
       </div>
-      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
+      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
       <div>
         {post.snippetData?.title && (
           <h2
@@ -172,12 +142,34 @@ export default function BlogWithAuthor({
           ></iframe>
         )}
       </div>
-    </>
+      {post.snippetData?.image && (
+        // <Zoom>
+        //   <img
+        //     onClick={(e: any) => {
+        //       e.stopPropagation();
+        //       e.preventDefault();
+        //       // openPreview(src);
+        //       // console.log("src - ", src);
+        //     }}
+        //     className="max-w-full max-h-full w-auto h-auto object-contain"
+        //     src={post.snippetData?.image}
+        //     alt="Image Preview"
+        //   />
+        // </Zoom>
+        <BlogImage className="mt-2" src={post.snippetData?.image} />
+      )}
+      {/* <p
+            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
+            style={{
+              fontFamily: "Courier,monospace",
+            }}
+          >
+            REUTERS/Leah Millis
+          </p> */}
+    </div>
   );
 
-  return noLink
-    ? wrapper(content)
-    : wrapper(<Link href={`/${post.id}`}>{content}</Link>);
+  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
 
   // return noLink ? content :  (
   //   <Link href={`/${post.id}`}>{content}</Link>
@@ -279,63 +271,8 @@ export function BlogWithAuthorV2({
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
   if (!post) return defaultBlogWithAuthorV2(size, noImage);
 
-  const wrapper = (children: ReactNode) => (
-    <div className="py-3 group">
-      {children}
-      {!noImage && post.snippetData?.image && (
-        <>
-          {/* <Zoom>
-            <img
-              onClick={(e: any) => {
-                e.stopPropagation();
-                e.preventDefault();
-                // openPreview(src);
-                // console.log("src - ", src);
-              }}
-              className="max-w-full max-h-full w-auto h-auto object-contain"
-              src={post.snippetData?.image}
-              alt="Image Preview"
-            />
-          </Zoom> */}
-          <BlogImage className="mt-2" src={post.snippetData?.image} />
-          <p
-            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
-            style={{
-              fontFamily: "Courier,monospace",
-            }}
-          >
-            REUTERS/Leah Millis
-          </p>
-        </>
-      )}
-      {/* {post.snippetData?.image && (
-        <Zoom>
-          <img
-            onClick={(e: any) => {
-              e.stopPropagation();
-              e.preventDefault();
-              // openPreview(src);
-              // console.log("src - ", src);
-            }}
-            className="max-w-full max-h-full w-auto h-auto object-contain"
-            src={post.snippetData?.image}
-            alt="Image Preview"
-          />
-        </Zoom>
-      )} */}
-      {/* <p
-            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
-            style={{
-              fontFamily: "Courier,monospace",
-            }}
-          >
-            REUTERS/Leah Millis
-          </p> */}
-    </div>
-  );
-
   const content = (
-    <>
+    <div className="py-3 group ">
       <div className="flex">
         {post.author.photoURL && (
           <div className="mr-2">
@@ -361,7 +298,7 @@ export function BlogWithAuthorV2({
           </p>
         </div>
       </div>
-      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
+      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
       <div>
         <Image
           src={circlesBlue}
@@ -421,10 +358,57 @@ export function BlogWithAuthorV2({
           REUTERS/Leah Millis
         </p> */}
       </div>
-    </>
+      {!noImage && post.snippetData?.image && (
+        <>
+          {/* <Zoom>
+            <img
+              onClick={(e: any) => {
+                e.stopPropagation();
+                e.preventDefault();
+                // openPreview(src);
+                // console.log("src - ", src);
+              }}
+              className="max-w-full max-h-full w-auto h-auto object-contain"
+              src={post.snippetData?.image}
+              alt="Image Preview"
+            />
+          </Zoom> */}
+          <BlogImage className="mt-2" src={post.snippetData?.image} />
+          <p
+            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
+            style={{
+              fontFamily: "Courier,monospace",
+            }}
+          >
+            REUTERS/Leah Millis
+          </p>
+        </>
+      )}
+      {/* {post.snippetData?.image && (
+        <Zoom>
+          <img
+            onClick={(e: any) => {
+              e.stopPropagation();
+              e.preventDefault();
+              // openPreview(src);
+              // console.log("src - ", src);
+            }}
+            className="max-w-full max-h-full w-auto h-auto object-contain"
+            src={post.snippetData?.image}
+            alt="Image Preview"
+          />
+        </Zoom>
+      )} */}
+      {/* <p
+            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
+            style={{
+              fontFamily: "Courier,monospace",
+            }}
+          >
+            REUTERS/Leah Millis
+          </p> */}
+    </div>
   );
 
-  return noLink
-    ? wrapper(content)
-    : wrapper(<Link href={`/${post.id}`}>{content}</Link>);
+  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
 }

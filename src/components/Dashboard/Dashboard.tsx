@@ -183,7 +183,7 @@ export default function Dashboard({
           )} */}
         </div>
       </div>
-      <div className="md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
+      <div className="mt-[15px] md:mt-0 md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
         <DesignedBlog post={postsByPosition.titlePost as Post} />
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
           {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
