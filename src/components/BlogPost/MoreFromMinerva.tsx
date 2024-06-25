@@ -44,7 +44,7 @@ function MinervaBlogPost({ post }: { post: Post }) {
           <h2
             className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
             style={{
-              fontSize: "24px",
+              fontSize: "22px",
               fontWeight: "395",
               fontVariationSettings: '"wght" 495,"opsz" 10',
             }}
@@ -57,9 +57,9 @@ function MinervaBlogPost({ post }: { post: Post }) {
             className="leading-[120%] group-hover:text-appBlue"
             style={{
               fontSize: "16px",
-              paddingTop: "8px",
+              paddingTop: "10px",
             }}
-            wordLimit={70}
+            wordLimit={40}
           >
             {post.snippetData?.content}
           </TrimmedPara>
