@@ -10,7 +10,7 @@ import { Spinner } from "@nextui-org/spinner";
 
 function MinervaBlogPost({ post }: { post: Post }) {
   const wrapper = (children: ReactNode) => (
-    <div className="py-3 group">{children}</div>
+    <div className="pb-[10px] group">{children}</div>
   );
 
   const content = (
@@ -38,7 +38,7 @@ function MinervaBlogPost({ post }: { post: Post }) {
           </p>
         </div>
       </div>
-      <hr className="border-dashed border-[#1f1d1a4d] my-4" />
+      <hr className="border-dashed border-[#1f1d1a4d] my-3" />
       <div>
         {post.snippetData?.title && (
           <h2
@@ -112,7 +112,7 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
             marginBottom: "10px",
           }}
         />
-        <div className="styles_title flex items-center gap-3">
+        <div className="styles_title flex items-center gap-3 mb-4">
           <Image src={ampersandImage} width={20} height={16} alt="Ampersand" />
           <h2 style={{ marginBottom: 0, marginTop: "4px" }}>
             More from Minerva
@@ -131,7 +131,10 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
                 }
               >
                 {postChunkOf2.map((post, j) => (
-                  <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
+                  <div
+                    key={post.id}
+                    className={j % 2 === 0 ? "pr-3 pb-[10px]" : "pl-3"}
+                  >
                     <MinervaBlogPost post={post} />
                   </div>
                 ))}
