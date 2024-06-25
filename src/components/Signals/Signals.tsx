@@ -205,7 +205,7 @@ export default function Signals({
 
   const { ref, isInView } = useInView();
   const targetRef = useRef<HTMLDivElement>(null);
-  const { isMobileScreen } = useScreenSize();
+  const { isMobileScreen, isTabletScreen } = useScreenSize();
 
   useEffect(() => {
     if (!isFetching && !isFetchingNextPage && isInView) fetchNextPage();
@@ -226,7 +226,13 @@ export default function Signals({
 
   return (
     <div
-      className="h-[calc(100vh-150px)]"
+      className={
+        isTabletScreen
+          ? "h-[calc(100vh-220px)]"
+          : isMobileScreen
+          ? ""
+          : "h-[calc(100vh-150px)]"
+      }
       style={{
         overflow: isMobileScreen ? "unset" : "auto",
       }}

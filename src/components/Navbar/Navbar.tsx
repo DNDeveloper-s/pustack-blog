@@ -423,7 +423,7 @@ export function NavbarTablet() {
   const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
   return (
-    <div className="h-[150px]">
+    <div className="h-[220px]">
       <div
         className="w-full fixed top-0 left-0 bg-primary z-[1000]"
         style={{
