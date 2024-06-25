@@ -218,14 +218,14 @@ export default function Signals({
       () =>
         targetEl?.scrollIntoView({
           behavior: "smooth",
-          block: isMobileScreen ? "start" : "center",
+          block: "start",
         }),
       400
     );
   }, [_serverFormedSignals, isMobileScreen]);
 
   return (
-    <div className="">
+    <div className="h-[calc(100vh-150px)] overflow-auto">
       <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] mb-2">
         {hasSignals && (
           <>

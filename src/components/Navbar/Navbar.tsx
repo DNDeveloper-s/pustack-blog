@@ -82,6 +82,7 @@ export function NavbarDesktop() {
 
   const showCreatePostButton = !pathname.includes("/admin") && !!user;
 
+  // <div className="h-[150px]">
   return (
     <div className="h-[150px]">
       <div
