@@ -156,7 +156,12 @@ export default function BlogWithAuthor({
         //     alt="Image Preview"
         //   />
         // </Zoom>
-        <BlogImage className="mt-2" src={post.snippetData?.image} />
+        <BlogImage
+          imageProps={{ className: "!w-full !object-cover" }}
+          noZoom
+          className="mt-2"
+          src={post.snippetData?.image}
+        />
       )}
       {/* <p
             className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
@@ -373,7 +378,12 @@ export function BlogWithAuthorV2({
               alt="Image Preview"
             />
           </Zoom> */}
-          <BlogImage className="mt-2" src={post.snippetData?.image} />
+          <BlogImage
+            imageProps={{ className: "!w-full !object-cover" }}
+            noZoom
+            className="mt-2"
+            src={post.snippetData?.image}
+          />
           <p
             className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
             style={{

@@ -40,6 +40,7 @@ export function ImageModalPreview() {
 interface BlogImageProps extends React.HTMLAttributes<HTMLElement> {
   src: string;
   imageProps?: React.ImgHTMLAttributes<HTMLImageElement>;
+  noZoom?: boolean;
 }
 /**
  * @description Providing onClick in props will remove the functionality of the image preview
@@ -50,8 +51,21 @@ export default function BlogImage({
   src,
   style,
   imageProps = {},
+  noZoom,
   ...props
 }: BlogImageProps) {
+  const imageContent = (
+    <img
+      src={src}
+      alt="Image Preview"
+      {...imageProps}
+      className={
+        "max-w-full max-h-full w-auto h-auto object-contain " +
+        (imageProps.className ?? "")
+      }
+    />
+  );
+
   return (
     <figure
       //   className="mt-2"
@@ -63,21 +77,7 @@ export default function BlogImage({
       }}
       {...props}
     >
-      <Zoom>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          onClick={(e: any) => {
-            e.stopPropagation();
-            e.preventDefault();
-            // openPreview(src);
-            // console.log("src - ", src);
-          }}
-          className="max-w-full max-h-full w-auto h-auto object-contain"
-          src={src}
-          alt="Image Preview"
-          {...imageProps}
-        />
-      </Zoom>
+      {noZoom ? imageContent : <Zoom>{imageContent}</Zoom>}
     </figure>
   );
   // return (
