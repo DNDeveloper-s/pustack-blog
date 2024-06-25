@@ -112,7 +112,7 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
             marginBottom: "10px",
           }}
         />
-        <div className="styles_title flex items-center gap-3 mb-4">
+        <div className="styles_title flex items-center gap-3 !mb-4">
           <Image src={ampersandImage} width={20} height={16} alt="Ampersand" />
           <h2 style={{ marginBottom: 0, marginTop: "4px" }}>
             More from Minerva
