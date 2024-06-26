@@ -1,7 +1,5 @@
-import Navbar from "@/components/Navbar/Navbar";
-import Signals from "@/components/Signals/Signals";
-import Footer from "@/components/shared/Footer";
-import { Signal, flattenQueryDataWithId } from "@/firebase/signal";
+import SignalsPage from "@/components/Signals/SignalsPage";
+import { flattenQueryDataWithId } from "@/firebase/signal";
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -11,8 +9,6 @@ import {
   limit,
   orderBy,
   query,
-  setDoc,
-  startAt,
   endAt,
 } from "firebase/firestore";
 
@@ -41,10 +37,5 @@ export default async function SignalPage({
     timestamp: doc.timestamp.toDate().toISOString(),
   }));
 
-  return (
-    <main className="min-h-screen w-full max-w-[1440px] px-3 mx-auto">
-      <Navbar />
-      <Signals signals={signals} startAt={searchParams.id} />
-    </main>
-  );
+  return <SignalsPage signals={signals} startAt={searchParams.startAt} />;
 }

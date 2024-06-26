@@ -7,7 +7,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "!./src/components/AdminEditor/JoditEditor.tsx",
-    "./node_modules/@nextui-org/theme/dist/components/(button|modal|progress|spinner|tabs|ripple).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|modal|progress|spinner|tabs|ripple).js",
   ],
   theme: {
     extend: {
@@ -44,6 +44,7 @@ const config: Config = {
       featureBold: ["FeatureFlatBold", "Times New Roman", "Times", "serif"],
       helvetica: ["Helvetica", "sans-serif"],
       larkenExtraBold: ["LarkenExtraBold", "sans-serif"],
+      courierPrime: ["CourierPrime", "monospace"],
     },
   },
   plugins: [nextui()],

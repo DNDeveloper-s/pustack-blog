@@ -16,3 +16,4 @@ export { default as minervaMiniImage } from "./images/minerva-mini.svg";
 export { default as owlImage } from "./images/owl.svg";
 export { default as twoCirclesBlack } from "./svgs/two-circles-black.svg";
 export { default as emptyBox } from "./svgs/empty-box.svg";
+export { default as twoCirclesWhite } from "./svgs/two-circles-white.svg";

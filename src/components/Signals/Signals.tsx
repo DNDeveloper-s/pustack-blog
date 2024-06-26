@@ -1,12 +1,18 @@
 "use client";
 
-import { arrowSignalBlue, emptyBox, twoCirclesBlack } from "@/assets";
+import {
+  arrowSignalBlue,
+  emptyBox,
+  twoCirclesBlack,
+  twoCirclesWhite,
+} from "@/assets";
 import Image from "next/image";
 import classes from "./Signals.module.css";
 import { Signal } from "@/firebase/signal";
 import { useQuerySignals } from "@/api/signal";
 import {
   createElement,
+  forwardRef,
   useCallback,
   useEffect,
   useMemo,
@@ -165,13 +171,16 @@ function SignalComponent({ signal }: { signal: Signal }) {
   );
 }
 
-export default function Signals({
-  signals: _serverSignals,
-  startAt,
-}: {
-  signals: any;
-  startAt: string | string[] | undefined;
-}) {
+function Signals(
+  {
+    signals: _serverSignals,
+    startAt,
+  }: {
+    signals: any;
+    startAt: string | string[] | undefined;
+  },
+  ref: any
+) {
   const {
     signals: _clientSignals,
     isFetching,
@@ -203,7 +212,7 @@ export default function Signals({
   const signals = _clientSignals || _serverFormedSignals;
   const hasSignals = signals?.length > 0;
 
-  const { ref, isInView } = useInView();
+  const { ref: lastItemRef, isInView } = useInView();
   const targetRef = useRef<HTMLDivElement>(null);
   const { isMobileScreen, isTabletScreen } = useScreenSize();
 
@@ -236,22 +245,19 @@ export default function Signals({
       style={{
         overflow: isMobileScreen ? "unset" : "auto",
       }}
+      ref={ref}
     >
       <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] mb-2">
         {hasSignals && (
           <>
-            <div className="flex items-center">
+            <div className={classes.signal_blue_header}>
               <div>
-                <Image
-                  alt="Signals"
-                  src={twoCirclesBlack}
-                  className="w-[20px]"
-                />
+                <Image alt="Signals" src={twoCirclesWhite} />
               </div>
-              <h3 className={classes.title}>SIGNALS</h3>
+              <h3>MINERVA SIGNALS</h3>
             </div>
             <div className={classes.label}>
-              <strong>Minerva Sinals:</strong>
+              {/* <strong>Minerva Signals:</strong> */}
               {" Global insights on today's biggest stories."}
             </div>
             {/* {hasPreviousPage && (
@@ -292,7 +298,7 @@ export default function Signals({
         )}
         {(hasNextPage || isFetching || isLoading) && (
           <div
-            ref={ref}
+            ref={lastItemRef}
             className="w-full flex items-center justify-center py-4"
           >
             <Spinner
@@ -320,3 +326,5 @@ export default function Signals({
     </div>
   );
 }
+
+export default forwardRef(Signals);

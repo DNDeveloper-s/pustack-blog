@@ -345,7 +345,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       <div className="max-w-[900px] mx-auto pb-10">
         <div
           ref={ref}
-          className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem_1fr] my-6"
+          className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem] my-6"
         >
           <div className="pb-5 md:pb-0 md:pr-5">
             <div className="flex items-end justify-between">

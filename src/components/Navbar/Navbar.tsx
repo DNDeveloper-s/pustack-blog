@@ -40,7 +40,11 @@ interface CurrentTime {
   date: string;
 }
 
-export function NavbarDesktop() {
+export function NavbarDesktop({
+  scrollRef,
+}: {
+  scrollRef?: React.RefObject<HTMLDivElement>;
+}) {
   const { user } = useUser();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleDrawer = () => {
@@ -55,15 +59,21 @@ export function NavbarDesktop() {
   });
 
   useEffect(() => {
-    function handleScroll() {
+    function handleWindowScroll() {
       setIsOnTop(window.scrollY === 0);
     }
 
+    function handleScroll() {
+      setIsOnTop(scrollRef?.current?.scrollTop === 0);
+    }
+
     handleScroll();
-    addEventListener("scroll", handleScroll);
+    scrollRef?.current?.addEventListener("scroll", handleScroll);
+    addEventListener("scroll", handleWindowScroll);
 
     return () => {
-      removeEventListener("scroll", handleScroll);
+      removeEventListener("scroll", handleWindowScroll);
+      scrollRef?.current?.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -174,7 +184,7 @@ export function NavbarDesktop() {
             <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
               <Link
                 className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
-                href="#"
+                href="/events"
                 style={{
                   fontWeight: 395,
                   fontVariationSettings: '"wght" 495,"opsz" 10',
@@ -381,7 +391,11 @@ export function NavbarDesktop() {
   );
 }
 
-export function NavbarTablet() {
+export function NavbarTablet({
+  scrollRef,
+}: {
+  scrollRef?: React.RefObject<HTMLDivElement>;
+}) {
   const { user } = useUser();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleDrawer = () => {
@@ -396,14 +410,21 @@ export function NavbarTablet() {
   });
 
   useEffect(() => {
-    function handleScroll() {
+    function handleWindowScroll() {
       setIsOnTop(window.scrollY === 0);
     }
 
-    addEventListener("scroll", handleScroll);
+    function handleScroll() {
+      setIsOnTop(scrollRef?.current?.scrollTop === 0);
+    }
+
+    handleScroll();
+    scrollRef?.current?.addEventListener("scroll", handleScroll);
+    addEventListener("scroll", handleWindowScroll);
 
     return () => {
-      removeEventListener("scroll", handleScroll);
+      removeEventListener("scroll", handleWindowScroll);
+      scrollRef?.current?.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -1029,15 +1050,19 @@ export function NavbarMobile() {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({
+  scrollRef,
+}: {
+  scrollRef?: React.RefObject<HTMLDivElement>;
+}) {
   const isTabletScreen = useMediaQuery({ maxWidth: 1024, minWidth: 769 });
   const isDesktopScreen = useMediaQuery({ minWidth: 1025 });
   const isMobileScreen = useMediaQuery({ maxWidth: 768 });
 
   return (
     <>
-      {isDesktopScreen && <NavbarDesktop />}
-      {isTabletScreen && <NavbarTablet />}
+      {isDesktopScreen && <NavbarDesktop scrollRef={scrollRef} />}
+      {isTabletScreen && <NavbarTablet scrollRef={scrollRef} />}
       {isMobileScreen && <NavbarMobile />}
     </>
   );

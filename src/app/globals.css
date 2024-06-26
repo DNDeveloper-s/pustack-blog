@@ -30,6 +30,11 @@
   src: url(/assets/fonts/LarkenDEMO-ExtraBold.otf);
 }
 
+@font-face {
+  font-family: CourierPrime;
+  src: url(/assets/fonts/CourierPrime-Regular.ttf);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
