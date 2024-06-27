@@ -10,6 +10,10 @@
   background: #f8f5d7;
 }
 
+* {
+  scroll-behavior: smooth;
+}
+
 @font-face {
   font-family: FeatureFlatHeadline;
   src: url(/assets/fonts/FeatureFlatHeadline.woff2);
