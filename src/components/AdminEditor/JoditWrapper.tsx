@@ -44,8 +44,10 @@ const TOPICS = [
 function JoditWrapper(
   {
     handleContinue,
+    prePost,
   }: {
     handleContinue: (post: Post) => void;
+    prePost?: Post;
   },
   ref: any
 ) {
@@ -61,12 +63,16 @@ function JoditWrapper(
     const getContent = localStorage.getItem("editor_state") ?? "{}";
     const storageContent = JSON.parse(getContent);
 
-    if (storageContent) {
+    if (prePost) {
+      setContent(prePost.content);
+      setTopic(prePost.topic);
+      if (inputRef.current) inputRef.current.value = prePost.title ?? "";
+    } else if (storageContent) {
       setContent(storageContent.content);
       setTopic(storageContent.topic);
       if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
     }
-  }, []);
+  }, [prePost]);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
@@ -116,7 +122,7 @@ function JoditWrapper(
     }
     const trimmedContent = trimEmptyElements(body);
 
-    const post = new Post(
+    let post = new Post(
       inputRef.current?.value || "Untitled",
       trimmedContent,
       {
@@ -126,6 +132,26 @@ function JoditWrapper(
       },
       topic
     );
+
+    if (prePost) {
+      post = new Post(
+        inputRef.current?.value || "Untitled",
+        trimmedContent,
+        {
+          name: user?.name || dummyAuthor.name,
+          email: user?.email || dummyAuthor.email,
+          photoURL: user?.image_url || dummyAuthor.photoURL,
+        },
+        topic,
+        prePost.id,
+        prePost.timestamp,
+        prePost.snippetPosition,
+        prePost.snippetDesign,
+        prePost.isFlagship,
+        prePost.displayTitle,
+        prePost.displayContent
+      );
+    }
 
     // postCreatePost(post);
     handleContinue(post);

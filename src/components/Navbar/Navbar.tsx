@@ -96,7 +96,7 @@ export function NavbarDesktop({
   return (
     <div className="h-[150px]">
       <div
-        className="w-full fixed top-0 left-0 bg-primary z-[1000]"
+        className="w-full fixed top-0 left-0 bg-primary z-40"
         style={{
           boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
@@ -446,7 +446,7 @@ export function NavbarTablet({
   return (
     <div className="h-[220px]">
       <div
-        className="w-full fixed top-0 left-0 bg-primary z-[1000]"
+        className="w-full fixed top-0 left-0 bg-primary z-40"
         style={{
           boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}

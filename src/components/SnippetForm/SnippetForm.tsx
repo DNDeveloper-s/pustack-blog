@@ -10,6 +10,7 @@ import {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { GoCheckCircleFill } from "react-icons/go";
@@ -92,11 +93,13 @@ function SnippetPositionControl<T = string>({
 }
 
 function SnippetForm({ post }: { post?: Post | null }, ref: any) {
+  const titleRef = useRef<any>(null);
+  const contentRef = useRef<any>(null);
   const [selectedPosition, setSelectedPosition] = useState<SnippetPosition>(
-    SnippetPosition.MID_CONTENT
+    post?.snippetPosition ?? SnippetPosition.MID_CONTENT
   );
   const [selectedSnippet, setSelectedSnippet] = useState<SnippetDesign>(
-    SnippetDesign.CLASSIC_CARD
+    post?.snippetDesign ?? SnippetDesign.CLASSIC_CARD
   );
   const [openDropdown, setOpenDropdown] = useState<
     "design" | "position" | null
@@ -113,7 +116,15 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
   useImperativeHandle(ref, () => ({
     selectedPosition,
     selectedSnippet,
+    title: () => (titleRef.current ? titleRef.current.value : ""),
+    content: () => (contentRef.current ? contentRef.current.value : ""),
   }));
+
+  useEffect(() => {
+    if (!post) return;
+    titleRef.current.value = post.displayTitle ?? post.snippetData?.title;
+    contentRef.current.value = post.displayContent ?? post.snippetData?.content;
+  }, [post]);
 
   const isPositionAllowed = useCallback(
     (position: SnippetPosition) => {
@@ -202,9 +213,8 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
                     background: "#ede9c3",
                     padding: "5px 7px",
                   }}
-                >
-                  {post.snippetData?.title}
-                </textarea>
+                  ref={titleRef}
+                ></textarea>
                 {/* <p
                   className="leading-[120%] w-full bg-transparent"
                   style={{
@@ -225,9 +235,8 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
                     background: "#ede9c3",
                     padding: "5px 7px",
                   }}
-                >
-                  {post.snippetData?.content}
-                </textarea>
+                  ref={contentRef}
+                ></textarea>
                 {post.snippetData?.image && (
                   <figure className="mt-2">
                     <img src={post.snippetData?.image} alt="Image One" />
@@ -319,7 +328,8 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
                       handleChange={handleChangeSnippet}
                       value={SnippetDesign.SIMPLE_LIST}
                       iconStyle={{ zoom: 0.6 }}
-                      isSelected={selectedSnippet === SnippetDesign.SIMPLE_LIST}
+                      isSelected={false}
+                      disabled={true}
                     >
                       <div className="pointer-events-none">
                         <BlueCircleBlog post={post} noLink />
@@ -353,8 +363,8 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
                       <SnippetPositionControl
                         handleChange={handleChangePosition}
                         value={SnippetPosition.LEFT}
-                        isSelected={selectedPosition === SnippetPosition.LEFT}
-                        disabled={!isPositionAllowed(SnippetPosition.LEFT)}
+                        isSelected={false}
+                        disabled={true}
                       >
                         {Array.from({ length: 9 }).map((_, i) => (
                           <div

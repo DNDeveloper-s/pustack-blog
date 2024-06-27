@@ -13,6 +13,7 @@ export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
   post?: Post;
+  linkClassName?: string;
 }
 
 const defaultBlogWithAuthor = (size = "lg") => (
@@ -78,11 +79,12 @@ export default function BlogWithAuthor({
   size = "lg",
   post,
   noLink,
+  linkClassName,
 }: BlogBaseProps & { post?: Post }) {
   if (!post) return defaultBlogWithAuthor(size);
 
   const content = (
-    <div className="py-3 group ">
+    <div className="py-3 group h-full flex flex-col">
       <div className="flex">
         <div className="mr-2">
           <img
@@ -107,7 +109,7 @@ export default function BlogWithAuthor({
         </div>
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
-      <div>
+      <div className="flex-1">
         {post.snippetData?.title && (
           <h2
             className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
@@ -157,7 +159,7 @@ export default function BlogWithAuthor({
         //   />
         // </Zoom>
         <BlogImage
-          imageProps={{ className: "!w-full !object-cover" }}
+          imageProps={{ className: "!w-full !object-cover !h-full" }}
           noZoom
           className="mt-2"
           src={post.snippetData?.image}
@@ -174,7 +176,13 @@ export default function BlogWithAuthor({
     </div>
   );
 
-  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
+  return noLink ? (
+    content
+  ) : (
+    <Link className={linkClassName} href={`/${post.id}`}>
+      {content}
+    </Link>
+  );
 
   // return noLink ? content :  (
   //   <Link href={`/${post.id}`}>{content}</Link>
@@ -273,11 +281,12 @@ export function BlogWithAuthorV2({
   post,
   noImage,
   noLink,
+  linkClassName,
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
   if (!post) return defaultBlogWithAuthorV2(size, noImage);
 
   const content = (
-    <div className="py-3 group ">
+    <div className="py-3 group h-full flex flex-col ">
       <div className="flex">
         {post.author.photoURL && (
           <div className="mr-2">
@@ -304,7 +313,7 @@ export function BlogWithAuthorV2({
         </div>
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
-      <div>
+      <div className="flex-1">
         <Image
           src={circlesBlue}
           alt="circles blue"
@@ -379,7 +388,7 @@ export function BlogWithAuthorV2({
             />
           </Zoom> */}
           <BlogImage
-            imageProps={{ className: "!w-full !object-cover" }}
+            imageProps={{ className: "!w-full !object-cover !h-full" }}
             noZoom
             className="mt-2"
             src={post.snippetData?.image}
@@ -420,5 +429,11 @@ export function BlogWithAuthorV2({
     </div>
   );
 
-  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
+  return noLink ? (
+    content
+  ) : (
+    <Link className={linkClassName} href={`/${post.id}`}>
+      {content}
+    </Link>
+  );
 }

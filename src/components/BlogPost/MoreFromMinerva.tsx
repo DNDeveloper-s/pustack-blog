@@ -1,3 +1,5 @@
+"use client";
+
 import { useGetPostsByCategory, useGetRecentPosts } from "@/api/post";
 import { ampersandImage, avatar } from "@/assets";
 import { chunk, sortBy } from "lodash";
@@ -7,10 +9,17 @@ import { Post } from "@/firebase/post";
 import TrimmedPara from "../shared/TrimmedPara";
 import Link from "next/link";
 import { Spinner } from "@nextui-org/spinner";
+import { useParams } from "next/navigation";
+import { trimToSentence } from "@/lib/transformers/trimToSentence";
 
 function MinervaBlogPost({ post }: { post: Post }) {
   const wrapper = (children: ReactNode) => (
     <div className="pb-[10px] group">{children}</div>
+  );
+
+  const trimmedTitle = useMemo(
+    () => trimToSentence(post?.snippetData?.title ?? "", 20),
+    [post?.snippetData?.title]
   );
 
   const content = (
@@ -49,7 +58,7 @@ function MinervaBlogPost({ post }: { post: Post }) {
               fontVariationSettings: '"wght" 495,"opsz" 10',
             }}
           >
-            {post.snippetData?.title}
+            {trimmedTitle}
           </h2>
         )}
         {post.snippetData?.content && (
@@ -83,10 +92,14 @@ function MinervaBlogPost({ post }: { post: Post }) {
 interface MoreFromMinervaProps {}
 export default function MoreFromMinerva(props: MoreFromMinervaProps) {
   const { data: posts, error, isLoading } = useGetRecentPosts();
+  const params = useParams();
 
   const chunkedPosts = useMemo(() => {
-    return chunk(posts ?? [], 2);
-  }, [posts]);
+    const _posts = posts
+      ?.filter((post) => post.id !== params?.postId?.[0])
+      .slice(0, 4);
+    return chunk(_posts ?? [], 2);
+  }, [posts, params?.postId?.[0]]);
 
   console.log("posts - ", posts);
   console.log("error - ", error);

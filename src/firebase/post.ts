@@ -10,6 +10,7 @@ import {
   QuerySnapshot,
   QueryStartAtConstraint,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -127,6 +128,8 @@ export class Post {
   private _position: PostPosition | undefined = undefined;
   snippetPosition: SnippetPosition = SnippetPosition.TITLE;
   snippetDesign: SnippetDesign = SnippetDesign.CLASSIC_CARD;
+  displayTitle: string | undefined = undefined;
+  displayContent: string | undefined = undefined;
   private _snippetData: {
     title?: string;
     content?: string;
@@ -166,10 +169,14 @@ export class Post {
     timestamp?: string,
     position?: SnippetPosition,
     design?: SnippetDesign,
-    isFlagship?: boolean
+    isFlagship?: boolean,
+    displayTitle?: string,
+    displayContent?: string
   ) {
     this.title = title;
     this.content = content;
+    this.displayTitle = displayTitle ?? title;
+    this.displayContent = displayContent;
     this.author = author;
     this.topic = topic;
     this.html = this.parseContent();
@@ -242,8 +249,10 @@ export class Post {
     );
 
     const snippetData = {
-      title: this.title,
-      content: contentTag
+      title: this.displayTitle,
+      content: this.displayContent
+        ? this.displayContent
+        : contentTag
         ? textElements[contentTag]?.[0]
         : textElements[titleTag]?.[1] ?? "",
       image: images[0],
@@ -307,9 +316,35 @@ export class Post {
     const postId = await this.generateUniqueId();
 
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
-    setDoc(postRef, this);
+
+    console.log("this - ", this);
+
+    await setDoc(postRef, this);
 
     return postId;
+  }
+
+  async updateInFirestore() {
+    if (!this.id) {
+      throw new Error("Post id is missing");
+    }
+
+    const postRef = doc(db, "posts", this.id).withConverter(postConverter);
+    await setDoc(postRef, this);
+
+    return this.id;
+  }
+
+  static async deleteFromFirestore(id: string) {
+    if (!id) {
+      throw new Error("Post id is missing");
+    }
+
+    const postRef = doc(db, "posts", id).withConverter(postConverter);
+
+    await deleteDoc(postRef);
+
+    return id;
   }
 
   markAsFlagship() {
@@ -465,6 +500,8 @@ export const postConverter = {
       timestamp: serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,
+      displayTitle: post.displayTitle,
+      displayContent: post.displayContent,
       meta: {
         description: post.snippetData?.content ?? null,
         image: post.snippetData?.image ?? null,
@@ -480,6 +517,7 @@ export const postConverter = {
   fromFirestore: (snapshot: any) => {
     if (!snapshot.exists) return undefined;
     const data = snapshot.data();
+    console.log("data 493 - ", data);
     return new Post(
       data.title,
       data.content,
@@ -489,7 +527,9 @@ export const postConverter = {
       data.timestamp.toDate().toISOString(),
       data.position,
       data.design,
-      data.isFlagship
+      data.isFlagship,
+      data.displayTitle,
+      data.displayContent
     );
   },
 };

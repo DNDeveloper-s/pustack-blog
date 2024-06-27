@@ -5,14 +5,16 @@ import Navbar from "../Navbar/Navbar";
 import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
-import { useCreatePost } from "@/api/post";
+import { useCreatePost, useGetPostById, useUpdatePost } from "@/api/post";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 
-export default function AdminPage() {
+export default function AdminPage({ postId }: { postId?: string }) {
+  const { data: requestedPost, isLoading } = useGetPostById(postId);
+
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const [step, setStep] = useState(1);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
@@ -21,21 +23,35 @@ export default function AdminPage() {
   const snippetRef = useRef<{
     selectedPosition: SnippetPosition;
     selectedSnippet: SnippetDesign;
+    title: () => string;
+    content: () => string;
   }>(null);
 
-  const {
-    mutate: postCreatePost,
-    isPending,
-    error,
-  } = useCreatePost({
+  useEffect(() => {
+    if (requestedPost) {
+      setCurrentPost(requestedPost);
+    }
+  }, [requestedPost]);
+
+  const { mutate: postCreatePost, isPending: isCreatePending } = useCreatePost({
     onSuccess: () => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
-      router.push("/");
+      // @ts-ignore
+      window.location = "/";
     },
   });
 
-  console.log("error - ", error);
+  const { mutate: postUpdatePost, isPending: isUpdatePending } = useUpdatePost({
+    onSuccess: (data: any) => {
+      joditRef.current.reset();
+      window.localStorage.removeItem("editor_state");
+      // @ts-ignore
+      window.location = "/" + data;
+    },
+  });
+
+  const isPending = isCreatePending || isUpdatePending;
 
   const handleContinue = (post: Post) => {
     setStep(2);
@@ -52,7 +68,7 @@ export default function AdminPage() {
   //   };
   // }, []);
 
-  const handleCreatePost = () => {
+  const handleSavePost = () => {
     if (!currentPost) return;
 
     const selectedPosition = snippetRef.current?.selectedPosition;
@@ -63,17 +79,24 @@ export default function AdminPage() {
     currentPost.snippetPosition = selectedPosition;
     currentPost.snippetDesign = selectedSnippet;
 
-    postCreatePost(currentPost);
-  };
+    currentPost.displayTitle = snippetRef.current?.title();
+    currentPost.displayContent = snippetRef.current?.content();
 
-  const handleFalshipChange = () => {};
+    console.log("snippetRef.current?.title - ", snippetRef.current?.title);
+
+    requestedPost ? postUpdatePost(currentPost) : postCreatePost(currentPost);
+  };
 
   return (
     <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
       <Navbar />
       <div className="flex items-center justify-between max-w-[1100px] mx-auto">
         <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
-          {step === 1 ? "Create Post" : "Choose Design and Position"}
+          {step === 1
+            ? requestedPost
+              ? "Edit Post"
+              : "Create Post"
+            : "Choose Design and Position"}
         </h2>
         {/* <label
           htmlFor={"today-flagship"}
@@ -91,7 +114,11 @@ export default function AdminPage() {
       </div>
       <div style={{ display: step === 1 ? "block" : "none" }}>
         <MathJaxContext>
-          <JoditWrapper ref={joditRef} handleContinue={handleContinue} />
+          <JoditWrapper
+            prePost={requestedPost}
+            ref={joditRef}
+            handleContinue={handleContinue}
+          />
         </MathJaxContext>
       </div>
       <div
@@ -117,12 +144,12 @@ export default function AdminPage() {
           <Button
             isDisabled={isPending}
             className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-            onClick={handleCreatePost}
+            onClick={handleSavePost}
             variant="flat"
             color="primary"
             isLoading={isPending}
           >
-            Create Post
+            {requestedPost ? "Update Post" : "Create Post"}
           </Button>
         </div>
       </div>

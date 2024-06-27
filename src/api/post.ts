@@ -73,9 +73,6 @@ export const useCreatePost = (
 
   const createPost = async (post: Post) => {
     const newPostId = await post.saveToFirestore();
-    if (post.isFlagship) {
-      await handleFlagshipPost(newPostId, true);
-    }
     return newPostId;
   };
 
@@ -84,6 +81,58 @@ export const useCreatePost = (
     onSettled: () => {
       qc.invalidateQueries({
         queryKey: API_QUERY.QUERY_POSTS,
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useDeletePost = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const deletePost = async (postId: string) => {
+    await Post.deleteFromFirestore(postId);
+    return postId;
+  };
+
+  return useMutation({
+    mutationFn: deletePost,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_POSTS,
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_POST_BY_ID(data),
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useUpdatePost = (
+  options?: UseMutationOptions<any, Error, Post>
+) => {
+  const qc = useQueryClient();
+
+  const updatePost = async (post: Post) => {
+    if (!post.id) {
+      throw new Error("Post ID is required");
+    }
+    const id = await post.updateInFirestore();
+
+    return id;
+  };
+
+  return useMutation({
+    mutationFn: updatePost,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_POSTS,
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_POST_BY_ID(data),
       });
     },
     ...(options ?? {}),
@@ -130,7 +179,7 @@ interface UseGetRecentPostsOptions {
 }
 export const useGetRecentPosts = (props?: UseGetRecentPostsOptions) => {
   const getRecentPosts = async () => {
-    const posts = await Post.getRecentPosts(props?.limit ?? 4);
+    const posts = await Post.getRecentPosts(props?.limit ?? 5);
     return posts;
   };
 

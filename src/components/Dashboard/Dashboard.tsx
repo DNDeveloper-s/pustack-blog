@@ -60,7 +60,9 @@ export default function Dashboard({
           data.timestamp,
           data.position,
           data.design,
-          data.isFlagship
+          data.isFlagship,
+          data.displayTitle,
+          data.displayContent
         )
     ),
   });
@@ -184,7 +186,10 @@ export default function Dashboard({
         </div>
       </div>
       <div className="mt-[15px] md:mt-0 md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
-        <DesignedBlog post={postsByPosition.titlePost as Post} />
+        <DesignedBlog
+          linkClassName="block"
+          post={postsByPosition.titlePost as Post}
+        />
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
           {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
             <div
@@ -193,7 +198,11 @@ export default function Dashboard({
             >
               {postChunkOf2.map((post, j) => (
                 <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
-                  <DesignedBlog size="sm" post={post} />
+                  <DesignedBlog
+                    linkClassName={"h-full block"}
+                    size="sm"
+                    post={post}
+                  />
                 </div>
               ))}
             </div>
@@ -208,7 +217,7 @@ export default function Dashboard({
       </div>
       <div className="px-0 md:pl-7 md:pr-0">
         {postsByPosition.rightPosts?.map((post) => (
-          <DesignedBlog key={post.id} post={post} />
+          <DesignedBlog linkClassName="block" key={post.id} post={post} />
         ))}
         {/* <BlogWithAuthor post={fullCPosts?.[1]} size="sm" /> */}
         {!isTabletScreen && (
