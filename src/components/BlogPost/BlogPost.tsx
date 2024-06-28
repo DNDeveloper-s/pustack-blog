@@ -96,7 +96,7 @@ function transformObjectToCodeString(object: any) {
   return codeString;
 }
 
-function filterAndTrimStrings(arr: any[]) {
+export function filterAndTrimStrings(arr: any[]) {
   return (
     arr?.map((c: any) => (typeof c === "string" ? c.trim() : "")).join(" ") ??
     ""
@@ -726,7 +726,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
           <MathJaxContext>
-            <div className="w-full py-2 mt-5 no-preflight blog-post-container">
+            <div className="w-full py-2 mt-5 no-preflight blog-post-container jodit-table">
               <MathJax>{hasPost && elements}</MathJax>
               {hasNoPost && (
                 <div className="my-10 text-xl text-center text-red-500 uppercase">

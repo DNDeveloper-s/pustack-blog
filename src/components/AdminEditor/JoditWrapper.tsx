@@ -21,6 +21,7 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { useUser } from "@/context/UserContext";
+import JoditPreview from "./JoditPreview";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -51,24 +52,29 @@ function JoditWrapper(
   },
   ref: any
 ) {
-  const [content, setContent] = useState("");
+  // const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { user } = useUser();
+  const disclosureOptions = useDisclosure();
+  const [initialContent, setInitialContent] = useState("");
+  const currentContent = useRef<string>("");
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
     const storageContent = JSON.parse(getContent);
 
     if (prePost) {
-      setContent(prePost.content);
+      setInitialContent(prePost.content);
+      currentContent.current = prePost.content;
       setTopic(prePost.topic);
       if (inputRef.current) inputRef.current.value = prePost.title ?? "";
     } else if (storageContent) {
-      setContent(storageContent.content);
+      setInitialContent(storageContent.content);
+      currentContent.current = storageContent.content;
       setTopic(storageContent.topic);
       if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
     }
@@ -77,7 +83,8 @@ function JoditWrapper(
   useImperativeHandle(ref, () => ({
     reset: () => {
       setTopic("");
-      setContent("");
+      setInitialContent("");
+      currentContent.current = "";
       if (inputRef.current) inputRef.current.value = "";
     },
   }));
@@ -85,7 +92,7 @@ function JoditWrapper(
   async function handleContinuePost() {
     if (!user) return;
 
-    const isValid = inputRef.current?.value && content && topic;
+    const isValid = inputRef.current?.value && currentContent.current && topic;
 
     if (!isValid) {
       setError("Please fill all fields");
@@ -93,13 +100,16 @@ function JoditWrapper(
     }
 
     const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
+    const doc = parser.parseFromString(currentContent.current, "text/html");
     const body = doc.body;
     function trimArray(arr: ChildNode[]) {
       let index = 0;
       while (true) {
         const el = arr[index];
-        if (el.textContent?.trim() !== "") {
+        if (
+          el?.textContent?.trim() !== "" ||
+          !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
+        ) {
           break;
         }
         index++;
@@ -157,7 +167,12 @@ function JoditWrapper(
     handleContinue(post);
   }
 
+  const handlePreview = () => {
+    disclosureOptions.onOpen();
+  };
+
   const updateLocalStorage = (key: string, value: any) => {
+    if (prePost) return;
     const getContent = localStorage.getItem("editor_state") ?? "{}";
     const storageContent = JSON.parse(getContent);
 
@@ -224,25 +239,26 @@ function JoditWrapper(
         <Button onClick={onOpen}>Create Maths Formula</Button>
       </div>
       <JoditEditor
-        content={content}
+        content={initialContent}
         setContent={(_content) => {
-          setContent(_content);
+          // setContent(_content);
+          currentContent.current = _content;
         }}
         updateLiveContent={(content) => {
           updateLocalStorage("content", content);
         }}
       />
       <div className="flex justify-end gap-4 mb-10">
-        {/* <Button
-          isDisabled={isPending}
-          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-          onClick={handleCreatePost}
+        <Button
+          // isDisabled={isPending}
+          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular"
+          onClick={handlePreview}
           variant="flat"
           color="primary"
-          isLoading={isPending}
+          // isLoading={isPending}
         >
-          Create Post
-        </Button> */}
+          Preview
+        </Button>
         <Button
           // isDisabled={isPending}
           className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
@@ -255,6 +271,10 @@ function JoditWrapper(
           Continue
         </Button>
       </div>
+      <JoditPreview
+        disclosureOptions={disclosureOptions}
+        content={currentContent.current}
+      />
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

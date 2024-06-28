@@ -25,7 +25,7 @@ import hljs from "highlight.js";
 
 interface JoditEditorProps {
   content: string;
-  setContent: React.Dispatch<React.SetStateAction<string>>;
+  setContent: (str: string) => void;
   updateLiveContent: (content: string) => void;
 }
 
@@ -57,6 +57,7 @@ export default function JoditEditor({
           removeButtons: ["image"],
           toolbar: true,
           extraPlugins: ["pasteCode"],
+          className: "no-preflight jodit-table",
           // @ts-ignore
           pasteCode: {
             globalHighlightLib: true,
@@ -221,7 +222,9 @@ export default function JoditEditor({
                       }
                     },
                     setProgress: (value: number) => {
-                      textAreaContainer.innerHTML = `Uploading ${value}%`;
+                      textAreaContainer.innerHTML = `Uploading ${value.toFixed(
+                        2
+                      )}%`;
                     },
                     handleComplete: (url: string) => {
                       textAreaContainer.innerHTML = "";
@@ -271,8 +274,8 @@ export default function JoditEditor({
             },
             {
               name: "Insert Icon",
-              iconURL:
-                "https://pustack-blog.vercel.app/assets/images/selection.png",
+              // iconURL:
+              // "https://pustack-blog.vercel.app/assets/images/selection.png",
               tooltip: "Insert Icon",
               group: "insert",
               popup: (

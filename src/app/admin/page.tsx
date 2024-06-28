@@ -7,5 +7,12 @@ export default async function Admin({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const postId = searchParams.post_id;
-  return <AdminPage postId={postId as string} />;
+  const user = await getAuthenticatedAppForUser();
+
+  return (
+    <>
+      <p>{JSON.stringify(user)}</p>
+      <AdminPage postId={postId as string} />
+    </>
+  );
 }

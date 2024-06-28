@@ -10,6 +10,7 @@
 
 .content {
   display: inline-block;
+  width: 100%;
   white-space: nowrap; /* Ensure content is scrollable horizontally */
 }
 

@@ -100,7 +100,7 @@ function SignalJodit(props: any, ref: any) {
       while (true) {
         const el = arr[index];
         if (
-          el.textContent?.trim() !== "" ||
+          el?.textContent?.trim() !== "" ||
           !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
         ) {
           break;

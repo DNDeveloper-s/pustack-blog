@@ -105,6 +105,11 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
     "design" | "position" | null
   >("design");
 
+  useEffect(() => {
+    setSelectedPosition(post?.snippetPosition ?? SnippetPosition.MID_CONTENT);
+    setSelectedSnippet(post?.snippetDesign ?? SnippetDesign.CLASSIC_CARD);
+  }, [post]);
+
   function handleChangePosition(position: SnippetPosition) {
     setSelectedPosition(position);
   }
@@ -132,6 +137,8 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
     },
     [selectedSnippet]
   );
+
+  console.log("selectedPosition - ", selectedPosition);
 
   if (!post)
     return (

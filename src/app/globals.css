@@ -461,32 +461,38 @@ ul {
   box-sizing: border-box;
   margin: 0.5em auto;
 }
-.no-preflight h1 {
+.no-preflight h1,
+.jodit-toolbar-button__text h1 {
   font-size: 2em;
   font-weight: bold;
   margin: 0.67em 0;
 }
-.no-preflight h2 {
+.no-preflight h2,
+.jodit-toolbar-button__text h2 {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.83em 0;
 }
-.no-preflight h3 {
+.no-preflight h3,
+.jodit-toolbar-button__text h3 {
   font-size: 1.17em;
   font-weight: bold;
   margin: 1em 0;
 }
-.no-preflight h4 {
+.no-preflight h4,
+.jodit-toolbar-button__text h4 {
   font-size: 1em;
   font-weight: bold;
   margin: 1.33em 0;
 }
-.no-preflight h5 {
+.no-preflight h5,
+.jodit-toolbar-button__text h5 {
   font-size: 0.83em;
   font-weight: bold;
   margin: 1.67em 0;
 }
-.no-preflight h6 {
+.no-preflight h6,
+.jodit-toolbar-button__text h6 {
   font-size: 0.67em;
   font-weight: bold;
   margin: 2.33em 0;
@@ -2279,4 +2285,8 @@ strong {
 
 .blue-border-b {
   border-bottom-color: #243bb5;
+}
+
+.jodit-table table tr td {
+  border-style: double;
 }
