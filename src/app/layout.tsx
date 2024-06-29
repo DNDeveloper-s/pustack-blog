@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 import { Metadata } from "next";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,14 +18,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const doc = await getAuthenticatedAppForUser();
-
-  console.log("doc - ", doc);
+  // const doc = await getAuthenticatedAppForUser();
 
   return (
     <html lang="en">
       <body>
-        <Providers currentUser={doc.currentUser}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

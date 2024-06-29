@@ -271,7 +271,7 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
         <div className="flex-1 pl-5">
           <div>
             <div
-              className="mb-4 border-b border-tertiary p-2 flex items-center justify-between cursor-pointer"
+              className="mb-4 border-b border-tertiary bg-[#eae6bc] p-2 flex items-center justify-between cursor-pointer"
               onClick={() =>
                 setOpenDropdown((c) => (c === "design" ? null : "design"))
               }
@@ -349,7 +349,7 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
           </div>
           <div className="mt-5">
             <div
-              className="mb-4 border-b border-tertiary p-2 flex items-center justify-between cursor-pointer"
+              className="mb-4 border-b bg-[#eae6bc] border-tertiary p-2 flex items-center justify-between cursor-pointer"
               onClick={() =>
                 setOpenDropdown((c) => (c === "position" ? null : "position"))
               }

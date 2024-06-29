@@ -158,7 +158,7 @@ function SignalJodit(props: any, ref: any) {
   return (
     <div className="w-full max-w-[1100px] mx-auto py-2">
       {/* <div>
-        <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
+      <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
           Create Post
         </h2>
       </div> */}

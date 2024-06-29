@@ -13,67 +13,67 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-// export async function generateMetadata(
-//   { params, searchParams }: Props,
-//   parent: ResolvingMetadata
-// ): Promise<Metadata> {
-// fetch data
-// const post = await Post.get(params.postId[0], true);
-// const docRef = doc(db, "posts", params.postId[0]);
-// const data = await getDoc(docRef);
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  //fetch data
+  // const post = await Post.get(params.postId[0], true);
+  const docRef = doc(db, "posts", params.postId[0]);
+  const data = await getDoc(docRef);
 
-// const post = flattenDocumentData(data);
+  const post = flattenDocumentData(data);
 
-// const dom = new JSDOM(post.content, {
-//   contentType: "text/html",
-// });
+  const dom = new JSDOM(post.content, {
+    contentType: "text/html",
+  });
 
-// const _images = Array.from(
-//   dom.window.document.getElementsByTagName("img")
-// ).reduce(srcReducer, []);
+  const _images = Array.from(
+    dom.window.document.getElementsByTagName("img")
+  ).reduce(srcReducer, []);
 
-// const _imageUrl = _images[0];
+  const _imageUrl = _images[0];
 
-// const imageUrl = encodeURIComponent(_imageUrl);
+  const imageUrl = encodeURIComponent(_imageUrl);
 
-// const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
-// const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
-// const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
-// const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
+  const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
 
-// // optionally access and extend (rather than replace) parent metadata
-// // const previousImages = (await parent).openGraph?.images || [];
+  // optionally access and extend (rather than replace) parent metadata
+  // const previousImages = (await parent).openGraph?.images || [];
 
-// return {
-//   title: post.title,
-//   description: post.content,
-//   openGraph: {
-//     title: post.title,
-//     description: post.content,
-//     url: "https://pustack-blog.vercel.app/",
-//     siteName: "Minerva",
-//     images: [
-//       {
-//         url: processedImageUrl2,
-//         width: 450,
-//         height: 235,
-//       },
-//       {
-//         url: processedImageUrl,
-//         width: 450,
-//         height: 300,
-//       },
-//       {
-//         url: processedImageUrl3,
-//         width: 400,
-//         height: 400,
-//       },
-//     ],
-//     locale: "en_US",
-//     type: "website",
-//   },
-// };
-// }
+  return {
+    title: post.title,
+    description: post.content,
+    openGraph: {
+      title: post.title,
+      description: post.content,
+      url: "https://pustack-blog.vercel.app/",
+      siteName: "Minerva",
+      images: [
+        {
+          url: processedImageUrl2,
+          width: 450,
+          height: 235,
+        },
+        {
+          url: processedImageUrl,
+          width: 450,
+          height: 300,
+        },
+        {
+          url: processedImageUrl3,
+          width: 400,
+          height: 400,
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+  };
+}
 
 export default async function PostId(props: { params: { postId: string[] } }) {
   // console.log("props", props);
@@ -89,7 +89,6 @@ export default async function PostId(props: { params: { postId: string[] } }) {
   }
 
   const post = flattenDocumentData(data);
-  const doc1 = await getAuthenticatedAppForUser();
 
   return (
     <div>
@@ -98,6 +97,7 @@ export default async function PostId(props: { params: { postId: string[] } }) {
           ...post,
           id: props.params.postId[0],
           timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
+          flagged_at: post.flagged_at?.toDate().toISOString(),
         }}
       />
     </div>

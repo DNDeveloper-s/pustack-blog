@@ -1,4 +1,4 @@
-import { db, firebaseConfig } from "@/lib/firebase";
+import { auth, db, firebaseConfig } from "@/lib/firebase";
 import { onAuthStateChanged } from "@/lib/firebase/auth";
 import { User } from "firebase/auth";
 import {
@@ -29,10 +29,9 @@ export interface UserDocumentData {
 
 export function UserProvider({
   children,
-  currentUser,
 }: {
   children: React.ReactNode;
-  currentUser: User | null;
+  // currentUser: User | null;
 }) {
   const [user, setUser] = useState<UserDocumentData | null>(null);
 
@@ -54,16 +53,15 @@ export function UserProvider({
   }, []);
 
   useEffect(() => {
-    if (currentUser) {
-      const fetchUser = async () => {
-        const user = await getDoc(doc(db, "users", currentUser.uid));
-        console.log("Setting User | 60 : ");
+    async function checkUser() {
+      await auth.authStateReady();
+      if (auth.currentUser) {
+        const user = await getDoc(doc(db, "users", auth.currentUser.uid));
         setUser(user.data() as UserDocumentData);
-      };
-
-      fetchUser();
+      }
     }
-  }, [currentUser]);
+    checkUser();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(async (authUser) => {

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { Highlight, themes } from "prism-react-renderer";
+import dynamic from "next/dynamic";
 import {
   createElement,
   forwardRef,
@@ -65,6 +66,9 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
+const NavigatorShare = dynamic(() => import("./NavigatorShare"), {
+  ssr: false,
+});
 
 function transformObjectToCodeString(object: any) {
   // Initialize an array to hold the lines of code
@@ -184,7 +188,7 @@ const DeletePostModalRef = forwardRef(DeletePostModal);
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const params = useParams();
   const [elements, setElements] = useState<any>(null);
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<Post | null | undefined>(null);
   const [copied, setCopied] = useState(false);
   const pageTimeSpent = usePageTime();
   const { user } = useUser();
@@ -218,11 +222,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         )
       );
     } else {
-      setPost(null);
+      setPost(undefined);
     }
   }, [_post]);
 
-  const hasPost = post;
+  const hasPost = !!post;
   const hasNoPost = !post;
 
   useEffect(() => {
@@ -264,7 +268,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         let index = 0;
         while (true) {
           const el = arr[index];
-          if (el.textContent?.trim() !== "") {
+          if (
+            el.textContent?.trim() !== "" ||
+            !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
+          ) {
             break;
           }
           index++;
@@ -458,6 +465,15 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     }
   }
 
+  if (post === null) {
+    return null;
+  }
+
+  if (post === undefined) {
+    router.push("/");
+    return null;
+  }
+
   return (
     <main
       className="max-w-[1440px] min-h-screen mx-auto px-3"
@@ -568,7 +584,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                     {post?.topic}
                   </p>
                 </div>
-                {typeof navigator?.canShare === "function" &&
+                <NavigatorShare handleShare={handleShare} />
+                {/* {typeof navigator?.canShare === "function" &&
                   navigator?.canShare() && (
                     <div
                       className="flex gap-2 items-center"
@@ -579,7 +596,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                       </button>
                       <HiOutlineExternalLink className="text-appBlue" />
                     </div>
-                  )}
+                  )} */}
               </div>
               <div className="mt-4">
                 <h2

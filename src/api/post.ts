@@ -44,28 +44,6 @@ export const useGetPostById = (postId?: string | null) => {
   });
 };
 
-const handleFlagshipPost = async (postId: string, isFlagship: boolean) => {
-  const posts = await Post.getFlagship(true);
-
-  const batch = writeBatch(db);
-
-  posts.forEach((post) => {
-    if (post.id !== postId)
-      batch.update(post.ref, {
-        isFlagship: false,
-        unflagged_at: serverTimestamp(),
-      });
-  });
-
-  const newFlagshipPostRef = doc(db, "posts", postId);
-  batch.update(newFlagshipPostRef, {
-    isFlagship: isFlagship,
-    flagged_at: serverTimestamp(),
-  });
-
-  await batch.commit();
-};
-
 export const useCreatePost = (
   options?: UseMutationOptions<any, Error, Post>
 ) => {

@@ -270,6 +270,8 @@ export default function JoditEditor({
                     </div>
                   </section>`
                 );
+
+                // edtr.selection.wrapInTag("spam");
               },
             },
             {
@@ -337,6 +339,8 @@ export default function JoditEditor({
                     alt: "icon",
                     style: "width: 20px; height: auto",
                   });
+
+                  const colorPicker = editor.create.element("color-picker");
 
                   const imageDiv = editor.create.div(
                     "cursor-pointer w-6 h-6 flex justify-center items-center",

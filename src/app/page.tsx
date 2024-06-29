@@ -1,9 +1,26 @@
-import Dashboard from "@/components/Dashboard/Dashboard";
 import LandingPageSections from "@/components/LandingPage/LandingPageSections";
 import Navbar from "@/components/Navbar/Navbar";
-import { flattenQueryData, flattenQueryDataWithId } from "@/firebase/post";
 import { db } from "@/lib/firebase";
-import { collection, limit, query, orderBy, getDocs } from "firebase/firestore";
+import {
+  collection,
+  limit,
+  query,
+  orderBy,
+  getDocs,
+  QuerySnapshot,
+} from "firebase/firestore";
+import { compact } from "lodash";
+import dynamic from "next/dynamic";
+// const Dashboard from "@/components/Dashboard/Dashboard";
+const Dashboard = dynamic(() => import("@/components/Dashboard/Dashboard"), {
+  ssr: false,
+});
+
+function flattenQueryDataWithId<T>(data: QuerySnapshot<T>) {
+  return compact(
+    data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  ) as (T & { id: string })[];
+}
 
 export default async function Home() {
   // const posts = await Post.getAll({ _flatten: true });
@@ -16,6 +33,7 @@ export default async function Home() {
   const posts = flattenQueryDataWithId(docs).map((doc) => ({
     ...doc,
     timestamp: doc.timestamp.toDate().toISOString(),
+    flagged_at: doc.flagged_at?.toDate().toISOString(),
   }));
 
   const signalsRef = collection(db, "signals");
@@ -30,6 +48,7 @@ export default async function Home() {
   const signals = flattenQueryDataWithId(signal_docs).map((doc) => ({
     ...doc,
     timestamp: doc.timestamp.toDate().toISOString(),
+    flagged_at: doc.flagged_at?.toDate().toISOString(),
   }));
 
   // const docRef = doc(db, "posts", props.params.postId[0]);

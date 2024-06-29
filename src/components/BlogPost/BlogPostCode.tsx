@@ -2,9 +2,11 @@
 
 import useScreenSize from "@/hooks/useScreenSize";
 import { Highlight, themes } from "prism-react-renderer";
-import { useEffect, useState } from "react";
+import { Prism } from "prism-react-renderer";
+import { useEffect, useMemo, useState } from "react";
 import { FaCopy } from "react-icons/fa6";
 import { MdOutlineDone } from "react-icons/md";
+import hljs from "highlight.js";
 
 function transformObjectToCodeString(object: any) {
   // Initialize an array to hold the lines of code
@@ -74,11 +76,31 @@ export default function BlogPostCode({ code }: { code: any }) {
     }, 2000);
   };
 
+  const codeString = useMemo(() => transformObjectToCodeString(code), [code]);
+
+  // const language = detect(codeString);
+
+  console.log(
+    "hljs.highlightAuto(codeString).language - ",
+    hljs.highlightAuto(codeString).language
+  );
+
   return (
     <Highlight
       theme={themes.oneDark}
-      code={transformObjectToCodeString(code)}
-      language="tsx"
+      code={codeString}
+      language={
+        hljs.highlightAuto(codeString, [
+          "python",
+          "javascript",
+          "typescript",
+          "java",
+          "dart",
+          "c",
+          "c++",
+          "c#",
+        ]).language ?? "tsx"
+      }
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => {
         console.log("tokens - ", tokens);

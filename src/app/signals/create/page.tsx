@@ -1,8 +1,12 @@
-import SignalForm from "@/components/Signals/SignalForm";
-import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function CreateSignal() {
+import dynamic from "next/dynamic";
+// import SignalForm from "@/components/Signals/SignalForm";
+const SignalForm = dynamic(() => import("@/components/Signals/SignalForm"), {
+  ssr: false,
+});
+
+export default function CreateSignal() {
   // const user = await getAuthenticatedAppForUser();
 
   // if (!user.currentUser?.uid) return redirect("/");

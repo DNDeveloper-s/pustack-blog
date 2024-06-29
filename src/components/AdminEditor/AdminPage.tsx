@@ -387,7 +387,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             </p>
           </div>
         </label> */}
-          {!haveTakenGuideTour && (
+          {step === 1 && !haveTakenGuideTour && (
             <p
               className="text-appBlue underline cursor-pointer"
               onClick={() => {
