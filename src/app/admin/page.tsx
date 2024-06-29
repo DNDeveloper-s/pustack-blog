@@ -8,9 +8,9 @@ export default async function Admin({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const postId = searchParams.post_id;
-  const user = await getAuthenticatedAppForUser();
+  // const user = await getAuthenticatedAppForUser();
 
-  if (!user.currentUser?.uid) return redirect("/");
+  // if (!user.currentUser?.uid) return redirect("/");
 
   return (
     <>

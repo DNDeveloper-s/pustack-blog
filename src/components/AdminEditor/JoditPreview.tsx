@@ -93,11 +93,13 @@ export function RenderEditorContent({
             ) {
               return (
                 <BlogImageDefault
-                  className="mx-auto max-w-full max-h-[500px] flex items-center justify-center"
+                  className="max-w-full block"
                   // @ts-ignore
                   src={props.src}
                   imageProps={{
-                    className: "max-h-[500px] object-contain max-w-full",
+                    ...props,
+                    // @ts-ignore
+                    className: "max-w-full h-auto " + (props.className ?? ""),
                   }}
                 />
               );

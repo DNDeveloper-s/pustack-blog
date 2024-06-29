@@ -32,6 +32,7 @@ import {
   DropdownTrigger,
   DropdownItem,
 } from "@nextui-org/dropdown";
+import { auth } from "@/lib/firebase";
 
 const classes = {
   textFormatGroup:
@@ -60,6 +61,22 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   const [open, setOpen] = useState<boolean>(false);
   const [currentTourStep, setCurrentTourStep] = useState<number>(0);
+
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+
+  useEffect(() => {
+    async function checkUser() {
+      await auth.authStateReady();
+
+      if (auth.currentUser) {
+        return setIsAuthInitialized(true);
+      }
+
+      return router.push("/");
+    }
+
+    checkUser();
+  }, []);
 
   const steps: TourProps["steps"] = useMemo(
     () => [
@@ -346,17 +363,18 @@ export default function AdminPage({ postId }: { postId?: string }) {
   }, [haveTakenGuideTour]);
 
   return (
-    <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
-      <Navbar />
-      <div className="flex items-center justify-between mt-8 max-w-[1100px] mx-auto">
-        <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
-          {step === 1
-            ? requestedPost
-              ? "Edit Post"
-              : "Create Post"
-            : "Choose Design and Position"}
-        </h2>
-        {/* <label
+    isAuthInitialized && (
+      <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
+        <Navbar />
+        <div className="flex items-center justify-between mt-8 max-w-[1100px] mx-auto">
+          <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
+            {step === 1
+              ? requestedPost
+                ? "Edit Post"
+                : "Create Post"
+              : "Choose Design and Position"}
+          </h2>
+          {/* <label
           htmlFor={"today-flagship"}
           className="flex gap-2 py-1 cursor-pointer group"
         >
@@ -369,114 +387,117 @@ export default function AdminPage({ postId }: { postId?: string }) {
             </p>
           </div>
         </label> */}
-        {!haveTakenGuideTour && (
-          <p
-            className="text-appBlue underline cursor-pointer"
-            onClick={() => {
-              setCurrentTourStep(0);
-              setOpen(true);
-            }}
-          >
-            Take Quick Tour?
-          </p>
-        )}
-        {step === 1 && haveTakenGuideTour && (
-          <Dropdown
-            classNames={{
-              content: "!bg-primary !rounded-[4px] !min-w-[100px]",
-            }}
-          >
-            <DropdownTrigger>
-              <p className="text-appBlue underline cursor-pointer">
-                Need help?
-              </p>
-            </DropdownTrigger>
-            <DropdownMenu
-              classNames={{
-                list: "p-0 m-0",
+          {!haveTakenGuideTour && (
+            <p
+              className="text-appBlue underline cursor-pointer"
+              onClick={() => {
+                setCurrentTourStep(0);
+                setOpen(true);
               }}
             >
-              <DropdownItem onClick={showTutorial(8)}>
-                Insert Code Snippet
-              </DropdownItem>
-              <DropdownItem onClick={showTutorial(5)}>
-                Insert Image
-              </DropdownItem>
-              <DropdownItem onClick={showTutorial(6)}>
-                Insert Youtube Video
-              </DropdownItem>
-              <DropdownItem onClick={showTutorial(2)}>Insert Link</DropdownItem>
-              <DropdownItem onClick={showTutorial(3)}>
-                Insert Section
-              </DropdownItem>
-              <DropdownItem onClick={showTutorial(1)}>
-                Color Formatting
-              </DropdownItem>
-              <DropdownItem onClick={showTutorial(7)}>
-                Insert Maths Formula
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        )}
-      </div>
-      <div style={{ display: step === 1 ? "block" : "none" }}>
-        <MathJaxContext>
-          <JoditWrapper
-            prePost={requestedPost}
-            ref={joditRef}
-            handleContinue={handleContinue}
-          />
-        </MathJaxContext>
-      </div>
-      <div
-        className="w-full max-w-[1100px] mx-auto py-2 mt-4"
-        style={{ display: step === 2 ? "block" : "none" }}
-      >
-        <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
-        <SnippetForm ref={snippetRef} post={currentPost} />
-        <div className="flex gap-4 justify-end items-center">
-          <Button
-            // isDisabled={isPending}
-            className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
-            // onClick={handleCreatePost}
-            variant="flat"
-            color="default"
-            // isLoading={isPending}
-            onClick={() => {
-              setStep(1);
-            }}
-          >
-            Back
-          </Button>
-          <Button
-            isDisabled={isPending}
-            className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-            onClick={handleSavePost}
-            variant="flat"
-            color="primary"
-            isLoading={isPending}
-          >
-            {requestedPost ? "Update Post" : "Create Post"}
-          </Button>
+              Take Quick Tour?
+            </p>
+          )}
+          {step === 1 && haveTakenGuideTour && (
+            <Dropdown
+              classNames={{
+                content: "!bg-primary !rounded-[4px] !min-w-[100px]",
+              }}
+            >
+              <DropdownTrigger>
+                <p className="text-appBlue underline cursor-pointer">
+                  Need help?
+                </p>
+              </DropdownTrigger>
+              <DropdownMenu
+                classNames={{
+                  list: "p-0 m-0",
+                }}
+              >
+                <DropdownItem onClick={showTutorial(8)}>
+                  Insert Code Snippet
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(5)}>
+                  Insert Image
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(6)}>
+                  Insert Youtube Video
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(2)}>
+                  Insert Link
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(3)}>
+                  Insert Section
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(1)}>
+                  Color Formatting
+                </DropdownItem>
+                <DropdownItem onClick={showTutorial(7)}>
+                  Insert Maths Formula
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </div>
-      </div>
-      {/* <DraftEditor /> */}
-      {/* <button onClick={() => copyIt()}>Copy it</button> */}
-      <Tour
-        current={currentTourStep}
-        onChange={setCurrentTourStep}
-        onFinish={() => {
-          setOpen(false);
-          setCurrentTourStep(0);
-          setHaveTakenGuideTour(true);
-        }}
-        open={open}
-        onClose={() => {
-          setOpen(false);
-          setHaveTakenGuideTour(true);
-        }}
-        steps={steps}
-      />
-    </main>
+        <div style={{ display: step === 1 ? "block" : "none" }}>
+          <MathJaxContext>
+            <JoditWrapper
+              prePost={requestedPost}
+              ref={joditRef}
+              handleContinue={handleContinue}
+            />
+          </MathJaxContext>
+        </div>
+        <div
+          className="w-full max-w-[1100px] mx-auto py-2 mt-4"
+          style={{ display: step === 2 ? "block" : "none" }}
+        >
+          <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
+          <SnippetForm ref={snippetRef} post={currentPost} />
+          <div className="flex gap-4 justify-end items-center">
+            <Button
+              // isDisabled={isPending}
+              className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
+              // onClick={handleCreatePost}
+              variant="flat"
+              color="default"
+              // isLoading={isPending}
+              onClick={() => {
+                setStep(1);
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              isDisabled={isPending}
+              className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
+              onClick={handleSavePost}
+              variant="flat"
+              color="primary"
+              isLoading={isPending}
+            >
+              {requestedPost ? "Update Post" : "Create Post"}
+            </Button>
+          </div>
+        </div>
+        {/* <DraftEditor /> */}
+        {/* <button onClick={() => copyIt()}>Copy it</button> */}
+        <Tour
+          current={currentTourStep}
+          onChange={setCurrentTourStep}
+          onFinish={() => {
+            setOpen(false);
+            setCurrentTourStep(0);
+            setHaveTakenGuideTour(true);
+          }}
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            setHaveTakenGuideTour(true);
+          }}
+          steps={steps}
+        />
+      </main>
+    )
   );
 }
