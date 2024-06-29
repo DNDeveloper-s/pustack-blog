@@ -12,10 +12,13 @@ function transformObjectToCodeString(object: any) {
 
   // Helper function to extract text from the object
   function extractText(node: any): string {
+    console.log("node.props.children - ", node.props);
     if (typeof node === "string") {
       return node;
     } else if (node?.props?.children) {
-      return node.props.children.map(extractText).join("");
+      return node.props.children instanceof Array
+        ? node.props.children.map(extractText).join("")
+        : extractText(node.props.children);
     } else if (node?.type === "br") {
       return "\n"; // Handle line breaks
     } else if (node?.props?.code?.length > 0) {

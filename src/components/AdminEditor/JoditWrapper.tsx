@@ -156,6 +156,15 @@ function JoditWrapper(
     }
     function trimEmptyElements(parentNode: HTMLElement) {
       const children = Array.from(parentNode.childNodes);
+
+      const parsedChildren = children.map((child) => {
+        console.log("child - ", child);
+        if (child?.nodeName?.toLowerCase() === "iframe") {
+          return document.createElement("p");
+        }
+        return child;
+      });
+
       const arr = trimArray(children);
       const finalArray = trimArray(arr.reverse());
 

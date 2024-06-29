@@ -49,11 +49,23 @@ export function RenderEditorContent({
       }
       function nodesToInnerHTMLString(nodes: any[]) {
         const container = document.createElement("div");
+
         nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
         return container.innerHTML;
       }
       function trimEmptyElements(parentNode: HTMLElement) {
         const children = Array.from(parentNode.childNodes);
+
+        const iFrames = parentNode.querySelectorAll("iframe");
+        iFrames.forEach((iFrameItem) => {
+          iFrameItem.classList.add("iframe");
+        }, []);
+
+        const mathElements = parentNode.querySelectorAll("math");
+        mathElements.forEach((mathEl) => {
+          mathEl.parentElement?.classList.add("math_container");
+        }, []);
+
         const arr = trimArray(children);
         const finalArray = trimArray(arr.reverse());
 
