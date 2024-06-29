@@ -22,6 +22,7 @@ import {
 } from "@nextui-org/modal";
 import { useUser } from "@/context/UserContext";
 import JoditPreview from "./JoditPreview";
+import { Spinner } from "@nextui-org/spinner";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -41,6 +42,38 @@ const TOPICS = [
   { key: "media", value: "Media" },
   { key: "others", value: "Others" },
 ];
+
+function MathsFormulaIframe() {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  return (
+    <>
+      {!iframeLoaded && (
+        <div className="flex items-center justify-center py-5">
+          <Spinner size="sm" label="Loading Maths Editor" />
+        </div>
+      )}
+      {iframeLoaded && (
+        <p className="mb-3 text-appBlue">
+          Copy <strong>Math ML</strong> code and paste it in the editor using
+          the <strong>Keep</strong> option.
+        </p>
+      )}
+      <iframe
+        src="https://www.imatheq.com/imatheq/com/imatheq/math-equation-editor-latex-mathml.html"
+        style={{
+          width: "100%",
+          height: "80vh",
+          maxHeight: "800px",
+          opacity: iframeLoaded ? 1 : 0,
+        }}
+        onLoad={(e: any) => {
+          console.log("iframe loaded", e);
+          setIframeLoaded(true);
+        }}
+      ></iframe>
+    </>
+  );
+}
 
 function JoditWrapper(
   {
@@ -236,7 +269,14 @@ function JoditWrapper(
         </select>
       </div>
       <div className="mt-5">
-        <Button onClick={onOpen}>Create Maths Formula</Button>
+        <Button
+          className="h-9 px-5 rounded text-xs font-featureRegular create-maths-formula-button"
+          variant="flat"
+          color="default"
+          onClick={onOpen}
+        >
+          Create Maths Formula
+        </Button>
       </div>
       <JoditEditor
         content={initialContent}
@@ -251,7 +291,7 @@ function JoditWrapper(
       <div className="flex justify-end gap-4 mb-10">
         <Button
           // isDisabled={isPending}
-          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular"
+          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
           onClick={handlePreview}
           variant="flat"
           color="primary"
@@ -286,14 +326,7 @@ function JoditWrapper(
         <ModalContent>
           <ModalHeader>Mathematics Formula</ModalHeader>
           <ModalBody>
-            <iframe
-              src="https://www.imatheq.com/imatheq/com/imatheq/math-equation-editor-latex-mathml.html"
-              style={{
-                width: "100%",
-                height: "80vh",
-                maxHeight: "800px",
-              }}
-            ></iframe>
+            <MathsFormulaIframe />
           </ModalBody>
         </ModalContent>
       </Modal>

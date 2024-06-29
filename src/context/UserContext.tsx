@@ -57,6 +57,7 @@ export function UserProvider({
     if (currentUser) {
       const fetchUser = async () => {
         const user = await getDoc(doc(db, "users", currentUser.uid));
+        console.log("Setting User | 60 : ");
         setUser(user.data() as UserDocumentData);
       };
 
@@ -70,6 +71,7 @@ export function UserProvider({
         const userRef = doc(db, "users", authUser.uid);
         const user = await getDoc(userRef);
         if (user.exists()) {
+          console.log("Setting User | 74 : ");
           setUser(user.data() as UserDocumentData);
         } else {
           await setDoc(userRef, {
@@ -80,10 +82,14 @@ export function UserProvider({
             sign_up_ts: serverTimestamp(),
           });
           const user = await getDoc(userRef);
+          console.log("Setting User | 85 : ");
           setUser(user.data() as UserDocumentData);
         }
       } else {
+        console.log("Setting User | 89 : ");
         setUser(null);
+
+        // router.push("/");
       }
     });
 

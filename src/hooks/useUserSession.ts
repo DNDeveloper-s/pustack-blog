@@ -28,8 +28,10 @@ export default function useUserSession(initialUser: any) {
     const unsubscribe = onAuthStateChanged(async (authUser) => {
       if (authUser) {
         const user = await getDoc(doc(db, "users", authUser.uid));
+        console.log("Setting User | 31 : ");
         setUser(user.data());
       } else {
+        console.log("Setting User | 34 : ");
         setUser(null);
       }
     });

@@ -19,6 +19,8 @@ export default async function RootLayout({
 }>) {
   const doc = await getAuthenticatedAppForUser();
 
+  console.log("doc - ", doc);
+
   return (
     <html lang="en">
       <body>

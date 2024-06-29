@@ -22,7 +22,9 @@ export async function signInWithGoogle() {
 
 export async function signOut() {
   try {
-    return auth.signOut();
+    await auth.signOut();
+    // @ts-ignore
+    if (typeof window !== undefined) window.location = "/";
   } catch (error) {
     console.error("Error signing out - ", error);
   }

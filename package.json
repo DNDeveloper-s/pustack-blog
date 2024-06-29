@@ -13,6 +13,7 @@
     "@draft-js-plugins/hashtag": "^4.2.2",
     "@draft-js-plugins/linkify": "^4.2.2",
     "@nextui-org/button": "^2.0.31",
+    "@nextui-org/dropdown": "^2.1.26",
     "@nextui-org/modal": "^2.0.34",
     "@nextui-org/progress": "^2.0.30",
     "@nextui-org/spinner": "^2.0.29",

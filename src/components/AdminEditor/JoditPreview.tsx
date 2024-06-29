@@ -13,17 +13,17 @@ import ScrollableContent from "../shared/ScrollableComponent";
 import { BlogImageDefault } from "../shared/BlogImage";
 import { filterAndTrimStrings } from "../BlogPost/BlogPost";
 
-export default function JoditPreview({
-  disclosureOptions,
+export function RenderEditorContent({
   content,
+  enabled,
 }: {
-  disclosureOptions: ReturnType<typeof useDisclosure>;
   content: string;
+  enabled: boolean;
 }) {
   const [elements, setElements] = useState<any>(null);
 
   useEffect(() => {
-    if (content && disclosureOptions.isOpen) {
+    if (content && enabled) {
       let index = 0;
       let firstContentEncountered = false;
       const parser = new DOMParser();
@@ -143,8 +143,23 @@ export default function JoditPreview({
       });
       setElements(_content);
     }
-  }, [content, disclosureOptions.isOpen]);
+  }, [content, enabled]);
+  return (
+    <MathJaxContext>
+      <div className="w-full py-2 no-preflight blog-post-container">
+        <MathJax>{elements}</MathJax>
+      </div>
+    </MathJaxContext>
+  );
+}
 
+export default function JoditPreview({
+  disclosureOptions,
+  content,
+}: {
+  disclosureOptions: ReturnType<typeof useDisclosure>;
+  content: string;
+}) {
   return (
     <Modal
       isOpen={disclosureOptions.isOpen}
@@ -159,11 +174,10 @@ export default function JoditPreview({
           Preview
         </ModalHeader>
         <ModalBody>
-          <MathJaxContext>
-            <div className="w-full py-2 no-preflight blog-post-container">
-              <MathJax>{elements}</MathJax>
-            </div>
-          </MathJaxContext>
+          <RenderEditorContent
+            content={content}
+            enabled={disclosureOptions.isOpen}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

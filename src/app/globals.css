@@ -2290,3 +2290,8 @@ strong {
 .jodit-table table tr td {
   border-style: double;
 }
+
+.ant-tour {
+  width: auto !important;
+  max-width: 90vw !important;
+}
