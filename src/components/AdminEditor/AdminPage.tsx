@@ -377,7 +377,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
               setOpen(true);
             }}
           >
-            Take Guide Tour?
+            Take Quick Tour?
           </p>
         )}
         {step === 1 && haveTakenGuideTour && (
@@ -398,6 +398,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
             >
               <DropdownItem onClick={showTutorial(8)}>
                 Insert Code Snippet
+              </DropdownItem>
+              <DropdownItem onClick={showTutorial(5)}>
+                Insert Image
               </DropdownItem>
               <DropdownItem onClick={showTutorial(6)}>
                 Insert Youtube Video
@@ -465,9 +468,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
         onFinish={() => {
           setOpen(false);
           setCurrentTourStep(0);
+          setHaveTakenGuideTour(true);
         }}
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          setHaveTakenGuideTour(true);
+        }}
         steps={steps}
       />
     </main>
