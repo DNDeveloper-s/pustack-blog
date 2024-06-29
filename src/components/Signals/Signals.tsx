@@ -137,6 +137,32 @@ function SignalComponent({ signal }: { signal: Signal }) {
               );
             }
 
+            if (type === "iframe") {
+              return (
+                <iframe
+                  {...props}
+                  style={{
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                    // @ts-ignore
+                    ...(props?.style ?? {}),
+                  }}
+                />
+              );
+            }
+
+            if (type === "blockquote") {
+              return createElement(
+                type,
+                {
+                  ...props,
+                  // @ts-ignore
+                  className: "minerva-blockquote-1 " + (props?.className ?? ""),
+                },
+                ...children
+              );
+            }
+
             return createElement(type, props, ...children);
             // return <div>Create Element</div>;
           },
@@ -221,9 +247,10 @@ function Signals(
   }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
 
   useEffect(() => {
+    console.log("targetEl - ", targetRef.current);
     if (!targetRef.current) return;
     const targetEl = targetRef.current;
-    setTimeout(
+    const timeout = setTimeout(
       () =>
         targetEl?.scrollIntoView({
           behavior: "smooth",
@@ -231,6 +258,8 @@ function Signals(
         }),
       400
     );
+
+    return () => clearTimeout(timeout);
   }, [_serverFormedSignals, isMobileScreen]);
 
   return (

@@ -39,6 +39,11 @@
   src: url(/assets/fonts/CourierPrime-Regular.ttf);
 }
 
+@font-face {
+  font-family: UtopiaItalic;
+  src: url(/assets/fonts/Utopia_Italic.ttf);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -443,7 +448,7 @@ ul {
 .no-preflight p {
   /* margin: 1em 0; */
 }
-.no-preflight blockquote,
+
 .no-preflight figure {
   margin: 1em 40px;
 }
@@ -457,9 +462,10 @@ ul {
   content: close-quote;
 }
 .no-preflight hr {
-  border: 1px inset;
+  border: none;
   box-sizing: border-box;
-  margin: 0.5em auto;
+  margin: 8px auto;
+  border-top: 1px dashed #1f1d1a4d;
 }
 .no-preflight h1,
 .jodit-toolbar-button__text h1 {
@@ -2294,4 +2300,105 @@ strong {
 .ant-tour {
   width: auto !important;
   max-width: 90vw !important;
+}
+
+.jodit_fullsize-box_true .jodit-container {
+  height: 100vh !important;
+}
+
+.minerva-blockquote {
+  padding: 60px 80px 40px;
+  position: relative;
+}
+.minerva-blockquote {
+  font-family: UtopiaItalic;
+  font-size: 35px;
+  font-weight: 700px;
+  text-align: center;
+}
+
+/*minerva-blockquote p::before {
+  content: "\f095"; 
+  font-family: FontAwesome;
+ display: inline-block;
+ padding-right: 6px;
+ vertical-align: middle;
+font-size: 180px;
+}*/
+
+.minerva-blockquote:before {
+  position: absolute;
+  font-family: "FontAwesome";
+  top: 0;
+
+  content: "\f10d";
+  font-size: 200px;
+  color: rgba(0, 0, 0, 0.1);
+}
+
+.minerva-blockquote::after {
+  content: "";
+  top: 20px;
+  left: 50%;
+  margin-left: -100px;
+  position: absolute;
+  border-bottom: 3px solid #bf0024;
+  height: 3px;
+  width: 200px;
+}
+
+.jodit-react-container blockquote,
+.minerva-blockquote-1 {
+  padding: 1em 61px;
+  margin: 0;
+  width: 100%;
+  font-size: 1.5vw;
+  line-height: 1.4;
+  text-rendering: optimizeLegibility;
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-fon-smoothing: grayscale;
+  position: relative;
+  font-family: UtopiaItalic;
+}
+
+.jodit-react-container blockquote,
+.minerva-blockquote-1 {
+  position: relative;
+}
+
+.jodit-react-container blockquote:before,
+.minerva-blockquote-1:before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  width: 40px;
+  height: 0px;
+  /* border-top: 01px solid #434040c7; */
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 1px 1px #b9b9b97d;
+}
+
+@media screen and (max-width: 1600px) {
+  .jodit-react-container blockquote,
+  .minerva-blockquote-1 {
+    font-size: 2vw;
+  }
+}
+
+@media all and (max-width: 1200px) {
+  .jodit-react-container blockquote,
+  .minerva-blockquote-1 {
+    font-size: 2.5vw;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .jodit-react-container blockquote,
+  .minerva-blockquote-1 {
+    font-size: 18px;
+    width: 100%;
+    min-width: 100%;
+  }
 }

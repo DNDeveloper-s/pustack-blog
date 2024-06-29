@@ -342,13 +342,14 @@ export function BlogWithAuthorV2({
             {post.snippetData?.content}
           </TrimmedPara>
         )}
-        <div className="flex mt-3">
-          <Image
-            src={arrowSignalBlue}
-            alt="circles blue"
-            className="w-[16px] h-[13px] mr-[8px]"
-          />
-          {post.snippetData?.quote && (
+        {post.snippetData?.quote && (
+          <div className="flex mt-3">
+            <Image
+              src={arrowSignalBlue}
+              alt="circles blue"
+              className="w-[16px] h-[13px] mr-[8px]"
+            />
+
             <h2
               className="leading-[120%] font-helvetica text-appBlue text-[15px]"
               style={{
@@ -358,8 +359,8 @@ export function BlogWithAuthorV2({
             >
               {post.snippetData?.quote}
             </h2>
-          )}
-        </div>
+          </div>
+        )}
         {/* <figure className="mt-2">
           <Image src={imageOne} alt="Image One" />
         </figure>
@@ -393,14 +394,6 @@ export function BlogWithAuthorV2({
             className="mt-2"
             src={post.snippetData?.image}
           />
-          <p
-            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
-            style={{
-              fontFamily: "Courier,monospace",
-            }}
-          >
-            REUTERS/Leah Millis
-          </p>
         </>
       )}
       {/* {post.snippetData?.image && (

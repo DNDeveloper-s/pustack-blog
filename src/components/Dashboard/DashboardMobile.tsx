@@ -12,17 +12,14 @@ import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import { Spinner } from "@nextui-org/spinner";
 import useInView from "@/hooks/useInView";
-import useScreenSize from "@/hooks/useScreenSize";
-import DashboardMobile from "./DashboardMobile";
 
-function DashboardDesktop({
+export default function DashboardMobile({
   posts: _serverPosts,
   signals: _serverSignals,
 }: {
   posts: any;
   signals: any;
 }) {
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const {
     signals: _clientSignals,
     isFetching,
@@ -170,21 +167,6 @@ function DashboardDesktop({
               <BlueSignalBlog signal={signal} />
             </div>
           ))}
-          {/* {(hasNextPage || isFetching || isLoading) && (
-            <div
-              ref={signalSpinnerRef}
-              className="flex-shrink-0 px-3 flex items-center justify-center"
-            >
-              <Spinner
-                classNames={{
-                  circle1: "blue-border-b",
-                  circle2: "blue-border-b",
-                }}
-                color="warning"
-                size="sm"
-              />
-            </div>
-          )} */}
         </div>
       </div>
       <div className="mt-[15px] md:mt-0 md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
@@ -192,59 +174,41 @@ function DashboardDesktop({
           linkClassName="block"
           post={postsByPosition.titlePost as Post}
         />
-        <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-          {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
-            <div
-              key={i}
-              className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
-            >
-              {postChunkOf2.map((post, j) => (
-                <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
-                  <DesignedBlog
-                    linkClassName={"h-full block"}
-                    size="sm"
-                    post={post}
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* <div className="pr-3">
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        {postsByPosition.rightPosts?.slice(0, 3)?.map((post) => (
+          <DesignedBlog
+            size="sm"
+            linkClassName="block"
+            key={post.id}
+            post={post}
+          />
+        ))}
+      </div>
+      <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+        {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+          >
+            {postChunkOf2.map((post, j) => (
+              <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
+                <DesignedBlog
+                  linkClassName={"h-full block"}
+                  size="sm"
+                  post={post}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+        {/* <div className="pr-3">
             <BlogWithAuthorV2 size="sm" />
           </div>
           <div className="pl-3">
             <BlogWithAuthor size="sm" />
           </div> */}
-        </div>
-      </div>
-      <div className="px-0 md:pl-7 md:pr-0">
-        <div className="grid grid-cols-1 gap-4">
-          {postsByPosition.rightPosts?.slice(0, 3)?.map((post) => (
-            <DesignedBlog
-              size="sm"
-              linkClassName="block"
-              key={post.id}
-              post={post}
-            />
-          ))}
-        </div>
-        {/* <BlogWithAuthor post={fullCPosts?.[1]} size="sm" /> */}
-        {!isTabletScreen && (
-          <div className="mt-4">
-            <SignUpForNewsLetters />
-          </div>
-        )}
       </div>
     </div>
-  );
-}
-
-export default function Dashboard(props: { posts: any; signals: any }) {
-  const { isMobileScreen } = useScreenSize();
-
-  return isMobileScreen ? (
-    <DashboardMobile {...props} />
-  ) : (
-    <DashboardDesktop {...props} />
   );
 }

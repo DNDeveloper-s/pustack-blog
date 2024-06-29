@@ -37,5 +37,5 @@ export default async function SignalPage({
     timestamp: doc.timestamp.toDate().toISOString(),
   }));
 
-  return <SignalsPage signals={signals} startAt={searchParams.startAt} />;
+  return <SignalsPage signals={signals} startAt={searchParams.id} />;
 }

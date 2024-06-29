@@ -130,6 +130,32 @@ export function RenderEditorContent({
               );
             }
 
+            if (type === "iframe") {
+              return (
+                <iframe
+                  {...props}
+                  style={{
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                    // @ts-ignore
+                    ...(props?.style ?? {}),
+                  }}
+                />
+              );
+            }
+
+            if (type === "blockquote") {
+              return createElement(
+                type,
+                {
+                  ...props,
+                  // @ts-ignore
+                  className: "minerva-blockquote-1 " + (props?.className ?? ""),
+                },
+                ...children
+              );
+            }
+
             return createElement(type, props, ...children);
             // return <div>Create Element</div>;
           },
