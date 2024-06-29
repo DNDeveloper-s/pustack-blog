@@ -97,6 +97,7 @@ function transformObjectToCodeString(object: any) {
 }
 
 export function filterAndTrimStrings(arr: any[]) {
+  if (!(arr instanceof Array)) return "";
   return (
     arr?.map((c: any) => (typeof c === "string" ? c.trim() : "")).join(" ") ??
     ""
@@ -329,20 +330,24 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 ?.props?.children.find((c: any) => c.type === "h2")
                 .props.children;
 
+              console.log("title - ", title);
+
               title &&
+                title instanceof Array &&
                 setTitles((prev) => [
                   ...prev,
                   { titleWithIcons: title, title: filterAndTrimStrings(title) },
                 ]);
-
-              console.log("title | |||| - ", title);
 
               const isFirstSection = index === 0;
               index++;
               return createElement(
                 type,
                 {
-                  id: filterAndTrimStrings(title),
+                  id:
+                    title && title instanceof Array
+                      ? filterAndTrimStrings(title)
+                      : "others",
                   ...props,
                   style: { paddingTop: "10px" },
                   className: isFirstSection ? "first_section" : "",
@@ -682,7 +687,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         alt="i-image"
                       /> */}
                         <h3
-                          className="text-[#1f1d1a] text-[16px] font-featureHeadline"
+                          className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
                           style={{
                             fontWeight: 400,
                             fontVariationSettings: '"wght" 500,"opsz" 10',
