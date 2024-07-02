@@ -7,6 +7,8 @@ import { JSDOM } from "jsdom";
 import useUserSession from "@/hooks/useUserSession";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 import { redirect } from "next/navigation";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 
 type Props = {
   params: { postId: [string] };
@@ -92,14 +94,16 @@ export default async function PostId(props: { params: { postId: string[] } }) {
 
   return (
     <div>
-      <BlogPost
-        _post={{
-          ...post,
-          id: props.params.postId[0],
-          timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
-          flagged_at: post.flagged_at?.toDate().toISOString(),
-        }}
-      />
+      <ErrorBoundary errorComponent={ErrorMasterComponent}>
+        <BlogPost
+          _post={{
+            ...post,
+            id: props.params.postId[0],
+            timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
+            flagged_at: post.flagged_at?.toDate().toISOString(),
+          }}
+        />
+      </ErrorBoundary>
     </div>
   );
 }
