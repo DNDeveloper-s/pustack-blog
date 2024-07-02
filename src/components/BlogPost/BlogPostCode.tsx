@@ -41,6 +41,8 @@ function transformObjectToCodeString(object: any) {
     // Extract text from the object
     const text = extractText(object);
     codeLines.push(text);
+  } else if (typeof object === "string") {
+    return object;
   }
 
   // Join the lines of code into a single string
@@ -79,11 +81,6 @@ export default function BlogPostCode({ code }: { code: any }) {
   const codeString = useMemo(() => transformObjectToCodeString(code), [code]);
 
   // const language = detect(codeString);
-
-  console.log(
-    "hljs.highlightAuto(codeString).language - ",
-    hljs.highlightAuto(codeString).language
-  );
 
   return (
     <Highlight
