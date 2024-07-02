@@ -1,5 +1,6 @@
 import LandingPageSections from "@/components/LandingPage/LandingPageSections";
 import Navbar from "@/components/Navbar/Navbar";
+import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -10,6 +11,7 @@ import {
   QuerySnapshot,
 } from "firebase/firestore";
 import { compact } from "lodash";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import dynamic from "next/dynamic";
 // const Dashboard from "@/components/Dashboard/Dashboard";
 const Dashboard = dynamic(() => import("@/components/Dashboard/Dashboard"), {
@@ -57,12 +59,14 @@ export default async function Home() {
   // const doc1 = await getAuthenticatedAppForUser();
 
   return (
-    <main className="w-full max-w-[1440px] mx-auto px-3">
-      <Navbar />
-      <div className="">
-        <Dashboard posts={posts} signals={signals} />
-        <LandingPageSections />
-      </div>
-    </main>
+    <ErrorBoundary errorComponent={ErrorMasterComponent}>
+      <main className="w-full max-w-[1440px] mx-auto px-3">
+        <Navbar />
+        <div className="">
+          <Dashboard posts={posts} signals={signals} />
+          <LandingPageSections />
+        </div>
+      </main>
+    </ErrorBoundary>
   );
 }

@@ -1,4 +1,5 @@
 import SignalsPage from "@/components/Signals/SignalsPage";
+import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 import { flattenQueryDataWithId } from "@/firebase/signal";
 import { db } from "@/lib/firebase";
 import {
@@ -11,6 +12,7 @@ import {
   query,
   endAt,
 } from "firebase/firestore";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export default async function SignalPage({
   searchParams,
@@ -37,5 +39,9 @@ export default async function SignalPage({
     timestamp: doc.timestamp.toDate().toISOString(),
   }));
 
-  return <SignalsPage signals={signals} startAt={searchParams.id} />;
+  return (
+    <ErrorBoundary errorComponent={ErrorMasterComponent}>
+      <SignalsPage signals={signals} startAt={searchParams.id} />
+    </ErrorBoundary>
+  );
 }

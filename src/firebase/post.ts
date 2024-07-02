@@ -317,8 +317,6 @@ export class Post {
 
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
 
-    console.log("this - ", this);
-
     await setDoc(postRef, this);
 
     return postId;

@@ -160,6 +160,14 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
                 Are you sure you want to delete post &quot;
                 <strong>{post?.displayTitle}</strong>&quot;
               </p>
+              {error && (
+                <p className="text-sm my-1 text-gray-500 bg-[#fffdf2] p-[4px_8px] rounded">
+                  Deletion Error:{" "}
+                  <span className="italic pl-1 text-danger-500 ">
+                    {error.message}
+                  </span>
+                </p>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button color="default" variant="light" onPress={onClose}>

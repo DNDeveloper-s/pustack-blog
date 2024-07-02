@@ -291,7 +291,12 @@ export default function AdminPage({ postId }: { postId?: string }) {
     }
   }, [requestedPost, user?.email]);
 
-  const { mutate: postCreatePost, isPending: isCreatePending } = useCreatePost({
+  const {
+    mutate: postCreatePost,
+    isPending: isCreatePending,
+    error: createPostError,
+    reset: createPostReset,
+  } = useCreatePost({
     onSuccess: () => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
@@ -300,7 +305,12 @@ export default function AdminPage({ postId }: { postId?: string }) {
     },
   });
 
-  const { mutate: postUpdatePost, isPending: isUpdatePending } = useUpdatePost({
+  const {
+    mutate: postUpdatePost,
+    isPending: isUpdatePending,
+    error: updatePostError,
+    reset: updatePostReset,
+  } = useUpdatePost({
     onSuccess: (data: any) => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
@@ -308,6 +318,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
       window.location = "/" + data;
     },
   });
+
+  const error = createPostError || updatePostError;
 
   const isPending = isCreatePending || isUpdatePending;
 
@@ -325,6 +337,11 @@ export default function AdminPage({ postId }: { postId?: string }) {
   //     window.onbeforeunload = null;
   //   };
   // }, []);
+
+  useEffect(() => {
+    createPostReset();
+    updatePostReset();
+  }, [step]);
 
   const handleSavePost = () => {
     if (!currentPost) return;
@@ -439,7 +456,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
             </Dropdown>
           )}
         </div>
-        <div style={{ display: step === 1 ? "block" : "none" }}>
+        <div
+          className="w-full max-w-[1100px] mx-auto"
+          style={{ display: step === 1 ? "block" : "none" }}
+        >
+          {error && (
+            <p className="text-danger-500 text-sm my-2">{error.message}</p>
+          )}
           <MathJaxContext>
             <JoditWrapper
               prePost={requestedPost}
@@ -452,6 +475,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
           className="w-full max-w-[1100px] mx-auto py-2 mt-4"
           style={{ display: step === 2 ? "block" : "none" }}
         >
+          {error && (
+            <p className="text-danger-500 text-sm my-2">{error.message}</p>
+          )}
           <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
           <SnippetForm ref={snippetRef} post={currentPost} />
           <div className="flex gap-4 justify-end items-center">
