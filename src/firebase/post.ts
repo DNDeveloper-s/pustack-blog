@@ -126,7 +126,7 @@ export class Post {
   readonly timestamp: string | undefined = undefined;
   private _flagship: boolean = false;
   private _position: PostPosition | undefined = undefined;
-  snippetPosition: SnippetPosition = SnippetPosition.TITLE;
+  snippetPosition: SnippetPosition = SnippetPosition.MID_CONTENT;
   snippetDesign: SnippetDesign = SnippetDesign.CLASSIC_CARD;
   displayTitle: string | undefined = undefined;
   displayContent: string | undefined = undefined;
