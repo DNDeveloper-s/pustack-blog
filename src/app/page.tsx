@@ -51,6 +51,7 @@ export default async function Home() {
     ...doc,
     timestamp: doc.timestamp.toDate().toISOString(),
     flagged_at: doc.flagged_at?.toDate().toISOString(),
+    unflagged_at: doc.unflagged_at?.toDate().toISOString(),
   }));
 
   // const docRef = doc(db, "posts", props.params.postId[0]);

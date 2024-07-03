@@ -5,7 +5,7 @@ import { ampersandImage, avatar } from "@/assets";
 import { chunk, sortBy } from "lodash";
 import Image from "next/image";
 import { ReactNode, useMemo } from "react";
-import { Post } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import TrimmedPara from "../shared/TrimmedPara";
 import Link from "next/link";
 import { Spinner } from "@nextui-org/spinner";
@@ -148,7 +148,7 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
                     key={post.id}
                     className={j % 2 === 0 ? "pr-3 pb-[10px]" : "pl-3"}
                   >
-                    <MinervaBlogPost post={post} />
+                    <MinervaBlogPost post={post as any} />
                   </div>
                 ))}
               </div>

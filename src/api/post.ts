@@ -1,5 +1,5 @@
 import { API_QUERY } from "@/config/api-query";
-import { Post } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import { db } from "@/lib/firebase";
 import {
   QueryFunctionContext,

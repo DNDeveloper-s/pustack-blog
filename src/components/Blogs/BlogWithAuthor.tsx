@@ -1,6 +1,6 @@
 import { arrowSignalBlue, avatar, circlesBlue, imageOne } from "@/assets";
 import { url } from "@/constants";
-import { Post } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import Image from "next/image";
 import Link from "next/link";
 import TrimmedPara from "../shared/TrimmedPara";

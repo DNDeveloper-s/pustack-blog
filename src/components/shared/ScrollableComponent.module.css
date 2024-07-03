@@ -21,6 +21,7 @@
   width: 20px;
   pointer-events: none; /* Allow clicks to pass through */
   display: none; /* Initially hidden */
+  z-index: 2;
 }
 
 .shadow.visible {
@@ -35,4 +36,20 @@
 .right {
   right: 0;
   box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.1);
+}
+
+.top {
+  top: 0;
+  bottom: unset;
+  height: 20px;
+  width: 100%; /* Stretch shadow across the width of the element */
+  box-shadow: inset 0 15px 10px -10px rgba(0, 0, 0, 0.15);
+}
+
+.bottom {
+  bottom: 0;
+  top: unset;
+  height: 20px;
+  width: 100%; /* Stretch shadow across the width of the element */
+  box-shadow: inset 0 -15px 10px -10px rgba(0, 0, 0, 0.15);
 }

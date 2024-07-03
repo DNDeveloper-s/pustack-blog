@@ -2,7 +2,7 @@
 import Flagship from "@/components/Blogs/Flagship";
 import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useMediaQuery } from "react-responsive";
-import { Post, SnippetPosition } from "@/firebase/post";
+import { Post, SnippetPosition } from "@/firebase/post-v2";
 import { chunk, compact, difference, sortBy } from "lodash";
 import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";

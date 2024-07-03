@@ -215,6 +215,7 @@ export default function JoditEditor({
                 input.addEventListener("change", (e) => {
                   // @ts-ignore
                   const file = e.target?.files[0];
+                  input.disabled = true;
                   handleUpload(file, {
                     setIsPending: (value: boolean) => {
                       if (value) {
@@ -229,6 +230,7 @@ export default function JoditEditor({
                     handleComplete: (url: string) => {
                       textAreaContainer.innerHTML = "";
                       textAreaContainer.append(para1, para2);
+                      input.disabled = false;
                       editor.selection.insertHTML(
                         `<img class="blog-image" src="${url}" alt="image" />`
                       );
@@ -248,142 +250,142 @@ export default function JoditEditor({
               //   onOpen();
               // },
             },
-            {
-              name: "Insert Section",
-              tooltip: "Insert Section",
-              group: "insert",
-              exec: async (edtr: Jodit) => {
-                console.log("edtr.places - ", edtr.editor.childNodes[0]);
-                // @ts-ignore
-                edtr.selection.setCursorAfter(
-                  edtr.editor.childNodes[edtr.editor.childNodes.length - 1]
-                );
-                // onOpen();
-                edtr.selection.insertHTML(
-                  `<section class="">
-                    <div class="styles_divider"></div>
-                    <div class="styles_title">
-                      <h2>Title</h2>
-                    </div>
-                    <div class="styles_text">
-                      <p>Text</p>
-                    </div>
-                  </section>`
-                );
+            // {
+            //   name: "Insert Section",
+            //   tooltip: "Insert Section",
+            //   group: "insert",
+            //   exec: async (edtr: Jodit) => {
+            //     console.log("edtr.places - ", edtr.editor.childNodes[0]);
+            //     // @ts-ignore
+            //     edtr.selection.setCursorAfter(
+            //       edtr.editor.childNodes[edtr.editor.childNodes.length - 1]
+            //     );
+            //     // onOpen();
+            //     edtr.selection.insertHTML(
+            //       `<section class="">
+            //         <div class="styles_divider"></div>
+            //         <div class="styles_title">
+            //           <h2>Title</h2>
+            //         </div>
+            //         <div class="styles_text">
+            //           <p>Text</p>
+            //         </div>
+            //       </section>`
+            //     );
 
-                // edtr.selection.wrapInTag("spam");
-              },
-            },
-            {
-              name: "Insert Icon",
-              // iconURL:
-              // "https://pustack-blog.vercel.app/assets/images/selection.png",
-              tooltip: "Insert Icon",
-              group: "insert",
-              popup: (
-                editor: Jodit,
-                current: any,
-                close: any,
-                _button: any
-              ) => {
-                const imageNames = [
-                  "youtube",
-                  "whatsapp",
-                  "Twitter",
-                  "reddit",
-                  "problem",
-                  "network",
-                  "maps",
-                  "linkedin",
-                  "ladder",
-                  "label",
-                  "handshake",
-                  "google",
-                  "github",
-                  "function",
-                  "formula",
-                  "discussion",
-                  "chemical",
-                  "chemical-bond",
-                  "bulb",
-                  "broken-bulb",
-                ];
+            //     // edtr.selection.wrapInTag("spam");
+            //   },
+            // },
+            // {
+            //   name: "Insert Icon",
+            //   // iconURL:
+            //   // "https://pustack-blog.vercel.app/assets/images/selection.png",
+            //   tooltip: "Insert Icon",
+            //   group: "insert",
+            //   popup: (
+            //     editor: Jodit,
+            //     current: any,
+            //     close: any,
+            //     _button: any
+            //   ) => {
+            //     const imageNames = [
+            //       "youtube",
+            //       "whatsapp",
+            //       "Twitter",
+            //       "reddit",
+            //       "problem",
+            //       "network",
+            //       "maps",
+            //       "linkedin",
+            //       "ladder",
+            //       "label",
+            //       "handshake",
+            //       "google",
+            //       "github",
+            //       "function",
+            //       "formula",
+            //       "discussion",
+            //       "chemical",
+            //       "chemical-bond",
+            //       "bulb",
+            //       "broken-bulb",
+            //     ];
 
-                const imageUrls = imageNames.map((name) => {
-                  return `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`;
-                });
+            //     const imageUrls = imageNames.map((name) => {
+            //       return `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`;
+            //     });
 
-                const pngImageNames = [
-                  "furtherreading",
-                  "github",
-                  "google-maps",
-                  "google",
-                  "link",
-                  "linkedin",
-                  "quiz",
-                  "reporterstake",
-                  "selection",
-                  "social",
-                  "thenews",
-                  "viewfrom",
-                  "youtube",
-                ];
+            //     const pngImageNames = [
+            //       "furtherreading",
+            //       "github",
+            //       "google-maps",
+            //       "google",
+            //       "link",
+            //       "linkedin",
+            //       "quiz",
+            //       "reporterstake",
+            //       "selection",
+            //       "social",
+            //       "thenews",
+            //       "viewfrom",
+            //       "youtube",
+            //     ];
 
-                const pngImageUrls = pngImageNames.map((name) => {
-                  return `https://pustack-blog.vercel.app/assets/images/${name}.png`;
-                });
+            //     const pngImageUrls = pngImageNames.map((name) => {
+            //       return `https://pustack-blog.vercel.app/assets/images/${name}.png`;
+            //     });
 
-                const images = [...imageUrls, ...pngImageUrls].map((url) => {
-                  const image = editor.create.element("img", {
-                    src: url,
-                    alt: "icon",
-                    style: "width: 20px; height: auto",
-                  });
+            //     const images = [...imageUrls, ...pngImageUrls].map((url) => {
+            //       const image = editor.create.element("img", {
+            //         src: url,
+            //         alt: "icon",
+            //         style: "width: 20px; height: auto",
+            //       });
 
-                  const colorPicker = editor.create.element("color-picker");
+            //       const colorPicker = editor.create.element("color-picker");
 
-                  const imageDiv = editor.create.div(
-                    "cursor-pointer w-6 h-6 flex justify-center items-center",
-                    {},
-                    [image]
-                  );
+            //       const imageDiv = editor.create.div(
+            //         "cursor-pointer w-6 h-6 flex justify-center items-center",
+            //         {},
+            //         [image]
+            //       );
 
-                  imageDiv.addEventListener("click", () => {
-                    editor.selection.insertHTML(
-                      `<span class="image-icon" style="display: inline-flex;"><img src="${url}" alt="icon" style="height: 16px; object-fit: contain; display: inline;" /></span>`,
-                      true
-                    );
-                    close();
-                  });
+            //       imageDiv.addEventListener("click", () => {
+            //         editor.selection.insertHTML(
+            //           `<span class="image-icon" style="display: inline-flex;"><img src="${url}" alt="icon" style="height: 16px; object-fit: contain; display: inline;" /></span>`,
+            //           true
+            //         );
+            //         close();
+            //       });
 
-                  return imageDiv;
-                });
+            //       return imageDiv;
+            //     });
 
-                const grid = editor.create.div(
-                  "grid gap-2",
-                  {
-                    style:
-                      "grid-template-columns: repeat(4, 1fr); gap: 0.85rem;",
-                  },
-                  images
-                );
+            //     const grid = editor.create.div(
+            //       "grid gap-2",
+            //       {
+            //         style:
+            //           "grid-template-columns: repeat(4, 1fr); gap: 0.85rem;",
+            //       },
+            //       images
+            //     );
 
-                const wrapper = editor.create.div(
-                  "relative active w-[200px] p-1",
-                  [grid]
-                );
+            //     const wrapper = editor.create.div(
+            //       "relative active w-[200px] p-1",
+            //       [grid]
+            //     );
 
-                return wrapper;
-              },
-              // exec: async (edtr: Jodit) => {
-              //   editor.current = edtr;
-              //   // const url = `https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-04%20at%2011.53.47%E2%80%AFAM.png?alt=media&token=5182d10a-bddb-4c9e-85f8-44481d5edbbc`;
-              //   // editor.current.selection.insertHTML(
-              //   //   `<img src="${url}" alt="image" />`
-              //   // );
-              //   onOpen();
-              // },
-            },
+            //     return wrapper;
+            //   },
+            //   // exec: async (edtr: Jodit) => {
+            //   //   editor.current = edtr;
+            //   //   // const url = `https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-04%20at%2011.53.47%E2%80%AFAM.png?alt=media&token=5182d10a-bddb-4c9e-85f8-44481d5edbbc`;
+            //   //   // editor.current.selection.insertHTML(
+            //   //   //   `<img src="${url}" alt="image" />`
+            //   //   // );
+            //   //   onOpen();
+            //   // },
+            // },
           ],
         }}
         //   tabIndex={1} // tabIndex of textarea

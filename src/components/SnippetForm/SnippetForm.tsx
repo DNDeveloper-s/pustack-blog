@@ -1,6 +1,6 @@
 "use client";
 
-import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post";
+import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import BlogWithAuthor, { BlogWithAuthorV2 } from "../Blogs/BlogWithAuthor";
 import BlueCircleBlog from "../Blogs/BlueCircleBlog";
 import Dashboard from "../Dashboard/Dashboard";

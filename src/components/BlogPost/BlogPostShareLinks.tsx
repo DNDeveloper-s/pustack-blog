@@ -1,9 +1,10 @@
-import { Post } from "@/firebase/post";
+import { Post as PostV1 } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import Link from "next/link";
 import { useState } from "react";
 
 interface BlogPostShareLinksProps extends React.HTMLAttributes<HTMLDivElement> {
-  post: Post;
+  post: Post | PostV1;
   appendClassName?: string;
 }
 

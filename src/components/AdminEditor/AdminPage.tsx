@@ -6,14 +6,14 @@ import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post";
+import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import { Button } from "@nextui-org/button";
 import { useCreatePost, useGetPostById, useUpdatePost } from "@/api/post";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useUser } from "@/context/UserContext";
 import { Tour, TourProps } from "antd";
-import Image from "next/image";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   codeTutorial,
   colorPicker,
@@ -33,6 +33,8 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { auth } from "@/lib/firebase";
+import PostSections, { PostSectionsRef } from "./PostSections";
+import { DndProvider } from "react-dnd";
 
 const classes = {
   textFormatGroup:

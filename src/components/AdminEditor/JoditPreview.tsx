@@ -12,193 +12,15 @@ import BlogPostCode from "../BlogPost/BlogPostCode";
 import ScrollableContent from "../shared/ScrollableComponent";
 import { BlogImageDefault } from "../shared/BlogImage";
 import { filterAndTrimStrings } from "../BlogPost/BlogPost";
-
-export function RenderEditorContent({
-  content,
-  enabled,
-}: {
-  content: string;
-  enabled: boolean;
-}) {
-  const [elements, setElements] = useState<any>(null);
-
-  useEffect(() => {
-    if (content && enabled) {
-      let index = 0;
-      let firstContentEncountered = false;
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(content, "text/html");
-      const body = doc.body;
-
-      // const preElement = body.querySelector("pre");
-
-      function trimArray(arr: ChildNode[]) {
-        console.log("arr - ", arr);
-        let index = 0;
-        while (true) {
-          const el = arr[index];
-          if (
-            el?.textContent?.trim() !== "" ||
-            !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
-          ) {
-            break;
-          }
-          index++;
-        }
-        return arr.slice(index);
-      }
-      function nodesToInnerHTMLString(nodes: any[]) {
-        const container = document.createElement("div");
-
-        nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
-        return container.innerHTML;
-      }
-      function trimEmptyElements(parentNode: HTMLElement) {
-        const children = Array.from(parentNode.childNodes);
-
-        const iFrames = parentNode.querySelectorAll("iframe");
-        iFrames.forEach((iFrameItem) => {
-          iFrameItem.classList.add("iframe");
-        }, []);
-
-        const mathElements = parentNode.querySelectorAll("math");
-        mathElements.forEach((mathEl) => {
-          mathEl.parentElement?.classList.add("math_container");
-        }, []);
-
-        const arr = trimArray(children);
-        const finalArray = trimArray(arr.reverse());
-
-        finalArray.reverse();
-
-        return nodesToInnerHTMLString(finalArray);
-      }
-      const trimmedContent = trimEmptyElements(body);
-
-      const _content = parse(trimmedContent, {
-        library: {
-          createElement(type, props, ...children) {
-            if (type === "pre") {
-              return <BlogPostCode code={children[0]} />;
-            }
-
-            if (type === "table") {
-              console.log("children - ", children[0]);
-              return (
-                <ScrollableContent>
-                  <table {...props}>{children[0]}</table>
-                </ScrollableContent>
-              );
-              // return createElement(
-              //   "div",
-              //   {
-              //     className: "overflow-x-auto",
-              //   },
-              //   children[0]
-              // );
-            }
-
-            if (
-              type === "img" &&
-              // @ts-ignore
-              props?.className?.includes("blog-image")
-            ) {
-              return (
-                <BlogImageDefault
-                  className="max-w-full block"
-                  // @ts-ignore
-                  src={props.src}
-                  imageProps={{
-                    ...props,
-                    // @ts-ignore
-                    className: "max-w-full h-auto " + (props.className ?? ""),
-                  }}
-                />
-              );
-            }
-
-            if (type === "section") {
-              let title = children[0]
-                .find((c: any) => c.props?.className?.includes("styles_title"))
-                ?.props?.children.find((c: any) => c.type === "h2")
-                .props.children;
-
-              // title &&
-              //   setTitles((prev) => [
-              //     ...prev,
-              //     { titleWithIcons: title, title: filterAndTrimStrings(title) },
-              //   ]);
-
-              console.log("title | |||| - ", title);
-
-              const isFirstSection = index === 0;
-              index++;
-              return createElement(
-                type,
-                {
-                  ...props,
-                  style: { paddingTop: "10px" },
-                  className: isFirstSection ? "first_section" : "",
-                },
-                ...children
-              );
-            }
-
-            if (type === "iframe") {
-              return (
-                <iframe
-                  {...props}
-                  style={{
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                    // @ts-ignore
-                    ...(props?.style ?? {}),
-                  }}
-                />
-              );
-            }
-
-            if (type === "blockquote") {
-              return createElement(
-                type,
-                {
-                  ...props,
-                  // @ts-ignore
-                  className: "minerva-blockquote-1 " + (props?.className ?? ""),
-                },
-                ...children
-              );
-            }
-
-            return createElement(type, props, ...children);
-            // return <div>Create Element</div>;
-          },
-          cloneElement(element, props, ...children) {
-            return <div>Clone Element</div>;
-          },
-          isValidElement(element) {
-            return true;
-          },
-        },
-      });
-      setElements(_content);
-    }
-  }, [content, enabled]);
-  return (
-    <MathJaxContext>
-      <div className="w-full py-2 no-preflight blog-post-container">
-        <MathJax>{elements}</MathJax>
-      </div>
-    </MathJaxContext>
-  );
-}
+import { Section } from "./Sections/Section";
+import BlogPostSection from "../BlogPost/v2/BlogPostSection";
 
 export default function JoditPreview({
   disclosureOptions,
-  content,
+  sections,
 }: {
   disclosureOptions: ReturnType<typeof useDisclosure>;
-  content: string;
+  sections?: Section[];
 }) {
   return (
     <Modal
@@ -214,10 +36,13 @@ export default function JoditPreview({
           Preview
         </ModalHeader>
         <ModalBody>
-          <RenderEditorContent
-            content={content}
-            enabled={disclosureOptions.isOpen}
-          />
+          {sections?.map((section, index) => (
+            <BlogPostSection
+              className="blog-post-container relative mb-2 py-2"
+              key={section.id}
+              section={section}
+            />
+          ))}
         </ModalBody>
       </ModalContent>
     </Modal>

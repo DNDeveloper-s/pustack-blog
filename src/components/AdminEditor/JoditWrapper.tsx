@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import JoditEditor from "./JoditEditor";
-import { Post } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import { useCreatePost } from "@/api/post";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,10 @@ import {
 import { useUser } from "@/context/UserContext";
 import JoditPreview from "./JoditPreview";
 import { Spinner } from "@nextui-org/spinner";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import PostSections, { PostSectionsRef } from "./PostSections";
+import { Section } from "./Sections/Section";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -93,21 +97,22 @@ function JoditWrapper(
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { user } = useUser();
   const disclosureOptions = useDisclosure();
-  const [initialContent, setInitialContent] = useState("");
+  // const [initialContent, setInitialContent] = useState("");
   const currentContent = useRef<string>("");
+  const postSectionsRef = useRef<PostSectionsRef>(null);
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
     const storageContent = JSON.parse(getContent);
 
     if (prePost) {
-      setInitialContent(prePost.content);
-      currentContent.current = prePost.content;
+      // setInitialContent(prePost.content);
+      // currentContent.current = prePost.content;
       setTopic(prePost.topic);
       if (inputRef.current) inputRef.current.value = prePost.title ?? "";
     } else if (storageContent) {
-      setInitialContent(storageContent.content);
-      currentContent.current = storageContent.content;
+      // setInitialContent(storageContent.content);
+      // currentContent.current = storageContent.content;
       setTopic(storageContent.topic);
       if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
     }
@@ -116,7 +121,7 @@ function JoditWrapper(
   useImperativeHandle(ref, () => ({
     reset: () => {
       setTopic("");
-      setInitialContent("");
+      // setInitialContent("");
       currentContent.current = "";
       if (inputRef.current) inputRef.current.value = "";
     },
@@ -125,83 +130,50 @@ function JoditWrapper(
   async function handleContinuePost() {
     if (!user) return;
 
-    const isValid = inputRef.current?.value && currentContent.current && topic;
+    const sections = postSectionsRef.current?.getSections();
+    sections?.forEach((section) => {
+      section.updateContent(section.trimContent(section.content));
+    });
+
+    const isValid =
+      inputRef.current?.value &&
+      sections &&
+      Section.mergedContent(sections).length > 0 &&
+      topic;
 
     if (!isValid) {
       setError("Please fill all fields");
       return;
     }
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(currentContent.current, "text/html");
-    const body = doc.body;
-    function trimArray(arr: ChildNode[]) {
-      let index = 0;
-      while (true) {
-        const el = arr[index];
-        if (
-          el?.textContent?.trim() !== "" ||
-          !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
-        ) {
-          break;
-        }
-        index++;
-      }
-      return arr.slice(index);
-    }
-    function nodesToInnerHTMLString(nodes: any[]) {
-      const container = document.createElement("div");
-      nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
-      return container.innerHTML;
-    }
-    function trimEmptyElements(parentNode: HTMLElement) {
-      const children = Array.from(parentNode.childNodes);
-
-      const parsedChildren = children.map((child) => {
-        console.log("child - ", child);
-        if (child?.nodeName?.toLowerCase() === "iframe") {
-          return document.createElement("p");
-        }
-        return child;
-      });
-
-      const arr = trimArray(children);
-      const finalArray = trimArray(arr.reverse());
-
-      finalArray.reverse();
-
-      return nodesToInnerHTMLString(finalArray);
-    }
-    const trimmedContent = trimEmptyElements(body);
-
     let post = new Post(
       inputRef.current?.value || "Untitled",
-      trimmedContent,
       {
         name: user?.name || dummyAuthor.name,
         email: user?.email || dummyAuthor.email,
         photoURL: user?.image_url || dummyAuthor.photoURL,
       },
-      topic
+      topic,
+      sections
     );
 
     if (prePost) {
       post = new Post(
         inputRef.current?.value || "Untitled",
-        trimmedContent,
         {
           name: user?.name || dummyAuthor.name,
           email: user?.email || dummyAuthor.email,
           photoURL: user?.image_url || dummyAuthor.photoURL,
         },
         topic,
+        sections,
         prePost.id,
         prePost.timestamp,
         prePost.snippetPosition,
         prePost.snippetDesign,
-        prePost.isFlagship,
         prePost.displayTitle,
-        prePost.displayContent
+        prePost.displayContent,
+        true
       );
     }
 
@@ -277,7 +249,7 @@ function JoditWrapper(
           ))}
         </select>
       </div>
-      <div className="mt-5">
+      <div className="my-5">
         <Button
           className="h-9 px-5 rounded text-xs font-featureRegular create-maths-formula-button"
           variant="flat"
@@ -287,42 +259,40 @@ function JoditWrapper(
           Create Maths Formula
         </Button>
       </div>
-      <JoditEditor
-        content={initialContent}
-        setContent={(_content) => {
-          // setContent(_content);
-          currentContent.current = _content;
-        }}
-        updateLiveContent={(content) => {
-          updateLocalStorage("content", content);
-        }}
-      />
-      <div className="flex justify-end gap-4 mb-10">
-        <Button
-          // isDisabled={isPending}
-          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
-          onClick={handlePreview}
-          variant="flat"
-          color="primary"
-          // isLoading={isPending}
-        >
-          Preview
-        </Button>
-        <Button
-          // isDisabled={isPending}
-          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-          // onClick={handleCreatePost}
-          onClick={handleContinuePost}
-          variant="flat"
-          color="primary"
-          // isLoading={isPending}
-        >
-          Continue
-        </Button>
-      </div>
+      <DndProvider backend={HTML5Backend}>
+        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+          Sections
+        </h4>
+        <PostSections sections={prePost?.sections} ref={postSectionsRef} />
+      </DndProvider>
+      {!postSectionsRef.current?.isResizing() && (
+        <div className="flex justify-end gap-4 mb-10">
+          <Button
+            // isDisabled={isPending}
+            className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
+            onClick={handlePreview}
+            variant="flat"
+            color="primary"
+            // isLoading={isPending}
+          >
+            Preview
+          </Button>
+          <Button
+            // isDisabled={isPending}
+            className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
+            // onClick={handleCreatePost}
+            onClick={handleContinuePost}
+            variant="flat"
+            color="primary"
+            // isLoading={isPending}
+          >
+            Continue
+          </Button>
+        </div>
+      )}
       <JoditPreview
         disclosureOptions={disclosureOptions}
-        content={currentContent.current}
+        sections={postSectionsRef.current?.getSections()}
       />
       <Modal
         isOpen={isOpen}

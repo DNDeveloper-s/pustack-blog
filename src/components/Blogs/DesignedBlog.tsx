@@ -1,4 +1,4 @@
-import { SnippetDesign } from "@/firebase/post";
+import { SnippetDesign } from "@/firebase/post-v2";
 import BlogWithAuthor, {
   BlogBaseProps,
   BlogWithAuthorV2,

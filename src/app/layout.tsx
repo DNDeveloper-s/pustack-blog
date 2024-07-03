@@ -4,6 +4,8 @@ import Providers from "./providers";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 import { Metadata } from "next";
 import Script from "next/script";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +25,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <ErrorBoundary errorComponent={ErrorMasterComponent}>
+          <Providers>{children}</Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

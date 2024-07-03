@@ -2,16 +2,15 @@
 import Flagship from "@/components/Blogs/Flagship";
 import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useMediaQuery } from "react-responsive";
-import { Post, SnippetPosition } from "@/firebase/post";
+import { Post, SnippetPosition } from "@/firebase/post-v2";
+import { Post as PostV1 } from "@/firebase/post";
 import { chunk, compact, difference, sortBy } from "lodash";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import { useQueryPosts } from "@/api/post";
 import { useQuerySignals } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
-import { Spinner } from "@nextui-org/spinner";
-import useInView from "@/hooks/useInView";
 import useScreenSize from "@/hooks/useScreenSize";
 import DashboardMobile from "./DashboardMobile";
 
@@ -51,9 +50,9 @@ function DashboardDesktop({
   const hasSignals = signals?.length > 0;
 
   const { data: posts } = useQueryPosts({
-    initialData: _serverPosts.map(
-      (data: any) =>
-        new Post(
+    initialData: _serverPosts.map((data: any) => {
+      if (!data.sections && data.content) {
+        return new PostV1(
           data.title,
           data.content,
           data.author,
@@ -65,8 +64,22 @@ function DashboardDesktop({
           data.isFlagship,
           data.displayTitle,
           data.displayContent
-        )
-    ),
+        );
+      }
+      return new Post(
+        data.title,
+        data.author,
+        data.topic,
+        data.sections,
+        data.id,
+        data.timestamp,
+        data.position,
+        data.design,
+        data.displayTitle,
+        data.displayContent,
+        data.is_v2
+      );
+    }),
   });
 
   // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
@@ -151,6 +164,8 @@ function DashboardDesktop({
       listPosts: sortBy(listPosts ?? [], "post.timestamp"),
     };
   }, [posts]);
+
+  console.log("rightPosts - ", postsByPosition, posts);
 
   // const oldPosts = chunk(
   //   [...(fullCPosts?.slice(2) ?? []), ...(fullQPosts ?? [])],

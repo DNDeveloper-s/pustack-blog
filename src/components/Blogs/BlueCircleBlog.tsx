@@ -3,7 +3,7 @@ import { url } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogBaseProps } from "./BlogWithAuthor";
-import { Post } from "@/firebase/post";
+import { Post } from "@/firebase/post-v2";
 import { Signal } from "@/firebase/signal";
 
 const defaultBlueCircleBlog = () => {

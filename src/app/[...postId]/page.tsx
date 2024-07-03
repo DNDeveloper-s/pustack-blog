@@ -1,4 +1,5 @@
 import BlogPost from "@/components/BlogPost/BlogPost";
+import BlogPostV2 from "@/components/BlogPost/v2/BlogPost";
 import { Post, flattenDocumentData, srcReducer } from "@/firebase/post";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -95,14 +96,25 @@ export default async function PostId(props: { params: { postId: string[] } }) {
   return (
     <div>
       <ErrorBoundary errorComponent={ErrorMasterComponent}>
-        <BlogPost
-          _post={{
-            ...post,
-            id: props.params.postId[0],
-            timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
-            flagged_at: post.flagged_at?.toDate().toISOString(),
-          }}
-        />
+        {post.sections ? (
+          <BlogPostV2
+            _post={{
+              ...post,
+              id: props.params.postId[0],
+              timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
+              flagged_at: post.flagged_at?.toDate().toISOString(),
+            }}
+          />
+        ) : (
+          <BlogPost
+            _post={{
+              ...post,
+              id: props.params.postId[0],
+              timestamp: new Date(post.timestamp.seconds * 1000).toISOString(),
+              flagged_at: post.flagged_at?.toDate().toISOString(),
+            }}
+          />
+        )}
       </ErrorBoundary>
     </div>
   );
