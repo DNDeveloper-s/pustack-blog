@@ -24,6 +24,8 @@ function flattenQueryDataWithId<T>(data: QuerySnapshot<T>) {
   ) as (T & { id: string })[];
 }
 
+export const revalidate = 0;
+
 export default async function Home() {
   // const posts = await Post.getAll({ _flatten: true });
 
@@ -36,6 +38,7 @@ export default async function Home() {
     ...doc,
     timestamp: doc.timestamp.toDate().toISOString(),
     flagged_at: doc.flagged_at?.toDate().toISOString(),
+    unflagged_at: doc.unflagged_at?.toDate().toISOString(),
   }));
 
   const signalsRef = collection(db, "signals");
@@ -67,6 +70,7 @@ export default async function Home() {
           <Dashboard posts={posts} signals={signals} />
           <LandingPageSections />
         </div>
+        {JSON.stringify(posts.slice(0, 15).map((c) => c.id))}
       </main>
     </ErrorBoundary>
   );
