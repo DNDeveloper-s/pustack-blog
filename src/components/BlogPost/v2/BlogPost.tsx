@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
+import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { Highlight, themes } from "prism-react-renderer";
 import dynamic from "next/dynamic";
 import {
@@ -41,7 +42,7 @@ import {
 import readingTime from "reading-time";
 import usePageTime from "@/hooks/usePageTime";
 import { useUser } from "@/context/UserContext";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
 import { FaCopy, FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../../shared/BlogImage";
@@ -212,6 +213,17 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const router = useRouter();
   const { isTabletScreen, isDesktopScreen, isMobileScreen } = useScreenSize();
   const scrollerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const _storageRef = storageRef(storage, `static/minerva.png`);
+    getDownloadURL(_storageRef)
+      .then((url) => {
+        console.log("url - ", url);
+      })
+      .catch((e) => {
+        console.log("error - ", e);
+      });
+  }, []);
 
   useEffect(() => {
     if (_post) {

@@ -45,4 +45,57 @@ const ScrollableContent = ({ children }: { children: ReactNode }) => {
   );
 };
 
+export const ScrollableVerticalContent = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shadowTop, setShadowTop] = useState(false);
+  const [shadowBottom, setShadowBottom] = useState(false);
+
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    setShadowTop(scrollTop > 0);
+    setShadowBottom(scrollTop < scrollHeight - clientHeight);
+  };
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    handleScroll(); // Initial check
+    containerRef.current.addEventListener("scroll", handleScroll);
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  return (
+    <div className={styles.vertical_wrapper + " " + className}>
+      <div
+        className={`${styles.shadow} ${shadowTop ? styles.visible : ""} ${
+          styles.top
+        }`}
+      />
+      <div
+        className={`${styles.shadow} ${shadowBottom ? styles.visible : ""} ${
+          styles.bottom
+        }`}
+      />
+      <div
+        className={styles.vertical_container + " " + className}
+        ref={containerRef}
+      >
+        <div className={styles.content}>{children}</div>
+      </div>
+    </div>
+  );
+};
+
 export default ScrollableContent;

@@ -192,7 +192,7 @@
       }
 
       .post_title {
-        font-size: 24px;
+        font-size: 32px;
       }
 
       .post_image {
@@ -211,15 +211,6 @@
         display: none;
       }
 
-      .post_text_content {
-        font-size: 16px;
-        padding-top: 8px;
-      }
-
-      .author_content_separator {
-        margin: 10px 0;
-      }
-
       @media only screen and (max-width: 600px) {
         .remove-mobile {
           display: none;
@@ -231,12 +222,12 @@
         }
 
         .w-h-38 {
-          width: 18px;
-          height: 18px;
+          width: 25px;
+          height: 25px;
         }
 
         .author_name {
-          font-size: 12px;
+          font-size: 14px;
         }
         .read_time {
           font-size: 10px;
@@ -248,16 +239,11 @@
         }
 
         .topic_info {
-          font-size: 8px;
+          font-size: 10px;
         }
 
         .post_title {
-          font-size: 14px;
-        }
-
-        .post_text_content {
-          font-size: 11px;
-          padding-top: 4px;
+          font-size: 24px;
         }
 
         .post_image {
@@ -270,10 +256,6 @@
 
         .read_more_container {
           height: 100px;
-        }
-
-        .author_content_separator {
-          margin: 8px 0;
         }
 
         .remove-desktop {
@@ -373,13 +355,7 @@
         style="border: none; border-top: 1px dashed #1f1d1a4d; margin-top: 1px"
       />
       <table
-        style="
-          margin-top: 30px;
-          margin-bottom: 40px;
-          max-width: 700px;
-          margin-left: auto;
-          margin-right: auto;
-        "
+        style="margin-top: 20px; margin-bottom: 20px"
         class="container"
         width="100%"
         cellpadding="0"
@@ -388,284 +364,218 @@
         <tr>
           <td
             class="content"
-            style="padding: 10px; padding-left: 0; width: 50%"
+            style="
+              padding-bottom: 10px;
+              padding-left: 0;
+              padding-right: 20px;
+              padding-top: 0;
+            "
           >
-            <div>
-              <table>
-                <tr>
-                  <td style="vertical-align: middle">
-                    <img
-                      style="display: block"
-                      src="https://lh3.googleusercontent.com/a/ACg8ocI5Y-45IWHPEg4sxF1UybGx5bXtbw-LW2jqmho1Gc_UnD5ahp1AVg=s96-c"
-                      alt="author"
-                      class="w-h-38"
-                    />
-                  </td>
-                  <td>
-                    <h3 class="author_name leading-120 text-17">DNDeveloper</h3>
-                    <p
-                      class="topic_info leading-120 text-15 text-tertiary font-helvetica uppercase"
+            <div class="py-3" style="padding-top: 0">
+              <div>
+                <table>
+                  <tr>
+                    <td>
+                      <table>
+                        <tr>
+                          <td>
+                            <img
+                              src="{{author.image}}"
+                              alt="author"
+                              class="w-h-38"
+                            />
+                          </td>
+                          <td>
+                            <h3
+                              style="
+                                color: #1f1d1a;
+                                white-space: nowrap;
+                                max-width: 250px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                              "
+                              class="text-appBlack author_name leading-120 text-17"
+                            >
+                              {{author.name}}
+                            </h3>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td style="width: 100%"></td>
+                    <td>
+                      <span
+                        class="read_time text-appBlack"
+                        style="
+                          color: #1f1d1a;
+                          white-space: nowrap;
+                          font-family: Helvetica, sans-serif;
+                        "
+                        >{{post.read_time}}</span
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <hr
+                style="
+                  border: none;
+                  border-top: 1px dashed #1f1d1a4d;
+                  margin: 4px 0;
+                "
+              />
+              <div>
+                <span
+                  class="updated_info text-appGrey"
+                  style="
+                    color: #53524c;
+                    font-family: Helvetica;
+                    line-height: 14px;
+                  "
+                >
+                  {{post.last_updated_at}}
+                </span>
+                <span
+                  class="topic_info"
+                  style="
+                    color: #53524c;
+                    font-family: Helvetica;
+                    line-height: 14px;
+                    text-transform: uppercase;
+                  "
+                >
+                  {{post.topic}}
+                </span>
+              </div>
+              <div>
+                <h2
+                  class="leading-120 text-appBlack line-clamp-2 post_title"
+                  style="
+                    font-weight: 500;
+                    margin-top: 8px;
+                    margin-bottom: 1px;
+                    color: #1f1d1a;
+                  "
+                >
+                  {{post.title}}
+                </h2>
+              </div>
+              <img
+                class="post_image"
+                style="
+                  max-width: 100%;
+                  max-height: 100%;
+                  height: auto;
+                  object-fit: cover;
+                  margin-top: 8px;
+                "
+                src="{{post.image}}"
+              />
+            </div>
+          </td>
+          <td
+            class="remove-mobile"
+            style="width: 1px; height: 100%; border-right: 1px dashed #1f1d1a4d"
+          ></td>
+          <td class="remove-mobile" style="width: 40%; vertical-align: bottom">
+            <table style="width: 100%; height: 100%">
+              <tr>
+                <div
+                  style="
+                    padding-bottom: 10px;
+                    padding-top: 10px;
+                    padding-left: 20px;
+                    padding-right: 0px;
+                  "
+                >
+                  <h3>In this article:</h3>
+                  {{#each post.sections}}
+                  <hr
+                    style="
+                      border: none;
+                      border-top: 1px dashed #1f1d1a4d;
+                      margin: 10px 0;
+                    "
+                  />
+                  <div>
+                    <h3
+                      className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
                       style="
-                        font-weight: 300;
-                        font-variation-settings: 'wght' 400 'opsz' 10;
+                        color: #1f1d1a;
+                        font-size: 16px;
+                        text-transform: capitalize;
+                        font-weight: 400;
                       "
                     >
-                      BUSINESS
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <hr
-                class="author_content_separator"
-                style="border: none; border-top: 1px dashed #1f1d1a4d"
-              />
-              <div>
-                <h2
-                  class="post_title font-featureHeadline leading-120 line-clamp-2"
-                >
-                  Beijing intervenes in China's solar industry as overcapacity
-                </h2>
-                <p class="post_text_content leading-120 line-clamp-3">
-                  A price war on solar panels in China has meant that big firms
-                  have rapidly lost profit while small firms risk bankruptcy.
-                  Historically, the industry has been propped up by city
-                  governments, which build solar panel factories to lease or
-                  sell to private firms.
-                </p>
-              </div>
-              <div
-                style="
-                  aspect-ratio: 1.33 / 1;
-                  width: 100%;
-                  overflow: hidden;
-                  margin-top: 8px;
-                "
-              >
-                <img
-                  style="
-                    max-width: 100%;
-                    max-height: 100%;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                  "
-                  src="https://img.semafor.com/0aa88e10aac0eddf6f4031d7e743ed07df65e114-4000x2667.jpg?w=750&q=75&auto=format"
-                />
-              </div>
-            </div>
-          </td>
-          <td
-            class="remove-mobile"
-            style="width: 1px; height: 100%; border-right: 1px dashed #1f1d1a4d"
-          ></td>
-          <td class="" style="padding: 10px; padding-right: 0; width: 50%">
-            <div>
-              <div class="flex">
-                <div class="mr-2">
-                  <img
-                    src="https://lh3.googleusercontent.com/a/ACg8ocI5Y-45IWHPEg4sxF1UybGx5bXtbw-LW2jqmho1Gc_UnD5ahp1AVg=s96-c"
-                    alt="author"
-                    class="w-h-38"
-                  />
+                      {{this.title}}
+                    </h3>
+                  </div>
+                  {{/each}}
                 </div>
-                <div>
-                  <h3 class="author_name leading-120 text-17">DNDeveloper</h3>
-                  <p
-                    class="topic_info leading-120 text-15 text-tertiary font-helvetica uppercase"
-                    style="
-                      font-weight: 300;
-                      font-variation-settings: 'wght' 400 'opsz' 10;
-                    "
-                  >
-                    BUSINESS
-                  </p>
-                </div>
-              </div>
-              <hr
-                class="author_content_separator"
-                style="border: none; border-top: 1px dashed #1f1d1a4d"
-              />
-              <div>
-                <h2
-                  class="post_title font-featureHeadline leading-120 line-clamp-2"
-                >
-                  Beijing intervenes in China's solar industry as overcapacity
-                </h2>
-                <p class="post_text_content leading-120 line-clamp-3">
-                  A price war on solar panels in China has meant that big firms
-                  have rapidly lost profit while small firms risk bankruptcy.
-                  Historically, the industry has been propped up by city
-                  governments, which build solar panel factories to lease or
-                  sell to private firms.
-                </p>
-              </div>
-              <div
-                style="
-                  aspect-ratio: 1.33 / 1;
-                  width: 100%;
-                  overflow: hidden;
-                  margin-top: 8px;
-                "
-              >
-                <img
-                  style="
-                    max-width: 100%;
-                    max-height: 100%;
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                  "
-                  src="https://lh3.googleusercontent.com/a/ACg8ocI5Y-45IWHPEg4sxF1UybGx5bXtbw-LW2jqmho1Gc_UnD5ahp1AVg=s96-c"
-                />
-              </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <hr
-              style="
-                border: none;
-                border-top: 1px dashed #1f1d1a4d;
-                margin: 10px 0;
-              "
-            />
-          </td>
-          <td>
-            <hr
-              style="
-                border: none;
-                border-top: 1px dashed #1f1d1a4d;
-                margin: 10px 0;
-              "
-            />
-          </td>
-          <td>
-            <hr
-              style="
-                border: none;
-                border-top: 1px dashed #1f1d1a4d;
-                margin: 10px 0;
-              "
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="content" style="padding: 10px; padding-left: 0">
-            <div>
-              <div class="flex">
-                <div class="mr-2">
-                  <img
-                    src="https://lh3.googleusercontent.com/a/ACg8ocI5Y-45IWHPEg4sxF1UybGx5bXtbw-LW2jqmho1Gc_UnD5ahp1AVg=s96-c"
-                    alt="author"
-                    class="w-h-38"
-                  />
-                </div>
-                <div>
-                  <h3 class="author_name leading-120 text-17">DNDeveloper</h3>
-                  <p
-                    class="topic_info leading-120 text-15 text-tertiary font-helvetica uppercase"
-                    style="
-                      font-weight: 300;
-                      font-variation-settings: 'wght' 400 'opsz' 10;
-                    "
-                  >
-                    BUSINESS
-                  </p>
-                </div>
-              </div>
-              <hr
-                class="author_content_separator"
-                style="border: none; border-top: 1px dashed #1f1d1a4d"
-              />
-              <div>
-                <h2
-                  class="post_title font-featureHeadline leading-120 line-clamp-2"
-                >
-                  Beijing intervenes in China's solar industry as overcapacity
-                </h2>
-                <p class="post_text_content leading-120 line-clamp-3">
-                  A price war on solar panels in China has meant that big firms
-                  have rapidly lost profit while small firms risk bankruptcy.
-                  Historically, the industry has been propped up by city
-                  governments, which build solar panel factories to lease or
-                  sell to private firms.
-                </p>
-              </div>
-              <img
-                style="
-                  max-width: 100%;
-                  max-height: 100%;
-                  width: 100%;
-                  height: auto;
-                  object-fit: cover;
-                  margin-top: 8px;
-                "
-                src="https://img.semafor.com/0aa88e10aac0eddf6f4031d7e743ed07df65e114-4000x2667.jpg?w=750&q=75&auto=format"
-              />
-            </div>
-          </td>
-          <td
-            class="remove-mobile"
-            style="width: 1px; height: 100%; border-right: 1px dashed #1f1d1a4d"
-          ></td>
-          <td class="" style="padding: 10px; padding-right: 0">
-            <div>
-              <div class="flex">
-                <div class="mr-2">
-                  <img
-                    src="https://lh3.googleusercontent.com/a/ACg8ocI5Y-45IWHPEg4sxF1UybGx5bXtbw-LW2jqmho1Gc_UnD5ahp1AVg=s96-c"
-                    alt="author"
-                    class="w-h-38"
-                  />
-                </div>
-                <div>
-                  <h3 class="author_name leading-120 text-17">DNDeveloper</h3>
-                  <p
-                    class="topic_info leading-120 text-15 text-tertiary font-helvetica uppercase"
-                    style="
-                      font-weight: 300;
-                      font-variation-settings: 'wght' 400 'opsz' 10;
-                    "
-                  >
-                    BUSINESS
-                  </p>
-                </div>
-              </div>
-              <hr
-                class="author_content_separator"
-                style="border: none; border-top: 1px dashed #1f1d1a4d"
-              />
-              <div>
-                <h2
-                  class="post_title font-featureHeadline leading-120 line-clamp-2"
-                >
-                  Beijing intervenes in China's solar industry as overcapacity
-                </h2>
-                <p class="post_text_content leading-120 line-clamp-3">
-                  A price war on solar panels in China has meant that big firms
-                  have rapidly lost profit while small firms risk bankruptcy.
-                  Historically, the industry has been propped up by city
-                  governments, which build solar panel factories to lease or
-                  sell to private firms.
-                </p>
-              </div>
-              <img
-                style="
-                  max-width: 100%;
-                  max-height: 100%;
-                  width: 100%;
-                  height: auto;
-                  object-fit: cover;
-                  margin-top: 8px;
-                "
-                src="https://img.semafor.com/0aa88e10aac0eddf6f4031d7e743ed07df65e114-4000x2667.jpg?w=750&q=75&auto=format"
-              />
-            </div>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
+      <div>
+        <hr
+          class="post_end_separator"
+          style="border-top: 1px dashed #1f1d1a4d; border-bottom: none"
+          ;
+        />
+        <hr
+          className="border-dashed border-[#1f1d1a4d] mt-[1px]"
+          style="
+            border-top: 1px dashed #1f1d1a4d;
+            margin-top: 1px;
+            border-bottom: none;
+          "
+        />
+
+        <table width="100%" class="read_more_container">
+          <tr>
+            <td
+              style="
+                text-align: center;
+                width: 100%;
+                background-image: url(http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/7382f2f4-6d70-41db-9b42-5c06c23b5294/920x270.png);
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center center;
+              "
+            >
+              <button
+                style="
+                  background-color: #243bb5;
+                  padding-top: 8px;
+                  padding-bottom: 8px;
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  color: white;
+                  outline: none;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                "
+              >
+                Read More
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- <div
+        style="
+          border-top: 1px solid #1f1d1a;
+          padding: 15px 0;
+          /* display: flex; */
+          /* flex-wrap: wrap; */  
+          /* row-gap: 10px; */
+          /* column-gap: 10px; */
+          /* align-items: center; */
+          /* justify-content: flex-start; */
+        "
+      > -->
       <hr
         style="margin: 10px 0; border-top-color: #1f1d1a"
         class="border-appBlack"

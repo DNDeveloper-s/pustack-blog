@@ -61,7 +61,7 @@ export default function Footer() {
           </div>
         ))}
         <div className="pl-4">
-          <span>© 2024 Semafor Inc.</span>
+          <span>© 2024 Minerva Inc.</span>
         </div>
       </div>
     </div>

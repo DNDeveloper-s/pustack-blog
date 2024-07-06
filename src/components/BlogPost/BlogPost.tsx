@@ -18,6 +18,7 @@ import {
   useState,
 } from "react";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
+import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import Image from "next/image";
 import {
   avatar,
@@ -41,7 +42,7 @@ import {
 import readingTime from "reading-time";
 import usePageTime from "@/hooks/usePageTime";
 import { useUser } from "@/context/UserContext";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
 import { FaCopy, FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../shared/BlogImage";
@@ -233,6 +234,17 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       setPost(undefined);
     }
   }, [_post]);
+
+  useEffect(() => {
+    const _storageRef = storageRef(storage, `static/minerva.png`);
+    getDownloadURL(_storageRef)
+      .then((url) => {
+        console.log("url - ", url);
+      })
+      .catch((e) => {
+        console.log("error - ", e);
+      });
+  }, []);
 
   const hasPost = !!post;
   const hasNoPost = !post;
@@ -809,3 +821,24 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     </main>
   );
 }
+
+const obj = {
+  posts: [
+    [
+      { id: 1, content: "Hello" },
+      { id: 2, content: "World" },
+    ],
+    [
+      { id: 3, content: "Hello" },
+      { id: 4, content: "World" },
+    ],
+    [
+      { id: 5, content: "Hello" },
+      { id: 6, content: "World" },
+    ],
+    [
+      { id: 7, content: "Hello" },
+      { id: 8, content: "World" },
+    ],
+  ],
+};

@@ -17,4 +17,5 @@ export const API_QUERY = {
   ],
   GET_RECENT_POSTS: ["get-recent-posts"],
   GET_FLAGSHIP_SIGNAL: ["get-flagship-signal"],
+  NOUN_PROJECT_ICONS: (query?: string | null) => ["noun-project-icons", query],
 };

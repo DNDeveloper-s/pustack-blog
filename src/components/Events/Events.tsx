@@ -30,7 +30,7 @@ function EventCard({ isUpcoming }: { isUpcoming?: boolean }) {
           threats, vulnerabilities, and attack techniques emerging regularly.
           Yet even in a technologically advanced environment, humans remain at
           the core of cybersecurity as both defenders and perpetrators of cyber
-          threats. Join Semafor’s senior editors for a consequential discussion
+          threats. Join Minerva senior editors for a consequential discussion
           on how policymakers and business leaders can work together to
           establish a more proactive and innovative cybersecurity ecosystem.
         </span>

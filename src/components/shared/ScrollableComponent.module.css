@@ -3,8 +3,19 @@
   overflow: hidden; /* Ensure shadows are contained within the wrapper */
 }
 
+.vertical_wrapper {
+  position: relative;
+  overflow: hidden; /* Ensure shadows are contained within the wrapper */
+  height: 100%;
+}
+
 .container {
   overflow-x: auto;
+  position: relative;
+}
+
+.vertical_container {
+  overflow-y: auto;
   position: relative;
 }
 

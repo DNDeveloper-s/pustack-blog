@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Section } from "./Section";
 import Image from "next/image";
 import { notableImage } from "@/assets";
@@ -7,6 +7,11 @@ import { Button } from "@nextui-org/button";
 import { MathJaxContext } from "better-react-mathjax";
 import JoditEditor from "../JoditEditor";
 import { Popover } from "antd";
+import { debounce, divide } from "lodash";
+import { useFetchNounProjectIcon } from "@/api/misc";
+import { TheNounProjectIcon } from "@/app/api/the-noun-project/route";
+import { ScrollableVerticalContent } from "@/components/shared/ScrollableComponent";
+import { Spinner } from "@nextui-org/spinner";
 
 function getAvailableIcons() {
   const imageNames = [
@@ -66,32 +71,95 @@ function IconExplorer({
   onIconClick: (icon: string) => void;
   defaultIcon: string;
 }) {
+  const [queryIcon, setQueryIcon] = useState("");
+  const { data, isLoading } = useFetchNounProjectIcon({
+    query: queryIcon,
+  });
   const [selectedIcon, setSelectedIcon] = useState(defaultIcon);
   const icons = useMemo(() => getAvailableIcons(), []);
+
+  // Debounced function
+  const debouncedFetchIconData = useCallback(
+    debounce((id) => {
+      setQueryIcon(id);
+    }, 300), // Adjust the delay as needed (300ms in this case)
+    []
+  );
+
+  // Update the iconId state and call the debounced fetch function
+  const handleInputChange = (e: any) => {
+    const newIconId = e.target.value;
+    debouncedFetchIconData(newIconId);
+  };
+
   return (
-    <div className="grid grid-cols-4 justify-items-center items-center max-w-[200px] gap-2">
-      {icons.map((icon, index) => {
-        return (
-          <div
-            key={index}
-            className="w-[23px] h-[23px] p-[3px] cursor-pointer rounded flex items-center justify-center"
-            style={{
-              backgroundColor:
-                selectedIcon === icon ? "#f8f5d7" : "transparent",
-            }}
-            onClick={() => {
-              onIconClick(icon);
-              setSelectedIcon(icon);
-            }}
-          >
-            <img
-              className="w-full h-full object-contain"
-              src={icon}
-              alt="Icon"
-            />
-          </div>
-        );
-      })}
+    <div>
+      <input
+        className="w-full mb-2 py-1 px-2 text-gray-600 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        type="text"
+        placeholder="Search Icon"
+        onChange={handleInputChange}
+      />
+      {isLoading && (
+        <div className="w-full flex items-center justify-center py-4">
+          <Spinner color="secondary" size="sm" label="Fetching icons" />
+        </div>
+      )}
+      {!isLoading && (
+        <div className="max-h-[300px] relative overflow-hidden">
+          <ScrollableVerticalContent className="max-h-[300px]">
+            <div className="grid grid-cols-4 justify-items-center items-center max-w-[200px] gap-2">
+              {data?.icons.map((icon: TheNounProjectIcon) => {
+                return (
+                  <div
+                    key={icon.id}
+                    className="w-[23px] h-[23px] p-[3px] cursor-pointer rounded flex items-center justify-center"
+                    style={{
+                      backgroundColor:
+                        selectedIcon === icon.thumbnail_url
+                          ? "#f8f5d7"
+                          : "transparent",
+                    }}
+                    onClick={() => {
+                      onIconClick(icon.thumbnail_url);
+                      setSelectedIcon(icon.thumbnail_url);
+                    }}
+                  >
+                    <img
+                      className="w-full h-full object-contain"
+                      src={icon.thumbnail_url}
+                      alt="Icon"
+                    />
+                  </div>
+                );
+              })}
+              {!data?.icons &&
+                icons.map((icon, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-[23px] h-[23px] p-[3px] cursor-pointer rounded flex items-center justify-center"
+                      style={{
+                        backgroundColor:
+                          selectedIcon === icon ? "#f8f5d7" : "transparent",
+                      }}
+                      onClick={() => {
+                        onIconClick(icon);
+                        setSelectedIcon(icon);
+                      }}
+                    >
+                      <img
+                        className="w-full h-full object-contain"
+                        src={icon}
+                        alt="Icon"
+                      />
+                    </div>
+                  );
+                })}
+            </div>
+          </ScrollableVerticalContent>
+        </div>
+      )}
     </div>
   );
 }

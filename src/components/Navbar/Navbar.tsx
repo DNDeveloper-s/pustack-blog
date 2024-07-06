@@ -371,7 +371,7 @@ export function NavbarDesktop({
                       fontVariationSettings: '"wght" 495,"opsz" 10',
                     }}
                   >
-                    <span>© 2024 Semafor Inc.</span>
+                    <span>© 2024 Minerva Inc.</span>
                   </p>
                 </div>
               </div>
@@ -797,7 +797,7 @@ export function NavbarTablet({
                       fontVariationSettings: '"wght" 495,"opsz" 10',
                     }}
                   >
-                    <span>© 2024 Semafor Inc.</span>
+                    <span>© 2024 Minerva Inc.</span>
                   </p>
                 </div>
               </div>
