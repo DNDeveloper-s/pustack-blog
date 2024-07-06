@@ -70,7 +70,6 @@ export default async function Home() {
           <Dashboard posts={posts} signals={signals} />
           <LandingPageSections />
         </div>
-        {JSON.stringify(posts.slice(0, 15).map((c) => c.id))}
       </main>
     </ErrorBoundary>
   );
