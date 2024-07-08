@@ -3,11 +3,14 @@ import sharp from "sharp";
 import path from "path";
 import { promises as fs } from "fs";
 
+export const revalidate = 0;
+
 export async function GET(request: any) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get("imageUrl");
   const width = searchParams.get("width");
   const height = searchParams.get("height");
+  const original = searchParams.get("original");
 
   if (!imageUrl) {
     return new NextResponse("Missing imageUrl query parameter", {
@@ -56,6 +59,16 @@ export async function GET(request: any) {
 
   const _width = +(width ?? 450);
   const _height = +(height ?? 300);
+
+  if (original) {
+    const image = await baseImage.png().toBuffer();
+
+    return new NextResponse(image, {
+      headers: {
+        "Content-Type": "image/png",
+      },
+    });
+  }
 
   const image = await baseImage
     .resize(+(width ?? 450), +(height ?? 300))
