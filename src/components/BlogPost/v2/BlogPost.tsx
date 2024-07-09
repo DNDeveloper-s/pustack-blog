@@ -42,7 +42,7 @@ import {
 import readingTime from "reading-time";
 import usePageTime from "@/hooks/usePageTime";
 import { useUser } from "@/context/UserContext";
-import { db, storage } from "@/lib/firebase";
+import { db, functions, storage } from "@/lib/firebase";
 import { FaRegStar } from "react-icons/fa";
 import { FaCopy, FaStar } from "react-icons/fa6";
 import BlogImage, { BlogImageDefault } from "../../shared/BlogImage";
@@ -69,6 +69,11 @@ import {
 import { Button } from "@nextui-org/button";
 import { Section } from "../../AdminEditor/Sections/Section";
 import BlogPostSection from "./BlogPostSection";
+import {
+  getFunctions,
+  httpsCallable,
+  httpsCallableFromURL,
+} from "firebase/functions";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -370,6 +375,43 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         }}
         ref={scrollerRef}
       >
+        {/* <button
+          onClick={async () => {
+            const sendEmailCallable = httpsCallable(
+              functions,
+              "sendEmailToSubscribersForSinglePost"
+            );
+
+            sendEmailCallable({ postId: "nice-one-to-call" })
+              .then((result) => {
+                console.log(result.data);
+              })
+              .catch((e) => {
+                console.log("error - ", e);
+              });
+
+            // try {
+            //   const resp = await fetch(
+            //     "https://sendemailtosubscribersforsinglepostrequest-jao2fnirkq-uc.a.run.app/",
+            //     {
+            //       method: "POST",
+            //       headers: {
+            //         "Content-Type": "application/json",
+            //       },
+            //       body: JSON.stringify({ postId: "nice-one-to-call" }),
+            //     }
+            //   );
+
+            //   const data = resp.json();
+
+            //   console.log("data - ", data);
+            // } catch (e) {
+            //   console.log("error - ", e);
+            // }
+          }}
+        >
+          Send Email
+        </button> */}
         <div className="max-w-[900px] mx-auto pb-10">
           <div
             ref={ref}

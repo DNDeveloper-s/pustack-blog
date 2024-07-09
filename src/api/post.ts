@@ -1,15 +1,14 @@
 import { API_QUERY } from "@/config/api-query";
 import { Post } from "@/firebase/post-v2";
-import { db } from "@/lib/firebase";
+import { functions } from "@/lib/firebase";
+import { httpsCallable } from "firebase/functions";
 import {
   QueryFunctionContext,
   UseMutationOptions,
-  UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 
 export const useQueryPosts = ({ initialData }: { initialData: any }) => {
   const queryPosts = async () => {
@@ -62,6 +61,22 @@ export const useCreatePost = (
       });
     },
     ...(options ?? {}),
+    onSuccess: (data, ...rest) => {
+      const sendEmailCallable = httpsCallable(
+        functions,
+        "sendEmailToSubscribersForSinglePost"
+      );
+
+      sendEmailCallable({ postId: "nice-one-to-call" })
+        .then((result) => {
+          console.log(result.data);
+        })
+        .catch((e) => {
+          console.log("error - ", e);
+        });
+
+      options?.onSuccess?.(data, ...rest);
+    },
   });
 };
 

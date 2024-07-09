@@ -57,7 +57,6 @@ export const useSignupNewsLetters = (
       const docRef = doc(subscriberRef, hashedEmail);
       batch.set(docRef, {
         email: variables.email,
-        userId: user?.uid ?? null,
         signed_up_at: serverTimestamp(),
       });
     });

@@ -220,6 +220,13 @@
         margin: 10px 0;
       }
 
+      .main-logo {
+        width: 300px;
+        margin: 10px auto;
+        display: block;
+        max-width: 70vw;
+      }
+
       @media only screen and (max-width: 600px) {
         .remove-mobile {
           display: none;
@@ -228,6 +235,16 @@
         .body-wrapper {
           padding-right: 5px;
           padding-left: 5px;
+        }
+        .main-logo-table {
+          width: 100%;
+        }
+
+        .main-logo {
+          width: 100%;
+          margin: 10px auto;
+          display: block;
+          max-width: unset;
         }
 
         .w-h-38 {
@@ -297,18 +314,44 @@
   <body>
     <div class="body-wrapper">
       <table width="100%">
-        <tr>
+        <tr class="remove-desktop">
           <td>
             <img
-              class="main-logo"
-              style="
-                width: 300px;
-                margin: 10px auto;
-                display: block;
-                max-width: 70vw;
-              "
-              src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/370f4fe9-b95c-480d-a62d-32a18fe162d5/437x71.png"
+              style="width: 100%"
+              src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/43f8c72c-6b6e-4b2c-8454-a7edd6655c3a/723x112.png"
+              alt=""
             />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table
+              class="main-logo-table"
+              style="margin-left: auto; margin-right: auto"
+            >
+              <tr>
+                <td class="remove-mobile">
+                  <img
+                    src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Fclock-left.png%3Falt%3Dmedia%26token%3D7a3a5871-9d1d-48b0-8b54-eec74cecd14b&original=true"
+                    alt="clock"
+                    style="height: 43px; display: block; margin-right: 15px"
+                  />
+                </td>
+                <td>
+                  <img
+                    class="main-logo"
+                    src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/370f4fe9-b95c-480d-a62d-32a18fe162d5/437x71.png"
+                  />
+                </td>
+                <td class="remove-mobile">
+                  <img
+                    src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Fclock-right.png%3Falt%3Dmedia%26token%3Dc7d6e171-d55e-477d-a748-a6dfc5dcb135&original=true"
+                    alt="clock"
+                    style="height: 43px; display: block; margin-left: 15px"
+                  />
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         <tr>

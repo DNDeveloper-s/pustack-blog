@@ -7,9 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import JoditEditor from "./JoditEditor";
 import { Post } from "@/firebase/post-v2";
-import { useCreatePost } from "@/api/post";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import { MathJax } from "better-react-mathjax";
