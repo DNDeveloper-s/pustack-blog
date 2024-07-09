@@ -21,8 +21,6 @@ export default async function unsubscribe({
     );
   }
 
-  console.log("email - ", email);
-
   const response = await axios.get(
     "https://us-central1-minerva-0000.cloudfunctions.net/unsubscribeEmail/?email=" +
       email

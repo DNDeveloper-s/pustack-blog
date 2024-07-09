@@ -61,19 +61,17 @@ export const useCreatePost = (
       });
     },
     ...(options ?? {}),
-    onSuccess: (data, ...rest) => {
+    onSuccess: async (data, ...rest) => {
       const sendEmailCallable = httpsCallable(
         functions,
         "sendEmailToSubscribersForSinglePost"
       );
 
-      sendEmailCallable({ postId: "nice-one-to-call" })
-        .then((result) => {
-          console.log(result.data);
-        })
-        .catch((e) => {
-          console.log("error - ", e);
-        });
+      try {
+        await sendEmailCallable(data);
+      } catch (e) {
+        console.error("Error in email - ", e);
+      }
 
       options?.onSuccess?.(data, ...rest);
     },
