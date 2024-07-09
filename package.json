@@ -24,6 +24,7 @@
     "@thednp/color-picker": "^2.0.0-alpha10",
     "@types/oauth": "^0.9.5",
     "antd": "^5.18.1",
+    "axios": "^1.7.2",
     "better-react-mathjax": "^2.0.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",

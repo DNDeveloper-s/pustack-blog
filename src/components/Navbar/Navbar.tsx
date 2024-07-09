@@ -1055,15 +1055,22 @@ export default function Navbar({
 }: {
   scrollRef?: React.RefObject<HTMLDivElement>;
 }) {
+  const [mounted, setMounted] = useState(false);
   const isTabletScreen = useMediaQuery({ maxWidth: 1024, minWidth: 769 });
   const isDesktopScreen = useMediaQuery({ minWidth: 1025 });
   const isMobileScreen = useMediaQuery({ maxWidth: 768 });
 
-  return (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return mounted ? (
     <>
       {isDesktopScreen && <NavbarDesktop scrollRef={scrollRef} />}
       {isTabletScreen && <NavbarTablet scrollRef={scrollRef} />}
       {isMobileScreen && <NavbarMobile />}
     </>
+  ) : (
+    <div></div>
   );
 }

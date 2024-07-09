@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/shared/Footer";
+import axios from "axios";
 
 export default async function unsubscribe({
   searchParams,
@@ -20,8 +21,11 @@ export default async function unsubscribe({
     );
   }
 
-  const response = await fetch(
-    "https://unsubscribeemail-jao2fnirkq-uc.a.run.app/?email=" + email
+  console.log("email - ", email);
+
+  const response = await axios.get(
+    "https://us-central1-minerva-0000.cloudfunctions.net/unsubscribeEmail/?email=" +
+      email
   );
 
   let msg = (
