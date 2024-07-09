@@ -73,6 +73,8 @@ export const useCreatePost = (
         console.error("Error in email - ", e);
       }
 
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       options?.onSuccess?.(data, ...rest);
     },
   });
