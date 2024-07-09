@@ -26,6 +26,7 @@ import { compact, keysIn } from "lodash";
 import { toDashCase } from "./signal";
 import { Section } from "@/components/AdminEditor/Sections/Section";
 import { Post as PostV1 } from "@/firebase/post";
+import readingTime from "reading-time";
 
 export interface Author {
   name: string;
@@ -497,6 +498,7 @@ export const postConverter = {
       design: post.snippetDesign,
       displayTitle: post.displayTitle,
       displayContent: post.displayContent,
+      read_time: readingTime(Section.mergedContent(post.sections)).text,
       sections: Section.toPlainObject(post.sections),
       meta: {
         description: post.snippetData?.content ?? null,
