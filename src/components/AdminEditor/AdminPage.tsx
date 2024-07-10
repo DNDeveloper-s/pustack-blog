@@ -66,6 +66,18 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
 
+  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
+  const [step, setStep] = useState(1);
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
+  const joditRef = useRef<any>(null);
+  const router = useRouter();
+  const snippetRef = useRef<{
+    selectedPosition: SnippetPosition;
+    selectedSnippet: SnippetDesign;
+    title: () => string;
+    content: () => string;
+  }>(null);
+
   useEffect(() => {
     async function checkUser() {
       await auth.authStateReady();
@@ -272,18 +284,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
     ],
     []
   );
-
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
-  const [step, setStep] = useState(1);
-  const [currentPost, setCurrentPost] = useState<Post | null>(null);
-  const joditRef = useRef<any>(null);
-  const router = useRouter();
-  const snippetRef = useRef<{
-    selectedPosition: SnippetPosition;
-    selectedSnippet: SnippetDesign;
-    title: () => string;
-    content: () => string;
-  }>(null);
 
   useEffect(() => {
     if (requestedPost) {

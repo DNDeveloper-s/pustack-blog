@@ -1,17 +1,8 @@
 "use client";
 
-import { useSignupNewsLetters } from "@/api/newsletter";
 import { url } from "@/constants";
-import { Spinner } from "@nextui-org/spinner";
 import Link from "next/link";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
 
 function CheckboxControl(
@@ -177,11 +168,6 @@ export const newsLettersList = [
   },
 ];
 
-function isValidEmail(email: string) {
-  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  return regex.test(email);
-}
-
 interface Status {
   error: string | null;
   sucess: string | null;
@@ -190,49 +176,6 @@ interface Status {
 
 export default function SignUpForNewsLetters() {
   const [checkedLetters, setCheckedLetters] = useState<NewsLetterItem[]>([]);
-  const {
-    isPending,
-    mutate: postSignUpNewsLetters,
-    isSuccess,
-  } = useSignupNewsLetters();
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [status, setStatus] = useState<Status>({
-    error: null,
-    sucess: null,
-    loading: false,
-  });
-
-  useEffect(() => {
-    if (isSuccess) {
-      if (inputRef.current) inputRef.current.value = "";
-      setStatus({
-        error: null,
-        sucess: "You are on the list",
-        loading: false,
-      });
-    }
-  }, [isSuccess]);
-
-  const handleSignUpNewsLetters = () => {
-    if (!isValidEmail(inputRef.current?.value ?? "")) {
-      return setStatus({
-        error: "Please enter a valid email",
-        sucess: null,
-        loading: false,
-      });
-    }
-
-    postSignUpNewsLetters({
-      email: inputRef.current?.value ?? "",
-      newsLetters: checkedLetters.map((item) => ({
-        id: item.key,
-        title: item.title,
-        description: item.description,
-        frequency: item.frequency,
-      })),
-    });
-  };
-
   return (
     <div className="my-4">
       <div className="border-t border-appBlack py-1">

@@ -104,16 +104,20 @@ function JoditWrapper(
     const storageContent = JSON.parse(getContent);
 
     if (prePost) {
-      // setInitialContent(prePost.content);
-      // currentContent.current = prePost.content;
       setTopic(prePost.topic);
       if (inputRef.current) inputRef.current.value = prePost.title ?? "";
-    } else if (storageContent) {
-      // setInitialContent(storageContent.content);
-      // currentContent.current = storageContent.content;
-      setTopic(storageContent.topic);
-      if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
     }
+
+    /**
+     * @disabled
+     * This code is not needed as we are not storing the content in local storage
+     */
+    // else if (storageContent) {
+    //   // setInitialContent(storageContent.content);
+    //   // currentContent.current = storageContent.content;
+    //   setTopic(storageContent.topic);
+    //   if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
+    // }
   }, [prePost]);
 
   useImperativeHandle(ref, () => ({

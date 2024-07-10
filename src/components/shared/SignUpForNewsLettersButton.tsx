@@ -51,6 +51,14 @@ export default function SignUpForNewsLettersButton({
       });
     }
 
+    if (checkedLetters.length === 0) {
+      return setStatus({
+        error: "Please select at least one newsletter",
+        sucess: null,
+        loading: false,
+      });
+    }
+
     postSignUpNewsLetters({
       email: inputRef.current?.value ?? "",
       newsLetters: checkedLetters.map((item) => ({
