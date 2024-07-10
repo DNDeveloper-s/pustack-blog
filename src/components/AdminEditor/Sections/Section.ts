@@ -88,6 +88,7 @@ class HTMLParser {
       while (true) {
         const el = arr[index];
         if (
+          el?.nodeName === "IFRAME" ||
           el?.textContent?.trim() !== "" ||
           !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
         ) {

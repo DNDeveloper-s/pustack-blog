@@ -9,8 +9,6 @@ export default function useRenderHtml(content: string, enabled: boolean) {
 
   useEffect(() => {
     if (content && enabled) {
-      let index = 0;
-      let firstContentEncountered = false;
       const parser = new DOMParser();
       const doc = parser.parseFromString(content, "text/html");
       const body = doc.body;
@@ -23,6 +21,7 @@ export default function useRenderHtml(content: string, enabled: boolean) {
         while (true) {
           const el = arr[index];
           if (
+            el?.nodeName === "IFRAME" ||
             el?.textContent?.trim() !== "" ||
             !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
           ) {

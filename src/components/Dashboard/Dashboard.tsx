@@ -173,8 +173,8 @@ function DashboardDesktop({
   // );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] py-2">
-      <div className="pr-0 md:pr-7">
+    <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] relative">
+      <div className="pr-0 md:pr-7 md:sticky md:top-[150px] md:h-[calc(100vh-150px)] py-2 md:overflow-auto">
         <Flagship title={(signals[0] as Signal).title} />
         <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {signals.map((signal: Signal) => (
@@ -202,7 +202,7 @@ function DashboardDesktop({
           )} */}
         </div>
       </div>
-      <div className="mt-[15px] md:mt-0 md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
+      <div className="mt-[15px] md:mt-0 md:border-x py-2 border-dashed border-[#1f1d1a4d] px-0 md:px-7">
         <DesignedBlog
           linkClassName="block"
           post={postsByPosition.titlePost as Post}
@@ -232,7 +232,7 @@ function DashboardDesktop({
           </div> */}
         </div>
       </div>
-      <div className="px-0 md:pl-7 md:pr-0">
+      <div className="px-0 md:pl-7 md:pr-0 py-2">
         <div className="grid grid-cols-1 gap-4">
           {postsByPosition.rightPosts?.slice(0, 3)?.map((post) => (
             <DesignedBlog

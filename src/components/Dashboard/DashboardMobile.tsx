@@ -3,6 +3,7 @@ import Flagship from "@/components/Blogs/Flagship";
 import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useMediaQuery } from "react-responsive";
 import { Post, SnippetPosition } from "@/firebase/post-v2";
+import { Post as PostV1 } from "@/firebase/post";
 import { chunk, compact, difference, sortBy } from "lodash";
 import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
@@ -48,9 +49,9 @@ export default function DashboardMobile({
   const hasSignals = signals?.length > 0;
 
   const { data: posts } = useQueryPosts({
-    initialData: _serverPosts.map(
-      (data: any) =>
-        new Post(
+    initialData: _serverPosts.map((data: any) => {
+      if (!data.sections && data.content) {
+        return new PostV1(
           data.title,
           data.content,
           data.author,
@@ -62,42 +63,23 @@ export default function DashboardMobile({
           data.isFlagship,
           data.displayTitle,
           data.displayContent
-        )
-    ),
+        );
+      }
+      return new Post(
+        data.title,
+        data.author,
+        data.topic,
+        data.sections,
+        data.id,
+        data.timestamp,
+        data.position,
+        data.design,
+        data.displayTitle,
+        data.displayContent,
+        data.is_v2
+      );
+    }),
   });
-
-  // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
-  //   useInView();
-
-  // useEffect(() => {
-  //   if (!isFetching && !isFetchingNextPage && isSignalSpinnerInView)
-  //     fetchNextPage();
-  // }, [fetchNextPage, isFetching, isFetchingNextPage, isSignalSpinnerInView]);
-
-  // const serverPosts = useMemo(() => {
-  //   if (!_serverPosts) return [];
-
-  //   console.log("_serverPosts - ", _serverPosts);
-
-  //   return _serverPosts.map(
-  //     (data: any) =>
-  //       new Post(
-  //         data.title,
-  //         data.content,
-  //         data.author,
-  //         data.topic,
-  //         data.id,
-  //         data.timestamp,
-  //         data.position,
-  //         data.design,
-  //         data.isFlagship
-  //       )
-  //   );
-  // }, [_serverPosts]);
-
-  // const posts = _posts ?? serverPosts;
-
-  console.log("posts - ", posts);
 
   const postsByPosition = useMemo(() => {
     if (!posts) {
