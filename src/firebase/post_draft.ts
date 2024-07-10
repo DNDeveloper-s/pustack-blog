@@ -24,6 +24,8 @@ import {
 } from "firebase/firestore";
 import { compact, keysIn } from "lodash";
 import { toDashCase } from "./signal";
+import { Section } from "@/components/AdminEditor/Sections/Section";
+import readingTime from "reading-time";
 
 export interface Author {
   name: string;
@@ -90,12 +92,12 @@ interface GetWithoutFlatten {
 }
 
 type PostDocumentSnapshot = DocumentSnapshot<
-  Post | undefined,
+  PostDraft | undefined,
   ReturnType<typeof postConverter.toFirestore>
 >;
 
 type PostQuerySnapshot = QuerySnapshot<
-  Post | undefined,
+  PostDraft | undefined,
   ReturnType<typeof postConverter.toFirestore>
 >;
 
@@ -114,22 +116,23 @@ const headings = {
   h6: [],
 };
 
-export class Post {
+export class PostDraft {
   _id: string | undefined = undefined;
   readonly title: string;
-  readonly content: string;
   readonly topic: string;
   readonly author: Author;
   readonly html: Document;
   readonly images: string[];
   readonly quotes: string[];
   readonly timestamp: string | undefined = undefined;
-  private _flagship: boolean = false;
   private _position: PostPosition | undefined = undefined;
   snippetPosition: SnippetPosition = SnippetPosition.MID_CONTENT;
   snippetDesign: SnippetDesign = SnippetDesign.CLASSIC_CARD;
   displayTitle: string | undefined = undefined;
   displayContent: string | undefined = undefined;
+  private _sections: Section[] = [];
+  readonly is_v2: boolean;
+
   private _snippetData: {
     title?: string;
     content?: string;
@@ -138,13 +141,15 @@ export class Post {
     iframe?: string;
   } | null = null;
 
-  get isFlagship() {
-    return this._flagship;
+  get sections() {
+    return this._sections;
   }
 
   get id(): string | undefined {
     if (this._id) return this._id;
-    console.warn("Post id is not set, Try calling generateUniqueId() first");
+    console.warn(
+      "PostDraft id is not set, Try calling generateUniqueId() first"
+    );
     return undefined;
   }
 
@@ -162,21 +167,21 @@ export class Post {
 
   constructor(
     title: string,
-    content: string,
     author: Author,
     topic: string,
+    sections: Section[] = [],
     id?: string,
     timestamp?: string,
     position?: SnippetPosition,
     design?: SnippetDesign,
-    isFlagship?: boolean,
     displayTitle?: string,
-    displayContent?: string
+    displayContent?: string,
+    is_v2: boolean = true
   ) {
     this.title = title;
-    this.content = content;
     this.displayTitle = displayTitle ?? title;
     this.displayContent = displayContent;
+    this._sections = Section.createFactory(sections);
     this.author = author;
     this.topic = topic;
     this.html = this.parseContent();
@@ -190,12 +195,15 @@ export class Post {
     this.timestamp = timestamp;
     this.snippetDesign = design ?? SnippetDesign.CLASSIC_CARD;
     this.snippetPosition = position ?? SnippetPosition.MID_CONTENT;
-    this._flagship = isFlagship ?? false;
+    this.is_v2 = !!is_v2;
   }
 
   private parseContent(): Document {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(this.content, "text/html");
+    const doc = parser.parseFromString(
+      Section.mergedContent(this.sections),
+      "text/html"
+    );
     return doc;
   }
 
@@ -307,7 +315,7 @@ export class Post {
   }
 
   private async idExistsinFirestore(id: string) {
-    const docRef = doc(db, "posts", id);
+    const docRef = doc(db, "post_drafts", id);
     const snapshot = await getDoc(docRef);
     return snapshot.exists();
   }
@@ -315,7 +323,7 @@ export class Post {
   async saveToFirestore() {
     const postId = await this.generateUniqueId();
 
-    const postRef = doc(db, "posts", postId).withConverter(postConverter);
+    const postRef = doc(db, "post_drafts", postId).withConverter(postConverter);
 
     await setDoc(postRef, this);
 
@@ -324,10 +332,12 @@ export class Post {
 
   async updateInFirestore() {
     if (!this.id) {
-      throw new Error("Post id is missing");
+      throw new Error("PostDraft id is missing");
     }
 
-    const postRef = doc(db, "posts", this.id).withConverter(postConverter);
+    const postRef = doc(db, "post_drafts", this.id).withConverter(
+      postConverter
+    );
     await setDoc(postRef, this);
 
     return this.id;
@@ -335,24 +345,14 @@ export class Post {
 
   static async deleteFromFirestore(id: string) {
     if (!id) {
-      throw new Error("Post id is missing");
+      throw new Error("PostDraft id is missing");
     }
 
-    const postRef = doc(db, "posts", id).withConverter(postConverter);
+    const postRef = doc(db, "post_drafts", id).withConverter(postConverter);
 
     await deleteDoc(postRef);
 
     return id;
-  }
-
-  markAsFlagship() {
-    // Mark the post as flagged
-    this._flagship = true;
-  }
-
-  unMarkAsFlagship() {
-    // Mark the post as flagged
-    this._flagship = false;
   }
 
   /**
@@ -372,19 +372,19 @@ export class Post {
    * Overload 3: Fetches the document data with flattening.
    * @param {string} id - The ID of the post to fetch.
    * @param {true} flatten - A boolean flag set to true indicating the document data should be flattened.
-   * @returns {Promise<Post>} A promise that resolves to the flattened post data.
+   * @returns {Promise<PostDraft>} A promise that resolves to the flattened post data.
    * @throws Will throw an error if the post cannot be fetched or doesn't exist.
    *
    * @param {string} id - The ID of the post to fetch.
    * @param {boolean} [flatten=false] - A boolean flag indicating whether to flatten the document data.
-   * @returns {Promise<PostDocumentSnapshot | Post>} A promise that resolves to the post document snapshot or flattened post data.
+   * @returns {Promise<PostDocumentSnapshot | PostDraft>} A promise that resolves to the post document snapshot or flattened post data.
    * @throws Will throw an error if the post cannot be fetched or doesn't exist.
    */
   static async get(id: string): Promise<PostDocumentSnapshot>;
   static async get(id: string, flatten: false): Promise<PostDocumentSnapshot>;
-  static async get(id: string, flatten: true): Promise<Post>;
+  static async get(id: string, flatten: true): Promise<PostDraft>;
   static async get(id: string, flatten: boolean = false) {
-    const docRef = doc(db, "posts", id).withConverter(postConverter);
+    const docRef = doc(db, "post_drafts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
   }
@@ -396,8 +396,8 @@ export class Post {
   ): Promise<QuerySnapshot<DocumentData, DocumentData>>;
   static async getFlagship(raw?: boolean) {
     const postsRef = raw
-      ? collection(db, "posts")
-      : collection(db, "posts").withConverter(postConverter);
+      ? collection(db, "post_drafts")
+      : collection(db, "post_drafts").withConverter(postConverter);
     const _query = query(postsRef, where("isFlagship", "==", true), limit(1));
 
     const docs = await getDocs(_query);
@@ -408,8 +408,8 @@ export class Post {
   static async getByCategory(
     category: string,
     _limit: QueryParams["_limit"] = 4
-  ): Promise<Post[]> {
-    const postsRef = collection(db, "posts").withConverter(postConverter);
+  ): Promise<PostDraft[]> {
+    const postsRef = collection(db, "post_drafts").withConverter(postConverter);
     const _query = query(
       postsRef,
       where("topic", "==", category),
@@ -425,8 +425,8 @@ export class Post {
 
   static async getRecentPosts(
     _limit: QueryParams["_limit"] = 4
-  ): Promise<Post[]> {
-    const postsRef = collection(db, "posts").withConverter(postConverter);
+  ): Promise<PostDraft[]> {
+    const postsRef = collection(db, "post_drafts").withConverter(postConverter);
     const _query = query(
       postsRef,
       where("hasTextMeta", "==", true),
@@ -462,7 +462,7 @@ export class Post {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: true;
-  }): Promise<Post[]>;
+  }): Promise<PostDraft[]>;
   static async getAll({
     _startAfter,
     _limit,
@@ -470,7 +470,7 @@ export class Post {
   }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
   static async getAll(queryParams?: QueryParams) {
     const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
-    const postsRef = collection(db, "posts").withConverter(postConverter);
+    const postsRef = collection(db, "post_drafts").withConverter(postConverter);
     let _query = query(postsRef, orderBy("timestamp", "desc"), limit(_limit));
 
     if (_startAfter) {
@@ -484,15 +484,16 @@ export class Post {
 
     const docs = await getDocs(_query);
 
+    console.log("docs - ", docs);
+
     return _flatten ? flattenQueryData(docs) : docs;
   }
 }
 
 export const postConverter = {
-  toFirestore: (post: Post) => {
+  toFirestore: (post: PostDraft) => {
     return {
       title: post.title,
-      content: post.content,
       author: post.author,
       topic: post.topic,
       timestamp: serverTimestamp(),
@@ -500,6 +501,8 @@ export const postConverter = {
       design: post.snippetDesign,
       displayTitle: post.displayTitle,
       displayContent: post.displayContent,
+      read_time: readingTime(Section.mergedContent(post.sections)).text,
+      sections: Section.toPlainObject(post.sections),
       meta: {
         description: post.snippetData?.content ?? null,
         image: post.snippetData?.image ?? null,
@@ -510,24 +513,25 @@ export const postConverter = {
         !!post.topic &&
         !!post.snippetData?.image &&
         !!post.snippetData?.content,
+      is_v2: true,
     };
   },
   fromFirestore: (snapshot: any) => {
     if (!snapshot.exists) return undefined;
     const data = snapshot.data();
-    console.log("data 493 - ", data);
-    return new Post(
+
+    return new PostDraft(
       data.title,
-      data.content,
       data.author,
       data.topic,
+      data.sections,
       snapshot.id,
       data.timestamp.toDate().toISOString(),
       data.position,
       data.design,
-      data.isFlagship,
       data.displayTitle,
-      data.displayContent
+      data.displayContent,
+      data.is_v2
     );
   },
 };

@@ -9,6 +9,7 @@ import {
   QueryOrderByConstraint,
   QuerySnapshot,
   QueryStartAtConstraint,
+  WriteBatch,
   collection,
   deleteDoc,
   doc,
@@ -21,6 +22,7 @@ import {
   setDoc,
   startAfter,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { compact, keysIn } from "lodash";
 import { toDashCase } from "./signal";
@@ -193,7 +195,7 @@ export class Post {
     this._id = id;
     this.timestamp = timestamp;
     this.snippetDesign = design ?? SnippetDesign.CLASSIC_CARD;
-    this.snippetPosition = position ?? SnippetPosition.TITLE;
+    this.snippetPosition = position ?? SnippetPosition.MID_CONTENT;
     this.is_v2 = !!is_v2;
   }
 
@@ -302,10 +304,10 @@ export class Post {
     }
   }
 
-  private async generateUniqueId() {
+  private async generateUniqueId(collectionName: string = "posts") {
     let id = toDashCase(this.title);
     let count = 1;
-    while (await this.idExistsinFirestore(id)) {
+    while (await this.idExistsinFirestore(id, collectionName)) {
       id = `${toDashCase(this.title)}-${count}`;
       count++;
     }
@@ -313,16 +315,35 @@ export class Post {
     return id;
   }
 
-  private async idExistsinFirestore(id: string) {
-    const docRef = doc(db, "posts", id);
+  private async idExistsinFirestore(
+    id: string,
+    collectionName: string = "posts"
+  ) {
+    const docRef = doc(db, collectionName, id);
     const snapshot = await getDoc(docRef);
     return snapshot.exists();
   }
 
-  async saveToFirestore() {
+  async saveToFirestore(returnBatch: boolean | WriteBatch = false) {
     const postId = await this.generateUniqueId();
-
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
+
+    if (returnBatch) {
+      const batch =
+        returnBatch instanceof WriteBatch ? returnBatch : writeBatch(db);
+      batch.set(postRef, this);
+      return batch;
+    }
+
+    await setDoc(postRef, this);
+
+    return postId;
+  }
+
+  async saveDraftToFirestore() {
+    const postId = await this.generateUniqueId("post_drafts");
+
+    const postRef = doc(db, "post_drafts", postId).withConverter(postConverter);
 
     await setDoc(postRef, this);
 
@@ -340,12 +361,57 @@ export class Post {
     return this.id;
   }
 
-  static async deleteFromFirestore(id: string) {
+  async updateDraftInFirestore() {
+    if (!this.id) {
+      throw new Error("Post id is missing");
+    }
+
+    const postRef = doc(db, "post_drafts", this.id).withConverter(
+      postConverter
+    );
+    await setDoc(postRef, this);
+
+    return this.id;
+  }
+
+  static async deleteFromFirestore(
+    id: string,
+    returnBatch: boolean | WriteBatch = false
+  ) {
     if (!id) {
       throw new Error("Post id is missing");
     }
 
     const postRef = doc(db, "posts", id).withConverter(postConverter);
+
+    if (returnBatch) {
+      const batch =
+        returnBatch instanceof WriteBatch ? returnBatch : writeBatch(db);
+      batch.delete(postRef);
+      return batch;
+    }
+
+    await deleteDoc(postRef);
+
+    return id;
+  }
+
+  static async deleteDraftFromFirestore(
+    id: string,
+    returnBatch: boolean | WriteBatch = false
+  ) {
+    if (!id) {
+      throw new Error("Post id is missing");
+    }
+
+    const postRef = doc(db, "post_drafts", id).withConverter(postConverter);
+
+    if (returnBatch) {
+      const batch =
+        returnBatch instanceof WriteBatch ? returnBatch : writeBatch(db);
+      batch.delete(postRef);
+      return batch;
+    }
 
     await deleteDoc(postRef);
 
@@ -382,6 +448,43 @@ export class Post {
   static async get(id: string, flatten: true): Promise<Post>;
   static async get(id: string, flatten: boolean = false) {
     const docRef = doc(db, "posts", id).withConverter(postConverter);
+    const data = await getDoc(docRef);
+    return flatten ? flattenDocumentData(data) : data;
+  }
+
+  /**
+   * Fetches a draft post document from Firestore.
+   *
+   * Overload 1: Fetches the document snapshot.
+   * @param {string} id - The ID of the post to fetch.
+   * @returns {Promise<PostDocumentSnapshot>} A promise that resolves to the post document snapshot.
+   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
+   *
+   * Overload 2: Fetches the document snapshot without flattening.
+   * @param {string} id - The ID of the post to fetch.
+   * @param {false} flatten - A boolean flag set to false indicating the document data should not be flattened.
+   * @returns {Promise<PostDocumentSnapshot>} A promise that resolves to the post document snapshot.
+   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
+   *
+   * Overload 3: Fetches the document data with flattening.
+   * @param {string} id - The ID of the post to fetch.
+   * @param {true} flatten - A boolean flag set to true indicating the document data should be flattened.
+   * @returns {Promise<Post>} A promise that resolves to the flattened post data.
+   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
+   *
+   * @param {string} id - The ID of the post to fetch.
+   * @param {boolean} [flatten=false] - A boolean flag indicating whether to flatten the document data.
+   * @returns {Promise<PostDocumentSnapshot | Post>} A promise that resolves to the post document snapshot or flattened post data.
+   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
+   */
+  static async getDraft(id: string): Promise<PostDocumentSnapshot>;
+  static async getDraft(
+    id: string,
+    flatten: false
+  ): Promise<PostDocumentSnapshot>;
+  static async getDraft(id: string, flatten: true): Promise<Post>;
+  static async getDraft(id: string, flatten: boolean = false) {
+    const docRef = doc(db, "post_drafts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
   }
@@ -485,6 +588,54 @@ export class Post {
 
     return _flatten ? flattenQueryData(docs) : docs;
   }
+
+  static async getAllDrafts(): Promise<PostQuerySnapshot>;
+  static async getAllDrafts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+  }): Promise<PostQuerySnapshot>;
+  static async getAllDrafts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+    _flatten: false;
+  }): Promise<PostQuerySnapshot>;
+  static async getAllDrafts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+    _flatten: true;
+  }): Promise<Post[]>;
+  static async getAllDrafts({
+    _startAfter,
+    _limit,
+    _flatten,
+  }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
+  static async getAllDrafts(queryParams?: QueryParams) {
+    const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
+    const postsRef = collection(db, "post_drafts").withConverter(postConverter);
+    let _query = query(postsRef, orderBy("timestamp", "desc"), limit(_limit));
+
+    if (_startAfter) {
+      _query = query(
+        postsRef,
+        orderBy("timestamp", "desc"),
+        startAfter(_startAfter),
+        limit(_limit)
+      );
+    }
+
+    const docs = await getDocs(_query);
+
+    return _flatten ? flattenQueryData(docs) : docs;
+  }
 }
 
 export const postConverter = {
@@ -496,8 +647,8 @@ export const postConverter = {
       timestamp: serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,
-      displayTitle: post.displayTitle,
-      displayContent: post.displayContent,
+      displayTitle: post.displayTitle ?? post.title,
+      displayContent: post.displayContent ?? "",
       read_time: readingTime(Section.mergedContent(post.sections)).text,
       sections: Section.toPlainObject(post.sections),
       meta: {

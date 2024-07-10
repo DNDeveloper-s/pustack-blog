@@ -1035,6 +1035,7 @@ export function NavbarMobile() {
           margin: "0 5px",
           display: "block",
         }}
+        className="!w-full !h-auto"
       />
       <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-3">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>

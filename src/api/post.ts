@@ -9,6 +9,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { WriteBatch, writeBatch } from "firebase/firestore";
 
 export const useQueryPosts = ({ initialData }: { initialData: any }) => {
   const queryPosts = async () => {
@@ -43,14 +44,31 @@ export const useGetPostById = (postId?: string | null) => {
   });
 };
 
+interface UseCreatePostOptions {
+  post: Post;
+  draftPostId?: string;
+}
 export const useCreatePost = (
-  options?: UseMutationOptions<any, Error, Post>
+  options?: UseMutationOptions<any, Error, UseCreatePostOptions>
 ) => {
   const qc = useQueryClient();
 
-  const createPost = async (post: Post) => {
-    const newPostId = await post.saveToFirestore();
-    return newPostId;
+  const createPost = async ({ post, draftPostId }: UseCreatePostOptions) => {
+    let batch: boolean | WriteBatch = false;
+    if (draftPostId) {
+      batch = (await Post.deleteDraftFromFirestore(
+        draftPostId,
+        true
+      )) as WriteBatch;
+    }
+
+    const returnedType = await post.saveToFirestore(batch);
+
+    if (returnedType instanceof WriteBatch) {
+      await returnedType.commit();
+    }
+
+    return returnedType;
   };
 
   return useMutation({
@@ -180,5 +198,115 @@ export const useGetRecentPosts = (props?: UseGetRecentPostsOptions) => {
     queryKey: API_QUERY.GET_RECENT_POSTS,
     queryFn: getRecentPosts,
     staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+export const useCreateDraftPost = (
+  options?: UseMutationOptions<any, Error, Post>
+) => {
+  const qc = useQueryClient();
+
+  const saveDraftPost = async (post: Post) => {
+    const newPostId = await post.saveDraftToFirestore();
+    return newPostId;
+  };
+
+  return useMutation({
+    mutationFn: saveDraftPost,
+    onSettled: () => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useGetDraftPostById = (
+  draftPostId?: string | null,
+  options?: { enabled?: boolean }
+) => {
+  const getDraftPostById = async ({ queryKey }: QueryFunctionContext) => {
+    const [, draftPostId] = queryKey;
+    if (!draftPostId || typeof draftPostId !== "string") {
+      throw new Error("Draft Post ID is required");
+    }
+    const post = await Post.getDraft(draftPostId, true);
+    return post;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(draftPostId),
+    queryFn: getDraftPostById,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled:
+      !!draftPostId &&
+      (options?.enabled !== undefined ? options.enabled : true),
+  });
+};
+
+export const useQueryDraftPosts = ({ initialData }: { initialData: any }) => {
+  const queryDraftPosts = async () => {
+    const posts = await Post.getAllDrafts();
+    return posts;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+    queryFn: queryDraftPosts,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    initialData,
+  });
+};
+
+export const useDeletePostDraft = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const deletePostDraft = async (postId: string) => {
+    await Post.deleteDraftFromFirestore(postId);
+    return postId;
+  };
+
+  return useMutation({
+    mutationFn: deletePostDraft,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(data),
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useUpdatePostDraft = (
+  options?: UseMutationOptions<any, Error, Post>
+) => {
+  const qc = useQueryClient();
+
+  const updatePostDraft = async (post: Post) => {
+    if (!post.id) {
+      throw new Error("Post ID is required");
+    }
+    const id = await post.updateDraftInFirestore();
+
+    return id;
+  };
+
+  return useMutation({
+    mutationFn: updatePostDraft,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(data),
+      });
+    },
+    ...(options ?? {}),
   });
 };

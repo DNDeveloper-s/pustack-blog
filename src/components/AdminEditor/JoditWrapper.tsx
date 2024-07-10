@@ -80,10 +80,16 @@ function MathsFormulaIframe() {
 function JoditWrapper(
   {
     handleContinue,
+    handleSaveDraft,
     prePost,
+    isDraftSaving,
+    isDraft,
   }: {
     handleContinue: (post: Post) => void;
     prePost?: Post;
+    handleSaveDraft: (post: Post) => void;
+    isDraftSaving: boolean;
+    isDraft: boolean;
   },
   ref: any
 ) {
@@ -98,6 +104,7 @@ function JoditWrapper(
   // const [initialContent, setInitialContent] = useState("");
   const currentContent = useRef<string>("");
   const postSectionsRef = useRef<PostSectionsRef>(null);
+  const [sectionsIndexKey, setSectionsIndexKey] = useState(0);
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
@@ -124,6 +131,7 @@ function JoditWrapper(
     reset: () => {
       setTopic("");
       // setInitialContent("");
+      setSectionsIndexKey((c) => c + 1);
       currentContent.current = "";
       if (inputRef.current) inputRef.current.value = "";
     },
@@ -181,6 +189,61 @@ function JoditWrapper(
 
     // postCreatePost(post);
     handleContinue(post);
+  }
+
+  async function handleSaveAsDraft() {
+    if (!user) return router.push("/");
+
+    if (!isDraft && prePost) return;
+
+    const sections = postSectionsRef.current?.getSections();
+    sections?.forEach((section) => {
+      section.updateContent(section.trimContent(section.content));
+    });
+
+    const isValid =
+      inputRef.current?.value &&
+      sections &&
+      Section.mergedContent(sections).length > 0 &&
+      topic;
+
+    if (!isValid) {
+      setError("Please fill all fields");
+      return;
+    }
+
+    let post = new Post(
+      inputRef.current?.value || "Untitled",
+      {
+        name: user?.name || dummyAuthor.name,
+        email: user?.email || dummyAuthor.email,
+        photoURL: user?.image_url || dummyAuthor.photoURL,
+      },
+      topic,
+      sections
+    );
+
+    if (isDraft && prePost) {
+      post = new Post(
+        inputRef.current?.value || "Untitled",
+        {
+          name: user?.name || dummyAuthor.name,
+          email: user?.email || dummyAuthor.email,
+          photoURL: user?.image_url || dummyAuthor.photoURL,
+        },
+        topic,
+        sections,
+        prePost?.id,
+        prePost?.timestamp,
+        prePost?.snippetPosition,
+        prePost?.snippetDesign,
+        prePost?.displayTitle,
+        prePost?.displayContent,
+        true
+      );
+    }
+
+    handleSaveDraft(post);
   }
 
   const handlePreview = () => {
@@ -265,12 +328,16 @@ function JoditWrapper(
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
           Sections
         </h4>
-        <PostSections sections={prePost?.sections} ref={postSectionsRef} />
+        <PostSections
+          key={sectionsIndexKey}
+          sections={prePost?.sections}
+          ref={postSectionsRef}
+        />
       </DndProvider>
       {!postSectionsRef.current?.isResizing() && (
         <div className="flex justify-end gap-4 mb-10">
           <Button
-            // isDisabled={isPending}
+            isDisabled={isDraftSaving}
             className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
             onClick={handlePreview}
             variant="flat"
@@ -279,8 +346,21 @@ function JoditWrapper(
           >
             Preview
           </Button>
+          {(!prePost || isDraft) && (
+            <Button
+              isDisabled={isDraftSaving}
+              className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
+              onClick={handleSaveAsDraft}
+              variant="flat"
+              color="primary"
+              // isLoading={isPending}
+              isLoading={isDraftSaving}
+            >
+              Save as Draft
+            </Button>
+          )}
           <Button
-            // isDisabled={isPending}
+            isDisabled={isDraftSaving}
             className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
             // onClick={handleCreatePost}
             onClick={handleContinuePost}

@@ -8,6 +8,7 @@ export default async function Admin({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const postId = searchParams.post_id;
+  const draftPostId = searchParams.draft_post_id;
   // const user = await getAuthenticatedAppForUser();
 
   // if (!user.currentUser?.uid) return redirect("/");
@@ -15,7 +16,10 @@ export default async function Admin({
   return (
     <>
       <ErrorBoundary errorComponent={ErrorMasterComponent}>
-        <AdminPage postId={postId as string} />
+        <AdminPage
+          postId={postId as string}
+          draftPostId={draftPostId as string}
+        />
       </ErrorBoundary>
     </>
   );

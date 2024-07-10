@@ -199,6 +199,73 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
   );
 }
 
+export function DeletePostModalBase({
+  disclosureOptions,
+  post,
+  error,
+  isLoading,
+  onDelete,
+}: {
+  disclosureOptions: any;
+  post?: Post;
+  error?: Error | null;
+  isLoading: boolean;
+  onDelete: (postId: string) => void;
+}) {
+  const { isOpen, onOpenChange } = disclosureOptions;
+  return (
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      classNames={{
+        base: "!bg-primary",
+      }}
+    >
+      <ModalContent>
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Delete Post
+            </ModalHeader>
+            <ModalBody>
+              <p>
+                Are you sure you want to delete post &quot;
+                <strong>{post?.displayTitle}</strong>&quot;
+              </p>
+              {error && (
+                <p className="text-sm my-1 text-gray-500 bg-[#fffdf2] p-[4px_8px] rounded">
+                  Deletion Error:{" "}
+                  <span className="italic pl-1 text-danger-500 ">
+                    {error.message}
+                  </span>
+                </p>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button color="default" variant="light" onPress={onClose}>
+                Cancel
+              </Button>
+              <Button
+                color="danger"
+                onPress={() => {
+                  if (!post?.id) {
+                    console.error("Post id not found");
+                    return;
+                  }
+                  onDelete(post?.id);
+                }}
+                isLoading={isLoading}
+              >
+                Delete
+              </Button>
+            </ModalFooter>
+          </>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+}
+
 const DeletePostModalRef = forwardRef(DeletePostModal);
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {

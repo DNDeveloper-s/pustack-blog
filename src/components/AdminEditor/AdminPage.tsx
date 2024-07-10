@@ -8,7 +8,14 @@ import SnippetForm from "../SnippetForm/SnippetForm";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import { Button } from "@nextui-org/button";
-import { useCreatePost, useGetPostById, useUpdatePost } from "@/api/post";
+import {
+  useCreateDraftPost,
+  useCreatePost,
+  useGetDraftPostById,
+  useGetPostById,
+  useUpdatePost,
+  useUpdatePostDraft,
+} from "@/api/post";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useUser } from "@/context/UserContext";
@@ -55,8 +62,20 @@ const classes = {
   previewEditorButton: ".preview-editor-button",
 };
 
-export default function AdminPage({ postId }: { postId?: string }) {
-  const { data: requestedPost, isLoading } = useGetPostById(postId);
+export default function AdminPage({
+  postId,
+  draftPostId,
+}: {
+  postId?: string;
+  draftPostId?: string;
+}) {
+  const { data: requestedActualPost, isLoading: isActualLoading } =
+    useGetPostById(postId);
+  const { data: requestedDraftPost, isLoading: isDraftLoading } =
+    useGetDraftPostById(draftPostId, { enabled: !!draftPostId && !postId });
+
+  const requestedPost = draftPostId ? requestedDraftPost : requestedActualPost;
+
   const { user } = useUser();
 
   const ref = useRef(null);
@@ -309,6 +328,32 @@ export default function AdminPage({ postId }: { postId?: string }) {
   });
 
   const {
+    mutate: postCreateDraft,
+    isPending: isCreateDraftPending,
+    error: createDraftError,
+    reset: createDraftReset,
+  } = useCreateDraftPost({
+    onSuccess: () => {
+      joditRef.current.reset();
+      window.localStorage.removeItem("editor_state");
+      router.push("/admin");
+    },
+  });
+
+  const {
+    mutate: postUpdateDraft,
+    isPending: isUpdateDraftPending,
+    error: upadteDraftError,
+    reset: updateDraftReset,
+  } = useUpdatePostDraft({
+    onSuccess: () => {
+      joditRef.current.reset();
+      window.localStorage.removeItem("editor_state");
+      router.push("/admin");
+    },
+  });
+
+  const {
     mutate: postUpdatePost,
     isPending: isUpdatePending,
     error: updatePostError,
@@ -322,9 +367,14 @@ export default function AdminPage({ postId }: { postId?: string }) {
     },
   });
 
-  const error = createPostError || updatePostError;
+  const error =
+    createPostError || updatePostError || createDraftError || updatePostError;
 
-  const isPending = isCreatePending || isUpdatePending;
+  const isPending =
+    isCreatePending ||
+    isUpdatePending ||
+    isCreateDraftPending ||
+    isUpdateDraftPending;
 
   const handleContinue = (post: Post) => {
     setStep(2);
@@ -344,9 +394,11 @@ export default function AdminPage({ postId }: { postId?: string }) {
   useEffect(() => {
     createPostReset();
     updatePostReset();
+    createDraftReset();
+    updateDraftReset();
   }, [step]);
 
-  const handleSavePost = () => {
+  const handleSavePost = (isDraft: boolean = false) => {
     if (!currentPost) return;
 
     const selectedPosition = snippetRef.current?.selectedPosition;
@@ -360,9 +412,24 @@ export default function AdminPage({ postId }: { postId?: string }) {
     currentPost.displayTitle = snippetRef.current?.title();
     currentPost.displayContent = snippetRef.current?.content();
 
-    console.log("snippetRef.current?.title - ", snippetRef.current?.title);
+    if (isDraft) {
+      requestedDraftPost
+        ? postUpdateDraft(currentPost)
+        : postCreateDraft(currentPost);
 
-    requestedPost ? postUpdatePost(currentPost) : postCreatePost(currentPost);
+      return;
+    }
+
+    requestedActualPost
+      ? postUpdatePost(currentPost)
+      : postCreatePost({
+          post: currentPost,
+          draftPostId: requestedDraftPost?.id,
+        });
+  };
+
+  const handleSaveDraft = (post: Post) => {
+    requestedDraftPost ? postUpdateDraft(post) : postCreateDraft(post);
   };
 
   const showTutorial = (step: number) => () => {
@@ -471,6 +538,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
               prePost={requestedPost}
               ref={joditRef}
               handleContinue={handleContinue}
+              handleSaveDraft={handleSaveDraft}
+              isDraftSaving={isCreateDraftPending}
+              isDraft={!!draftPostId}
             />
           </MathJaxContext>
         </div>
@@ -497,15 +567,27 @@ export default function AdminPage({ postId }: { postId?: string }) {
             >
               Back
             </Button>
+            {!requestedActualPost && (
+              <Button
+                isDisabled={isPending}
+                className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
+                onClick={() => handleSavePost(true)}
+                variant="flat"
+                color="primary"
+                isLoading={isCreateDraftPending || isUpdateDraftPending}
+              >
+                Save as Draft
+              </Button>
+            )}
             <Button
               isDisabled={isPending}
               className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-              onClick={handleSavePost}
+              onClick={() => handleSavePost()}
               variant="flat"
               color="primary"
-              isLoading={isPending}
+              isLoading={isCreatePending || isUpdatePending}
             >
-              {requestedPost ? "Update Post" : "Create Post"}
+              {requestedActualPost ? "Update Post" : "Create Post"}
             </Button>
           </div>
         </div>
