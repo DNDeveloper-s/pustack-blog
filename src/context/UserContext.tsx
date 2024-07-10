@@ -78,6 +78,7 @@ export function UserProvider({
             image_url: authUser.photoURL,
             uid: authUser.uid,
             sign_up_ts: serverTimestamp(),
+            subscriber: true,
           });
           const user = await getDoc(userRef);
           console.log("Setting User | 85 : ");

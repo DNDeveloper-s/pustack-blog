@@ -68,7 +68,7 @@ export const useCreatePost = (
       );
 
       try {
-        await sendEmailCallable(data);
+        await sendEmailCallable({ postId: data });
       } catch (e) {
         console.error("Error in email - ", e);
       }

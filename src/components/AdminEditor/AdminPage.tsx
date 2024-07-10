@@ -303,7 +303,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
       // @ts-ignore
-      window.location = "/";
+      // window.location = "/";
+      router.push("/");
     },
   });
 
