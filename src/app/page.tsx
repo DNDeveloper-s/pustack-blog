@@ -9,6 +9,9 @@ import {
   orderBy,
   getDocs,
   QuerySnapshot,
+  where,
+  setDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { compact } from "lodash";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
@@ -30,7 +33,26 @@ export default async function Home() {
   // const posts = await Post.getAll({ _flatten: true });
 
   const postsRef = collection(db, "posts");
-  let _query = query(postsRef, orderBy("timestamp", "desc"), limit(50));
+
+  // Set all posts to be published
+  const _docs = await getDocs(postsRef);
+
+  const batch = writeBatch(db);
+
+  for (let doc of _docs.docs) {
+    if (!doc.data().sections) {
+      batch.delete(doc.ref);
+    }
+  }
+
+  await batch.commit();
+
+  let _query = query(
+    postsRef,
+    where("status", "==", "published"),
+    orderBy("timestamp", "desc"),
+    limit(50)
+  );
 
   const docs = await getDocs(_query);
 

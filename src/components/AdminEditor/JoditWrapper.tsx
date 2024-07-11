@@ -177,12 +177,14 @@ function JoditWrapper(
         },
         topic,
         sections,
+        prePost.status ?? "published",
         prePost.id,
         prePost.timestamp,
         prePost.snippetPosition,
         prePost.snippetDesign,
         prePost.displayTitle,
         prePost.displayContent,
+        undefined,
         true
       );
     }
@@ -233,12 +235,14 @@ function JoditWrapper(
         },
         topic,
         sections,
+        prePost?.status ?? "published",
         prePost?.id,
         prePost?.timestamp,
         prePost?.snippetPosition,
         prePost?.snippetDesign,
         prePost?.displayTitle,
         prePost?.displayContent,
+        undefined,
         true
       );
     }

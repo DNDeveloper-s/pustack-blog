@@ -2461,3 +2461,36 @@ font-size: 180px;
     transform: translateX(0);
   }
 }
+
+.drafts-notification {
+  padding: 15px 20px !important;
+  background: #fffce1;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 355px !important;
+}
+
+.drafts-notification .ant-notification-notice-close {
+  position: relative !important;
+  width: auto !important;
+  height: auto !important;
+  top: unset !important;
+  right: unset !important;
+  flex-shrink: 0 !important;
+}
+
+.drafts-notification .ant-notification-notice-close:hover {
+  background-color: transparent !important;
+}
+
+.drafts-notification .ant-notification-notice-message {
+  margin-bottom: 0 !important;
+  padding-right: 0 !important;
+}
+
+
+.schedule-date-picker .ant-picker-panel-container {
+  background-color: #f8f5d7;
+}

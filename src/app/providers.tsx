@@ -3,12 +3,19 @@
 
 // We can not useState or useRef in a server component, which is why we are
 // extracting this part out into it's own file with 'use client' on top
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/context/UserContext";
 import { User } from "firebase/auth";
 import { LinkContextProvider } from "@/context/LinkContext";
 import { BlogImageContextProvider } from "@/context/BlogImageContext";
+import { notification } from "antd";
+import {
+  ArgsProps,
+  NotificationInstance,
+  NotificationPlacement,
+} from "antd/es/notification/interface";
+import { NotificationContextProvider } from "@/context/NotificationContext";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -63,6 +70,8 @@ function getPersistor() {
   }
 }
 
+const Context = React.createContext({ name: "Default" });
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
@@ -70,11 +79,34 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   //       render if it suspends and there is no boundary
   const queryClient = getQueryClient();
 
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = (
+    placement: NotificationPlacement,
+    props: ArgsProps,
+    type: keyof Omit<NotificationInstance, "destroy"> = "success"
+  ) => {
+    api[type]({
+      placement,
+      showProgress: true,
+      closable: false,
+      pauseOnHover: true,
+      ...props,
+    });
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <BlogImageContextProvider>
         <>
-          <UserProvider>{children}</UserProvider>
+          <NotificationContextProvider
+            openNotification={openNotification}
+            destroy={api.destroy}
+          >
+            <>
+              {contextHolder}
+              <UserProvider>{children}</UserProvider>
+            </>
+          </NotificationContextProvider>
         </>
       </BlogImageContextProvider>
     </QueryClientProvider>

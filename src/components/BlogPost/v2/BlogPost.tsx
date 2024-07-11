@@ -305,12 +305,14 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           _post.author,
           _post.topic,
           _post.sections,
+          _post.status ?? "published",
           _post.id,
           _post.timestamp,
           _post.position,
           _post.design,
           _post.displayTitle,
           _post.displayContent,
+          _post.scheduledTime,
           _post.is_v2
         )
       );

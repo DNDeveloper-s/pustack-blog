@@ -18,6 +18,13 @@ import { useUser } from "@/context/UserContext";
 import { useMediaQuery } from "react-responsive";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/dropdown";
+import { FaCaretDown } from "react-icons/fa";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -140,16 +147,58 @@ export function NavbarDesktop({
             </div>
             <div className="flex-1 flex items-start gap-5 justify-end">
               {showCreatePostButton && (
-                <Link
-                  href="/admin"
-                  className="text-[10px] flex justify-end font-helvetica text-primaryText"
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
+                <Dropdown
+                  classNames={{
+                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                    base: "!p-[0_10px]",
                   }}
                 >
-                  <span>CREATE POST</span>
-                </Link>
+                  <DropdownTrigger className="!scale-100 !opacity-100">
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <p
+                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        MANAGE POSTS
+                      </p>
+                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    classNames={{
+                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                      base: "!p-[0_10px]",
+                    }}
+                  >
+                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
+                      <Link
+                        href="/admin"
+                        className="text-[10px] flex justify-center font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        <span>CREATE POST</span>
+                      </Link>
+                    </DropdownItem>
+                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
+                      <Link
+                        href="/admin/drafts"
+                        className="text-[10px] flex justify-center font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        <span>VIEW DRAFTS</span>
+                      </Link>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               )}
               {!user ? (
                 <div

@@ -45,16 +45,14 @@ export interface PostSectionsRef {
 
 function PostSections(props: { sections?: Section[] }, ref: any) {
   const [resizeMode, setResizeMode] = useState(false);
-  const [sections, setSections] = useState<Section[]>(
-    props.sections ?? [
-      new Section(
-        0,
-        "",
-        "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
-        ""
-      ),
-    ]
-  );
+  const [sections, setSections] = useState<Section[]>([
+    new Section(
+      0,
+      "",
+      "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+      ""
+    ),
+  ]);
   const moveCard = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       console.log("dragIndex - ", dragIndex);
@@ -92,8 +90,24 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
   }, [sections]);
 
   useEffect(() => {
-    props.sections && setSections(props.sections);
+    console.log("Props.sections | sections - ", props.sections);
+    setSections(
+      props.sections ?? [
+        new Section(
+          0,
+          "",
+          "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+          ""
+        ),
+      ]
+    );
   }, [props.sections]);
+
+  useEffect(() => {
+    console.log("initial sections - ");
+  }, []);
+
+  console.log("sections - ", sections);
 
   const renderCard = (section: Section, index: number) => {
     if (resizeMode) {

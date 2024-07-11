@@ -9,6 +9,7 @@ import {
   QueryOrderByConstraint,
   QuerySnapshot,
   QueryStartAtConstraint,
+  Timestamp,
   WriteBatch,
   collection,
   deleteDoc,
@@ -108,6 +109,7 @@ interface QueryParams {
   _startAfter?: string;
   _limit?: number;
   _flatten?: boolean;
+  _status?: string[];
 }
 
 const headings = {
@@ -119,6 +121,7 @@ const headings = {
   h6: [],
 };
 
+type PostStatus = "draft" | "published" | "scheduled";
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
@@ -127,6 +130,8 @@ export class Post {
   readonly html: Document;
   readonly images: string[];
   readonly quotes: string[];
+  private _status: PostStatus = "draft";
+  private _scheduledTime: string | undefined = undefined;
   readonly timestamp: string | undefined = undefined;
   private _position: PostPosition | undefined = undefined;
   snippetPosition: SnippetPosition = SnippetPosition.MID_CONTENT;
@@ -146,6 +151,14 @@ export class Post {
 
   get sections() {
     return this._sections;
+  }
+
+  get status() {
+    return this._status;
+  }
+
+  get scheduledTime() {
+    return this._scheduledTime;
   }
 
   get id(): string | undefined {
@@ -171,12 +184,14 @@ export class Post {
     author: Author,
     topic: string,
     sections: Section[] = [],
+    status: PostStatus = "published",
     id?: string,
     timestamp?: string,
     position?: SnippetPosition,
     design?: SnippetDesign,
     displayTitle?: string,
     displayContent?: string,
+    scheduledTime?: string,
     is_v2: boolean = true
   ) {
     this.title = title;
@@ -197,6 +212,8 @@ export class Post {
     this.snippetDesign = design ?? SnippetDesign.CLASSIC_CARD;
     this.snippetPosition = position ?? SnippetPosition.MID_CONTENT;
     this.is_v2 = !!is_v2;
+    this._status = status;
+    this._scheduledTime = scheduledTime;
   }
 
   private parseContent(): Document {
@@ -419,6 +436,27 @@ export class Post {
   }
 
   /**
+   *
+   * @param scheduledTime - The time to schedule the post in ISO string format.
+   */
+  schedulePost(scheduledTime: string) {
+    // Check if the input time is valid ISO string
+    if (!new Date(scheduledTime).toISOString()) {
+      throw new Error("Invalid Scheduled Time");
+    }
+
+    this._status = "scheduled";
+    this._scheduledTime = scheduledTime;
+  }
+
+  /**
+   * Publishes the post.
+   */
+  draftPost() {
+    this._status = "draft";
+  }
+
+  /**
    * Fetches a post document from Firestore.
    *
    * Overload 1: Fetches the document snapshot.
@@ -448,43 +486,6 @@ export class Post {
   static async get(id: string, flatten: true): Promise<Post>;
   static async get(id: string, flatten: boolean = false) {
     const docRef = doc(db, "posts", id).withConverter(postConverter);
-    const data = await getDoc(docRef);
-    return flatten ? flattenDocumentData(data) : data;
-  }
-
-  /**
-   * Fetches a draft post document from Firestore.
-   *
-   * Overload 1: Fetches the document snapshot.
-   * @param {string} id - The ID of the post to fetch.
-   * @returns {Promise<PostDocumentSnapshot>} A promise that resolves to the post document snapshot.
-   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
-   *
-   * Overload 2: Fetches the document snapshot without flattening.
-   * @param {string} id - The ID of the post to fetch.
-   * @param {false} flatten - A boolean flag set to false indicating the document data should not be flattened.
-   * @returns {Promise<PostDocumentSnapshot>} A promise that resolves to the post document snapshot.
-   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
-   *
-   * Overload 3: Fetches the document data with flattening.
-   * @param {string} id - The ID of the post to fetch.
-   * @param {true} flatten - A boolean flag set to true indicating the document data should be flattened.
-   * @returns {Promise<Post>} A promise that resolves to the flattened post data.
-   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
-   *
-   * @param {string} id - The ID of the post to fetch.
-   * @param {boolean} [flatten=false] - A boolean flag indicating whether to flatten the document data.
-   * @returns {Promise<PostDocumentSnapshot | Post>} A promise that resolves to the post document snapshot or flattened post data.
-   * @throws Will throw an error if the post cannot be fetched or doesn't exist.
-   */
-  static async getDraft(id: string): Promise<PostDocumentSnapshot>;
-  static async getDraft(
-    id: string,
-    flatten: false
-  ): Promise<PostDocumentSnapshot>;
-  static async getDraft(id: string, flatten: true): Promise<Post>;
-  static async getDraft(id: string, flatten: boolean = false) {
-    const docRef = doc(db, "post_drafts", id).withConverter(postConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
   }
@@ -558,10 +559,13 @@ export class Post {
   static async getAll({
     _startAfter,
     _limit,
+    _flatten,
+    _status,
   }: {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: true;
+    _status: string[];
   }): Promise<Post[]>;
   static async getAll({
     _startAfter,
@@ -569,13 +573,76 @@ export class Post {
     _flatten,
   }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
   static async getAll(queryParams?: QueryParams) {
-    const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
+    const { _startAfter, _limit = 50, _flatten, _status } = queryParams ?? {};
     const postsRef = collection(db, "posts").withConverter(postConverter);
-    let _query = query(postsRef, orderBy("timestamp", "desc"), limit(_limit));
+
+    console.log("_status - ", _status);
+
+    let _query = query(
+      postsRef,
+      where("status", "in", _status ?? ["published"]),
+      orderBy("timestamp", "desc"),
+      limit(_limit)
+    );
 
     if (_startAfter) {
       _query = query(
         postsRef,
+        where("status", "in", _status ?? ["published"]),
+        orderBy("timestamp", "desc"),
+        startAfter(_startAfter),
+        limit(_limit)
+      );
+    }
+
+    const docs = await getDocs(_query);
+
+    return _flatten ? flattenQueryData(docs) : docs;
+  }
+
+  static async getPublishedPosts(): Promise<PostQuerySnapshot>;
+  static async getPublishedPosts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+  }): Promise<PostQuerySnapshot>;
+  static async getPublishedPosts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+    _flatten: false;
+  }): Promise<PostQuerySnapshot>;
+  static async getPublishedPosts({
+    _startAfter,
+    _limit,
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+    _flatten: true;
+  }): Promise<Post[]>;
+  static async getPublishedPosts({
+    _startAfter,
+    _limit,
+    _flatten,
+  }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
+  static async getPublishedPosts(queryParams?: QueryParams) {
+    const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
+    const postsRef = collection(db, "posts").withConverter(postConverter);
+    let _query = query(
+      postsRef,
+      where("status", "==", "published"),
+      orderBy("timestamp", "desc"),
+      limit(_limit)
+    );
+
+    if (_startAfter) {
+      _query = query(
+        postsRef,
+        where("status", "==", "published"),
         orderBy("timestamp", "desc"),
         startAfter(_startAfter),
         limit(_limit)
@@ -620,12 +687,18 @@ export class Post {
   }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
   static async getAllDrafts(queryParams?: QueryParams) {
     const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
-    const postsRef = collection(db, "post_drafts").withConverter(postConverter);
-    let _query = query(postsRef, orderBy("timestamp", "desc"), limit(_limit));
+    const postsRef = collection(db, "posts").withConverter(postConverter);
+    let _query = query(
+      postsRef,
+      where("status", "==", "draft"),
+      orderBy("timestamp", "desc"),
+      limit(_limit)
+    );
 
     if (_startAfter) {
       _query = query(
         postsRef,
+        where("status", "==", "draft"),
         orderBy("timestamp", "desc"),
         startAfter(_startAfter),
         limit(_limit)
@@ -656,6 +729,10 @@ export const postConverter = {
         image: post.snippetData?.image ?? null,
         quote: post.snippetData?.quote ?? null,
       },
+      status: post.status,
+      scheduledTime: post.scheduledTime
+        ? Timestamp.fromDate(new Date(post.scheduledTime))
+        : null,
       hasTextMeta: !!post.snippetData?.content && !!post.topic,
       hasImageMeta:
         !!post.topic &&
@@ -689,12 +766,14 @@ export const postConverter = {
       data.author,
       data.topic,
       data.sections,
+      data.status ?? "published",
       snapshot.id,
       data.timestamp.toDate().toISOString(),
       data.position,
       data.design,
       data.displayTitle,
       data.displayContent,
+      data.scheduledTime,
       data.is_v2
     );
   },

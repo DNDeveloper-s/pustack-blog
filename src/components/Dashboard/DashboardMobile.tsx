@@ -70,12 +70,14 @@ export default function DashboardMobile({
         data.author,
         data.topic,
         data.sections,
+        data.status ?? "published",
         data.id,
         data.timestamp,
         data.position,
         data.design,
         data.displayTitle,
         data.displayContent,
+        data.scheduledTime,
         data.is_v2
       );
     }),

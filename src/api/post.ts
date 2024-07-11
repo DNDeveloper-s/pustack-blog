@@ -3,25 +3,45 @@ import { Post } from "@/firebase/post-v2";
 import { functions } from "@/lib/firebase";
 import { httpsCallable } from "firebase/functions";
 import {
+  DefinedUseQueryResult,
   QueryFunctionContext,
   UseMutationOptions,
+  UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import { WriteBatch, writeBatch } from "firebase/firestore";
 
-export const useQueryPosts = ({ initialData }: { initialData: any }) => {
-  const queryPosts = async () => {
-    const posts = await Post.getAll({ _flatten: true });
+export const useQueryPosts = ({
+  initialData,
+  status = ["published"],
+}: {
+  initialData: any;
+  status: string[];
+}) => {
+  const queryPosts = async ({ queryKey }: QueryFunctionContext) => {
+    const [, status] = queryKey;
+
+    console.log('status.split(",") - ', status);
+
+    if (typeof status !== "string") {
+      throw new Error("Status is required");
+    }
+
+    const posts = await Post.getAll({
+      _flatten: true,
+      _status: status.split(","),
+    });
 
     return posts;
   };
 
   return useQuery({
-    queryKey: API_QUERY.QUERY_POSTS,
+    queryKey: API_QUERY.QUERY_POSTS(status),
     queryFn: queryPosts,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: true,
+    staleTime: 0, // 5 minutes
     initialData,
   });
 };
@@ -75,7 +95,7 @@ export const useCreatePost = (
     mutationFn: createPost,
     onSettled: () => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS,
+        queryKey: API_QUERY.QUERY_POSTS([]),
       });
     },
     ...(options ?? {}),
@@ -112,7 +132,7 @@ export const useDeletePost = (
     mutationFn: deletePost,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS,
+        queryKey: API_QUERY.QUERY_POSTS([]),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_POST_BY_ID(data),
@@ -140,7 +160,7 @@ export const useUpdatePost = (
     mutationFn: updatePost,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS,
+        queryKey: API_QUERY.QUERY_POSTS([]),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_POST_BY_ID(data),
@@ -215,7 +235,7 @@ export const useCreateDraftPost = (
     mutationFn: saveDraftPost,
     onSettled: () => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS(),
       });
     },
     ...(options ?? {}),
@@ -231,7 +251,7 @@ export const useGetDraftPostById = (
     if (!draftPostId || typeof draftPostId !== "string") {
       throw new Error("Draft Post ID is required");
     }
-    const post = await Post.getDraft(draftPostId, true);
+    const post = await Post.get(draftPostId, true);
     return post;
   };
 
@@ -245,14 +265,18 @@ export const useGetDraftPostById = (
   });
 };
 
-export const useQueryDraftPosts = ({ initialData }: { initialData: any }) => {
+export const useQueryDraftPosts = ({
+  initialData,
+}: {
+  initialData: Post[];
+}): DefinedUseQueryResult<Post[], Error> => {
   const queryDraftPosts = async () => {
-    const posts = await Post.getAllDrafts();
+    const posts = await Post.getAllDrafts({ _flatten: true });
     return posts;
   };
 
   return useQuery({
-    queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+    queryKey: API_QUERY.QUERY_DRAFT_POSTS(),
     queryFn: queryDraftPosts,
     staleTime: 1000 * 60 * 5, // 5 minutes
     initialData,
@@ -273,7 +297,7 @@ export const useDeletePostDraft = (
     mutationFn: deletePostDraft,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS(),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(data),
@@ -301,7 +325,7 @@ export const useUpdatePostDraft = (
     mutationFn: updatePostDraft,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_DRAFT_POSTS,
+        queryKey: API_QUERY.QUERY_DRAFT_POSTS(),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(data),

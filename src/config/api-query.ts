@@ -1,6 +1,9 @@
 export const API_QUERY = {
-  QUERY_POSTS: ["query-posts"],
-  QUERY_DRAFT_POSTS: ["query-draft-posts"],
+  QUERY_POSTS: (status: string[]) => ["query-posts", status.join(",")],
+  QUERY_DRAFT_POSTS: (...status: string[]) => [
+    "query-draft-posts",
+    status.join(","),
+  ],
   GET_POST_BY_ID: (postId?: string | null) => ["get-post-by-id", postId],
   GET_DRAFT_POST_BY_ID: (draftPostId?: string | null) => [
     "get-draft-post-by-id",

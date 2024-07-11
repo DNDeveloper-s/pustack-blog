@@ -5,7 +5,7 @@ import Navbar from "../Navbar/Navbar";
 import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
 import SnippetForm from "../SnippetForm/SnippetForm";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import { Button } from "@nextui-org/button";
 import {
@@ -19,15 +19,13 @@ import {
 import { useRouter } from "next/navigation";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useUser } from "@/context/UserContext";
-import { Tour, TourProps } from "antd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { Tour, TourProps, notification } from "antd";
 import {
   codeTutorial,
   colorPicker,
   createMathsFormula,
   iconImage,
   insertImage,
-  insertLink,
   insertSection,
   insertYoutubeVideo,
   textFormatting,
@@ -40,8 +38,21 @@ import {
   DropdownItem,
 } from "@nextui-org/dropdown";
 import { auth } from "@/lib/firebase";
-import PostSections, { PostSectionsRef } from "./PostSections";
-import { DndProvider } from "react-dnd";
+import Link from "next/link";
+import { useNotification } from "@/context/NotificationContext";
+import { NotificationPlacements } from "antd/es/notification/interface";
+import { FaCaretDown } from "react-icons/fa";
+import { MdDrafts, MdScheduleSend } from "react-icons/md";
+import { IoIosCreate } from "react-icons/io";
+import PostScheduleModal from "./PostScheduleModal";
+import { useDisclosure } from "@nextui-org/modal";
+import { Dayjs } from "dayjs";
+
+const getButtonLabel = (requestedPost?: Post) => {
+  if (requestedPost?.status === "draft") return "Create Post";
+
+  return requestedPost ? "Update Post" : "Create Post";
+};
 
 const classes = {
   textFormatGroup:
@@ -62,19 +73,17 @@ const classes = {
   previewEditorButton: ".preview-editor-button",
 };
 
-export default function AdminPage({
-  postId,
-  draftPostId,
-}: {
-  postId?: string;
-  draftPostId?: string;
-}) {
-  const { data: requestedActualPost, isLoading: isActualLoading } =
-    useGetPostById(postId);
-  const { data: requestedDraftPost, isLoading: isDraftLoading } =
-    useGetDraftPostById(draftPostId, { enabled: !!draftPostId && !postId });
+function SaveDraftSnackBarContent() {
+  return (
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <p>You draft has been saved</p>
+    </div>
+  );
+}
 
-  const requestedPost = draftPostId ? requestedDraftPost : requestedActualPost;
+export default function AdminPage({ postId }: { postId?: string }) {
+  const { data: requestedPost, isLoading: isActualLoading } =
+    useGetPostById(postId);
 
   const { user } = useUser();
 
@@ -85,9 +94,9 @@ export default function AdminPage({
 
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
 
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const [step, setStep] = useState(1);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
+  const disclosureOptions = useDisclosure();
   const joditRef = useRef<any>(null);
   const router = useRouter();
   const snippetRef = useRef<{
@@ -96,6 +105,8 @@ export default function AdminPage({
     title: () => string;
     content: () => string;
   }>(null);
+
+  const { openNotification, destroy } = useNotification();
 
   useEffect(() => {
     async function checkUser() {
@@ -327,31 +338,71 @@ export default function AdminPage({
     },
   });
 
-  const {
-    mutate: postCreateDraft,
-    isPending: isCreateDraftPending,
-    error: createDraftError,
-    reset: createDraftReset,
-  } = useCreateDraftPost({
-    onSuccess: () => {
-      joditRef.current.reset();
-      window.localStorage.removeItem("editor_state");
-      router.push("/admin");
-    },
-  });
+  // const {
+  //   mutate: postCreateDraft,
+  //   isPending: isCreateDraftPending,
+  //   error: createDraftError,
+  //   reset: createDraftReset,
+  // } = useCreateDraftPost({
+  //   onSuccess: () => {
+  //     joditRef.current.reset();
+  //     window.localStorage.removeItem("editor_state");
+  //     setStep(1);
+  //     openNotification(
+  //       NotificationPlacements[5],
+  //       {
+  //         message: <SaveDraftSnackBarContent />,
+  //         closable: true,
+  //         showProgress: true,
+  //         closeIcon: (
+  //           <Link
+  //             href="/admin/drafts"
+  //             className="underline text-appBlue cursor-pointer whitespace-nowrap"
+  //           >
+  //             View Drafts
+  //           </Link>
+  //         ),
+  //         key: "drafts-notification",
+  //         className: "drafts-notification",
+  //       },
+  //       "success"
+  //     );
+  //     router.push("/admin");
+  //   },
+  // });
 
-  const {
-    mutate: postUpdateDraft,
-    isPending: isUpdateDraftPending,
-    error: upadteDraftError,
-    reset: updateDraftReset,
-  } = useUpdatePostDraft({
-    onSuccess: () => {
-      joditRef.current.reset();
-      window.localStorage.removeItem("editor_state");
-      router.push("/admin");
-    },
-  });
+  // const {
+  //   mutate: postUpdateDraft,
+  //   isPending: isUpdateDraftPending,
+  //   error: upadteDraftError,
+  //   reset: updateDraftReset,
+  // } = useUpdatePostDraft({
+  //   onSuccess: () => {
+  //     joditRef.current.reset();
+  //     window.localStorage.removeItem("editor_state");
+  //     setStep(1);
+  //     openNotification(
+  //       NotificationPlacements[5],
+  //       {
+  //         message: <SaveDraftSnackBarContent />,
+  //         closable: true,
+  //         showProgress: true,
+  //         closeIcon: (
+  //           <Link
+  //             href="/admin/drafts"
+  //             className="underline text-appBlue cursor-pointer whitespace-nowrap"
+  //           >
+  //             View Drafts
+  //           </Link>
+  //         ),
+  //         key: "drafts-notification",
+  //         className: "drafts-notification",
+  //       },
+  //       "success"
+  //     );
+  //     router.push("/admin");
+  //   },
+  // });
 
   const {
     mutate: postUpdatePost,
@@ -367,14 +418,9 @@ export default function AdminPage({
     },
   });
 
-  const error =
-    createPostError || updatePostError || createDraftError || updatePostError;
+  const error = createPostError || updatePostError;
 
-  const isPending =
-    isCreatePending ||
-    isUpdatePending ||
-    isCreateDraftPending ||
-    isUpdateDraftPending;
+  const isPending = isCreatePending || isUpdatePending;
 
   const handleContinue = (post: Post) => {
     setStep(2);
@@ -394,8 +440,6 @@ export default function AdminPage({
   useEffect(() => {
     createPostReset();
     updatePostReset();
-    createDraftReset();
-    updateDraftReset();
   }, [step]);
 
   const handleSavePost = (isDraft: boolean = false) => {
@@ -412,24 +456,60 @@ export default function AdminPage({
     currentPost.displayTitle = snippetRef.current?.title();
     currentPost.displayContent = snippetRef.current?.content();
 
-    if (isDraft) {
-      requestedDraftPost
-        ? postUpdateDraft(currentPost)
-        : postCreateDraft(currentPost);
-
-      return;
-    }
-
-    requestedActualPost
+    requestedPost
       ? postUpdatePost(currentPost)
       : postCreatePost({
           post: currentPost,
-          draftPostId: requestedDraftPost?.id,
         });
   };
 
-  const handleSaveDraft = (post: Post) => {
-    requestedDraftPost ? postUpdateDraft(post) : postCreateDraft(post);
+  const handleSchedulePost = (scheduledTime: Dayjs) => {
+    if (!currentPost) return;
+
+    const selectedPosition = snippetRef.current?.selectedPosition;
+    const selectedSnippet = snippetRef.current?.selectedSnippet;
+
+    if (!selectedPosition || !selectedSnippet) return;
+
+    currentPost.snippetPosition = selectedPosition;
+    currentPost.snippetDesign = selectedSnippet;
+
+    currentPost.displayTitle = snippetRef.current?.title();
+    currentPost.displayContent = snippetRef.current?.content();
+
+    currentPost.schedulePost(scheduledTime.toISOString());
+
+    postCreatePost({
+      post: currentPost,
+    });
+  };
+
+  const handleSaveDraft = (_post?: Post) => {
+    let post = _post;
+
+    if (!post && currentPost) {
+      const selectedPosition = snippetRef.current?.selectedPosition;
+      const selectedSnippet = snippetRef.current?.selectedSnippet;
+
+      if (selectedPosition) currentPost.snippetPosition = selectedPosition;
+      if (selectedSnippet) currentPost.snippetDesign = selectedSnippet;
+
+      currentPost.displayTitle = snippetRef.current?.title();
+      currentPost.displayContent = snippetRef.current?.content();
+
+      post = currentPost;
+    }
+
+    if (!post) {
+      console.error("No post to save");
+      return;
+    }
+
+    post.draftPost();
+
+    postCreatePost({
+      post,
+    });
   };
 
   const showTutorial = (step: number) => () => {
@@ -539,8 +619,12 @@ export default function AdminPage({
               ref={joditRef}
               handleContinue={handleContinue}
               handleSaveDraft={handleSaveDraft}
-              isDraftSaving={isCreateDraftPending}
-              isDraft={!!draftPostId}
+              isDraftSaving={
+                isPending &&
+                (requestedPost?.status === "draft" ||
+                  currentPost?.status === "draft")
+              }
+              isDraft={requestedPost?.status === "draft"}
             />
           </MathJaxContext>
         </div>
@@ -555,40 +639,104 @@ export default function AdminPage({
           <SnippetForm ref={snippetRef} post={currentPost} />
           <div className="flex gap-4 justify-end items-center">
             <Button
-              // isDisabled={isPending}
+              isDisabled={isPending}
               className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
               // onClick={handleCreatePost}
               variant="flat"
               color="default"
               // isLoading={isPending}
               onClick={() => {
+                if (isPending) return;
                 setStep(1);
               }}
             >
               Back
             </Button>
-            {!requestedActualPost && (
-              <Button
-                isDisabled={isPending}
-                className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-                onClick={() => handleSavePost(true)}
-                variant="flat"
-                color="primary"
-                isLoading={isCreateDraftPending || isUpdateDraftPending}
-              >
-                Save as Draft
-              </Button>
-            )}
-            <Button
-              isDisabled={isPending}
-              className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-              onClick={() => handleSavePost()}
-              variant="flat"
-              color="primary"
-              isLoading={isCreatePending || isUpdatePending}
+            <Dropdown
+              disabled={isPending}
+              classNames={{
+                content: "!bg-appBlue !rounded-[4px] p-0 !min-w-[150px]",
+                base: "!p-[0_4px]",
+                arrow: "!bg-appBlue",
+              }}
+              style={{
+                // @ts-ignore
+                "--nextui-content1": "230 67% 43%",
+                backgroundColor: "#243bb5",
+                borderRadius: "4px",
+              }}
+              placement="bottom-end"
+              showArrow={true}
             >
-              {requestedActualPost ? "Update Post" : "Create Post"}
-            </Button>
+              <div className="flex items-start">
+                <Button
+                  isDisabled={isPending}
+                  className="h-9 px-3 rounded-tl rounded-bl flex items-center justify-center gap-2 rounded-tr-none rounded-br-none bg-appBlue font-featureBold text-primary border-2 border-appBlue text-xs uppercase"
+                  onClick={() => handleSavePost()}
+                  variant="flat"
+                  color="primary"
+                  isLoading={isPending}
+                >
+                  <IoIosCreate />
+                  <span>
+                    {isPending ? "Saving..." : getButtonLabel(requestedPost)}
+                  </span>
+                </Button>
+                <DropdownTrigger className="!scale-100 !opacity-100">
+                  <div className="h-9 w-6 border-l border-primary  cursor-pointer flex rounded-tr rounded-br items-center justify-center bg-appBlue text-primary">
+                    <FaCaretDown />
+                  </div>
+                </DropdownTrigger>
+              </div>
+              <DropdownMenu
+                classNames={{
+                  list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
+                  base: "!p-[0_5px]",
+                }}
+              >
+                <DropdownItem
+                  onClick={() => {
+                    disclosureOptions.onOpen();
+                  }}
+                  className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
+                >
+                  <p
+                    className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                  >
+                    <MdScheduleSend />
+                    <span>SCHEDULE POST</span>
+                  </p>
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => {
+                    handleSaveDraft();
+                  }}
+                  className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
+                >
+                  <p
+                    className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                  >
+                    <MdDrafts />
+                    <span>SAVE AS DRAFT</span>
+                  </p>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+            {currentPost && (
+              <PostScheduleModal
+                disclosureOptions={disclosureOptions}
+                handleSchedulePost={handleSchedulePost}
+                isPending={isPending}
+              />
+            )}
           </div>
         </div>
         {/* <DraftEditor /> */}
