@@ -2490,7 +2490,37 @@ font-size: 180px;
   padding-right: 0 !important;
 }
 
+.schedule-date-picker .ant-picker-panel-container,
+.schedule-date-picker {
+  background: #f8f5d7 !important;
+}
 
-.schedule-date-picker .ant-picker-panel-container {
-  background-color: #f8f5d7;
+.app-dark-background,
+.app-dark-background > .ant-select-selector,
+.app-dark-background > .ant-popover-content > .ant-popover-inner,
+.app-dark-background > .ant-checkbox-inner,
+.app-dark-background > .ant-picker-range-wrapper > .ant-picker-panel-container {
+  background: #f8f5d7 !important;
+  --antd-arrow-background-color: #f8f5d7 !important;
+}
+
+.app-background,
+.app-background > .ant-select-selector,
+.app-background > .ant-popover-content > .ant-popover-inner,
+.app-background > .ant-checkbox-inner,
+.app-background > .ant-picker-range-wrapper > .ant-picker-panel-container {
+  background: #fcfae4 !important;
+  --antd-arrow-background-color: #fcfae4 !important;
+}
+
+.app-background .ant-checkbox-inner:after {
+  border: 2px solid #243bb5 !important;
+  border-top: 0 !important;
+  border-left: 0 !important;
+}
+
+.app-primary {
+  background-color: #243bb5;
+  color: #fff;
+  border-color: #243bb5;
 }

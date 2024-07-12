@@ -49,7 +49,7 @@ function DashboardDesktop({
   const signals = (_clientSignals || _serverFormedSignals)?.slice(0, 10);
   const hasSignals = signals?.length > 0;
 
-  const { data: posts } = useQueryPosts({
+  const { posts } = useQueryPosts({
     initialData: _serverPosts.map((data: any) => {
       if (!data.sections && data.content) {
         return new PostV1(

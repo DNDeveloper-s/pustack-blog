@@ -25,6 +25,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import PostSections, { PostSectionsRef } from "./PostSections";
 import { Section } from "./Sections/Section";
+import { useNotification } from "@/context/NotificationContext";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -105,6 +106,7 @@ function JoditWrapper(
   const currentContent = useRef<string>("");
   const postSectionsRef = useRef<PostSectionsRef>(null);
   const [sectionsIndexKey, setSectionsIndexKey] = useState(0);
+  const { openNotification } = useNotification();
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
@@ -152,7 +154,21 @@ function JoditWrapper(
       topic;
 
     if (!isValid) {
-      setError("Please fill all fields");
+      openNotification(
+        "bottomRight",
+        {
+          message: "Please fill all fields",
+          closable: true,
+          duration: null,
+          closeIcon: (
+            <p className="underline text-danger cursor-pointer whitespace-nowrap">
+              Close
+            </p>
+          ),
+          className: "drafts-notification",
+        },
+        "error"
+      );
       return;
     }
 
@@ -210,7 +226,21 @@ function JoditWrapper(
       topic;
 
     if (!isValid) {
-      setError("Please fill all fields");
+      openNotification(
+        "bottomRight",
+        {
+          message: "Please fill all fields",
+          closable: true,
+          duration: null,
+          closeIcon: (
+            <p className="underline text-danger cursor-pointer whitespace-nowrap">
+              Close
+            </p>
+          ),
+          className: "drafts-notification",
+        },
+        "error"
+      );
       return;
     }
 

@@ -34,19 +34,6 @@ export default async function Home() {
 
   const postsRef = collection(db, "posts");
 
-  // Set all posts to be published
-  const _docs = await getDocs(postsRef);
-
-  const batch = writeBatch(db);
-
-  for (let doc of _docs.docs) {
-    if (!doc.data().sections) {
-      batch.delete(doc.ref);
-    }
-  }
-
-  await batch.commit();
-
   let _query = query(
     postsRef,
     where("status", "==", "published"),

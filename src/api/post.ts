@@ -5,45 +5,83 @@ import { httpsCallable } from "firebase/functions";
 import {
   DefinedUseQueryResult,
   QueryFunctionContext,
+  QueryKey,
   UseMutationOptions,
   UseQueryOptions,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import { WriteBatch, writeBatch } from "firebase/firestore";
+import { useMemo } from "react";
+import { useUser } from "@/context/UserContext";
+import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
 
 export const useQueryPosts = ({
   initialData,
   status = ["published"],
+  sort = [{ field: "timestamp", order: "desc" }],
+  userEmail,
+  enabled = true,
+  dateRange,
+  topics,
 }: {
+  userEmail?: string;
   initialData: any;
-  status: string[];
-}) => {
-  const queryPosts = async ({ queryKey }: QueryFunctionContext) => {
-    const [, status] = queryKey;
+  enabled?: boolean;
+} & Partial<PostFilters>) => {
+  const LIMIT = 10;
 
-    console.log('status.split(",") - ', status);
-
+  const queryPosts = async (
+    pageParam: any,
+    queryKey: QueryKey,
+    direction: "forward" | "backward"
+  ) => {
+    const [, userEmail, status, sort, dateRange, topics] = queryKey;
     if (typeof status !== "string") {
       throw new Error("Status is required");
     }
 
-    const posts = await Post.getAll({
-      _flatten: true,
-      _status: status.split(","),
-    });
-
-    return posts;
+    try {
+      const posts = await Post.getAll({
+        _userEmail: userEmail as string,
+        _flatten: true,
+        _startAfter: pageParam,
+        status: status ? status.split(",") : [],
+        _limit: LIMIT as number,
+        sort: sort as { field: string; order: "asc" | "desc" }[],
+        dateRange: dateRange as PostFilters["dateRange"],
+        topics: topics as PostFilters["topics"],
+      });
+      console.log("posts - ", posts);
+      return posts;
+    } catch (e) {
+      console.log("Error in queryPosts - ", e);
+      return { lastDoc: undefined, data: [] };
+    }
   };
 
-  return useQuery({
-    queryKey: API_QUERY.QUERY_POSTS(status),
-    queryFn: queryPosts,
-    enabled: true,
-    staleTime: 0, // 5 minutes
-    initialData,
+  const query = useInfiniteQuery({
+    queryKey: API_QUERY.QUERY_POSTS(userEmail, status, sort, dateRange, topics),
+    queryFn: ({ pageParam, queryKey, direction }: any) =>
+      queryPosts(pageParam, queryKey, direction),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.lastDoc || lastPage?.data?.length < LIMIT) return undefined;
+      return lastPage.lastDoc as any;
+    },
+    enabled,
   });
+
+  const posts = useMemo(() => {
+    return query.data?.pages.map((page) => page.data).flat() ?? initialData;
+  }, [query.data]);
+
+  return {
+    ...query,
+    posts,
+  };
 };
 
 export const useGetPostById = (postId?: string | null) => {
@@ -74,44 +112,32 @@ export const useCreatePost = (
   const qc = useQueryClient();
 
   const createPost = async ({ post, draftPostId }: UseCreatePostOptions) => {
-    let batch: boolean | WriteBatch = false;
-    if (draftPostId) {
-      batch = (await Post.deleteDraftFromFirestore(
-        draftPostId,
-        true
-      )) as WriteBatch;
-    }
+    const _post = await post.saveToFirestore();
 
-    const returnedType = await post.saveToFirestore(batch);
-
-    if (returnedType instanceof WriteBatch) {
-      await returnedType.commit();
-    }
-
-    return returnedType;
+    return _post;
   };
 
   return useMutation({
     mutationFn: createPost,
     onSettled: () => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS([]),
+        // queryKey: API_QUERY.QUERY_POSTS(),
       });
     },
     ...(options ?? {}),
     onSuccess: async (data, ...rest) => {
-      const sendEmailCallable = httpsCallable(
-        functions,
-        "sendEmailToSubscribersForSinglePost"
-      );
+      // const sendEmailCallable = httpsCallable(
+      //   functions,
+      //   "sendEmailToSubscribersForSinglePost"
+      // );
 
-      try {
-        await sendEmailCallable({ postId: data });
-      } catch (e) {
-        console.error("Error in email - ", e);
-      }
+      // try {
+      //   await sendEmailCallable({ postId: data });
+      // } catch (e) {
+      //   console.error("Error in email - ", e);
+      // }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
 
       options?.onSuccess?.(data, ...rest);
     },
@@ -132,7 +158,7 @@ export const useDeletePost = (
     mutationFn: deletePost,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS([]),
+        // queryKey: API_QUERY.QUERY_POSTS([]),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_POST_BY_ID(data),
@@ -151,16 +177,16 @@ export const useUpdatePost = (
     if (!post.id) {
       throw new Error("Post ID is required");
     }
-    const id = await post.updateInFirestore();
+    const _post = await post.updateInFirestore();
 
-    return id;
+    return _post;
   };
 
   return useMutation({
     mutationFn: updatePost,
     onSettled: (data: any) => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_POSTS([]),
+        // queryKey: API_QUERY.QUERY_POSTS([]),
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_POST_BY_ID(data),

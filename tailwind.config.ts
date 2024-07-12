@@ -7,7 +7,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "!./src/components/AdminEditor/JoditEditor.tsx",
-    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|progress|spinner|tabs|ripple|menu|divider|popover).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|progress|spinner|tabs|ripple|menu|divider|popover).js",
   ],
   theme: {
     extend: {
@@ -19,6 +19,7 @@ const config: Config = {
       colors: {
         primaryText: "#3a6d78",
         primary: "#f8f5d7",
+        primaryVariant1: "#fff9b1",
         activeText: "#0e29b5",
         secondary: "#e4e2d6",
         tertiary: "#66655d",

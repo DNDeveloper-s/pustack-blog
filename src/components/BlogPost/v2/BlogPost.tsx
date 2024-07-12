@@ -444,43 +444,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
         }}
         ref={scrollerRef}
       >
-        {/* <button
-          onClick={async () => {
-            const sendEmailCallable = httpsCallable(
-              functions,
-              "sendEmailToSubscribersForSinglePost"
-            );
-
-            sendEmailCallable({ postId: "nice-one-to-call" })
-              .then((result) => {
-                console.log(result.data);
-              })
-              .catch((e) => {
-                console.log("error - ", e);
-              });
-
-            // try {
-            //   const resp = await fetch(
-            //     "https://sendemailtosubscribersforsinglepostrequest-jao2fnirkq-uc.a.run.app/",
-            //     {
-            //       method: "POST",
-            //       headers: {
-            //         "Content-Type": "application/json",
-            //       },
-            //       body: JSON.stringify({ postId: "nice-one-to-call" }),
-            //     }
-            //   );
-
-            //   const data = resp.json();
-
-            //   console.log("data - ", data);
-            // } catch (e) {
-            //   console.log("error - ", e);
-            // }
-          }}
-        >
-          Send Email
-        </button> */}
         <div className="max-w-[900px] mx-auto pb-10">
           <div
             ref={ref}

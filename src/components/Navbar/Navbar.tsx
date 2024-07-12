@@ -176,7 +176,7 @@ export function NavbarDesktop({
                     <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
                       <Link
                         href="/admin"
-                        className="text-[10px] flex justify-center font-helvetica text-primaryText"
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
                         style={{
                           fontWeight: 600,
                           fontVariationSettings: '"wght" 700,"opsz" 10',
@@ -188,13 +188,13 @@ export function NavbarDesktop({
                     <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
                       <Link
                         href="/admin/drafts"
-                        className="text-[10px] flex justify-center font-helvetica text-primaryText"
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
                         style={{
                           fontWeight: 600,
                           fontVariationSettings: '"wght" 700,"opsz" 10',
                         }}
                       >
-                        <span>VIEW DRAFTS</span>
+                        <span>VIEW MY POSTS</span>
                       </Link>
                     </DropdownItem>
                   </DropdownMenu>

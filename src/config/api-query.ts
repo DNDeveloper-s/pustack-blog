@@ -1,5 +1,13 @@
+import { Dayjs } from "dayjs";
+
 export const API_QUERY = {
-  QUERY_POSTS: (status: string[]) => ["query-posts", status.join(",")],
+  QUERY_POSTS: (
+    userEmail: string | null | undefined,
+    status: string[],
+    sort?: { field: string; order: "asc" | "desc" }[],
+    dateRange?: [Dayjs | null, Dayjs | null],
+    topics?: string[]
+  ) => ["query-posts", userEmail, status.join(","), sort, dateRange, topics],
   QUERY_DRAFT_POSTS: (...status: string[]) => [
     "query-draft-posts",
     status.join(","),

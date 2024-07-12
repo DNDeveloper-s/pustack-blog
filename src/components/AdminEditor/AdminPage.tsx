@@ -73,10 +73,10 @@ const classes = {
   previewEditorButton: ".preview-editor-button",
 };
 
-function SaveDraftSnackBarContent() {
+export function SnackbarContent({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-2 whitespace-nowrap">
-      <p>You draft has been saved</p>
+      <p>{label}</p>
     </div>
   );
 }
@@ -329,80 +329,57 @@ export default function AdminPage({ postId }: { postId?: string }) {
     error: createPostError,
     reset: createPostReset,
   } = useCreatePost({
-    onSuccess: () => {
+    onSuccess: (data: Post) => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
+
+      if (data.status === "draft") {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: <SnackbarContent label={"Your draft has been saved."} />,
+            closable: true,
+            showProgress: true,
+            closeIcon: (
+              <Link
+                href="/admin/drafts"
+                className="underline text-appBlue cursor-pointer whitespace-nowrap"
+              >
+                View Drafts
+              </Link>
+            ),
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+      } else {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: (
+              <SnackbarContent
+                label={
+                  "Your post has been " +
+                  (data.status === "scheduled" ? "scheduled" : "created") +
+                  "."
+                }
+              />
+            ),
+            closable: false,
+            showProgress: true,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+        router.push("/");
+      }
+
       // @ts-ignore
       // window.location = "/";
-      router.push("/");
     },
   });
-
-  // const {
-  //   mutate: postCreateDraft,
-  //   isPending: isCreateDraftPending,
-  //   error: createDraftError,
-  //   reset: createDraftReset,
-  // } = useCreateDraftPost({
-  //   onSuccess: () => {
-  //     joditRef.current.reset();
-  //     window.localStorage.removeItem("editor_state");
-  //     setStep(1);
-  //     openNotification(
-  //       NotificationPlacements[5],
-  //       {
-  //         message: <SaveDraftSnackBarContent />,
-  //         closable: true,
-  //         showProgress: true,
-  //         closeIcon: (
-  //           <Link
-  //             href="/admin/drafts"
-  //             className="underline text-appBlue cursor-pointer whitespace-nowrap"
-  //           >
-  //             View Drafts
-  //           </Link>
-  //         ),
-  //         key: "drafts-notification",
-  //         className: "drafts-notification",
-  //       },
-  //       "success"
-  //     );
-  //     router.push("/admin");
-  //   },
-  // });
-
-  // const {
-  //   mutate: postUpdateDraft,
-  //   isPending: isUpdateDraftPending,
-  //   error: upadteDraftError,
-  //   reset: updateDraftReset,
-  // } = useUpdatePostDraft({
-  //   onSuccess: () => {
-  //     joditRef.current.reset();
-  //     window.localStorage.removeItem("editor_state");
-  //     setStep(1);
-  //     openNotification(
-  //       NotificationPlacements[5],
-  //       {
-  //         message: <SaveDraftSnackBarContent />,
-  //         closable: true,
-  //         showProgress: true,
-  //         closeIcon: (
-  //           <Link
-  //             href="/admin/drafts"
-  //             className="underline text-appBlue cursor-pointer whitespace-nowrap"
-  //           >
-  //             View Drafts
-  //           </Link>
-  //         ),
-  //         key: "drafts-notification",
-  //         className: "drafts-notification",
-  //       },
-  //       "success"
-  //     );
-  //     router.push("/admin");
-  //   },
-  // });
 
   const {
     mutate: postUpdatePost,
@@ -410,11 +387,47 @@ export default function AdminPage({ postId }: { postId?: string }) {
     error: updatePostError,
     reset: updatePostReset,
   } = useUpdatePost({
-    onSuccess: (data: any) => {
+    onSuccess: (data: Post) => {
       joditRef.current.reset();
       window.localStorage.removeItem("editor_state");
+
+      if (data.status === "draft") {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: <SnackbarContent label={"Your draft has been saved."} />,
+            closable: true,
+            showProgress: true,
+            closeIcon: (
+              <Link
+                href="/admin/drafts"
+                className="underline text-appBlue cursor-pointer whitespace-nowrap"
+              >
+                View Drafts
+              </Link>
+            ),
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+      } else {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: <SnackbarContent label={"Your post has been updated."} />,
+            closable: false,
+            showProgress: true,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+        router.push("/" + data);
+      }
+
       // @ts-ignore
-      window.location = "/" + data;
+      // window.location = "/" + data;
     },
   });
 
@@ -479,9 +492,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
     currentPost.schedulePost(scheduledTime.toISOString());
 
-    postCreatePost({
-      post: currentPost,
-    });
+    setCurrentPost(currentPost);
+
+    requestedPost
+      ? postUpdatePost(currentPost)
+      : postCreatePost({
+          post: currentPost,
+        });
   };
 
   const handleSaveDraft = (_post?: Post) => {
@@ -507,9 +524,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
     post.draftPost();
 
-    postCreatePost({
-      post,
-    });
+    setCurrentPost(post);
+
+    requestedPost
+      ? postUpdatePost(post)
+      : postCreatePost({
+          post,
+        });
   };
 
   const showTutorial = (step: number) => () => {

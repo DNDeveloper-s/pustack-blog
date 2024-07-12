@@ -172,11 +172,42 @@ export default function JoditEditor({
                   "Insert"
                 );
 
-                urlButton.addEventListener("click", () => {
-                  editor.selection.insertHTML(
-                    `<img class="blog-image" src="${urlInput.value}" alt="image" />`
+                urlButton.addEventListener("click", async () => {
+                  const response = await fetch(
+                    `/api/fetch-image?imageUrl=${encodeURIComponent(
+                      urlInput.value
+                    )}&original=true`
                   );
-                  close();
+                  const blob = await response.blob();
+                  const filename = `image_${Date.now()}.${
+                    blob.type.split("/")[1]
+                  }`;
+                  const file = new File([blob], filename, {
+                    type: blob.type,
+                  });
+
+                  handleUpload(file, {
+                    setIsPending: (value: boolean) => {
+                      if (value) {
+                        urlButton.innerHTML = "Uploading...";
+                      }
+                    },
+                    setProgress: (value: number) => {
+                      urlButton.innerHTML = `Uploading ${value.toFixed(2)}%`;
+                    },
+                    handleComplete: (url: string) => {
+                      urlButton.innerHTML = "Insert";
+                      editor.selection.insertHTML(
+                        `<img class="blog-image" src="${url}" alt="image" />`
+                      );
+                      close();
+                    },
+                  });
+
+                  // editor.selection.insertHTML(
+                  //   `<img class="blog-image" src="${urlInput.value}" alt="image" />`
+                  // );
+                  // close();
                 });
 
                 textAreaContainer.addEventListener("drop", (e) => {

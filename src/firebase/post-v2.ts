@@ -30,6 +30,7 @@ import { toDashCase } from "./signal";
 import { Section } from "@/components/AdminEditor/Sections/Section";
 import { Post as PostV1 } from "@/firebase/post";
 import readingTime from "reading-time";
+import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
 
 export interface Author {
   name: string;
@@ -105,12 +106,19 @@ type PostQuerySnapshot = QuerySnapshot<
   ReturnType<typeof postConverter.toFirestore>
 >;
 
-interface QueryParams {
+interface QueryParams extends Partial<PostFilters> {
   _startAfter?: string;
   _limit?: number;
   _flatten?: boolean;
-  _status?: string[];
+  _userEmail?: string;
+  status?: string[];
 }
+
+type GetAllReturnType<T> = {
+  firstDoc: PostDocumentSnapshot;
+  data: T;
+  lastDoc: PostDocumentSnapshot;
+};
 
 const headings = {
   h1: [],
@@ -354,7 +362,7 @@ export class Post {
 
     await setDoc(postRef, this);
 
-    return postId;
+    return this;
   }
 
   async saveDraftToFirestore() {
@@ -375,7 +383,7 @@ export class Post {
     const postRef = doc(db, "posts", this.id).withConverter(postConverter);
     await setDoc(postRef, this);
 
-    return this.id;
+    return this;
   }
 
   async updateDraftInFirestore() {
@@ -540,14 +548,14 @@ export class Post {
     return compact(flattenQueryData(docs));
   }
 
-  static async getAll(): Promise<PostQuerySnapshot>;
+  static async getAll(): Promise<GetAllReturnType<PostQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
   }: {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
-  }): Promise<PostQuerySnapshot>;
+  }): Promise<GetAllReturnType<PostQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
@@ -555,49 +563,100 @@ export class Post {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: false;
-  }): Promise<PostQuerySnapshot>;
+  }): Promise<GetAllReturnType<PostQuerySnapshot>>;
   static async getAll({
     _startAfter,
     _limit,
-    _flatten,
-    _status,
   }: {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: true;
-    _status: string[];
-  }): Promise<Post[]>;
+    _userEmail?: string | undefined;
+  } & Partial<PostFilters>): Promise<GetAllReturnType<Post[]>>;
   static async getAll({
     _startAfter,
     _limit,
     _flatten,
-  }: QueryParams & { _flatten: false }): Promise<PostQuerySnapshot>;
+  }: {
+    _startAfter?: QueryParams["_startAfter"];
+    _limit?: QueryParams["_limit"];
+    _flatten: true;
+  } & Partial<PostFilters>): Promise<GetAllReturnType<Post[]>>;
+  static async getAll({
+    _startAfter,
+    _limit,
+    _flatten,
+  }: QueryParams & { _flatten: false }): Promise<
+    GetAllReturnType<PostQuerySnapshot>
+  >;
   static async getAll(queryParams?: QueryParams) {
-    const { _startAfter, _limit = 50, _flatten, _status } = queryParams ?? {};
+    const {
+      _startAfter,
+      _limit = 50,
+      _flatten,
+      status: _status,
+      sort: _sort,
+      _userEmail,
+      topics: _topics,
+      dateRange: _dateRange,
+    } = queryParams ?? {};
     const postsRef = collection(db, "posts").withConverter(postConverter);
 
-    console.log("_status - ", _status);
+    let _query = query(postsRef);
 
-    let _query = query(
-      postsRef,
-      where("status", "in", _status ?? ["published"]),
-      orderBy("timestamp", "desc"),
-      limit(_limit)
-    );
+    if (_status && _status.length > 0) {
+      // Add status filter
+      _query = query(_query, where("status", "in", _status));
+    }
+
+    // Add topic filter if provided
+    if (_topics && _topics.length > 0) {
+      _query = query(_query, where("topic", "in", _topics));
+    }
+
+    if (_dateRange && _dateRange.length === 2) {
+      const [startDate, endDate] = _dateRange;
+      if (startDate && endDate) {
+        _query = query(
+          _query,
+          where("timestamp", ">=", startDate.toDate()),
+          where("timestamp", "<=", endDate.toDate())
+        );
+      } else if (startDate) {
+        _query = query(_query, where("timestamp", ">=", startDate.toDate()));
+      } else if (endDate) {
+        _query = query(_query, where("timestamp", "<=", endDate.toDate()));
+      }
+    }
+
+    // Add additional conditions based on _userEmail and _startAfter
+    if (_userEmail) {
+      _query = query(_query, where("author.email", "==", _userEmail));
+    }
+
+    // Add sorting to the query
+    if (_sort && _sort.length > 0) {
+      _sort.forEach((sortOption: { field: string; order: "asc" | "desc" }) => {
+        _query = query(_query, orderBy(sortOption.field, sortOption.order));
+      });
+    } else {
+      // Default sorting by timestamp
+      _query = query(_query, orderBy("timestamp", "desc"));
+    }
 
     if (_startAfter) {
-      _query = query(
-        postsRef,
-        where("status", "in", _status ?? ["published"]),
-        orderBy("timestamp", "desc"),
-        startAfter(_startAfter),
-        limit(_limit)
-      );
+      _query = query(_query, startAfter(_startAfter));
     }
+
+    _query = query(_query, limit(_limit));
 
     const docs = await getDocs(_query);
 
-    return _flatten ? flattenQueryData(docs) : docs;
+    return {
+      firstDoc: docs.docs[0],
+      data: _flatten ? flattenQueryData(docs) : docs,
+      lastDoc: docs.docs[docs.docs.length - 1],
+    };
   }
 
   static async getPublishedPosts(): Promise<PostQuerySnapshot>;
@@ -773,7 +832,7 @@ export const postConverter = {
       data.design,
       data.displayTitle,
       data.displayContent,
-      data.scheduledTime,
+      data.scheduledTime?.toDate().toISOString(),
       data.is_v2
     );
   },

@@ -471,12 +471,12 @@ export class Post {
   static async getAll(queryParams?: QueryParams) {
     const { _startAfter, _limit = 50, _flatten } = queryParams ?? {};
     const postsRef = collection(db, "posts").withConverter(postConverter);
-    let _query = query(postsRef, orderBy("timestamp", "desc"), limit(_limit));
+    let _query = query(postsRef, orderBy("timestamp", "asc"), limit(_limit));
 
     if (_startAfter) {
       _query = query(
         postsRef,
-        orderBy("timestamp", "desc"),
+        orderBy("timestamp", "asc"),
         startAfter(_startAfter),
         limit(_limit)
       );
