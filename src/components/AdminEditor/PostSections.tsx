@@ -1,8 +1,12 @@
 import {
+  MutableRefObject,
+  RefObject,
+  createRef,
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import update from "immutability-helper";
@@ -41,6 +45,7 @@ const RearrangeButton = ({
 export interface PostSectionsRef {
   getSections: () => Section[];
   isResizing: () => boolean;
+  getSectionsRef: () => any;
 }
 
 function PostSections(props: { sections?: Section[] }, ref: any) {
@@ -53,10 +58,19 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
       ""
     ),
   ]);
+  const sectionsRef = useRef([createRef()]);
+
+  useEffect(() => {
+    // Ensure the refs array has the same length as the elements array
+    if (sections.length !== sectionsRef.current.length + 1) {
+      sectionsRef.current = Array(sections.length + 1)
+        .fill(1)
+        .map((_, i) => sectionsRef.current[i] || createRef());
+    }
+  }, [sections]);
+
   const moveCard = useCallback(
     (dragIndex: number, hoverIndex: number) => {
-      console.log("dragIndex - ", dragIndex);
-      console.log("hoverIndex - ", hoverIndex);
       const dragCard = sections[dragIndex];
       setSections(
         update(sections, {
@@ -81,6 +95,9 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
       return sections;
     },
     isResizing: () => resizeMode,
+    getSectionsRef: () => {
+      return sectionsRef;
+    },
   }));
 
   useEffect(() => {
@@ -90,7 +107,6 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
   }, [sections]);
 
   useEffect(() => {
-    console.log("Props.sections | sections - ", props.sections);
     setSections(
       props.sections ?? [
         new Section(
@@ -102,12 +118,6 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
       ]
     );
   }, [props.sections]);
-
-  useEffect(() => {
-    console.log("initial sections - ");
-  }, []);
-
-  console.log("sections - ", sections);
 
   const renderCard = (section: Section, index: number) => {
     if (resizeMode) {
@@ -128,6 +138,8 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
         index={index}
         section={section}
         deleteCard={deleteCard}
+        // @ts-ignore
+        ref={sectionsRef.current[index]}
       />
     );
   };

@@ -47,6 +47,7 @@ import { IoIosCreate } from "react-icons/io";
 import PostScheduleModal from "./PostScheduleModal";
 import { useDisclosure } from "@nextui-org/modal";
 import { Dayjs } from "dayjs";
+import useScreenSize from "@/hooks/useScreenSize";
 
 const getButtonLabel = (requestedPost?: Post) => {
   if (requestedPost?.status === "draft") return "Create Post";
@@ -93,6 +94,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
   const [currentTourStep, setCurrentTourStep] = useState<number>(0);
 
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+  const { isMobileScreen, isTabletScreen } = useScreenSize();
 
   const [step, setStep] = useState(1);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
@@ -323,6 +325,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
     }
   }, [requestedPost, user?.email]);
 
+  console.log("requestedPost - ", requestedPost, currentPost);
+
   const {
     mutate: postCreatePost,
     isPending: isCreatePending,
@@ -342,7 +346,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             showProgress: true,
             closeIcon: (
               <Link
-                href="/admin/drafts"
+                href="/admin/drafts?status=draft"
                 className="underline text-appBlue cursor-pointer whitespace-nowrap"
               >
                 View Drafts
@@ -400,7 +404,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             showProgress: true,
             closeIcon: (
               <Link
-                href="/admin/drafts"
+                href="/admin/drafts?status=draft"
                 className="underline text-appBlue cursor-pointer whitespace-nowrap"
               >
                 View Drafts
@@ -423,7 +427,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           },
           "success"
         );
-        router.push("/" + data);
+        router.push("/" + data.id);
       }
 
       // @ts-ignore
@@ -468,6 +472,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
     currentPost.displayTitle = snippetRef.current?.title();
     currentPost.displayContent = snippetRef.current?.content();
+
+    currentPost.livePost();
 
     requestedPost
       ? postUpdatePost(currentPost)
@@ -554,15 +560,24 @@ export default function AdminPage({ postId }: { postId?: string }) {
     isAuthInitialized && (
       <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
         <Navbar />
-        <div className="flex items-center justify-between mt-8 max-w-[1100px] mx-auto">
-          <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
-            {step === 1
-              ? requestedPost
-                ? "Edit Post"
-                : "Create Post"
-              : "Choose Design and Position"}
-          </h2>
-          {/* <label
+        <div
+          className={
+            isTabletScreen
+              ? "h-[calc(100vh-220px)]"
+              : isMobileScreen
+              ? ""
+              : "h-[calc(100vh-150px)]" + " overflow-auto"
+          }
+        >
+          <div className="flex items-center justify-between mt-8 max-w-[1100px] mx-auto">
+            <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
+              {step === 1
+                ? requestedPost
+                  ? "Edit Post"
+                  : "Create Post"
+                : "Choose Design and Position"}
+            </h2>
+            {/* <label
           htmlFor={"today-flagship"}
           className="flex gap-2 py-1 cursor-pointer group"
         >
@@ -575,208 +590,226 @@ export default function AdminPage({ postId }: { postId?: string }) {
             </p>
           </div>
         </label> */}
-          {step === 1 && !haveTakenGuideTour && (
-            <p
-              className="text-appBlue underline cursor-pointer"
-              onClick={() => {
-                setCurrentTourStep(0);
-                setOpen(true);
-              }}
-            >
-              Take Quick Tour?
-            </p>
-          )}
-          {step === 1 && haveTakenGuideTour && (
-            <Dropdown
-              classNames={{
-                content: "!bg-primary !rounded-[4px] !min-w-[100px]",
-              }}
-            >
-              <DropdownTrigger>
-                <p className="text-appBlue underline cursor-pointer">
-                  Need help?
-                </p>
-              </DropdownTrigger>
-              <DropdownMenu
-                classNames={{
-                  list: "p-0 m-0",
+            {step === 1 && !haveTakenGuideTour && (
+              <p
+                className="text-appBlue underline cursor-pointer"
+                onClick={() => {
+                  setCurrentTourStep(0);
+                  setOpen(true);
                 }}
               >
-                <DropdownItem onClick={showTutorial(8)}>
-                  Insert Code Snippet
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(5)}>
-                  Insert Image
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(6)}>
-                  Insert Youtube Video
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(2)}>
-                  Insert Link
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(3)}>
-                  Insert Section
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(1)}>
-                  Color Formatting
-                </DropdownItem>
-                <DropdownItem onClick={showTutorial(7)}>
-                  Insert Maths Formula
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          )}
-        </div>
-        <div
-          className="w-full max-w-[1100px] mx-auto"
-          style={{ display: step === 1 ? "block" : "none" }}
-        >
-          {error && (
-            <p className="text-danger-500 text-sm my-2">{error.message}</p>
-          )}
-          <MathJaxContext>
-            <JoditWrapper
-              prePost={requestedPost}
-              ref={joditRef}
-              handleContinue={handleContinue}
-              handleSaveDraft={handleSaveDraft}
-              isDraftSaving={
-                isPending &&
-                (requestedPost?.status === "draft" ||
-                  currentPost?.status === "draft")
-              }
-              isDraft={requestedPost?.status === "draft"}
-            />
-          </MathJaxContext>
-        </div>
-        <div
-          className="w-full max-w-[1100px] mx-auto py-2 mt-4"
-          style={{ display: step === 2 ? "block" : "none" }}
-        >
-          {error && (
-            <p className="text-danger-500 text-sm my-2">{error.message}</p>
-          )}
-          <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
-          <SnippetForm ref={snippetRef} post={currentPost} />
-          <div className="flex gap-4 justify-end items-center">
-            <Button
-              isDisabled={isPending}
-              className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
-              // onClick={handleCreatePost}
-              variant="flat"
-              color="default"
-              // isLoading={isPending}
-              onClick={() => {
-                if (isPending) return;
-                setStep(1);
-              }}
-            >
-              Back
-            </Button>
-            <Dropdown
-              disabled={isPending}
-              classNames={{
-                content: "!bg-appBlue !rounded-[4px] p-0 !min-w-[150px]",
-                base: "!p-[0_4px]",
-                arrow: "!bg-appBlue",
-              }}
-              style={{
-                // @ts-ignore
-                "--nextui-content1": "230 67% 43%",
-                backgroundColor: "#243bb5",
-                borderRadius: "4px",
-              }}
-              placement="bottom-end"
-              showArrow={true}
-            >
-              <div className="flex items-start">
-                <Button
-                  isDisabled={isPending}
-                  className="h-9 px-3 rounded-tl rounded-bl flex items-center justify-center gap-2 rounded-tr-none rounded-br-none bg-appBlue font-featureBold text-primary border-2 border-appBlue text-xs uppercase"
-                  onClick={() => handleSavePost()}
-                  variant="flat"
-                  color="primary"
-                  isLoading={isPending}
-                >
-                  <IoIosCreate />
-                  <span>
-                    {isPending ? "Saving..." : getButtonLabel(requestedPost)}
-                  </span>
-                </Button>
-                <DropdownTrigger className="!scale-100 !opacity-100">
-                  <div className="h-9 w-6 border-l border-primary  cursor-pointer flex rounded-tr rounded-br items-center justify-center bg-appBlue text-primary">
-                    <FaCaretDown />
-                  </div>
+                Take Quick Tour?
+              </p>
+            )}
+            {step === 1 && haveTakenGuideTour && (
+              <Dropdown
+                classNames={{
+                  content: "!bg-primary !rounded-[4px] !min-w-[100px]",
+                }}
+              >
+                <DropdownTrigger>
+                  <p className="text-appBlue underline cursor-pointer">
+                    Need help?
+                  </p>
                 </DropdownTrigger>
-              </div>
-              <DropdownMenu
-                classNames={{
-                  list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
-                  base: "!p-[0_5px]",
-                }}
-              >
-                <DropdownItem
-                  onClick={() => {
-                    disclosureOptions.onOpen();
+                <DropdownMenu
+                  classNames={{
+                    list: "p-0 m-0",
                   }}
-                  className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
                 >
-                  <p
-                    className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                  >
-                    <MdScheduleSend />
-                    <span>SCHEDULE POST</span>
-                  </p>
-                </DropdownItem>
-                <DropdownItem
-                  onClick={() => {
-                    handleSaveDraft();
-                  }}
-                  className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
-                >
-                  <p
-                    className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                  >
-                    <MdDrafts />
-                    <span>SAVE AS DRAFT</span>
-                  </p>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            {currentPost && (
-              <PostScheduleModal
-                disclosureOptions={disclosureOptions}
-                handleSchedulePost={handleSchedulePost}
-                isPending={isPending}
-              />
+                  <DropdownItem onClick={showTutorial(8)}>
+                    Insert Code Snippet
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(5)}>
+                    Insert Image
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(6)}>
+                    Insert Youtube Video
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(2)}>
+                    Insert Link
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(3)}>
+                    Insert Section
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(1)}>
+                    Color Formatting
+                  </DropdownItem>
+                  <DropdownItem onClick={showTutorial(7)}>
+                    Insert Maths Formula
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             )}
           </div>
+          <div
+            className="w-full max-w-[1100px] mx-auto"
+            style={{ display: step === 1 ? "block" : "none" }}
+          >
+            {error && (
+              <p className="text-danger-500 text-sm my-2">{error.message}</p>
+            )}
+            <MathJaxContext>
+              <JoditWrapper
+                prePost={requestedPost}
+                ref={joditRef}
+                handleContinue={handleContinue}
+                handleSaveDraft={handleSaveDraft}
+                isDraftSaving={
+                  isPending &&
+                  (requestedPost?.status === "draft" ||
+                    currentPost?.status === "draft")
+                }
+                isDraft={requestedPost?.status === "draft"}
+              />
+            </MathJaxContext>
+          </div>
+          <div
+            className="w-full max-w-[1100px] mx-auto py-2 mt-4"
+            style={{ display: step === 2 ? "block" : "none" }}
+          >
+            {error && (
+              <p className="text-danger-500 text-sm my-2">{error.message}</p>
+            )}
+            <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
+            <SnippetForm ref={snippetRef} post={currentPost} />
+            <div className="flex gap-4 justify-end items-center">
+              <Button
+                isDisabled={isPending}
+                className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
+                // onClick={handleCreatePost}
+                variant="flat"
+                color="default"
+                // isLoading={isPending}
+                onClick={() => {
+                  if (isPending) return;
+                  setStep(1);
+                }}
+              >
+                Back
+              </Button>
+              <Dropdown
+                // disabled={isPending}
+                disabled={requestedPost?.status === "published" || isPending}
+                classNames={{
+                  content: "!bg-appBlue !rounded-[4px] p-0 !min-w-[150px]",
+                  base: "!p-[0_4px]",
+                  arrow: "!bg-appBlue",
+                }}
+                style={{
+                  // @ts-ignore
+                  "--nextui-content1": "230 67% 43%",
+                  backgroundColor: "#243bb5",
+                  borderRadius: "4px",
+                }}
+                placement="bottom-end"
+                showArrow={true}
+                isDisabled={requestedPost?.status === "published" || isPending}
+              >
+                <div className="flex items-start">
+                  <Button
+                    isDisabled={isPending}
+                    className="h-9 px-3 rounded-tl rounded-bl flex items-center justify-center gap-2 rounded-tr-none rounded-br-none bg-appBlue font-featureBold text-primary border-2 border-appBlue text-xs uppercase"
+                    onClick={() => handleSavePost()}
+                    variant="flat"
+                    color="primary"
+                    isLoading={isPending}
+                  >
+                    <IoIosCreate />
+                    <span>
+                      {isPending ? "Saving..." : getButtonLabel(requestedPost)}
+                    </span>
+                  </Button>
+                  <DropdownTrigger
+                    className={
+                      "!scale-100 " +
+                      (requestedPost?.status === "published"
+                        ? " !opacity-20"
+                        : " !opacity-100")
+                    }
+                  >
+                    <div className="h-9 w-6 border-l border-primary  cursor-pointer flex rounded-tr rounded-br items-center justify-center bg-appBlue text-primary">
+                      <FaCaretDown />
+                    </div>
+                  </DropdownTrigger>
+                </div>
+                <DropdownMenu
+                  classNames={{
+                    list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
+                    base: "!p-[0_5px]",
+                  }}
+                >
+                  <DropdownItem
+                    onClick={() => {
+                      disclosureOptions.onOpen();
+                    }}
+                    className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
+                  >
+                    <p
+                      className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
+                      style={{
+                        fontWeight: 600,
+                        fontVariationSettings: '"wght" 700,"opsz" 10',
+                      }}
+                    >
+                      <MdScheduleSend />
+                      <span>
+                        {currentPost?.status === "scheduled"
+                          ? "UPDATE SCHEDULE"
+                          : "SCHEDULE POST"}
+                      </span>
+                    </p>
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={() => {
+                      handleSaveDraft();
+                    }}
+                    className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
+                  >
+                    <p
+                      className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
+                      style={{
+                        fontWeight: 600,
+                        fontVariationSettings: '"wght" 700,"opsz" 10',
+                      }}
+                    >
+                      <MdDrafts />
+                      <span>SAVE AS DRAFT</span>
+                    </p>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              {currentPost && (
+                <PostScheduleModal
+                  disclosureOptions={disclosureOptions}
+                  handleSchedulePost={handleSchedulePost}
+                  isPending={isPending}
+                  post={currentPost ?? requestedPost}
+                  handlePostNow={() => {
+                    handleSavePost();
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          {/* <DraftEditor /> */}
+          {/* <button onClick={() => copyIt()}>Copy it</button> */}
+          <Tour
+            current={currentTourStep}
+            onChange={setCurrentTourStep}
+            onFinish={() => {
+              setOpen(false);
+              setCurrentTourStep(0);
+              setHaveTakenGuideTour(true);
+            }}
+            open={open}
+            onClose={() => {
+              setOpen(false);
+              setHaveTakenGuideTour(true);
+            }}
+            steps={steps}
+          />
         </div>
-        {/* <DraftEditor /> */}
-        {/* <button onClick={() => copyIt()}>Copy it</button> */}
-        <Tour
-          current={currentTourStep}
-          onChange={setCurrentTourStep}
-          onFinish={() => {
-            setOpen(false);
-            setCurrentTourStep(0);
-            setHaveTakenGuideTour(true);
-          }}
-          open={open}
-          onClose={() => {
-            setOpen(false);
-            setHaveTakenGuideTour(true);
-          }}
-          steps={steps}
-        />
       </main>
     )
   );

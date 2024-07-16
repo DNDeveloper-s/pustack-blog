@@ -249,7 +249,6 @@ function Signals(
   }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
 
   useEffect(() => {
-    console.log("targetEl - ", targetRef.current);
     if (!targetRef.current) return;
     const targetEl = targetRef.current;
     const timeout = setTimeout(

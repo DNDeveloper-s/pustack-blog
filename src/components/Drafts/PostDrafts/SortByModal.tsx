@@ -21,6 +21,8 @@ interface SortGroupItemProps {
   label: string;
   handleChange: (value: string) => void;
   value: string;
+  disabled?: boolean;
+  onReset?: () => void;
 }
 function SortGroupItem(props: SortGroupItemProps) {
   const [value, setValue] = useState<string | null>(null);
@@ -30,14 +32,27 @@ function SortGroupItem(props: SortGroupItemProps) {
   }, [props.value]);
 
   const onChange = (e: RadioChangeEvent) => {
-    console.log("radio checked", e.target.value);
     setValue(e.target.value);
     props.handleChange(e.target.value);
   };
 
+  const reset = () => {
+    setValue(null);
+    props.onReset?.();
+  };
+
   return (
     <div>
-      <p className="font-helvetica my-2 text-xs text-tertiary">{props.label}</p>
+      <div className="flex justify-between items-center mb-1 text-xs">
+        <p className="font-helvetica my-2 text-xs text-tertiary">
+          {props.label}
+        </p>
+        {/* {!props.disabled && value && (
+          <p onClick={reset} className="text-appBlue cursor-pointer">
+            Reset
+          </p>
+        )} */}
+      </div>
       {/* <div>
         <CheckboxGroup
           options={plainOptions}
@@ -46,7 +61,7 @@ function SortGroupItem(props: SortGroupItemProps) {
           className="flex flex-col gap-2"
         />
       </div> */}
-      <Radio.Group onChange={onChange} value={value}>
+      <Radio.Group disabled={props.disabled} onChange={onChange} value={value}>
         <Space direction="vertical">
           {props.list.map((item) => (
             <Radio key={item.value} value={item.value}>
@@ -83,7 +98,7 @@ const sortOptions = [
 ];
 
 export interface SortBy {
-  timestamp: "asc" | "desc";
+  timestamp?: "asc" | "desc";
   displayTitle?: "asc" | "desc";
 }
 
@@ -130,9 +145,14 @@ export default function SortByModal({
                 value={sortBy[sortGroup.key]}
                 handleChange={(value) => {
                   setSortBy((c) => ({
-                    ...c,
                     [sortGroup.key]: value,
                   }));
+                }}
+                // disabled={
+                //   keys(sortBy).length > 0 && keys(sortBy)[0] !== sortGroup.key
+                // }
+                onReset={() => {
+                  setSortBy({});
                 }}
               />
               {index + 1 !== sortOptions.length && (
@@ -170,9 +190,7 @@ export default function SortByModal({
         }
       }
     >
-      <Badge count={keys(sortBy).length}>
-        <Button className="app-background">Sort By</Button>
-      </Badge>
+      <Button className="app-background">Sort By</Button>
     </Popover>
   );
 }

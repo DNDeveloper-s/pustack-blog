@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Section } from "./Section";
 import Image from "next/image";
 import { notableImage } from "@/assets";
@@ -12,6 +20,8 @@ import { useFetchNounProjectIcon } from "@/api/misc";
 import { TheNounProjectIcon } from "@/app/api/the-noun-project/route";
 import { ScrollableVerticalContent } from "@/components/shared/ScrollableComponent";
 import { Spinner } from "@nextui-org/spinner";
+import { IoMdCloseCircle } from "react-icons/io";
+import { useNotification } from "@/context/NotificationContext";
 
 function getAvailableIcons() {
   const imageNames = [
@@ -164,18 +174,28 @@ function IconExplorer({
   );
 }
 
+export interface SectionEditorRef {
+  openNotValidSection: () => void;
+  titleInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  hasTitle: () => boolean;
+  hasContent: () => boolean;
+  scrollToTitle: () => void;
+  scrollToContent: () => void;
+}
 interface SectionEditorProps {
   section: Section;
   onDelete?: () => void;
   handleViewMode: (viewMode: boolean) => void;
 }
-export default function SectionEditor({
-  section,
-  onDelete,
-  handleViewMode,
-}: SectionEditorProps) {
+function SectionEditor(
+  { section, onDelete, handleViewMode }: SectionEditorProps,
+  ref: any
+) {
+  const [shallowDeleted, setShallowDeleted] = useState(false);
+  const { openNotification } = useNotification();
   const currentContent = useRef("");
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(section.icon);
 
@@ -188,9 +208,9 @@ export default function SectionEditor({
   };
 
   useEffect(() => {
-    if (!titleInputRef.current) return;
+    if (!titleInputRef.current || shallowDeleted) return;
     titleInputRef.current.value = section.title;
-  }, [section]);
+  }, [section, shallowDeleted]);
 
   const handleIconClick = (icon: string) => {
     section.updateIcon(icon);
@@ -223,136 +243,200 @@ export default function SectionEditor({
     handleViewMode(true);
   };
 
-  return (
-    <div className="px-4 py-3">
-      <div className="flex items-center justify-between flex-wrap gap-5 mb-3">
-        <div className="flex items-center">
-          <Popover
-            content={
-              <IconExplorer
-                defaultIcon={section.icon}
-                onIconClick={handleIconClick}
-              />
-            }
-            title="Choose Icon"
-            trigger="click"
-            open={open}
-            onOpenChange={handleOpenChange}
-            placement={"bottomLeft"}
-            overlayClassName="overlayClassName_icon_list"
-            overlayInnerStyle={{
-              background: "var(--antd-arrow-background-color)",
+  useImperativeHandle(ref, () => ({
+    openNotValidSection: () => {
+      setOpenNotValidSection(true);
+    },
+    titleInputRef: titleInputRef,
+    hasTitle: () => section.title !== "",
+    hasContent: () => section.content !== "",
+    scrollToTitle: () => {
+      titleInputRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+      titleInputRef.current?.focus();
+    },
+    scrollToContent: () => {
+      editorContainerRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    },
+  }));
+
+  const didUndo = useRef(false);
+  const handleDeleteWithUndo = () => {
+    setShallowDeleted(true);
+    openNotification(
+      "bottomRight",
+      {
+        message: "Section Deleted",
+        closable: true,
+        duration: 4,
+        closeIcon: (
+          <p
+            className="underline text-blue-500 cursor-pointer whitespace-nowrap"
+            onClick={() => {
+              didUndo.current = true;
+              setShallowDeleted(false);
             }}
           >
+            Undo
+          </p>
+        ),
+        onClose() {
+          !didUndo.current && onDelete && onDelete();
+          didUndo.current = false;
+        },
+        className: "drafts-notification",
+      },
+      "error"
+    );
+  };
+
+  return (
+    !shallowDeleted && (
+      <div className="px-4 py-3">
+        <div className="flex items-center justify-between flex-wrap gap-5 mb-3 relative">
+          <div className="flex items-center relative">
             <Popover
-              content={<p className="text-white">Choose Icon</p>}
-              trigger={"hover"}
-              open={showIconTutorial}
-              placement="bottom"
-              className="className-dnd"
-              overlayClassName="overlayClassName_choose_icon_animation"
+              content={
+                <IconExplorer
+                  defaultIcon={section.icon}
+                  onIconClick={handleIconClick}
+                />
+              }
+              title="Choose Icon"
+              trigger="click"
+              open={open}
+              onOpenChange={handleOpenChange}
+              placement={"bottomLeft"}
+              overlayClassName="overlayClassName_icon_list"
               overlayInnerStyle={{
-                padding: "4px 10px",
-                fontSize: "13px",
                 background: "var(--antd-arrow-background-color)",
               }}
             >
-              <div
-                className="border cursor-pointer border-r-0 pl-2 pr-1 border-[1px_solid_#e5e7eb] h-[34px] bg-lightPrimary flex items-center justify-center gap-1"
-                style={{
-                  borderInlineEnd: 0,
+              <Popover
+                content={<p className="text-white">Choose Icon</p>}
+                trigger={"hover"}
+                open={showIconTutorial}
+                placement="bottom"
+                className="className-dnd"
+                overlayClassName="overlayClassName_choose_icon_animation"
+                overlayInnerStyle={{
+                  padding: "4px 10px",
+                  fontSize: "13px",
+                  background: "var(--antd-arrow-background-color)",
                 }}
               >
-                <span>
-                  <img
-                    className="w-[16px] h-auto max-h-[16px]"
-                    src={selectedIcon}
-                    alt="Notable Image"
-                  />
-                </span>
-                <span>
-                  <FaCaretDown />
-                </span>
-              </div>
+                <div
+                  className="border cursor-pointer border-r-0 pl-2 pr-1 border-[1px_solid_#e5e7eb] h-[34px] bg-lightPrimary flex items-center justify-center gap-1"
+                  style={{
+                    borderInlineEnd: 0,
+                  }}
+                >
+                  <span>
+                    <img
+                      className="w-[16px] h-auto max-h-[16px]"
+                      src={selectedIcon}
+                      alt="Notable Image"
+                    />
+                  </span>
+                  <span>
+                    <FaCaretDown />
+                  </span>
+                </div>
+              </Popover>
             </Popover>
-          </Popover>
-          <div className="w-[500px]">
-            <input
-              // disabled={isPending}
-              className="border text-[16px] w-full flex-shrink py-1 h-[34px] px-2 border-[1px_solid_#e5e7eb] bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-              placeholder="Enter the Section Title"
-              type="text"
-              style={{
-                fontVariationSettings: '"wght" 400,"opsz" 10',
-              }}
-              ref={titleInputRef}
-              onChange={(e) => section.updateTitle(e.target.value)}
-            />
+            <div className="w-[500px]">
+              <input
+                // disabled={isPending}
+                className="border text-[16px] w-full flex-shrink py-1 h-[34px] px-2 border-[1px_solid_#e5e7eb] bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                placeholder="Enter the Section Title"
+                type="text"
+                style={{
+                  fontVariationSettings: '"wght" 400,"opsz" 10',
+                }}
+                ref={titleInputRef}
+                onChange={(e) => section.updateTitle(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
+          <div className="flex items-center gap-3 relative">
+            {/* <Button
             className="h-9 px-3 rounded bg-danger-500 text-primary text-xs font-featureRegular"
             variant="flat"
             color="primary"
             onClick={() => onDelete && onDelete()}
           >
             Delete
-          </Button>
-          <Popover
-            content={
-              <p className="text-danger-500">
-                {section.title === ""
-                  ? "Please fill in the title of the section"
-                  : section.content === ""
-                  ? "Please fill in the content of the section using the editor below"
-                  : null}
-              </p>
-            }
-            trigger={"click"}
-            open={openNotValidSection}
-            onOpenChange={(open) => {
-              if (open) {
-                if (section.title === "" || section.content === "") {
-                  setOpenNotValidSection(true);
-                  return;
-                }
+          </Button> */}
+            <Popover
+              content={
+                <p className="text-danger-500">
+                  {section.title === ""
+                    ? "Please fill in the title of the section"
+                    : section.content === ""
+                    ? "Please fill in the content of the section using the editor below"
+                    : null}
+                </p>
               }
-              setOpenNotValidSection(false);
-            }}
-            placement="bottom"
-            overlayClassName="overlayClassName_section_not_valid"
-            overlayInnerStyle={{
-              padding: "4px 10px",
-              fontSize: "13px",
-              background: "var(--antd-arrow-background-color)",
-            }}
-          >
-            <Button
-              className="h-9 px-3 rounded bg-appBlue text-primary text-xs font-featureRegular"
-              variant="flat"
-              color="primary"
-              onClick={handleDoneEditting}
+              trigger={"click"}
+              open={openNotValidSection}
+              onOpenChange={(open) => {
+                if (open) {
+                  if (section.title === "" || section.content === "") {
+                    setOpenNotValidSection(true);
+                    return;
+                  }
+                }
+                setOpenNotValidSection(false);
+              }}
+              placement="bottom"
+              overlayClassName="overlayClassName_section_not_valid"
+              overlayInnerStyle={{
+                padding: "4px 10px",
+                fontSize: "13px",
+                background: "var(--antd-arrow-background-color)",
+              }}
             >
-              Done Editting
-            </Button>
-          </Popover>
+              <Button
+                className="h-9 px-3 rounded bg-appBlue text-primary text-xs font-featureRegular"
+                variant="flat"
+                color="primary"
+                onClick={handleDoneEditting}
+              >
+                Done Editting
+              </Button>
+            </Popover>
+          </div>
+          <IoMdCloseCircle
+            onClick={() => handleDeleteWithUndo()}
+            className="text-2xl cursor-pointer text-[#ddc900] absolute top-[-25px] right-[-25px]"
+          />
+        </div>
+        <div ref={editorContainerRef}>
+          <MathJaxContext>
+            <JoditEditor
+              //   content={""}
+              content={section.content}
+              setContent={(_content) => {
+                // setContent(_content);
+                currentContent.current = _content;
+                section.updateContent(_content);
+              }}
+              updateLiveContent={(content) => {
+                // updateLocalStorage("content", content);
+              }}
+            />
+          </MathJaxContext>
         </div>
       </div>
-      <MathJaxContext>
-        <JoditEditor
-          //   content={""}
-          content={section.content}
-          setContent={(_content) => {
-            // setContent(_content);
-            currentContent.current = _content;
-            section.updateContent(_content);
-          }}
-          updateLiveContent={(content) => {
-            // updateLocalStorage("content", content);
-          }}
-        />
-      </MathJaxContext>
-    </div>
+    )
   );
 }
+
+export default forwardRef<SectionEditorRef, SectionEditorProps>(SectionEditor);

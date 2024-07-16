@@ -115,8 +115,6 @@ function DashboardDesktop({
 
   // const posts = _posts ?? serverPosts;
 
-  console.log("posts - ", posts);
-
   const postsByPosition = useMemo(() => {
     if (!posts) {
       return {
@@ -166,8 +164,6 @@ function DashboardDesktop({
       listPosts: sortBy(listPosts ?? [], "post.timestamp"),
     };
   }, [posts]);
-
-  console.log("rightPosts - ", postsByPosition, posts);
 
   // const oldPosts = chunk(
   //   [...(fullCPosts?.slice(2) ?? []), ...(fullQPosts ?? [])],

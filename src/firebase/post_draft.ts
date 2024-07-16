@@ -484,8 +484,6 @@ export class PostDraft {
 
     const docs = await getDocs(_query);
 
-    console.log("docs - ", docs);
-
     return _flatten ? flattenQueryData(docs) : docs;
   }
 }

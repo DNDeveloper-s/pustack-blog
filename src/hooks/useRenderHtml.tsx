@@ -16,7 +16,6 @@ export default function useRenderHtml(content: string, enabled: boolean) {
       // const preElement = body.querySelector("pre");
 
       function trimArray(arr: ChildNode[]) {
-        console.log("arr - ", arr);
         let index = 0;
         while (true) {
           const el = arr[index];
@@ -67,7 +66,6 @@ export default function useRenderHtml(content: string, enabled: boolean) {
             }
 
             if (type === "table") {
-              console.log("children - ", children[0]);
               return (
                 <ScrollableContent>
                   <table {...props}>{children[0]}</table>
@@ -100,33 +98,6 @@ export default function useRenderHtml(content: string, enabled: boolean) {
                 />
               );
             }
-
-            // if (type === "section") {
-            //   let title = children[0]
-            //     .find((c: any) => c.props?.className?.includes("styles_title"))
-            //     ?.props?.children.find((c: any) => c.type === "h2")
-            //     .props.children;
-
-            //   // title &&
-            //   //   setTitles((prev) => [
-            //   //     ...prev,
-            //   //     { titleWithIcons: title, title: filterAndTrimStrings(title) },
-            //   //   ]);
-
-            //   console.log("title | |||| - ", title);
-
-            //   const isFirstSection = index === 0;
-            //   index++;
-            //   return createElement(
-            //     type,
-            //     {
-            //       ...props,
-            //       style: { paddingTop: "10px" },
-            //       className: isFirstSection ? "first_section" : "",
-            //     },
-            //     ...children
-            //   );
-            // }
 
             if (type === "iframe") {
               return (

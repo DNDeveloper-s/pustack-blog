@@ -102,7 +102,6 @@ export const useQuerySignals = ({
     direction: "forward" | "backward"
   ) => {
     const [, limit, startAt] = queryKey;
-    console.log("pageParam - ", pageParam, direction);
     const signals = await Signal.getAll({
       _flatten: true,
       _startAfter: pageParam,

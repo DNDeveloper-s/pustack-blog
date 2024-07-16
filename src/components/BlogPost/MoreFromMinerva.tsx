@@ -101,8 +101,6 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
     return chunk(_posts ?? [], 2);
   }, [posts, params?.postId?.[0]]);
 
-  console.log("posts - ", posts);
-  console.log("error - ", error);
 
   const hasNoPosts = !isLoading && !posts?.length;
 

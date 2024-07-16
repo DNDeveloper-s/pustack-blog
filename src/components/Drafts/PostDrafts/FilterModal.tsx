@@ -11,7 +11,6 @@ import {
   Badge,
 } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { set, values } from "lodash";
 import {
   forwardRef,
   useEffect,
@@ -75,11 +74,18 @@ function DateRangeFilter(props: DateRangeFilterProps, ref: any) {
     },
   }));
 
+  const reset = () => {
+    setStartDate(null);
+    setEndDate(null);
+  };
+
   return (
     <div className="pt-1 pb-3">
       <div className="flex justify-between items-center mb-1.5 text-xs">
         <p>Date Range</p>
-        <p className="text-appBlue cursor-pointer">Reset</p>
+        <p onClick={reset} className="text-appBlue cursor-pointer">
+          Reset
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-2">
         {/* <DatePicker.RangePicker
@@ -94,6 +100,9 @@ function DateRangeFilter(props: DateRangeFilterProps, ref: any) {
             value={startDate}
             onChange={(date) => setStartDate(date)}
             rootClassName="schedule-date-picker"
+            disabledDate={(current) => {
+              return !!(current && endDate && current > endDate);
+            }}
           />
         </label>
         <label htmlFor="" className="w-full flex flex-col">
@@ -102,6 +111,9 @@ function DateRangeFilter(props: DateRangeFilterProps, ref: any) {
             value={endDate}
             onChange={(date) => setEndDate(date)}
             rootClassName="schedule-date-picker"
+            disabledDate={(current) => {
+              return !!(current && startDate && current < startDate);
+            }}
           />
         </label>
       </div>
@@ -138,15 +150,22 @@ function StatusFilter(props: StatusFilterProps, ref: any) {
     },
   }));
 
+  const reset = () => {
+    setValue([]);
+  };
+
   return (
     <div className="pt-1 pb-3 max-w-[250px]">
       <div className="flex justify-between items-center mb-1 text-xs">
         <p>Status</p>
-        <p className="text-appBlue cursor-pointer">Reset</p>
+        <p onClick={reset} className="text-appBlue cursor-pointer">
+          Reset
+        </p>
       </div>
       <div className="">
         <Select
           mode="tags"
+          value={value}
           style={{ width: "100%" }}
           placeholder="Select Status"
           onChange={(values) => {
@@ -205,14 +224,21 @@ function TopicFilter(props: TopicFilterProps, ref: any) {
     },
   }));
 
+  const reset = () => {
+    setValue([]);
+  };
+
   return (
     <div className="pt-1 pb-3 max-w-[250px]">
       <div className="flex justify-between items-center mb-1 text-xs">
         <p>Topic</p>
-        <p className="text-appBlue cursor-pointer">Reset</p>
+        <p onClick={reset} className="text-appBlue cursor-pointer">
+          Reset
+        </p>
       </div>
       <div className="">
         <Select
+          value={value}
           mode="tags"
           style={{ width: "100%" }}
           placeholder="Select Topics"

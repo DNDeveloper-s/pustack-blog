@@ -54,7 +54,6 @@ export const useQueryPosts = ({
         dateRange: dateRange as PostFilters["dateRange"],
         topics: topics as PostFilters["topics"],
       });
-      console.log("posts - ", posts);
       return posts;
     } catch (e) {
       console.log("Error in queryPosts - ", e);

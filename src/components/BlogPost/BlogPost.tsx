@@ -121,7 +121,6 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
 
   useImperativeHandle(ref, () => ({
     handleChangeOpen: (open: boolean) => {
-      console.log("open - ", open);
       if (open) onOpen();
       else onClose();
     },
@@ -139,8 +138,6 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
       window.location = "/";
     },
   });
-
-  console.log("saurabh-singh-post-title - ", error);
 
   return (
     <Modal
@@ -177,7 +174,6 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
               <Button
                 color="danger"
                 onPress={() => {
-                  console.log("post.id - ", post?.id);
                   !!post?.id && postDeletePost(post.id);
                 }}
                 isLoading={isPending}

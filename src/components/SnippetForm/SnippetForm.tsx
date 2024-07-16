@@ -138,8 +138,6 @@ function SnippetForm({ post }: { post?: Post | null }, ref: any) {
     [selectedSnippet]
   );
 
-  console.log("selectedPosition - ", selectedPosition);
-
   if (!post)
     return (
       <div>

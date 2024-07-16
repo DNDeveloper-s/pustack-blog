@@ -1,7 +1,7 @@
-import { useCallback, useRef, useState } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { Section } from "./Section";
 import { useDrag, useDrop } from "react-dnd";
-import SectionEditor from "./SectionEditor";
+import SectionEditor, { SectionEditorRef } from "./SectionEditor";
 import { MdEdit } from "react-icons/md";
 import SectionPreview from "./SectionPreview";
 
@@ -17,11 +17,10 @@ interface PostSectionProps {
   index: number;
   deleteCard: (index: number) => void;
 }
-export default function PostSection({
-  index,
-  section,
-  deleteCard,
-}: PostSectionProps) {
+function PostSection(
+  { index, section, deleteCard }: PostSectionProps,
+  ref: React.Ref<SectionEditorRef>
+) {
   const [editMode, setEditMode] = useState(!section.content);
   const handleViewMode = (viewMode: boolean) => {
     setEditMode(!viewMode);
@@ -33,9 +32,12 @@ export default function PostSection({
         handleViewMode={handleViewMode}
         onDelete={() => deleteCard(index)}
         section={section}
+        ref={ref}
       />
     </div>
   ) : (
     <SectionPreview section={section} handleViewMode={handleViewMode} />
   );
 }
+
+export default forwardRef<SectionEditorRef, PostSectionProps>(PostSection);

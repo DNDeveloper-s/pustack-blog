@@ -27,7 +27,7 @@ export default function JoditPreview({
       isOpen={disclosureOptions.isOpen}
       onOpenChange={disclosureOptions.onOpenChange}
       classNames={{
-        wrapper: "bg-black bg-opacity-50",
+        wrapper: "bg-black bg-opacity-50 !items-center",
         base: "!max-w-[900px] !w-[90vw]",
       }}
     >

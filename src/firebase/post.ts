@@ -515,7 +515,6 @@ export const postConverter = {
   fromFirestore: (snapshot: any) => {
     if (!snapshot.exists) return undefined;
     const data = snapshot.data();
-    console.log("data 493 - ", data);
     return new Post(
       data.title,
       data.content,

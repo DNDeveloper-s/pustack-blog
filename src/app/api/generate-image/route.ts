@@ -32,7 +32,6 @@ export async function GET(request: any) {
   const imageBuffer = Buffer.from(arrayBuffer);
 
   const overlayImagePath = path.resolve("./public/logo.png"); // Path to your logo image
-  console.log("overlayImagePath - ", overlayImagePath);
   // const overlayBuffer = await sharp(overlayImagePath).toBuffer();
 
   // const image = await sharp(imageBuffer)

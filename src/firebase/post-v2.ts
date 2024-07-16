@@ -444,6 +444,14 @@ export class Post {
   }
 
   /**
+   * Publishes the post.
+   */
+  livePost() {
+    this._status = "published";
+    this._scheduledTime = undefined;
+  }
+
+  /**
    *
    * @param scheduledTime - The time to schedule the post in ISO string format.
    */
@@ -633,10 +641,10 @@ export class Post {
     if (_userEmail) {
       _query = query(_query, where("author.email", "==", _userEmail));
     }
-
     // Add sorting to the query
     if (_sort && _sort.length > 0) {
       _sort.forEach((sortOption: { field: string; order: "asc" | "desc" }) => {
+        // if (sortOption.field === "timestamp") return;
         _query = query(_query, orderBy(sortOption.field, sortOption.order));
       });
     } else {
@@ -709,8 +717,6 @@ export class Post {
     }
 
     const docs = await getDocs(_query);
-
-    console.log("docs - ", docs);
 
     return _flatten ? flattenQueryData(docs) : docs;
   }

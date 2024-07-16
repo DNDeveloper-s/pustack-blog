@@ -114,7 +114,6 @@ function BlogImageReducer(
   state: IBlogImageState,
   action: BlogImageAction
 ): IBlogImageState {
-  console.log("action - ", action);
   switch (action.type) {
     case "OPEN_PREVIEW":
       state.previewUrl = action.payload;

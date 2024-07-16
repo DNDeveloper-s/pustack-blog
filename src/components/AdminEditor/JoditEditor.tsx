@@ -38,10 +38,6 @@ export default function JoditEditor({
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   // const [editorData, setEditorData] = useState("");
 
-  const editorRef = useCallback((node: any) => {
-    console.log("node - ", node);
-  }, []);
-
   const handleInsertImageUrl = (url: string) => {
     onClose();
     editor.current?.selection?.insertHTML(`<img src="${url}" alt="image" />`);

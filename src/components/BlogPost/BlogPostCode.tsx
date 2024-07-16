@@ -14,7 +14,6 @@ function transformObjectToCodeString(object: any) {
 
   // Helper function to extract text from the object
   function extractText(node: any): string {
-    console.log("node.props.children - ", node.props);
     if (typeof node === "string") {
       return node;
     } else if (node?.props?.children) {
@@ -100,7 +99,6 @@ export default function BlogPostCode({ code }: { code: any }) {
       }
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => {
-        console.log("tokens - ", tokens);
         return (
           <div
             style={{

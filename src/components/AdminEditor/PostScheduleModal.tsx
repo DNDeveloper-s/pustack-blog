@@ -10,21 +10,33 @@ import {
 } from "@nextui-org/modal";
 import { DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface PostScheduleModalProps {
   disclosureOptions: ReturnType<typeof useDisclosure>;
   handleSchedulePost: (scheduledTime: Dayjs) => void;
+  handlePostNow: () => void;
   isPending?: boolean;
+  post: Post;
 }
 export default function PostScheduleModal({
   disclosureOptions,
   handleSchedulePost,
+  handlePostNow,
   isPending,
+  post,
 }: PostScheduleModalProps) {
   const [scheduledTime, setScheduledTime] = useState<Dayjs>(
     dayjs().add(1, "hour")
   );
+
+  useEffect(() => {
+    if (post?.scheduledTime) {
+      setScheduledTime(dayjs(post.scheduledTime));
+    }
+  }, [post]);
+
+  console.log("sdfasdf-asdf - ", post);
 
   return (
     <Modal
@@ -84,8 +96,26 @@ export default function PostScheduleModal({
               isLoading={isPending}
             >
               {/* <IoIosCreate /> */}
-              <span>Schedule</span>
+              <span>
+                {post?.scheduledTime ? "Update Schedule" : "Create Schedule"}
+              </span>
             </Button>
+            {post.scheduledTime && (
+              <Button
+                isDisabled={isPending}
+                className="h-9 px-5 rounded flex items-center justify-center gap-2 bg-appBlue font-featureBold  text-primary text-xs uppercase"
+                onClick={() => {
+                  if (isPending) return;
+                  handlePostNow();
+                }}
+                variant="flat"
+                color="primary"
+                isLoading={isPending}
+              >
+                {/* <IoIosCreate /> */}
+                <span>Post Now</span>
+              </Button>
+            )}
           </div>
         </ModalFooter>
       </ModalContent>

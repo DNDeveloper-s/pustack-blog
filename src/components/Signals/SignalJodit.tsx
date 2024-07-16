@@ -138,7 +138,6 @@ function SignalJodit(props: any, ref: any) {
 
     // // postCreatePost(post);
     // handleContinue(post);
-    console.log("trimmedContent - ", trimmedContent);
     // postCreateSignal(signal);
   }
 

@@ -657,9 +657,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                         >
                           <span className="inline-flex">
                             <img
-                              src="https://pustack-blog.vercel.app/assets/images/svgs/formula.svg"
+                              src={section.icon}
                               alt="icon"
-                              className="h-[16px] w-auto inline"
+                              className="h-auto w-auto inline"
                             />
                           </span>
                           {section.title}

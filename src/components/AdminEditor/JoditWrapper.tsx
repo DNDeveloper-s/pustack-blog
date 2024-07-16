@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  RefObject,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -26,6 +27,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import PostSections, { PostSectionsRef } from "./PostSections";
 import { Section } from "./Sections/Section";
 import { useNotification } from "@/context/NotificationContext";
+import { SectionEditorRef } from "./Sections/SectionEditor";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -70,7 +72,6 @@ function MathsFormulaIframe() {
           opacity: iframeLoaded ? 1 : 0,
         }}
         onLoad={(e: any) => {
-          console.log("iframe loaded", e);
           setIframeLoaded(true);
         }}
       ></iframe>
@@ -97,6 +98,7 @@ function JoditWrapper(
   // const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const topicRef = useRef<HTMLSelectElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -139,6 +141,78 @@ function JoditWrapper(
     },
   }));
 
+  const isValid = () => {
+    const sections = postSectionsRef.current?.getSections();
+    sections?.forEach((section) => {
+      section.updateContent(section.trimContent(section.content));
+    });
+    const _isValid =
+      inputRef.current?.value &&
+      sections &&
+      Section.mergedContent(sections).length > 0 &&
+      topic;
+
+    const field = inputRef.current?.value
+      ? topic
+        ? sections && Section.mergedContent(sections).length > 0
+          ? null
+          : "sections"
+        : "topic"
+      : "title";
+
+    if (field === "title") {
+      inputRef.current?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+      inputRef.current?.focus();
+      return { isValid: false, field, message: "Please enter the post title" };
+    }
+
+    if (field === "topic") {
+      topicRef.current?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+      topicRef.current?.focus();
+      return { isValid: false, field, message: "Please select a topic" };
+    }
+
+    console.log(
+      "postSectionsRef.current?.getSectionsRef() - ",
+      postSectionsRef.current?.getSectionsRef()
+    );
+
+    const sectionsEl = postSectionsRef.current?.getSectionsRef()?.current;
+
+    for (let i = 0; i < sectionsEl.length - 1; i++) {
+      const sectionRef = sectionsEl[i] as RefObject<SectionEditorRef>;
+
+      if (sectionRef.current === null) continue;
+
+      if (!sectionRef.current?.hasTitle()) {
+        sectionRef.current?.openNotValidSection();
+        sectionRef.current?.scrollToTitle();
+        return {
+          isValid: false,
+          field: "sections",
+          message: "Please enter section title",
+        };
+      }
+
+      if (!sectionRef.current?.hasContent()) {
+        sectionRef.current?.scrollToContent();
+        return {
+          isValid: false,
+          field: "sections",
+          message: "Please enter content in the section using the editor",
+        };
+      }
+    }
+
+    return { isValid: _isValid, field, message: "Please fill all fields." };
+  };
+
   async function handleContinuePost() {
     if (!user) return;
 
@@ -147,19 +221,15 @@ function JoditWrapper(
       section.updateContent(section.trimContent(section.content));
     });
 
-    const isValid =
-      inputRef.current?.value &&
-      sections &&
-      Section.mergedContent(sections).length > 0 &&
-      topic;
+    const _isValid = isValid();
 
-    if (!isValid) {
+    if (!_isValid.isValid) {
       openNotification(
         "bottomRight",
         {
-          message: "Please fill all fields",
+          message: _isValid.message,
           closable: true,
-          duration: null,
+          duration: 2,
           closeIcon: (
             <p className="underline text-danger cursor-pointer whitespace-nowrap">
               Close
@@ -200,7 +270,7 @@ function JoditWrapper(
         prePost.snippetDesign,
         prePost.displayTitle,
         prePost.displayContent,
-        undefined,
+        prePost.scheduledTime,
         true
       );
     }
@@ -219,19 +289,16 @@ function JoditWrapper(
       section.updateContent(section.trimContent(section.content));
     });
 
-    const isValid =
-      inputRef.current?.value &&
-      sections &&
-      Section.mergedContent(sections).length > 0 &&
-      topic;
+    const _isValid = isValid();
 
-    if (!isValid) {
+    if (!_isValid.isValid) {
       openNotification(
         "bottomRight",
         {
-          message: "Please fill all fields",
+          message: _isValid.message,
           closable: true,
-          duration: null,
+          duration: 2,
+          showProgress: true,
           closeIcon: (
             <p className="underline text-danger cursor-pointer whitespace-nowrap">
               Close
@@ -329,6 +396,7 @@ function JoditWrapper(
         </h4>
         <select
           // disabled={isPending}
+          ref={topicRef}
           value={topic}
           onChange={(e) => {
             setTopic(e.target.value);
