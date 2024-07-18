@@ -48,6 +48,7 @@ import PostScheduleModal from "./PostScheduleModal";
 import { useDisclosure } from "@nextui-org/modal";
 import { Dayjs } from "dayjs";
 import useScreenSize from "@/hooks/useScreenSize";
+import SlateEditor from "../SlateEditor/SlateEditor";
 
 const getButtonLabel = (requestedPost?: Post) => {
   if (requestedPost?.status === "draft") return "Create Post";
@@ -649,20 +650,18 @@ export default function AdminPage({ postId }: { postId?: string }) {
             {error && (
               <p className="text-danger-500 text-sm my-2">{error.message}</p>
             )}
-            <MathJaxContext>
-              <JoditWrapper
-                prePost={requestedPost}
-                ref={joditRef}
-                handleContinue={handleContinue}
-                handleSaveDraft={handleSaveDraft}
-                isDraftSaving={
-                  isPending &&
-                  (requestedPost?.status === "draft" ||
-                    currentPost?.status === "draft")
-                }
-                isDraft={requestedPost?.status === "draft"}
-              />
-            </MathJaxContext>
+            <JoditWrapper
+              prePost={requestedPost}
+              ref={joditRef}
+              handleContinue={handleContinue}
+              handleSaveDraft={handleSaveDraft}
+              isDraftSaving={
+                isPending &&
+                (requestedPost?.status === "draft" ||
+                  currentPost?.status === "draft")
+              }
+              isDraft={requestedPost?.status === "draft"}
+            />
           </div>
           <div
             className="w-full max-w-[1100px] mx-auto py-2 mt-4"

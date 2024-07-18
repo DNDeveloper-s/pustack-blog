@@ -2061,9 +2061,10 @@ ul {
 .styles_title h2,
 .styles_title h3,
 .styles_title h4,
-.styles_title h5 {
+.styles_title h5,
+.styles_title p {
   font-family: FeatureFlatBold;
-  font-size: 20px;
+  font-size: 20px !important;
   line-height: 27px;
   color: #1f1d1a;
   margin: 0;
@@ -2523,4 +2524,130 @@ font-size: 180px;
   background-color: #243bb5;
   color: #fff;
   border-color: #243bb5;
+}
+
+.minerva-slate h1 {
+  display: block;
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate h2 {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate h3 {
+  display: block;
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate h4 {
+  display: block;
+  margin-top: 1.33em;
+  margin-bottom: 1.33em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate h5 {
+  display: block;
+  font-size: 0.83em;
+  margin-top: 1.67em;
+  margin-bottom: 1.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate h6 {
+  display: block;
+  font-size: 0.67em;
+  margin-top: 2.33em;
+  margin-bottom: 2.33em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.minerva-slate ul {
+  list-style-type: disc;
+  list-style-position: inside;
+}
+.minerva-slate ol {
+  list-style-type: decimal;
+  list-style-position: inside;
+}
+.minerva-slate ul ul,
+.minerva-slate ol ul {
+  list-style-type: circle;
+  list-style-position: inside;
+  margin-left: 15px;
+}
+.minerva-slate ol ol,
+.minerva-slate ul ol {
+  list-style-type: lower-latin;
+  list-style-position: inside;
+  margin-left: 15px;
+}
+.minerva-slate *:focus-visible {
+  /* background: rgba(0, 0, 0, 0.01); */
+  outline: none;
+}
+.minerva-slate strong {
+  font-weight: bold;
+}
+.minerva-slate .foo {
+  position: absolute;
+  border-color: #4b5563;
+  border-width: 2px;
+  width: 25px;
+  height: 25px;
+  border: none;
+}
+.minerva-slate .handle-se {
+  bottom: -2px;
+  right: -2px;
+  cursor: se-resize;
+  border-bottom: 2px solid #4b5563;
+  border-right: 2px solid #4b5563;
+}
+.minerva-slate .handle-sw {
+  bottom: -2px;
+  left: -2px;
+  cursor: sw-resize;
+  border-bottom: 2px solid #4b5563;
+  border-left: 2px solid #4b5563;
+}
+.minerva-slate .handle-nw {
+  top: -2px;
+  left: -2px;
+  cursor: nw-resize;
+  border-top: 2px solid #4b5563;
+  border-left: 2px solid #4b5563;
+}
+.minerva-slate .handle-ne {
+  top: -2px;
+  right: -2px;
+  cursor: ne-resize;
+  border-top: 2px solid #4b5563;
+  border-right: 2px solid #4b5563;
+}
+
+[data-placeholder]::before {
+  content: attr(data-placeholder);
+  color: #d3d3d3;
+  display: block;
+  position: absolute;
+  font-family: Campton, sans-serif;
+  cursor: text;
 }

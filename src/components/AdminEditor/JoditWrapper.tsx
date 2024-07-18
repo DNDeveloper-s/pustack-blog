@@ -28,6 +28,9 @@ import PostSections, { PostSectionsRef } from "./PostSections";
 import { Section } from "./Sections/Section";
 import { useNotification } from "@/context/NotificationContext";
 import { SectionEditorRef } from "./Sections/SectionEditor";
+import SlateEditor, { SlateEditorRef } from "../SlateEditor/SlateEditor";
+import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
+import { CustomElement } from "../../../types/slate";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -107,8 +110,11 @@ function JoditWrapper(
   // const [initialContent, setInitialContent] = useState("");
   const currentContent = useRef<string>("");
   const postSectionsRef = useRef<PostSectionsRef>(null);
+  const slateEditorRef = useRef<SlateEditorRef>(null);
   const [sectionsIndexKey, setSectionsIndexKey] = useState(0);
   const { openNotification } = useNotification();
+
+  console.log("prePost?.nodes - ", prePost?.nodes, prePost);
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
@@ -139,6 +145,9 @@ function JoditWrapper(
       currentContent.current = "";
       if (inputRef.current) inputRef.current.value = "";
     },
+    getSlateValue: () => {
+      return slateEditorRef.current?.getValue();
+    },
   }));
 
   const isValid = () => {
@@ -146,11 +155,7 @@ function JoditWrapper(
     sections?.forEach((section) => {
       section.updateContent(section.trimContent(section.content));
     });
-    const _isValid =
-      inputRef.current?.value &&
-      sections &&
-      Section.mergedContent(sections).length > 0 &&
-      topic;
+    const _isValid = inputRef.current?.value && topic;
 
     const field = inputRef.current?.value
       ? topic
@@ -178,48 +183,22 @@ function JoditWrapper(
       return { isValid: false, field, message: "Please select a topic" };
     }
 
-    console.log(
-      "postSectionsRef.current?.getSectionsRef() - ",
-      postSectionsRef.current?.getSectionsRef()
-    );
-
-    const sectionsEl = postSectionsRef.current?.getSectionsRef()?.current;
-
-    for (let i = 0; i < sectionsEl.length - 1; i++) {
-      const sectionRef = sectionsEl[i] as RefObject<SectionEditorRef>;
-
-      if (sectionRef.current === null) continue;
-
-      if (!sectionRef.current?.hasTitle()) {
-        sectionRef.current?.openNotValidSection();
-        sectionRef.current?.scrollToTitle();
-        return {
-          isValid: false,
-          field: "sections",
-          message: "Please enter section title",
-        };
-      }
-
-      if (!sectionRef.current?.hasContent()) {
-        sectionRef.current?.scrollToContent();
-        return {
-          isValid: false,
-          field: "sections",
-          message: "Please enter content in the section using the editor",
-        };
-      }
+    // slateEditorRef.current?.getValue();
+    if (slateEditorRef.current?.hasSomeContent() === false) {
+      return { isValid: false, field, message: "Please enter some content" };
     }
 
-    return { isValid: _isValid, field, message: "Please fill all fields." };
+    // return { isValid: _isValid, field, message: "Please fill all fields." };
+    return { isValid: true, field: "", message: "" };
   };
 
   async function handleContinuePost() {
     if (!user) return;
 
-    const sections = postSectionsRef.current?.getSections();
-    sections?.forEach((section) => {
-      section.updateContent(section.trimContent(section.content));
-    });
+    // const sections = postSectionsRef.current?.getSections();
+    // sections?.forEach((section) => {
+    //   section.updateContent(section.trimContent(section.content));
+    // });
 
     const _isValid = isValid();
 
@@ -250,8 +229,21 @@ function JoditWrapper(
         photoURL: user?.image_url || dummyAuthor.photoURL,
       },
       topic,
-      sections
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      slateEditorRef.current?.getValue()
+      // sections
     );
+
+    console.log("post - ", post);
 
     if (prePost) {
       post = new Post(
@@ -262,7 +254,7 @@ function JoditWrapper(
           photoURL: user?.image_url || dummyAuthor.photoURL,
         },
         topic,
-        sections,
+        [],
         prePost.status ?? "published",
         prePost.id,
         prePost.timestamp,
@@ -271,7 +263,8 @@ function JoditWrapper(
         prePost.displayTitle,
         prePost.displayContent,
         prePost.scheduledTime,
-        true
+        true,
+        slateEditorRef.current?.getValue()
       );
     }
 
@@ -340,7 +333,8 @@ function JoditWrapper(
         prePost?.displayTitle,
         prePost?.displayContent,
         undefined,
-        true
+        true,
+        slateEditorRef.current?.getValue()
       );
     }
 
@@ -348,7 +342,12 @@ function JoditWrapper(
   }
 
   const handlePreview = () => {
-    disclosureOptions.onOpen();
+    console.log(
+      "slateEditorRef.current?.getValue(); - ",
+      slateEditorRef.current?.getValue()
+    );
+    slateEditorRef.current?.setReadonly(true);
+    // disclosureOptions.onOpen();
   };
 
   const updateLocalStorage = (key: string, value: any) => {
@@ -416,7 +415,7 @@ function JoditWrapper(
           ))}
         </select>
       </div>
-      <div className="my-5">
+      {/* <div className="my-5">
         <Button
           className="h-9 px-5 rounded text-xs font-featureRegular create-maths-formula-button"
           variant="flat"
@@ -425,8 +424,8 @@ function JoditWrapper(
         >
           Create Maths Formula
         </Button>
-      </div>
-      <DndProvider backend={HTML5Backend}>
+      </div> */}
+      {/* <DndProvider backend={HTML5Backend}>
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
           Sections
         </h4>
@@ -435,45 +434,73 @@ function JoditWrapper(
           sections={prePost?.sections}
           ref={postSectionsRef}
         />
-      </DndProvider>
-      {!postSectionsRef.current?.isResizing() && (
-        <div className="flex justify-end gap-4 mb-10">
+      </DndProvider> */}
+      <div className="mt-5">
+        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+          Content
+        </h4>
+        <div className="border text-[16px] w-full flex-1 flex-shrink bg-lightPrimary">
+          <SlateEditor
+            key={JSON.stringify(prePost?.nodes)}
+            value={prePost?.nodes as CustomElement[] | undefined}
+            ref={slateEditorRef}
+          />
+        </div>
+      </div>
+      <label
+        htmlFor="1"
+        className="flex cursor-pointer items-center justify-end mt-5 gap-2"
+      >
+        <Checkbox
+          onChange={(checked: boolean) => {
+            // console.log(
+            //   "slateEditorRef.current?.getValue(); - ",
+            //   slateEditorRef.current?.getValue()
+            // );
+            slateEditorRef.current?.setReadonly(checked);
+          }}
+          defaultValue={false}
+          id="1"
+        />
+        <span>Preview Mode</span>
+      </label>
+      <div className="flex justify-end gap-4 mb-10 mt-8">
+        {/* <Button
+          isDisabled={isDraftSaving}
+          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
+          onClick={handlePreview}
+          variant="flat"
+          color="primary"
+          // isLoading={isPending}
+        >
+          Preview
+        </Button> */}
+        {(!prePost || isDraft) && (
           <Button
             isDisabled={isDraftSaving}
             className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
-            onClick={handlePreview}
+            onClick={handleSaveAsDraft}
             variant="flat"
             color="primary"
             // isLoading={isPending}
+            isLoading={isDraftSaving}
           >
-            Preview
+            Save as Draft
           </Button>
-          {(!prePost || isDraft) && (
-            <Button
-              isDisabled={isDraftSaving}
-              className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
-              onClick={handleSaveAsDraft}
-              variant="flat"
-              color="primary"
-              // isLoading={isPending}
-              isLoading={isDraftSaving}
-            >
-              Save as Draft
-            </Button>
-          )}
-          <Button
-            isDisabled={isDraftSaving}
-            className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-            // onClick={handleCreatePost}
-            onClick={handleContinuePost}
-            variant="flat"
-            color="primary"
-            // isLoading={isPending}
-          >
-            Continue
-          </Button>
-        </div>
-      )}
+        )}
+        <Button
+          isDisabled={isDraftSaving}
+          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
+          // onClick={handleCreatePost}
+          onClick={handleContinuePost}
+          variant="flat"
+          color="primary"
+          // isLoading={isPending}
+        >
+          Continue
+        </Button>
+      </div>
+
       <JoditPreview
         disclosureOptions={disclosureOptions}
         sections={postSectionsRef.current?.getSections()}

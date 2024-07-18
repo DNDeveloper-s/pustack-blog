@@ -8,17 +8,20 @@ import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
 function CheckboxControl(
   {
     onChange,
+    defaultValue,
     id,
   }: {
     onChange?: (checked: boolean) => void;
+    defaultValue?: boolean;
     id: string;
   },
   ref: any
 ) {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(defaultValue ?? false);
 
   useImperativeHandle(ref, () => ({
     isChecked: checked,
+    setChecked,
   }));
 
   return (

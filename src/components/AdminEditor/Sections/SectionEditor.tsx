@@ -74,7 +74,7 @@ function getAvailableIcons() {
   return [...imageUrls, ...pngImageUrls];
 }
 
-function IconExplorer({
+export function IconExplorer({
   onIconClick,
   defaultIcon,
 }: {

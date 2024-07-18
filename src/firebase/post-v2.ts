@@ -31,6 +31,11 @@ import { Section } from "@/components/AdminEditor/Sections/Section";
 import { Post as PostV1 } from "@/firebase/post";
 import readingTime from "reading-time";
 import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
+import { Descendant } from "slate";
+import {
+  getFirstExistingText,
+  getFirstImage,
+} from "@/components/SlateEditor/utils/helpers";
 
 export interface Author {
   name: string;
@@ -146,15 +151,16 @@ export class Post {
   snippetDesign: SnippetDesign = SnippetDesign.CLASSIC_CARD;
   displayTitle: string | undefined = undefined;
   displayContent: string | undefined = undefined;
+  nodes: Descendant[] | undefined = undefined;
   private _sections: Section[] = [];
   readonly is_v2: boolean;
 
   private _snippetData: {
     title?: string;
-    content?: string;
-    image?: string;
-    quote?: string;
-    iframe?: string;
+    content?: string | null;
+    image?: string | null;
+    quote?: string | null;
+    iframe?: string | null;
   } | null = null;
 
   get sections() {
@@ -200,7 +206,8 @@ export class Post {
     displayTitle?: string,
     displayContent?: string,
     scheduledTime?: string,
-    is_v2: boolean = true
+    is_v2: boolean = true,
+    nodes?: Descendant[]
   ) {
     this.title = title;
     this.displayTitle = displayTitle ?? title;
@@ -214,6 +221,7 @@ export class Post {
       "blockquote",
       textContentReducer
     );
+    this.nodes = nodes;
     this.preparePostSnippetData();
     this._id = id;
     this.timestamp = timestamp;
@@ -243,6 +251,24 @@ export class Post {
   }
 
   preparePostSnippetData() {
+    if (this.nodes) {
+      const snippetData = {
+        title: this.displayTitle,
+        content: this.displayContent
+          ? this.displayContent
+          : getFirstExistingText(this.nodes),
+        image: getFirstImage(this.nodes),
+        // quote: quotes[0],
+        // iframe: iframes[0],
+        author: this.author,
+        topic: this.topic,
+      };
+
+      this._snippetData = snippetData;
+
+      return;
+    }
+
     const textElements = {
       h1: this.extractElements<string>("h1", textContentReducer),
       h2: this.extractElements<string>("h2", textContentReducer),
@@ -804,6 +830,7 @@ export const postConverter = {
         !!post.snippetData?.image &&
         !!post.snippetData?.content,
       is_v2: true,
+      nodes: post.nodes,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -839,7 +866,8 @@ export const postConverter = {
       data.displayTitle,
       data.displayContent,
       data.scheduledTime?.toDate().toISOString(),
-      data.is_v2
+      data.is_v2,
+      data.nodes
     );
   },
 };

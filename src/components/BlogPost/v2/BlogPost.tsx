@@ -74,6 +74,9 @@ import {
   httpsCallable,
   httpsCallableFromURL,
 } from "firebase/functions";
+import SlateEditor from "@/components/SlateEditor/SlateEditor";
+import { CustomElement } from "../../../../types/slate";
+import { getSections } from "@/components/SlateEditor/utils/helpers";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -313,7 +316,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           _post.displayTitle,
           _post.displayContent,
           _post.scheduledTime,
-          _post.is_v2
+          _post.is_v2,
+          _post.nodes
         )
       );
     } else {
@@ -379,6 +383,14 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       }
     });
   }, [post?.id, user?.uid]);
+
+  const sections = useMemo(() => {
+    if (!post) return [];
+    if (post.nodes) {
+      return getSections(post.nodes as CustomElement[]);
+    }
+    return post.sections;
+  }, [post?.sections, post?.nodes]);
 
   const renderElement = useCallback((element: any, index: number) => {
     if (element.tsx) {
@@ -624,7 +636,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   checkedLetters={newsLettersList}
                 />
               </div>
-              {post?.sections?.length > 0 && (
+              {sections?.length > 0 && (
                 <div className="flex flex-col gap-1">
                   <h3
                     className="text-[#1f1d1a] text-[16px] font-featureHeadline"
@@ -635,7 +647,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   >
                     In this article:
                   </h3>
-                  {post?.sections?.map((section, index) => (
+                  {sections?.map((section, index) => (
                     <>
                       <hr className="border-dashed border-[#1f1d1a4d] my-2" />
                       <div
@@ -723,21 +735,27 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-          <MathJaxContext>
-            <div className="w-full py-2 mt-5 no-preflight blog-post-container jodit-table">
-              {post?.sections?.map((section, index) => (
-                <BlogPostSection key={section.id} section={section} />
-              ))}
-              {hasNoPost && (
-                <div className="my-10 text-xl text-center text-red-500 uppercase">
-                  Post not found,{" "}
-                  <span className="underline text-appBlue">
-                    <Link href="/">Go back</Link>
-                  </span>
-                </div>
-              )}
+          {post.nodes ? (
+            <div className="my-8">
+              <SlateEditor readonly value={post.nodes as CustomElement[]} />
             </div>
-          </MathJaxContext>
+          ) : (
+            <MathJaxContext>
+              <div className="w-full py-2 mt-5 no-preflight blog-post-container jodit-table">
+                {post?.sections?.map((section, index) => (
+                  <BlogPostSection key={section.id} section={section} />
+                ))}
+                {hasNoPost && (
+                  <div className="my-10 text-xl text-center text-red-500 uppercase">
+                    Post not found,{" "}
+                    <span className="underline text-appBlue">
+                      <Link href="/">Go back</Link>
+                    </span>
+                  </div>
+                )}
+              </div>
+            </MathJaxContext>
+          )}
           <div>
             <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
             <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
