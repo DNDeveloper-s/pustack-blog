@@ -131,7 +131,7 @@ const ResizableEmbedVideo = ({
         <div
           /* @ts-ignore */
           className={alignmentClass[element.align]}
-          style={{ width, height }}
+          style={{ width, height, maxWidth: "100%" }}
         >
           <iframe
             src={embeddedUrl ?? ""}
