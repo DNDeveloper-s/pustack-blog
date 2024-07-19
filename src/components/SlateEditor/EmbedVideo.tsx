@@ -137,7 +137,7 @@ const ResizableEmbedVideo = ({
             src={embeddedUrl ?? ""}
             width={width}
             height={height}
-            className="bg-black"
+            className="bg-black max-w-full"
           />
         </div>
       </div>
@@ -223,7 +223,7 @@ const ResizableEmbedVideo = ({
           src={embeddedUrl ?? ""}
           width={width}
           height={height}
-          className="bg-black"
+          className="bg-black max-w-full"
         />
       </ResizableBox>
     </div>
