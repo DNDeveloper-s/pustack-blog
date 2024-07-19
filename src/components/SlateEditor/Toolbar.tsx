@@ -293,7 +293,7 @@ export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
 
   return (
-    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0">
+    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0 z-20">
       {tools.map((group, i) => (
         <div key={i} className="flex gap-0">
           <div className="mr-0"></div>
