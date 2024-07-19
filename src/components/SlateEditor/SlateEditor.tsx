@@ -21,12 +21,18 @@ import {
   hasContent,
 } from "./utils/helpers";
 import { CustomElement } from "../../../types/slate";
+import Toolbar, { ToolType } from "./Toolbar";
+import SlateColorPicker from "./SlateColorPicker";
+import { Input, Popover } from "antd";
+import { Button } from "@nextui-org/button";
+import LinkUrlComponent from "./LinkUrlComponent";
 
 const TEXT_COLOR_MARK = "color";
 
 const initialValue: CustomElement[] = [
   {
     type: "paragraph",
+    align: "left",
     children: [
       {
         text: 'The editor gives you full control over the logic you can add. For example, it\'s fairly common to want to add markdown-like shortcuts to editors. So that, when you start a line with "> " you get a blockquote that looks like this:',
@@ -35,10 +41,12 @@ const initialValue: CustomElement[] = [
   },
   {
     type: "block-quote",
+    align: "left",
     children: [{ text: "A wise quote." }],
   },
   {
     type: "paragraph",
+    align: "left",
     children: [
       {
         text: 'Order when you start a line with "## " you get a level-two heading, like this:',
@@ -47,10 +55,12 @@ const initialValue: CustomElement[] = [
   },
   {
     type: "heading-two",
+    align: "left",
     children: [{ text: "Try it out!" }],
   },
   {
     type: "paragraph",
+    align: "left",
     children: [
       {
         text: 'Try it out for yourself! Try starting a new line with ">", "-", or "#"s.',
@@ -99,17 +109,43 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
   // }, [props.value]);
 
   const renderLeaf = (props: any) => {
-    const { attributes, children, leaf } = props;
+    let { attributes, children, leaf } = props;
 
-    if (leaf[TEXT_COLOR_MARK]) {
-      return (
-        <span {...attributes} style={{ color: leaf[TEXT_COLOR_MARK] }}>
-          <strong>{children}</strong>
-        </span>
+    if (leaf.bold) {
+      children = <strong>{children}</strong>;
+    }
+
+    if (leaf.italic) {
+      children = <em>{children}</em>;
+    }
+
+    if (leaf.underline) {
+      children = <u>{children}</u>;
+    }
+
+    if (leaf["strike-through"]) {
+      children = <del>{children}</del>;
+    }
+
+    if (leaf.link) {
+      children = (
+        <LinkUrlComponent key={leaf.link} {...props}>
+          {children}
+        </LinkUrlComponent>
       );
     }
 
-    return <span {...attributes}>{children}</span>;
+    const style = {
+      color: leaf.color,
+      backgroundColor: leaf.backgroundColor,
+      fontSize: leaf.fontSize,
+    };
+
+    return (
+      <span {...attributes} style={style}>
+        {children}
+      </span>
+    );
   };
 
   const renderElement = useCallback(
@@ -186,6 +222,8 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     },
   }));
 
+  console.log("value - ", value);
+
   return (
     <div key={key} className="minerva-slate min-h-[350px]">
       <Slate
@@ -196,6 +234,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         // @ts-ignore
         onChange={setValue}
       >
+        {!readonly && <Toolbar />}
         <Editable
           readOnly={readonly}
           // onDOMBeforeInput={handleDOMBeforeInput}
@@ -208,7 +247,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         {/* <button onClick={handleSave}>Save</button> */}
         {/* <button onClick={handleLoad}>Load</button> */}
         {/* </div> */}
-        <DropdownMenu />
+        {!readonly && <DropdownMenu />}
       </Slate>
     </div>
   );

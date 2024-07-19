@@ -72,16 +72,18 @@ const withShortcuts = (editor: Editor) => {
       // Get the text before the current cursor position
       // @ts-ignore
       const beforeText = node.text.slice(0, offset);
+      const splitted = beforeText.split(" ");
+      const textToCheck = splitted[splitted.length - 1];
 
       // Check if there is a slash before the current position
-      const slashIndex = beforeText.lastIndexOf("/");
+      const slashIndex = textToCheck.lastIndexOf("/");
 
       if (slashIndex !== -1) {
         // Insert the new character
         insertText(text);
 
         // Calculate the query text as everything after the last slash
-        const query = beforeText.slice(slashIndex + 1) + text;
+        const query = textToCheck.slice(slashIndex + 1) + text;
 
         // Show or update the dropdown menu
         setTimeout(() => {
@@ -298,16 +300,18 @@ const withShortcuts = (editor: Editor) => {
         // Get the text before the current cursor position
         // @ts-ignore
         const beforeText = node.text.slice(0, offset);
+        const splitted = beforeText.split(" ");
+        const textToCheck = splitted[splitted.length - 1];
 
         // Check if there is a slash before the current position
-        const slashIndex = beforeText.lastIndexOf("/");
+        const slashIndex = textToCheck.lastIndexOf("/");
 
         if (slashIndex !== -1) {
           // Delete the character
           deleteBackward(...args);
 
           // Calculate the query text as everything after the last slash
-          const query = beforeText.slice(slashIndex + 1, -1);
+          const query = textToCheck.slice(slashIndex + 1, -1);
 
           console.log("slashIndex - ", slashIndex);
           if (slashIndex)
@@ -393,33 +397,55 @@ const withShortcuts = (editor: Editor) => {
   editor.insertBreak = () => {
     const { selection } = editor;
     if (selection) {
-      {
-        const [match] = Array.from(
-          Editor.nodes(editor, {
-            match: (n) => Element.isElement(n) && n.type.includes("list-item"),
-          })
-        );
+      const [match] = Array.from(
+        Editor.nodes(editor, {
+          match: (n) => Element.isElement(n) && n.type === "list-item",
+        })
+      );
 
-        if (match) {
-          const [node, path] = match;
-          const nodeString = Node.string(node);
+      if (match) {
+        const [node, path] = match;
+        const nodeString = Node.string(node);
 
-          if (nodeString.length === 0) {
-            // Get the parent path of the list item
-            const parentPath = Path.parent(path);
+        if (nodeString.length === 0) {
+          // Get the parent path of the list item
+          const parentPath = Path.parent(path);
+          const grandparentPath = Path.parent(parentPath);
 
-            // Remove the empty list item
-            Transforms.removeNodes(editor, { at: path });
+          // Remove the empty list item
+          Transforms.removeNodes(editor, { at: path });
 
-            // Check if the parent list is now empty and should be removed
-            const parentNode = Node.get(editor, parentPath);
-            if (
-              Element.isElement(parentNode) &&
-              parentNode.children.length === 0
-            ) {
-              Transforms.removeNodes(editor, { at: parentPath });
-            }
+          // Check if the parent list is now empty and should be removed
+          const parentNode = Node.get(editor, parentPath);
+          if (
+            Element.isElement(parentNode) &&
+            parentNode.children.length === 0
+          ) {
+            Transforms.removeNodes(editor, { at: parentPath });
+          }
 
+          // Check if the grandparent is a list (bulleted-list or numbered-list)
+          const grandparentNode = Node.get(editor, grandparentPath);
+          if (
+            Element.isElement(grandparentNode) &&
+            (grandparentNode.type === "bulleted-list" ||
+              grandparentNode.type === "numbered-list" ||
+              grandparentNode.type === "alphabet-list")
+          ) {
+            // Insert a new list item at the correct position
+            const insertPath = Path.next(parentPath);
+            Transforms.insertNodes(
+              editor,
+              {
+                type: "list-item",
+                children: [{ text: "" }],
+              },
+              { at: insertPath }
+            );
+
+            // Move the selection to the newly created list item
+            Transforms.select(editor, Editor.start(editor, insertPath));
+          } else {
             // Insert a new paragraph at the correct position
             const insertPath = Path.next(parentPath);
             Transforms.insertNodes(
@@ -433,34 +459,103 @@ const withShortcuts = (editor: Editor) => {
 
             // Move the selection to the newly created paragraph
             Transforms.select(editor, Editor.start(editor, insertPath));
-
-            return;
           }
+
+          return;
         }
-      }
 
-      {
-        // Reset the formatting to paragraph
-        const { selection } = editor;
-        // if (selection) {
-        //   insertBreak();
-        //   const [match] = Array.from(
-        //     Editor.nodes(editor, {
-        //       match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
-        //     })
-        //   );
+        // Insert a new list item if the current one is not empty
+        const insertPath = Path.next(path);
+        Transforms.insertNodes(
+          editor,
+          {
+            type: "list-item",
+            children: [{ text: "" }],
+          },
+          { at: insertPath }
+        );
 
-        //   if (match) {
-        //     const [, path] = match;
-        //     Transforms.setNodes(editor, { type: "paragraph" }, { at: path });
-        //   }
-        //   return;
-        // }
+        // Move the selection to the newly created list item
+        Transforms.select(editor, Editor.start(editor, insertPath));
+        return;
       }
     }
 
+    // Default break behavior
     insertBreak();
   };
+
+  // editor.insertBreak = () => {
+  //   const { selection } = editor;
+  //   if (selection) {
+  //     {
+  //       const [match] = Array.from(
+  //         Editor.nodes(editor, {
+  //           match: (n) => Element.isElement(n) && n.type.includes("list-item"),
+  //         })
+  //       );
+
+  //       if (match) {
+  //         const [node, path] = match;
+  //         const nodeString = Node.string(node);
+
+  //         if (nodeString.length === 0) {
+  //           // Get the parent path of the list item
+  //           const parentPath = Path.parent(path);
+
+  //           // Remove the empty list item
+  //           Transforms.removeNodes(editor, { at: path });
+
+  //           // Check if the parent list is now empty and should be removed
+  //           const parentNode = Node.get(editor, parentPath);
+  //           if (
+  //             Element.isElement(parentNode) &&
+  //             parentNode.children.length === 0
+  //           ) {
+  //             Transforms.removeNodes(editor, { at: parentPath });
+  //           }
+
+  //           // Insert a new paragraph at the correct position
+  //           const insertPath = Path.next(parentPath);
+  //           Transforms.insertNodes(
+  //             editor,
+  //             {
+  //               type: "paragraph",
+  //               children: [{ text: "" }],
+  //             },
+  //             { at: insertPath }
+  //           );
+
+  //           // Move the selection to the newly created paragraph
+  //           Transforms.select(editor, Editor.start(editor, insertPath));
+
+  //           return;
+  //         }
+  //       }
+  //     }
+
+  //     {
+  //       // Reset the formatting to paragraph
+  //       const { selection } = editor;
+  //       // if (selection) {
+  //       //   insertBreak();
+  //       //   const [match] = Array.from(
+  //       //     Editor.nodes(editor, {
+  //       //       match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
+  //       //     })
+  //       //   );
+
+  //       //   if (match) {
+  //       //     const [, path] = match;
+  //       //     Transforms.setNodes(editor, { type: "paragraph" }, { at: path });
+  //       //   }
+  //       //   return;
+  //       // }
+  //     }
+  //   }
+
+  //   insertBreak();
+  // };
 
   return editor;
 };

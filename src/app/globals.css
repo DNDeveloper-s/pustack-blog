@@ -2413,8 +2413,12 @@ font-size: 180px;
   --antd-arrow-background-color: #fcfae4;
 }
 
+.fontSize_overlayClassName > .ant-popover-content > .ant-popover-inner {
+  padding: 0;
+}
+
 .overlayClassName_choose_icon_animation {
-  --antd-arrow-background-color: #4b65ed;
+  --antd-arrow-background-color: #243bb5;
   transition: none;
   animation: topBottomAnim 1s cubic-bezier(0.49, 0.05, 0.52, 0.93) infinite;
 }
@@ -2648,6 +2652,8 @@ font-size: 180px;
   color: #d3d3d3;
   display: block;
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   font-family: Campton, sans-serif;
   cursor: text;
 }

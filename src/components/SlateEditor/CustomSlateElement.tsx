@@ -168,6 +168,8 @@ const CustomSlateElement = (props: any) => {
   const path = ReactEditor.findPath(editor, element);
   const textContent = Node.string(element);
 
+  const style = { textAligh: element.align || "left" };
+
   // const selection = editor.selection;
   // if (selection) {
   //   chat;
@@ -175,7 +177,7 @@ const CustomSlateElement = (props: any) => {
   const isSelectionInThisElement = isCursorInElement(editor, element);
 
   let el = (
-    <p {...attributes} {...element}>
+    <p {...attributes} {...element} style={style}>
       {children}
     </p>
   );
@@ -303,6 +305,7 @@ const CustomSlateElement = (props: any) => {
           <p
             {...attributes}
             {...element}
+            style={style}
             data-placeholder="Type here or use '/' to insert blocks"
           >
             {children}
@@ -310,7 +313,7 @@ const CustomSlateElement = (props: any) => {
         );
       } else {
         el = (
-          <p {...attributes} {...element}>
+          <p {...attributes} {...element} style={style}>
             {children}
           </p>
         );

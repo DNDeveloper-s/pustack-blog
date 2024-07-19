@@ -57,6 +57,7 @@ export type ImageElement = {
   width?: number;
   height?: number;
   maxConstraints?: [number, number];
+  minConstraints?: [number, number];
   align?: "center" | "left" | "right";
   children: Descendant[];
 };
@@ -109,6 +110,18 @@ export type HRElement = {
   children: EmptyText[];
 };
 
+export type NumberedListElement = {
+  type: "numbered-list";
+  align?: string;
+  children: Descendant[];
+};
+
+export type AlphabetListElement = {
+  type: "alphabet-list";
+  align?: string;
+  children: Descendant[];
+};
+
 export type SectionHeaderElement = {
   type: "section-header";
   children: Descendant[];
@@ -145,6 +158,8 @@ type CustomElement =
   | ChooseImageElement
   | ButtonElement
   | BadgeElement
+  | AlphabetListElement
+  | NumberedListElement
   | ListItemElement
   | MentionElement
   | ParagraphElement

@@ -9,7 +9,6 @@ const options = [
   "Image",
   "Horizontal Line",
   "Section Header",
-  "Link",
   "Embed Video",
 ];
 
@@ -30,7 +29,9 @@ const DropdownMenu = () => {
       setPosition(event.detail);
       setActive(0);
       setFilteredOptions(
-        options.filter((option) => option.startsWith(event.detail.query))
+        options.filter((option) =>
+          option.toLowerCase().startsWith(event.detail.query?.toLowerCase?.())
+        )
       );
     };
 
@@ -219,16 +220,17 @@ const DropdownMenu = () => {
         left: position.left,
         zIndex: 1000,
       }}
-      className="absolute border border-gray-600 shadow-lg left-0 top-6 z-10 block max-h-64 w-64 select-none overflow-y-auto rounded-md bg-base-100 bg-white p-2 overflow-auto"
+      className="absolute shadow-2xl left-0 top-6 z-10 block max-h-64 w-64 select-none overflow-y-auto rounded-md bg-base-100 bg-white p-2 overflow-auto"
     >
       {filteredOptions.map((item, index) => (
         <div
           key={item}
           onMouseEnter={() => setActive(index)}
           contentEditable={false}
-          className={`p-2 cursor-pointer ${
-            active === index ? "bg-gray-200" : ""
+          className={`p-2 cursor-pointer rounded ${
+            active === index ? "bg-gray-100" : ""
           }`}
+          onClick={() => onSelectOption(item)}
           ref={(ref) => {
             if (active === index) {
               activeRef.current = ref;

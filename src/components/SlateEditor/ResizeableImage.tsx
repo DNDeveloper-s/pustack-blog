@@ -67,6 +67,10 @@ const ResizableImage = ({
       const maxWidth = node.clientWidth;
       const maxHeight = maxWidth / ratio;
 
+      // minWidth and minHeight are set to 100
+      const minWidth = 150;
+      const minHeight = minWidth / ratio;
+
       const path = ReactEditor.findPath(editor, element);
       Transforms.setNodes(
         editor,
@@ -75,6 +79,7 @@ const ResizableImage = ({
           width: dimensions.width > maxWidth ? maxWidth : dimensions.width,
           height: dimensions.height > maxHeight ? maxHeight : dimensions.height,
           maxConstraints: [maxWidth, maxHeight],
+          minConstraints: [minWidth, minHeight],
         },
         { at: path }
       );
@@ -123,6 +128,7 @@ const ResizableImage = ({
         style={{ maxWidth: "100%" }}
         lockAspectRatio={true}
         handle={<MyHandle />}
+        minConstraints={element.minConstraints}
         draggableOpts={{}}
         resizeHandles={["sw", "nw", "se", "ne"]}
         // @ts-ignore
