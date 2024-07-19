@@ -153,6 +153,7 @@ const ResizableEmbedVideo = ({
         width={width}
         height={height}
         maxConstraints={element.maxConstraints}
+        minConstraints={[150, 100]}
         style={{ maxWidth: "100%" }}
         lockAspectRatio={false}
         handle={<MyHandle />}
