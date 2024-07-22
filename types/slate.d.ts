@@ -5,23 +5,27 @@ import { HistoryEditor } from "slate-history";
 export type BlockQuoteElement = {
   type: "block-quote";
   align?: string;
+  dropdown?: boolean;
   children: Descendant[];
 };
 
 export type BulletedListElement = {
   type: "bulleted-list";
   align?: string;
+  dropdown?: boolean;
   children: Descendant[];
 };
 
 export type CheckListItemElement = {
   type: "check-list-item";
   checked: boolean;
+  dropdown?: boolean;
   children: Descendant[];
 };
 
 export type EditableVoidElement = {
   type: "editable-void";
+  dropdown?: boolean;
   children: EmptyText[];
 };
 
@@ -29,17 +33,20 @@ export type HeadingElement = {
   type: "heading";
   align?: string;
   children: Descendant[];
+  dropdown?: boolean;
 };
 
 export type HeadingTwoElement = {
   type: "heading-two";
   align?: string;
+  dropdown?: boolean;
   children: Descendant[];
 };
 
 export type MathElement = {
   type: "math-block";
   latex: string;
+  dropdown?: boolean;
   children: EmptyText[];
 };
 
@@ -55,6 +62,7 @@ export type ImageElement = {
   type: "image-block";
   src: string;
   width?: number;
+  dropdown?: boolean;
   height?: number;
   maxConstraints?: [number, number];
   minConstraints?: [number, number];
@@ -65,11 +73,13 @@ export type ImageElement = {
 export type MentionElement = {
   type: "mention";
   character: string;
+  dropdown?: boolean;
   children: CustomText[];
 };
 
 export type ParagraphElement = {
   type: "paragraph";
+  dropdown?: boolean;
   align?: string;
   children: Descendant[];
 };
@@ -86,6 +96,21 @@ export type VideoElement = {
   type: "video";
   url: string;
   children: EmptyText[];
+};
+
+export type TableCellElement = {
+  type: "table-cell";
+  children: Descendant[];
+};
+
+export type TableRowElement = {
+  type: "table-row";
+  children: TableCellElement[];
+};
+
+export type TableElement = {
+  type: "table";
+  children: TableRowElement[];
 };
 
 export type CodeBlockElement = {
@@ -169,6 +194,9 @@ type CustomElement =
   | TitleElement
   | EmbedVideoElement
   | VideoElement
+  | TableElement
+  | TableRowElement
+  | TableCellElement
   | MathElement
   | CodeBlockElement
   | CodeLineElement;

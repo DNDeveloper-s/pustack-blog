@@ -39,9 +39,9 @@ export default function SectionHeader({ element }: { element: any }) {
 
   if (readonly) {
     return (
-      <div className="mt-3">
+      <div className="mt-3" id={element.id}>
         <div className="styles_divider"></div>
-        <div className="styles_title" id={element.id}>
+        <div className="styles_title">
           <p>
             <span className="inline-flex mr-2">
               <img

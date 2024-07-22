@@ -4,6 +4,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css"; // Ensure you have the CSS for react-resizable
 import { Transforms } from "slate";
 import { ReactEditor, useReadOnly, useSlate } from "slate-react";
+import { BlogImageDefault } from "../shared/BlogImage";
 
 const getImageDimensions = (url: string) => {
   return new Promise((resolve, reject) => {
@@ -110,7 +111,17 @@ const ResizableImage = ({
           className={alignmentClass[element.align]}
           style={{ width, height }}
         >
-          <img src={element.src} width={width} height={height} alt="" />
+          <BlogImageDefault
+            className="max-w-full block"
+            // @ts-ignore
+            src={element.src}
+            imageProps={{
+              width,
+              height,
+              // @ts-ignore
+              className: "max-w-full h-auto ",
+            }}
+          />
         </div>
       </div>
     );

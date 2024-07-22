@@ -19,6 +19,8 @@ import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { moveCursorto } from "./utils/helpers";
 import { Range } from "slate";
+import { TableCellElement, TableElement, TableRowElement } from "./SlateTable";
+import { useState } from "react";
 
 const allowedTypes = [
   "paragraph",
@@ -168,6 +170,8 @@ const CustomSlateElement = (props: any) => {
   const path = ReactEditor.findPath(editor, element);
   const textContent = Node.string(element);
 
+  const [hoveredCellPath, setHoveredCellPath] = useState(null);
+
   const style = { textAligh: element.align || "left" };
 
   // const selection = editor.selection;
@@ -250,6 +254,24 @@ const CustomSlateElement = (props: any) => {
         </h5>
       );
       break;
+    case "table":
+      el = <TableElement {...props} />;
+      break;
+    case "table-row":
+      return <TableRowElement {...props} />;
+    case "table-cell":
+      const cellPath = ReactEditor.findPath(props.editor, element);
+      const tablePath = Path.parent(Path.parent(cellPath));
+      return (
+        <TableCellElement
+          {...props}
+          cellPath={cellPath}
+          tablePath={tablePath}
+          key={hoveredCellPath}
+          hoveredCellPath={hoveredCellPath}
+          setHoveredCellPath={setHoveredCellPath}
+        />
+      );
     case "heading-six":
       el = (
         <h6 {...attributes} {...element}>
@@ -306,6 +328,7 @@ const CustomSlateElement = (props: any) => {
             {...attributes}
             {...element}
             style={style}
+            className="relative"
             data-placeholder="Type here or use '/' to insert blocks"
           >
             {children}
@@ -322,6 +345,11 @@ const CustomSlateElement = (props: any) => {
 
   // Check if the element is a nested list item
   const isNestedListItem = path.length > 1 && path.some((p) => p !== 0);
+
+  const showSideTools =
+    !isNestedListItem &&
+    !readonly &&
+    !["table-row", "table-cell"].includes(element.type);
 
   const moveUp = () => {
     const previousPath = Path.previous(path);
@@ -365,7 +393,7 @@ const CustomSlateElement = (props: any) => {
       }
       // data-slate-void={element.type === "code-block"}
     >
-      {!isNestedListItem && !readonly && (
+      {showSideTools && (
         <div className="group-hover/line:opacity-100 opacity-0 absolute -left-4 top-1/2 transform -translate-y-1/2">
           <div className="flex flex-col text-sm text-gray-400">
             <div
@@ -383,7 +411,7 @@ const CustomSlateElement = (props: any) => {
           </div>
         </div>
       )}
-      {!isNestedListItem && !readonly && (
+      {showSideTools && (
         <div className="group-hover/line:opacity-100 opacity-0 absolute -right-4 top-1/2 transform -translate-y-1/2">
           <div className="flex flex-col text-base text-gray-400">
             <div

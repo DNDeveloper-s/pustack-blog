@@ -1,4 +1,13 @@
-import { Editor, Element, Node, Path, Point, Range, Transforms } from "slate";
+import {
+  Editor,
+  Element,
+  Node,
+  Path,
+  Point,
+  Range,
+  Text,
+  Transforms,
+} from "slate";
 import {
   // AlphabetListElement,
   BulletedListElement,
@@ -24,242 +33,233 @@ const withShortcuts = (editor: Editor) => {
   const { deleteBackward, insertText, insertBreak } = editor;
 
   editor.insertText = (text) => {
-    const { selection, path } = editor;
+    const { selection } = editor;
 
-    // if (text.endsWith("/") && selection && Range.isCollapsed(selection)) {
-    //   // Show the dropdown with few items
-    //   console.log("Show the dropdown with few items - ", selection);
-    //   const newProperties: Partial<SlateElement> = {
-    //     type: "span",
-    //     className: "menu",
-    //   };
-    //   Transforms.setNodes<SlateElement>(editor, newProperties, {
-    //     match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
-    //   });
+    if (text === " " && selection && Range.isCollapsed(selection)) {
+      // @ts-ignore
+      if (Editor.marks(editor)?.dropdown) {
+        Transforms.setNodes(
+          editor,
+          // @ts-ignore
+          { dropdown: false },
+          { match: Text.isText }
+        );
+      }
+    }
+
+    if (text === "/" && selection && Range.isCollapsed(selection)) {
+      // @ts-ignore
+      if (Editor.marks(editor)?.dropdown) {
+        Transforms.setNodes(
+          editor,
+          // @ts-ignore
+          { dropdown: false },
+          { match: Text.isText }
+        );
+      }
+      Editor.addMark(editor, "dropdown", true);
+      insertText(text);
+
+      return;
+
+      // if (Editor.marks(editor).dropdown) {
+      //   Transforms.setNodes(
+      //     editor,
+      //     // @ts-ignore
+      //     { dropdown: false },
+      //     { match: Text.isText, split: true }
+      //   );
+      //   // Editor.removeMark(editor, "dropdown");
+      //   // insertText(" ");
+      // }
+      // Editor.addMark(editor, "dropdown", true);
+      // insertText(text);
+    }
+
+    // const { selection, path } = editor;
+    // console.log("text - ", text);
+
+    // if (text === "/") {
+    //   insertText("/fasdf");
+    //   Transforms.setNodes(
+    //     editor,
+    //     //@ts-ignore
+    //     { dropdown: true },
+    //     { match: (n) => Text.isText(n), split: true }
+    //   );
+    //   return;
+
+    //   // Editor.addMark(editor, "dropdown", true);
+    //   // insertText("/");
+    //   // const { selection } = editor;
+    //   // if (selection && Range.isCollapsed(selection)) {
+    //   //   const [match] = Editor.nodes(editor, {
+    //   //     //@ts-ignore
+    //   //     match: (n) => n.dropdown === true,
+    //   //   });
+
+    //   //   if (!match) {
+    //   //     Transforms.setNodes(
+    //   //       editor,
+    //   //       //@ts-ignore
+    //   //       { dropdown: true },
+    //   //       { match: (n) => Text.isText(n), split: true }
+    //   //     );
+    //   //     insertText("/");
+    //   //     // Transforms.insertText(editor, text);
+    //   //     return;
+    //   //   }
+    //   // }
     // }
 
-    // if (text === "/" && selection && Range.isCollapsed(selection)) {
-    //   // Show the dropdown menu
-    //   const domSelection = window.getSelection();
-    //   if (!domSelection) return insertText(text);
-    //   const domRange = domSelection.getRangeAt(0);
-    //   const rect = domRange.getBoundingClientRect();
-
-    //   editor.showDropdownMenu({
-    //     top: rect.top + window.scrollY + 20,
-    //     left: rect.left + window.scrollX,
-    //   });
-    // } else {
-    //   if (text === " " || text === "\n") {
+    // Commented
+    // if (selection && Range.isCollapsed(selection)) {
+    //   if ((text === " " || text === "\n") && dropdownPosition) {
     //     editor.hideDropdownMenu();
+    //     dropdownPosition = null;
+    //     insertText(text);
+    //     console.log(" - - ");
+    //     return;
+    //   }
+
+    //   const [start] = Range.edges(selection);
+    //   const { path, offset } = start;
+    //   const node = Node.get(editor, path);
+
+    //   // Get the text before the current cursor position
+    //   // @ts-ignore
+    //   const beforeText = node.text.slice(0, offset);
+    //   const splitted = beforeText.split(" ");
+    //   const textToCheck = splitted[splitted.length - 1];
+
+    //   // Check if there is a slash before the current position
+    //   const slashIndex = textToCheck.lastIndexOf("/");
+
+    //   if (slashIndex !== -1) {
+    //     // Insert the new character
+    //     insertText(text);
+
+    //     // Calculate the query text as everything after the last slash
+    //     const query = textToCheck.slice(slashIndex + 1) + text;
+
+    //     // Show or update the dropdown menu
+    //     setTimeout(() => {
+    //       if (!dropdownPosition) {
+    //         const domSelection = window.getSelection();
+    //         if (!domSelection) return insertText(text);
+    //         const domRange = domSelection.getRangeAt(0);
+    //         const rect = domRange.getBoundingClientRect();
+    //         console.log("setting dropdownPosition -");
+    //         dropdownPosition = {
+    //           top: rect.top + window.scrollY + 20,
+    //           left: rect.left + window.scrollX,
+    //         };
+    //       }
+    //       editor.showDropdownMenu({
+    //         ...dropdownPosition,
+    //         query,
+    //       });
+    //     }, 0);
+
+    //     return;
+    //   } else if (text === "/") {
+    //     insertText(text);
+
+    //     setTimeout(() => {
+    //       const domSelection = window.getSelection();
+    //       if (!domSelection) return insertText(text);
+    //       const domRange = domSelection.getRangeAt(0);
+    //       const rect = domRange.getBoundingClientRect();
+    //       console.log("setting dropdownPosition -");
+    //       dropdownPosition = {
+    //         top: rect.top + window.scrollY + 20,
+    //         left: rect.left + window.scrollX,
+    //       };
+    //       editor.showDropdownMenu({
+    //         ...dropdownPosition,
+    //         query: "",
+    //       });
+    //     }, 0);
+
+    //     return;
     //   }
     // }
 
     // Commented
-    if (selection && Range.isCollapsed(selection)) {
-      if ((text === " " || text === "\n") && dropdownPosition) {
-        editor.hideDropdownMenu();
-        dropdownPosition = null;
-        insertText(text);
-        console.log(" - - ");
-        return;
-      }
+    // if (text.endsWith(" ") && selection && Range.isCollapsed(selection)) {
+    //   const { anchor } = selection;
+    //   const block = Editor.above(editor, {
+    //     match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
+    //   });
+    //   const path = block ? block[1] : [];
+    //   const start = Editor.start(editor, path);
+    //   const range = { anchor, focus: start };
+    //   const beforeText = Editor.string(editor, range) + text.slice(0, -1);
+    //   // @ts-ignore
+    //   const type = SHORTCUTS[beforeText];
 
-      const [start] = Range.edges(selection);
-      const { path, offset } = start;
-      const node = Node.get(editor, path);
+    //   if (type) {
+    //     Transforms.select(editor, range);
 
-      // Get the text before the current cursor position
-      // @ts-ignore
-      const beforeText = node.text.slice(0, offset);
-      const splitted = beforeText.split(" ");
-      const textToCheck = splitted[splitted.length - 1];
+    //     if (!Range.isCollapsed(range)) {
+    //       Transforms.delete(editor);
+    //     }
 
-      // Check if there is a slash before the current position
-      const slashIndex = textToCheck.lastIndexOf("/");
+    //     const newProperties: Partial<Element> = {
+    //       type,
+    //     };
 
-      if (slashIndex !== -1) {
-        // Insert the new character
-        insertText(text);
+    //     Transforms.setNodes<Element>(editor, newProperties, {
+    //       match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
+    //     });
 
-        // Calculate the query text as everything after the last slash
-        const query = textToCheck.slice(slashIndex + 1) + text;
+    //     console.log("type - ", type);
 
-        // Show or update the dropdown menu
-        setTimeout(() => {
-          if (!dropdownPosition) {
-            const domSelection = window.getSelection();
-            if (!domSelection) return insertText(text);
-            const domRange = domSelection.getRangeAt(0);
-            const rect = domRange.getBoundingClientRect();
-            console.log("setting dropdownPosition -");
-            dropdownPosition = {
-              top: rect.top + window.scrollY + 20,
-              left: rect.left + window.scrollX,
-            };
-          }
-          editor.showDropdownMenu({
-            ...dropdownPosition,
-            query,
-          });
-        }, 0);
+    //     if (type === "list-item") {
+    //       const list: BulletedListElement = {
+    //         type: "bulleted-list",
+    //         children: [],
+    //       };
+    //       console.log("wrappiong - ");
+    //       // @ts-ignore
+    //       Transforms.wrapNodes(editor, list, {
+    //         match: (n) =>
+    //           !Editor.isEditor(n) &&
+    //           Element.isElement(n) &&
+    //           // @ts-ignore
+    //           n.type === "list-item",
+    //       });
+    //     } else if (type === "list-item-number") {
+    //       const list = {
+    //         type: "numbered-list",
+    //         children: [],
+    //       };
+    //       // @ts-ignore
+    //       Transforms.wrapNodes(editor, list, {
+    //         match: (n) =>
+    //           !Editor.isEditor(n) &&
+    //           Element.isElement(n) &&
+    //           // @ts-ignore
+    //           n.type === "list-item-number",
+    //       });
+    //     } else if (type === "list-item-alpha") {
+    //       const list = {
+    //         type: "alphabet-list",
+    //         children: [],
+    //       };
+    //       // @ts-ignore
+    //       Transforms.wrapNodes(editor, list, {
+    //         match: (n) =>
+    //           !Editor.isEditor(n) &&
+    //           Element.isElement(n) &&
+    //           // @ts-ignore
+    //           n.type === "list-item-alpha",
+    //       });
+    //     }
 
-        return;
-      } else if (text === "/") {
-        insertText(text);
-
-        setTimeout(() => {
-          const domSelection = window.getSelection();
-          if (!domSelection) return insertText(text);
-          const domRange = domSelection.getRangeAt(0);
-          const rect = domRange.getBoundingClientRect();
-          console.log("setting dropdownPosition -");
-          dropdownPosition = {
-            top: rect.top + window.scrollY + 20,
-            left: rect.left + window.scrollX,
-          };
-          editor.showDropdownMenu({
-            ...dropdownPosition,
-            query: "",
-          });
-        }, 0);
-
-        return;
-      }
-
-      // const [start] = Range.edges(selection);
-      // const { path, offset } = start;
-      // const node = Node.get(editor, path);
-
-      // // Check the text before the cursor
-      // const before = Editor.before(editor, selection, { unit: "character" });
-      // const beforeRange = before && Editor.range(editor, before, selection);
-      // const beforeText =
-      //   (beforeRange && Editor.string(editor, beforeRange)) || "";
-
-      // console.log("beforeTexty - ", before);
-
-      // if (beforeText.endsWith("/") || beforeText.includes("/")) {
-      //   // Insert the new character
-      //   insertText(text);
-
-      //   // Calculate the query text
-      //   const query = beforeText.split("/").pop() + text;
-
-      //   // Show or update the dropdown menu
-      //   setTimeout(() => {
-      //     const domSelection = window.getSelection();
-      //     if (!domSelection) return insertText(text);
-      //     const domRange = domSelection.getRangeAt(0);
-      //     const rect = domRange.getBoundingClientRect();
-      //     editor.showDropdownMenu({
-      //       top: rect.top + window.scrollY + 20,
-      //       left: rect.left + window.scrollX,
-      //       query,
-      //     });
-      //   }, 0);
-
-      //   return;
-      // }
-
-      // if (
-      //   text === "/" ||
-      //   (beforeText.startsWith("/") && beforeText.length > 1)
-      // ) {
-      //   // Show the dropdown menu and filter options
-      //   const query = beforeText.slice(1) + text;
-      //   const domSelection = window.getSelection();
-      //   if (!domSelection) return insertText(text);
-      //   const domRange = domSelection.getRangeAt(0);
-      //   const rect = domRange.getBoundingClientRect();
-
-      //   editor.showDropdownMenu({
-      //     top: rect.top + window.scrollY + 20,
-      //     left: rect.left + window.scrollX,
-      //     query,
-      //   });
-      // } else {
-      //   // Hide the dropdown menu on space or enter
-      //   if (text === " " || text === "\n") {
-      //     editor.hideDropdownMenu();
-      //   }
-      // }
-    }
-
-    if (text.endsWith(" ") && selection && Range.isCollapsed(selection)) {
-      const { anchor } = selection;
-      const block = Editor.above(editor, {
-        match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
-      });
-      const path = block ? block[1] : [];
-      const start = Editor.start(editor, path);
-      const range = { anchor, focus: start };
-      const beforeText = Editor.string(editor, range) + text.slice(0, -1);
-      // @ts-ignore
-      const type = SHORTCUTS[beforeText];
-
-      if (type) {
-        Transforms.select(editor, range);
-
-        if (!Range.isCollapsed(range)) {
-          Transforms.delete(editor);
-        }
-
-        const newProperties: Partial<Element> = {
-          type,
-        };
-
-        Transforms.setNodes<Element>(editor, newProperties, {
-          match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
-        });
-
-        console.log("type - ", type);
-
-        if (type === "list-item") {
-          const list: BulletedListElement = {
-            type: "bulleted-list",
-            children: [],
-          };
-          console.log("wrappiong - ");
-          // @ts-ignore
-          Transforms.wrapNodes(editor, list, {
-            match: (n) =>
-              !Editor.isEditor(n) &&
-              Element.isElement(n) &&
-              // @ts-ignore
-              n.type === "list-item",
-          });
-        } else if (type === "list-item-number") {
-          const list = {
-            type: "numbered-list",
-            children: [],
-          };
-          // @ts-ignore
-          Transforms.wrapNodes(editor, list, {
-            match: (n) =>
-              !Editor.isEditor(n) &&
-              Element.isElement(n) &&
-              // @ts-ignore
-              n.type === "list-item-number",
-          });
-        } else if (type === "list-item-alpha") {
-          const list = {
-            type: "alphabet-list",
-            children: [],
-          };
-          // @ts-ignore
-          Transforms.wrapNodes(editor, list, {
-            match: (n) =>
-              !Editor.isEditor(n) &&
-              Element.isElement(n) &&
-              // @ts-ignore
-              n.type === "list-item-alpha",
-          });
-        }
-
-        return;
-      }
-    }
+    //     return;
+    //   }
+    // }
 
     insertText(text);
   };
@@ -272,7 +272,6 @@ const withShortcuts = (editor: Editor) => {
     const block = Editor.above(editor, {
       match: (n: any) => Editor.isBlock(editor, n),
     });
-    console.log("block - ", block);
 
     if (block) {
       const [, path] = block;
@@ -397,6 +396,16 @@ const withShortcuts = (editor: Editor) => {
   editor.insertBreak = () => {
     const { selection } = editor;
     if (selection) {
+      const [tableCell] = Editor.nodes(editor, {
+        // @ts-ignore
+        match: (n) => n.type === "table-cell",
+      });
+
+      if (tableCell) {
+        // Prevent default behavior when inside a table cell
+        return;
+      }
+
       const [match] = Array.from(
         Editor.nodes(editor, {
           match: (n) => Element.isElement(n) && n.type === "list-item",

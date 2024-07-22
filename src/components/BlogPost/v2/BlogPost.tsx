@@ -580,7 +580,10 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 {post?.snippetData?.image && (
                   <BlogImage
                     className="mt-4 w-[77%]"
-                    src={post?.snippetData?.image}
+                    src={
+                      `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                      encodeURIComponent(post?.snippetData?.image)
+                    }
                     style={{
                       aspectRatio: "auto 700 / 453",
                     }}

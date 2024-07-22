@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSlate } from "slate-react";
+import { ReactEditor, useSlate } from "slate-react";
 import { CustomElement } from "../../../types/slate";
-import { Range, Transforms } from "slate";
+import { Range, Text, Transforms } from "slate";
+import { Editor } from "slate";
 
 const options = [
   "Math Formula",
   "Code Snippet",
   "Image",
   "Horizontal Line",
+  "Table",
   "Section Header",
   "Embed Video",
 ];
@@ -15,57 +17,101 @@ const options = [
 const DropdownMenu = () => {
   const [active, setActive] = useState(0);
   const containerRef = useRef<HTMLSpanElement | null>(null);
+  const [show, setShow] = useState(true);
   const activeRef = useRef<HTMLDivElement | null>(null);
-  const [position, setPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
   // const dropdownRef = useRef();
   const editor = useSlate();
 
   useEffect(() => {
-    const handleShowDropdownMenu = (event: any) => {
-      setPosition(event.detail);
-      setActive(0);
-      setFilteredOptions(
-        options.filter((option) =>
-          option.toLowerCase().startsWith(event.detail.query?.toLowerCase?.())
-        )
-      );
-    };
-
-    const handleHideDropdownMenu = () => {
-      setPosition(null);
-      setFilteredOptions([]);
-    };
-
-    window.addEventListener("show-dropdown-menu", handleShowDropdownMenu);
-    window.addEventListener("hide-dropdown-menu", handleHideDropdownMenu);
-
-    return () => {
-      window.removeEventListener("show-dropdown-menu", handleShowDropdownMenu);
-      window.removeEventListener("hide-dropdown-menu", handleHideDropdownMenu);
-    };
-  }, [position]);
-
-  // Handle Outside Click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    if (!show) return;
+    function handleMouseDown(e: MouseEvent) {
+      console.log("handleMouseDOwn - ");
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as HTMLElement)
+        !containerRef.current.contains(e.target as HTMLElement)
       ) {
-        setPosition(null);
+        // Editor.removeMark(editor, "dropdown");
+        setShow(false);
+        Transforms.deselect(editor);
+        ReactEditor.deselect(editor);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    function handleKeyUp(e: KeyboardEvent) {
+      const [node] = Array.from(
+        Editor.nodes(editor, {
+          //@ts-ignore
+          match: (n) => Text.isText(n) && n.dropdown === true,
+          at: [],
+          mode: "all",
+        })
+      );
+
+      const [textNode] = node;
+
+      // @ts-ignore
+      console.log("textNodde - ", textNode, textNode.text);
+
+      setFilteredOptions(
+        options.filter((option) =>
+          // @ts-ignore
+          option.toLowerCase().includes(textNode.text.slice(1).toLowerCase())
+        )
+      );
+    }
+
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("mousedown", handleMouseDown);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [containerRef]);
+  }, [show]);
+
+  // useEffect(() => {
+  //   const handleShowDropdownMenu = (event: any) => {
+  //     setPosition(event.detail);
+  //     setActive(0);
+  //     setFilteredOptions(
+  //       options.filter((option) =>
+  //         option.toLowerCase().startsWith(event.detail.query?.toLowerCase?.())
+  //       )
+  //     );
+  //   };
+
+  //   const handleHideDropdownMenu = () => {
+  //     setPosition(null);
+  //     setFilteredOptions([]);
+  //   };
+
+  //   window.addEventListener("show-dropdown-menu", handleShowDropdownMenu);
+  //   window.addEventListener("hide-dropdown-menu", handleHideDropdownMenu);
+
+  //   return () => {
+  //     window.removeEventListener("show-dropdown-menu", handleShowDropdownMenu);
+  //     window.removeEventListener("hide-dropdown-menu", handleHideDropdownMenu);
+  //   };
+  // }, [position]);
+
+  // Handle Outside Click
+  // useEffect(() => {
+  //   function handleClickOutside(event: MouseEvent) {
+  //     if (
+  //       containerRef.current &&
+  //       !containerRef.current.contains(event.target as HTMLElement)
+  //     ) {
+  //       setPosition(null);
+  //     }
+  //   }
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [containerRef]);
 
   const onSelectOption = (option: string) => {
     // Code Block
@@ -154,6 +200,17 @@ const DropdownMenu = () => {
           type: "enter-embed-video-url-ui",
           children: [{ text: "" }],
         };
+      } else if (option === "Table") {
+        customElement = {
+          type: "table",
+          children: Array.from({ length: 2 }, () => ({
+            type: "table-row",
+            children: Array.from({ length: 2 }, () => ({
+              type: "table-cell",
+              children: [{ text: "" }],
+            })),
+          })),
+        };
       }
 
       Transforms.deselect(editor);
@@ -172,7 +229,7 @@ const DropdownMenu = () => {
   };
 
   useEffect(() => {
-    if (!position) return;
+    if (!show) return;
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
@@ -199,7 +256,7 @@ const DropdownMenu = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [filteredOptions, position, active]);
+  }, [filteredOptions, show, active]);
 
   useEffect(() => {
     if (activeRef.current) {
@@ -210,14 +267,10 @@ const DropdownMenu = () => {
     }
   }, [active]);
 
-  if (!position) return null;
-
-  return (
+  return !show ? null : (
     <span
       ref={containerRef}
       style={{
-        top: position.top,
-        left: position.left,
         zIndex: 1000,
       }}
       className="absolute shadow-2xl left-0 top-6 z-10 block max-h-64 w-64 select-none overflow-y-auto rounded-md bg-base-100 bg-white p-2 overflow-auto"
@@ -246,3 +299,51 @@ const DropdownMenu = () => {
 };
 
 export default DropdownMenu;
+
+export function StaticDropdownMenu() {
+  const dropdownRef = useRef<HTMLSpanElement>(null);
+  const editor = useSlate();
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    if (!show) return;
+    function handleMouseDown(e: MouseEvent) {
+      console.log("handleMouseDOwn - ");
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as HTMLElement)
+      ) {
+        // Editor.removeMark(editor, "dropdown");
+        setShow(false);
+        Transforms.deselect(editor);
+        ReactEditor.deselect(editor);
+      }
+    }
+
+    window.addEventListener("mousedown", handleMouseDown);
+
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [show]);
+
+  function handleClickOnItem() {
+    const nodes = Array.from(
+      Editor.nodes(editor, {
+        //@ts-ignore
+        match: (n) => Text.isText(n) && n.dropdown === true,
+        at: [],
+        mode: "all",
+      })
+    );
+
+    console.log("nodes - ", nodes);
+  }
+
+  return !show ? null : (
+    <span ref={dropdownRef} className="absolute top-full left-0">
+      <p onClick={handleClickOnItem}>Nice one</p>
+      <p>Thanks to one</p>
+    </span>
+  );
+}

@@ -2413,6 +2413,7 @@ font-size: 180px;
   --antd-arrow-background-color: #fcfae4;
 }
 
+
 .fontSize_overlayClassName > .ant-popover-content > .ant-popover-inner {
   padding: 0;
 }
@@ -2647,7 +2648,8 @@ font-size: 180px;
   border-right: 2px solid #4b5563;
 }
 
-[data-placeholder]::before {
+[data-placeholder]::before,
+[align="left"][data-placeholder]::before {
   content: attr(data-placeholder);
   color: #d3d3d3;
   display: block;
@@ -2656,4 +2658,31 @@ font-size: 180px;
   transform: translateY(-50%);
   font-family: Campton, sans-serif;
   cursor: text;
+  white-space: nowrap;
+}
+
+[align="center"][data-placeholder]::before {
+  content: attr(data-placeholder);
+  color: #d3d3d3;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Campton, sans-serif;
+  cursor: text;
+  white-space: nowrap;
+}
+
+[align="right"][data-placeholder]::before {
+  content: attr(data-placeholder);
+  color: #d3d3d3;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translate(-100%, -50%);
+  font-family: Campton, sans-serif;
+  cursor: text;
+  white-space: nowrap;
 }

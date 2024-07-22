@@ -8,12 +8,20 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Descendant, Editor, Element, Node, createEditor } from "slate";
+import {
+  Descendant,
+  Editor,
+  Element,
+  Node,
+  Text,
+  Transforms,
+  createEditor,
+} from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 import withShortcuts, { SHORTCUTS } from "./utils/withShortcuts";
 import CustomSlateElement from "./CustomSlateElement";
-import DropdownMenu from "./DropdownMenu";
+import DropdownMenu, { StaticDropdownMenu } from "./DropdownMenu";
 import {
   exportSlateState,
   getFirstExistingText,
@@ -111,6 +119,8 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
   const renderLeaf = (props: any) => {
     let { attributes, children, leaf } = props;
 
+    console.log("props - ", props);
+
     if (leaf.bold) {
       children = <strong>{children}</strong>;
     }
@@ -132,6 +142,15 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         <LinkUrlComponent key={leaf.link} {...props}>
           {children}
         </LinkUrlComponent>
+      );
+    }
+
+    if (leaf.dropdown) {
+      return (
+        <span {...attributes} className="relative">
+          <span>{children}</span>
+          <DropdownMenu />
+        </span>
       );
     }
 
@@ -195,10 +214,12 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
 
     // const has = hasContent(editor);
 
-    const text = getFirstExistingText(value);
-    const src = getFirstImage(value);
-    console.log("text - ", text);
-    console.log("src - ", src);
+    console.log("value - ", value);
+
+    // const text = getFirstExistingText(value);
+    // const src = getFirstImage(value);
+    // console.log("text - ", text);
+    // console.log("src - ", src);
   }
 
   const [key, setKey] = useState(0);
@@ -222,8 +243,6 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     },
   }));
 
-  console.log("value - ", value);
-
   return (
     <div key={key} className="minerva-slate min-h-[350px]">
       <Slate
@@ -243,11 +262,11 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
           spellCheck
           autoFocus
         />
-        {/* <div className="mt-4 flex gap-4"> */}
-        {/* <button onClick={handleSave}>Save</button> */}
-        {/* <button onClick={handleLoad}>Load</button> */}
-        {/* </div> */}
-        {!readonly && <DropdownMenu />}
+        <div className="mt-4 flex gap-4">
+          <button onClick={handleSave}>Save</button>
+          {/* <button onClick={handleLoad}>Load</button> */}
+        </div>
+        {/* {!readonly && <DropdownMenu />} */}
       </Slate>
     </div>
   );
