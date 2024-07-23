@@ -211,6 +211,7 @@ const DropdownMenu = () => {
       // Adjust the path to point to the root
       const rootPath = [path[0]];
       let shouldFocus = false;
+      let shouldFocusNext = false;
 
       // Replace the current element with the custom element
       let customElement: CustomElement = {
@@ -237,6 +238,7 @@ const DropdownMenu = () => {
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
       } else if (option.isDivider) {
+        shouldFocusNext = true;
         customElement = {
           type: "horizontal-line",
           children: [{ text: "" }],
@@ -321,6 +323,9 @@ const DropdownMenu = () => {
 
       if (shouldFocus) {
         Transforms.select(editor, Editor.end(editor, rootPath));
+      }
+      if (shouldFocusNext && hasNextPath(editor, rootPath)) {
+        Transforms.select(editor, Editor.start(editor, Path.next(rootPath)));
       }
 
       // Move the cursor to the newly created element

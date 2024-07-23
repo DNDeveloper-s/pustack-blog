@@ -76,7 +76,10 @@ import {
 } from "firebase/functions";
 import SlateEditor from "@/components/SlateEditor/SlateEditor";
 import { CustomElement } from "../../../../types/slate";
-import { getSections } from "@/components/SlateEditor/utils/helpers";
+import {
+  extractTextFromEditor,
+  getSections,
+} from "@/components/SlateEditor/utils/helpers";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -341,7 +344,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   useEffect(() => {
     if (!post?.sections || !user || !post?.id || readDoc.current) return;
     const readingTimeInSeconds =
-      readingTime(Section.mergedContent(post.sections)).minutes * 60;
+      readingTime(
+        post.nodes
+          ? extractTextFromEditor(post.nodes)
+          : Section.mergedContent(post.sections)
+      ).minutes * 60;
     // Check if the pageTimespent is 20% more than the reading time
     if (pageTimeSpent > readingTimeInSeconds * 0.2) {
       const docRef = doc(db, "users", user.uid, "history", post.id);
@@ -489,7 +496,13 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 <div className="flex items-center gap-3">
                   {post?.sections && (
                     <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                      {readingTime(Section.mergedContent(post.sections)).text}
+                      {
+                        readingTime(
+                          post.nodes
+                            ? extractTextFromEditor(post.nodes)
+                            : Section.mergedContent(post.sections)
+                        ).text
+                      }
                     </span>
                   )}
                   {!isBookMarked ? (

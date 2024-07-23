@@ -131,3 +131,19 @@ export const hasNextPath = (editor: Editor, currentPath: Path) => {
   const nextPath = Path.next(currentPath);
   return Node.has(editor, nextPath);
 };
+
+/**
+ *
+ * @param editor
+ * @returns
+ */
+export const extractTextFromEditor = (editor: Editor | any[]) => {
+  if (editor instanceof Array) {
+    return editor.map((node) => Node.string(node)).join(" ");
+  }
+  if (typeof editor === "object") {
+    const { children } = editor;
+    return children.map((node) => Node.string(node)).join(" ");
+  }
+  return "";
+};

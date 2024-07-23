@@ -33,6 +33,7 @@ import readingTime from "reading-time";
 import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
 import { Descendant } from "slate";
 import {
+  extractTextFromEditor,
   getFirstExistingText,
   getFirstImage,
 } from "@/components/SlateEditor/utils/helpers";
@@ -813,7 +814,11 @@ export const postConverter = {
       design: post.snippetDesign,
       displayTitle: post.displayTitle ?? post.title,
       displayContent: post.displayContent ?? "",
-      read_time: readingTime(Section.mergedContent(post.sections)).text,
+      read_time: readingTime(
+        post.nodes
+          ? extractTextFromEditor(post.nodes)
+          : Section.mergedContent(post.sections)
+      ).text,
       sections: Section.toPlainObject(post.sections),
       meta: {
         description: post.snippetData?.content ?? null,
