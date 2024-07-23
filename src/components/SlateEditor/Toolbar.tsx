@@ -12,13 +12,14 @@ import { PiListBulletsDuotone, PiListNumbersDuotone } from "react-icons/pi";
 import { RiLinkUnlinkM } from "react-icons/ri";
 import { Editor, Element, Text, Transforms } from "slate";
 import { ReactEditor, useSlate } from "slate-react";
-import SlateColorPopover from "./SlateColorPicker";
+import SlateColorPopover, { SlateColorGroup } from "./SlateColorPicker";
 import { MdFormatColorText } from "react-icons/md";
 import { IoMdColorFill } from "react-icons/io";
 import { applyLink } from "./LinkUrlComponent";
 import FontSize from "./FontSize";
 import { Popover } from "antd";
 import { useEffect, useState } from "react";
+import { Range } from "slate";
 
 export type ToolType =
   | "bold"
@@ -130,8 +131,12 @@ const isBlockActive = (editor: Editor, format: any) => {
       !Editor.isEditor(n) &&
       Element.isElement(n) &&
       (n.type === "paragraph" ||
-        n.type === "heading" ||
+        n.type === "heading-one" ||
         n.type === "heading-two" ||
+        n.type === "heading-three" ||
+        n.type === "heading-four" ||
+        n.type === "heading-five" ||
+        n.type === "heading-six" ||
         n.type === "block-quote") &&
       n.align === format,
   });
@@ -219,6 +224,25 @@ const applyTextColor = (editor: Editor, color: string) => {
 };
 
 const applyBackgroundColor = (editor: Editor, color: string) => {
+  const { selection } = editor;
+
+  if (selection && Range.isCollapsed(selection)) {
+    const [tableCell] = Array.from(
+      Editor.nodes(editor, {
+        // @ts-ignore
+        match: (n) => n.type === "table-cell",
+      })
+    );
+
+    if (tableCell && tableCell[0]) {
+      const cellPath = ReactEditor.findPath(editor, tableCell[0]);
+      // @ts-ignore
+      Transforms.setNodes(editor, { backgroundColor: color }, { at: cellPath });
+      Transforms.select(editor, Editor.end(editor, cellPath));
+      return;
+    }
+  }
+
   Editor.addMark(editor, "backgroundColor", color);
 };
 
@@ -319,13 +343,18 @@ export default function Toolbar(props: ToolbarProps) {
       ))}
       <div className="flex flex-wrap gap-0">
         <LinkTool />
-        <SlateColorPopover
+        {/* <SlateColorPopover
           icon={<MdFormatColorText />}
           onApply={(color: string) => applyTextColor(editor, color)}
         />
         <SlateColorPopover
           icon={<IoMdColorFill />}
           onApply={(color: string) => applyBackgroundColor(editor, color)}
+        /> */}
+        <SlateColorGroup
+          applyTextColor={applyTextColor}
+          applyBackgroundColor={applyBackgroundColor}
+          editor={editor}
         />
         <FontSize />
       </div>

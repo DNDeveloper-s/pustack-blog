@@ -50,6 +50,21 @@ const allowedTypes = [
 const deleteElementAndFocusNext = (editor: Editor, path: Path) => {
   const nextPath = Path.next(path);
 
+  // Check if there is only one node in the editor
+  if (editor.children.length === 1 && Path.equals(path, [0])) {
+    Transforms.removeNodes(editor, { at: path });
+    Transforms.insertNodes(
+      editor,
+      {
+        type: "paragraph",
+        children: [{ text: "" }],
+      },
+      { at: [0] }
+    );
+    Transforms.select(editor, [0, 0]);
+    return;
+  }
+
   // Check if the next path exists, otherwise move focus to the previous element
   if (Node.has(editor, nextPath)) {
     Transforms.removeNodes(editor, { at: path });
@@ -186,10 +201,22 @@ const CustomSlateElement = (props: any) => {
     </p>
   );
 
+  const showPlaceholder =
+    textContent === "" && !readonly && isSelectionInThisElement;
+
   switch (element.type) {
     case "block-quote":
       el = (
-        <blockquote {...attributes} {...element}>
+        <blockquote
+          {...attributes}
+          {...element}
+          className="minerva-blockquote-1 relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the block quote formatting"
+              : ""
+          }
+        >
           {children}
         </blockquote>
       );
@@ -221,37 +248,98 @@ const CustomSlateElement = (props: any) => {
       break;
     case "heading-one":
       el = (
-        <h1 {...attributes} {...element}>
+        <h1
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
           {children}
         </h1>
       );
       break;
     case "heading-two":
       el = (
-        <h2 {...attributes} {...element}>
+        <h2
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
           {children}
         </h2>
       );
       break;
     case "heading-three":
       el = (
-        <h3 {...attributes} {...element}>
+        <h3
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
           {children}
         </h3>
       );
       break;
     case "heading-four":
       el = (
-        <h4 {...attributes} {...element}>
+        <h4
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
           {children}
         </h4>
       );
       break;
     case "heading-five":
       el = (
-        <h5 {...attributes} {...element}>
+        <h5
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
           {children}
         </h5>
+      );
+      break;
+    case "heading-six":
+      el = (
+        <h6
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder
+              ? "Hit Backspace to remove the header formatting"
+              : ""
+          }
+        >
+          {children}
+        </h6>
       );
       break;
     case "table":
@@ -272,18 +360,18 @@ const CustomSlateElement = (props: any) => {
           setHoveredCellPath={setHoveredCellPath}
         />
       );
-    case "heading-six":
-      el = (
-        <h6 {...attributes} {...element}>
-          {children}
-        </h6>
-      );
-      break;
     case "list-item":
     case "list-item-number":
     case "list-item-alpha":
       el = (
-        <li {...attributes} {...element}>
+        <li
+          {...attributes}
+          {...element}
+          className="relative"
+          data-placeholder={
+            showPlaceholder ? "Hit Backspace to remove the list item" : ""
+          }
+        >
           {children}
         </li>
       );

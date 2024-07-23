@@ -13,6 +13,7 @@ import {
   Editor,
   Element,
   Node,
+  Path,
   Text,
   Transforms,
   createEditor,
@@ -172,6 +173,76 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     [editor]
   );
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const { selection } = editor;
+
+      if (selection) {
+        const [cellNode, cellPath] = Array.from(
+          Editor.above(editor, {
+            // @ts-ignore
+            match: (n) => n.type === "table-cell",
+          }) ?? []
+        );
+
+        if (cellNode) {
+          // @ts-ignore
+          const rowPath = Path.parent(cellPath);
+          const tablePath = Path.parent(rowPath);
+          // @ts-ignore
+          const colIndex = cellPath[cellPath.length - 1];
+          const rowIndex = rowPath[rowPath.length - 1];
+
+          const tableNode = Editor.node(editor, tablePath)[0];
+
+          if (event.shiftKey) {
+            // Handle Shift + Tab (move to the previous cell)
+            if (colIndex === 0) {
+              if (rowIndex > 0) {
+                const prevRowPath = Path.previous(rowPath);
+                const prevCellPath = [
+                  ...prevRowPath,
+                  // @ts-ignore
+                  tableNode.children[prevRowPath[prevRowPath.length - 1]]
+                    .children.length - 1,
+                ];
+                Transforms.select(editor, Editor.end(editor, prevCellPath));
+                ReactEditor.focus(editor);
+              }
+            } else {
+              const prevCellPath = [...rowPath, colIndex - 1];
+              Transforms.select(editor, Editor.end(editor, prevCellPath));
+              ReactEditor.focus(editor);
+            }
+          } else {
+            // Handle Tab (move to the next cell)
+            const isLastCellInRow =
+              // @ts-ignore
+              colIndex === tableNode.children[rowIndex].children.length - 1;
+
+            if (isLastCellInRow) {
+              const isLastRowInTable =
+                // @ts-ignore
+                rowIndex === tableNode.children.length - 1;
+
+              if (!isLastRowInTable) {
+                const nextRowPath = Path.next(rowPath);
+                const nextCellPath = [...nextRowPath, 0];
+                Transforms.select(editor, Editor.end(editor, nextCellPath));
+                ReactEditor.focus(editor);
+              }
+            } else {
+              const nextCellPath = [...rowPath, colIndex + 1];
+              Transforms.select(editor, Editor.end(editor, nextCellPath));
+              ReactEditor.focus(editor);
+            }
+          }
+        }
+      }
+    }
+  };
+
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
       queueMicrotask(() => {
@@ -256,17 +327,13 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         {!readonly && <Toolbar />}
         <Editable
           readOnly={readonly}
-          // onDOMBeforeInput={handleDOMBeforeInput}
+          onDOMBeforeInput={handleDOMBeforeInput}
+          onKeyDown={handleKeyDown}
           renderElement={renderElement}
           renderLeaf={renderLeaf}
           spellCheck
           autoFocus
         />
-        <div className="mt-4 flex gap-4">
-          <button onClick={handleSave}>Save</button>
-          {/* <button onClick={handleLoad}>Load</button> */}
-        </div>
-        {/* {!readonly && <DropdownMenu />} */}
       </Slate>
     </div>
   );

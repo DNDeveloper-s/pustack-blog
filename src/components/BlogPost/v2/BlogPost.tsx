@@ -579,10 +579,11 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               </figure> */}
                 {post?.snippetData?.image && (
                   <BlogImage
-                    className="mt-4 w-[77%]"
+                    className="mt-4 w-[77%] cover-figure"
                     src={
-                      `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
-                      encodeURIComponent(post?.snippetData?.image)
+                      post?.snippetData?.image
+                      // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                      // encodeURIComponent(post?.snippetData?.image)
                     }
                     style={{
                       aspectRatio: "auto 700 / 453",

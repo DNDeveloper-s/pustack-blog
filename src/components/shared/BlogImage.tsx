@@ -60,7 +60,7 @@ export default function BlogImage({
       alt="Image Preview"
       {...imageProps}
       className={
-        "max-w-full max-h-full w-auto h-auto object-contain " +
+        "max-w-full max-h-full w-full h-full object-cover " +
         (imageProps.className ?? "")
       }
     />

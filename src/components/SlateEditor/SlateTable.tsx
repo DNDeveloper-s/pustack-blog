@@ -2,7 +2,7 @@ import { Popover } from "antd";
 import { useState } from "react";
 import { FaGripLines, FaGripLinesVertical } from "react-icons/fa6";
 import { Editor, Node, Path, Transforms } from "slate";
-import { useSlate } from "slate-react";
+import { ReactEditor, useSlate } from "slate-react";
 
 export const TableElement = ({ attributes, children, element }: any) => {
   return (
@@ -42,6 +42,45 @@ const insertColumn = (
   });
 };
 
+const duplicateColumn = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const colIndex = cellPath[cellPath.length - 1];
+
+  const [tableNode] = Editor.node(editor, tablePath);
+
+  Editor.withoutNormalizing(editor, () => {
+    // @ts-ignore
+    tableNode.children.forEach((row, rowIndex) => {
+      const cellPathToDuplicate = [...tablePath, rowIndex, colIndex];
+      const newCellPath = [...tablePath, rowIndex, colIndex + 1];
+
+      const [cellToDuplicate] = Editor.node(editor, cellPathToDuplicate);
+
+      // Insert a duplicate of the current cell
+      Transforms.insertNodes(editor, cellToDuplicate, { at: newCellPath });
+    });
+  });
+};
+
+const duplicateRow = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const rowIndex = rowPath[rowPath.length - 1];
+
+  const [tableNode] = Editor.node(editor, tablePath);
+
+  Editor.withoutNormalizing(editor, () => {
+    const rowToDuplicatePath = [...tablePath, rowIndex];
+    const newRowPath = [...tablePath, rowIndex + 1];
+
+    const [rowToDuplicate] = Editor.node(editor, rowToDuplicatePath);
+
+    // Insert a duplicate of the current row
+    Transforms.insertNodes(editor, rowToDuplicate, { at: newRowPath });
+  });
+};
+
 const insertRow = (
   editor: Editor,
   tablePath: Path,
@@ -71,6 +110,122 @@ const insertRow = (
   Transforms.insertNodes(editor, newRow, { at: insertPath });
 };
 
+const moveColumnRight = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const colIndex = cellPath[cellPath.length - 1];
+
+  const [tableNode] = Editor.node(editor, tablePath);
+  // @ts-ignore
+  const isLastColumn = colIndex === tableNode.children[0].children.length - 1;
+
+  if (!isLastColumn) {
+    Editor.withoutNormalizing(editor, () => {
+      // @ts-ignore
+      tableNode.children.forEach((row, rowIndex) => {
+        const currentCellPath = [...tablePath, rowIndex, colIndex];
+        const nextCellPath = [...tablePath, rowIndex, colIndex + 1];
+
+        const [currentCell] = Editor.node(editor, currentCellPath);
+
+        Transforms.removeNodes(editor, { at: currentCellPath });
+        Transforms.insertNodes(editor, currentCell, { at: nextCellPath });
+      });
+    });
+  }
+};
+
+const moveColumnLeft = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const colIndex = cellPath[cellPath.length - 1];
+
+  if (colIndex > 0) {
+    const [tableNode] = Editor.node(editor, tablePath);
+    Editor.withoutNormalizing(editor, () => {
+      // @ts-ignore
+      tableNode.children.forEach((row, rowIndex) => {
+        const currentCellPath = [...tablePath, rowIndex, colIndex];
+        const prevCellPath = [...tablePath, rowIndex, colIndex - 1];
+
+        const [currentCell] = Editor.node(editor, currentCellPath);
+
+        // Now remove the current cell's original position
+        Transforms.removeNodes(editor, { at: currentCellPath });
+        // Insert the current cell at the previous cell's position
+        Transforms.insertNodes(editor, currentCell, { at: prevCellPath });
+      });
+    });
+  }
+};
+
+const moveRowUp = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const rowIndex = rowPath[rowPath.length - 1];
+
+  if (rowIndex > 0) {
+    const [tableNode] = Editor.node(editor, tablePath);
+    Editor.withoutNormalizing(editor, () => {
+      const prevRowPath = [...tablePath, rowIndex - 1];
+      const [currentRow] = Editor.node(editor, rowPath);
+
+      // Remove the current row from its original position
+      Transforms.removeNodes(editor, { at: rowPath });
+
+      // Insert the current row at the previous row's position
+      Transforms.insertNodes(editor, currentRow, { at: prevRowPath });
+    });
+  }
+};
+
+const moveRowDown = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const rowIndex = rowPath[rowPath.length - 1];
+
+  const [tableNode] = Editor.node(editor, tablePath);
+  // @ts-ignore
+  const isLastRow = rowIndex === tableNode.children.length - 1;
+
+  if (!isLastRow) {
+    Editor.withoutNormalizing(editor, () => {
+      const nextRowPath = [...tablePath, rowIndex + 1];
+      const [currentRow] = Editor.node(editor, rowPath);
+
+      // Remove the current row from its original position
+      Transforms.removeNodes(editor, { at: rowPath });
+
+      // Insert the current row at the next row's position
+      Transforms.insertNodes(editor, currentRow, { at: nextRowPath });
+    });
+  }
+};
+
+const deleteRow = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+
+  Editor.withoutNormalizing(editor, () => {
+    Transforms.removeNodes(editor, { at: rowPath });
+  });
+};
+
+const deleteColumn = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const colIndex = cellPath[cellPath.length - 1];
+
+  const [tableNode] = Editor.node(editor, tablePath);
+
+  Editor.withoutNormalizing(editor, () => {
+    // @ts-ignore
+    tableNode.children.forEach((row, rowIndex) => {
+      const cellPathToRemove = [...tablePath, rowIndex, colIndex];
+      Transforms.removeNodes(editor, { at: cellPathToRemove });
+    });
+  });
+};
+
 const isFirstCellInRow = (editor: Editor, cellPath: Path) => {
   const colIndex = cellPath[cellPath.length - 1];
   return colIndex === 0;
@@ -84,6 +239,9 @@ const isFirstCellInColumn = (editor: Editor, cellPath: Path) => {
 const colOptions = [
   { id: "insert-left", label: "Insert Left" },
   { id: "insert-right", label: "Insert Right" },
+  { id: "move-left", label: "Move Left" },
+  { id: "move-right", label: "Move Right" },
+  { id: "duplicate", label: "Duplicate" },
   { id: "delete", label: "Delete" },
 ];
 
@@ -106,6 +264,9 @@ function TableColumnOptions({ onClick }: { onClick: (option: any) => void }) {
 const rowOptions = [
   { id: "insert-above", label: "Insert Above" },
   { id: "insert-below", label: "Insert Below" },
+  { id: "move-up", label: "Move Up" },
+  { id: "move-down", label: "Move Down" },
+  { id: "duplicate", label: "Duplicate" },
   { id: "delete", label: "Delete" },
 ];
 
@@ -124,6 +285,52 @@ function TableRowOptions({ onClick }: { onClick: (option: any) => void }) {
     </div>
   );
 }
+
+const setHoverState = (editor: Editor, cellPath: Path) => {
+  const rowPath = Path.parent(cellPath);
+  const tablePath = Path.parent(rowPath);
+  const colIndex = cellPath[cellPath.length - 1];
+  const rowIndex = rowPath[rowPath.length - 1];
+
+  // Set hover state on the first cell of the column
+  const tableNode = Editor.node(editor, tablePath)[0];
+  //@ts-ignore
+  const columnCellPath = [...tablePath, 0, colIndex];
+  const { history } = editor;
+  const { undos } = history;
+
+  history.undos = [];
+
+  // @ts-ignore
+  Transforms.setNodes(editor, { hoverColumn: true }, { at: columnCellPath });
+
+  history.undos = undos;
+
+  const rowCellPath = [...tablePath, rowIndex, 0];
+  //@ts-ignore
+  Transforms.setNodes(editor, { hoverRow: true }, { at: rowCellPath });
+
+  // ReactEditor.focus(editor);
+};
+
+const clearHoverState = (editor: Editor) => {
+  const { history } = editor;
+  const { undos } = history;
+
+  history.undos = [];
+
+  Transforms.setNodes(
+    editor,
+    // @ts-ignore
+    { hoverColumn: null, hoverRow: null },
+    // @ts-ignore
+    { match: (n) => n.type === "table-cell", at: [] }
+  );
+
+  history.undos = undos;
+
+  // ReactEditor.focus(editor);
+};
 
 export const TableCellElement = ({
   attributes,
@@ -150,37 +357,37 @@ export const TableCellElement = ({
     if (openCol || openRow) {
       return;
     }
-    setHoveredCellPath(cellPath);
+    setHoverState(editor, cellPath);
   };
 
   const handleMouseLeave = () => {
     if (openCol || openRow) {
       return;
     }
-    setHoveredCellPath(null);
+    clearHoverState(editor);
   };
 
   const colIndex = cellPath[cellPath.length - 1];
   const rowIndex = cellPath[cellPath.length - 2];
 
-  if (rowIndex === 0) {
-    console.log("First row - ", cellPath);
-  }
+  // if (rowIndex === 0) {
+  //   console.log("First row - ", cellPath);
+  // }
 
-  if (colIndex === 0) {
-    console.log("First column - ", cellPath);
-  }
+  // if (colIndex === 0) {
+  //   console.log("First column - ", cellPath);
+  // }
 
-  console.log("hoveredCellPath - ", hoveredCellPath);
+  // console.log("hoveredCellPath - ", hoveredCellPath);
 
-  const isFirstCellInHoveredColumn =
-    hoveredCellPath &&
-    hoveredCellPath[hoveredCellPath.length - 1] === colIndex &&
-    rowIndex === 0;
-  const isFirstCellInHoveredRow =
-    hoveredCellPath &&
-    hoveredCellPath[hoveredCellPath.length - 2] === rowIndex &&
-    colIndex === 0;
+  // const isFirstCellInHoveredColumn =
+  //   hoveredCellPath &&
+  //   hoveredCellPath[hoveredCellPath.length - 1] === colIndex &&
+  //   rowIndex === 0;
+  // const isFirstCellInHoveredRow =
+  //   hoveredCellPath &&
+  //   hoveredCellPath[hoveredCellPath.length - 2] === rowIndex &&
+  //   colIndex === 0;
 
   const handleOpenColChange = (open: boolean) => {
     setOpenCol(open);
@@ -195,6 +402,14 @@ export const TableCellElement = ({
       insertColumn(editor, tablePath, colIndex, "left");
     } else if (option.id === "insert-right") {
       insertColumn(editor, tablePath, colIndex, "right");
+    } else if (option.id === "move-left") {
+      moveColumnLeft(editor, cellPath);
+    } else if (option.id === "move-right") {
+      moveColumnRight(editor, cellPath);
+    } else if (option.id === "delete") {
+      deleteColumn(editor, cellPath);
+    } else if (option.id === "duplicate") {
+      duplicateColumn(editor, cellPath);
     }
     setOpenCol(false);
   };
@@ -204,9 +419,20 @@ export const TableCellElement = ({
       insertRow(editor, tablePath, rowIndex, "above");
     } else if (option.id === "insert-below") {
       insertRow(editor, tablePath, rowIndex, "below");
+    } else if (option.id === "move-up") {
+      moveRowUp(editor, cellPath);
+    } else if (option.id === "move-down") {
+      moveRowDown(editor, cellPath);
+    } else if (option.id === "delete") {
+      deleteRow(editor, cellPath);
+    } else if (option.id === "duplicate") {
+      duplicateRow(editor, cellPath);
     }
     setOpenRow(false);
   };
+
+  const isFirstCellInHoveredColumn = element.hoverColumn;
+  const isFirstCellInHoveredRow = element.hoverRow;
 
   return (
     <td
@@ -214,59 +440,68 @@ export const TableCellElement = ({
       className="border relative border-slate-400 px-3 py-1.5"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={{
+        backgroundColor: element.backgroundColor ?? "transparent",
+      }}
     >
-      <div
-        className={
-          "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
-          (isFirstCellInHoveredColumn ? "opacity-100" : "opacity-0")
-        }
-        contentEditable={false}
-      >
-        <Popover
-          content={<TableColumnOptions onClick={handleColClick} />}
-          trigger="click"
-          open={openCol}
-          onOpenChange={handleOpenColChange}
-          placement={"bottomLeft"}
-          overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
-          overlayInnerStyle={{
-            background: "var(--antd-arrow-background-color)",
-          }}
-          style={{ padding: 0 }}
+      {isFirstCellInHoveredColumn && (
+        <div
+          className={
+            "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
+            (isFirstCellInHoveredColumn ? "opacity-100" : "opacity-0")
+          }
+          contentEditable={false}
         >
-          <div className="cursor-pointer">
-            <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
-              <FaGripLines />
+          <Popover
+            content={<TableColumnOptions onClick={handleColClick} />}
+            trigger="hover"
+            // open={openCol}
+            // onOpenChange={handleOpenColChange}
+            placement={"bottomLeft"}
+            overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
+            overlayInnerStyle={{
+              background: "var(--antd-arrow-background-color)",
+            }}
+            style={{ padding: 0 }}
+          >
+            <div className="cursor-pointer">
+              <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
+                <FaGripLines />
+              </div>
             </div>
-          </div>
-        </Popover>
-      </div>
-      <div
-        className={
-          "absolute bottom-0 left-[-0.9rem] top-0 my-auto h-min w-min space-y-1 " +
-          (isFirstCellInHoveredRow ? "opacity-100" : "opacity-0")
-        }
-        contentEditable={false}
-      >
-        <Popover
-          content={<TableRowOptions onClick={handleRowClick} />}
-          trigger="click"
-          open={openRow}
-          onOpenChange={handleOpenRowChange}
-          placement={"bottomLeft"}
-          overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
-          overlayInnerStyle={{
-            background: "var(--antd-arrow-background-color)",
-          }}
-          style={{ padding: 0 }}
+          </Popover>
+        </div>
+      )}
+      {isFirstCellInHoveredRow && (
+        <div
+          className={
+            "absolute bottom-0 left-[-0.9rem] top-0 my-auto h-min w-min space-y-1 " +
+            (isFirstCellInHoveredRow
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none")
+          }
+          contentEditable={false}
         >
-          <div className="cursor-pointer">
-            <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
-              <FaGripLinesVertical />
+          <Popover
+            content={<TableRowOptions onClick={handleRowClick} />}
+            trigger="hover"
+            // open={openRow}
+            // onOpenChange={handleOpenRowChange}
+            placement={"bottomLeft"}
+            overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
+            overlayInnerStyle={{
+              background: "var(--antd-arrow-background-color)",
+            }}
+            style={{ padding: 0 }}
+          >
+            <div className="cursor-pointer">
+              <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
+                <FaGripLinesVertical />
+              </div>
             </div>
-          </div>
-        </Popover>
-      </div>
+          </Popover>
+        </div>
+      )}
       {children}
       {/* <div>
         <button

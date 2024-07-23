@@ -1,4 +1,4 @@
-import { Descendant, Editor, Location, Text, Transforms } from "slate";
+import { Descendant, Editor, Location, Path, Text, Transforms } from "slate";
 import { SlateContextValue } from "slate-react/dist/hooks/use-slate";
 import { CustomElement } from "../../../../types/slate";
 import { Node } from "slate";
@@ -119,4 +119,15 @@ export const getSections = (values: Descendant[]) => {
     }
   }
   return sections;
+};
+
+/**
+ *
+ * @param editor {Editor}
+ * @param currentPath {Path}
+ * @returns {boolean}
+ */
+export const hasNextPath = (editor: Editor, currentPath: Path) => {
+  const nextPath = Path.next(currentPath);
+  return Node.has(editor, nextPath);
 };

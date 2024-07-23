@@ -2,8 +2,10 @@ import { Button } from "@nextui-org/button";
 import { Input, Popover } from "antd";
 import { ReactNode, useState } from "react";
 import { RgbaStringColorPicker } from "react-colorful";
+import { IoMdColorFill } from "react-icons/io";
 import { IconType } from "react-icons/lib";
 import { MdFormatColorText } from "react-icons/md";
+import { Editor } from "slate";
 
 function hexToRgbA(hex: string) {
   let c: any;
@@ -51,11 +53,15 @@ export function SlateColorPicker({
 interface SlateColorPopoverProps {
   icon: ReactNode;
   onApply?: (color: string) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function SlateColorPopover({
   icon,
   onApply,
+  open: _open,
+  onOpenChange,
 }: SlateColorPopoverProps) {
   const [open, setOpen] = useState(false);
   const handleOpenChange = (open: boolean) => {
@@ -67,14 +73,14 @@ export default function SlateColorPopover({
         <SlateColorPicker
           onApply={(color: string) => {
             onApply?.(color);
-            setOpen(false);
+            onOpenChange ? onOpenChange(false) : setOpen(false);
           }}
         />
       }
       title="Pick a color"
       trigger="click"
-      open={open}
-      onOpenChange={handleOpenChange}
+      open={_open ?? open}
+      onOpenChange={onOpenChange ?? handleOpenChange}
       placement={"bottomLeft"}
       overlayClassName="overlayClassName_icon_list"
       overlayInnerStyle={{
@@ -85,5 +91,45 @@ export default function SlateColorPopover({
         {icon}
       </Button>
     </Popover>
+  );
+}
+
+export function SlateColorGroup({
+  applyTextColor,
+  applyBackgroundColor,
+  editor,
+}: {
+  applyTextColor: (editor: Editor, color: string) => void;
+  applyBackgroundColor: (editor: Editor, color: string) => void;
+  editor: Editor;
+}) {
+  const [openTextColor, setOpenTextColor] = useState(false);
+  const [openBackgroundColor, setOpenBackgroundColor] = useState(false);
+
+  const handleOpenTextColorChange = (open: boolean) => {
+    if (open) setOpenBackgroundColor(false);
+    setOpenTextColor(open);
+  };
+
+  const handleOpenBackgroundColorChange = (open: boolean) => {
+    if (open) setOpenTextColor(false);
+    setOpenBackgroundColor(open);
+  };
+
+  return (
+    <>
+      <SlateColorPopover
+        icon={<MdFormatColorText />}
+        onApply={(color: string) => applyTextColor(editor, color)}
+        open={openTextColor}
+        onOpenChange={handleOpenTextColorChange}
+      />
+      <SlateColorPopover
+        icon={<IoMdColorFill />}
+        onApply={(color: string) => applyBackgroundColor(editor, color)}
+        open={openBackgroundColor}
+        onOpenChange={handleOpenBackgroundColorChange}
+      />
+    </>
   );
 }

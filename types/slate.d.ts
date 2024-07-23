@@ -30,7 +30,7 @@ export type EditableVoidElement = {
 };
 
 export type HeadingElement = {
-  type: "heading";
+  type: "heading-one";
   align?: string;
   children: Descendant[];
   dropdown?: boolean;
@@ -38,6 +38,34 @@ export type HeadingElement = {
 
 export type HeadingTwoElement = {
   type: "heading-two";
+  align?: string;
+  dropdown?: boolean;
+  children: Descendant[];
+};
+
+export type HeadingThreeElement = {
+  type: "heading-three";
+  align?: string;
+  dropdown?: boolean;
+  children: Descendant[];
+};
+
+export type HeadingFourElement = {
+  type: "heading-four";
+  align?: string;
+  dropdown?: boolean;
+  children: Descendant[];
+};
+
+export type HeadingFiveElement = {
+  type: "heading-five";
+  align?: string;
+  dropdown?: boolean;
+  children: Descendant[];
+};
+
+export type HeadingSixElement = {
+  type: "heading-six";
   align?: string;
   dropdown?: boolean;
   children: Descendant[];
@@ -100,6 +128,7 @@ export type VideoElement = {
 
 export type TableCellElement = {
   type: "table-cell";
+  backgroundColor?: string;
   children: Descendant[];
 };
 
@@ -177,6 +206,10 @@ type CustomElement =
   | EditableVoidElement
   | HeadingElement
   | HeadingTwoElement
+  | HeadingThreeElement
+  | HeadingFourElement
+  | HeadingFiveElement
+  | HeadingSixElement
   | EnterEmbedVideoUrlUIElement
   | ImageElement
   | LinkElement

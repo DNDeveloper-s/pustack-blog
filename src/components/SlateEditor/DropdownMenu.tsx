@@ -1,25 +1,156 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { ReactEditor, useSlate } from "slate-react";
-import { CustomElement } from "../../../types/slate";
-import { Range, Text, Transforms } from "slate";
+import { CustomElement, ParagraphElement } from "../../../types/slate";
+import { Path, Range, Text, Transforms } from "slate";
 import { Editor } from "slate";
+import { TbMath } from "react-icons/tb";
+import {
+  LuCode2,
+  LuHeading1,
+  LuHeading2,
+  LuHeading3,
+  LuHeading4,
+  LuHeading5,
+  LuHeading6,
+  LuQuote,
+} from "react-icons/lu";
+import { IoImageOutline } from "react-icons/io5";
+import { CiViewTable } from "react-icons/ci";
+import { RxSection } from "react-icons/rx";
+import { MdOutlineOndemandVideo } from "react-icons/md";
+import { hasNextPath } from "./utils/helpers";
 
-const options = [
-  "Math Formula",
-  "Code Snippet",
-  "Image",
-  "Horizontal Line",
-  "Table",
-  "Section Header",
-  "Embed Video",
+const DividerIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={22}
+    height={22}
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    className="tabler-icon tabler-icon-separator block"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M3 12v.01M7 12h10M21 12v.01" />
+  </svg>
+);
+
+interface OptionItem {
+  id: string;
+  label: string;
+  isMath?: boolean;
+  isCode?: boolean;
+  isImage?: boolean;
+  isDivider?: boolean;
+  isTable?: boolean;
+  isSectionHeader?: boolean;
+  isEmbedVideo?: boolean;
+  isHeadingOne?: boolean;
+  isHeadingTwo?: boolean;
+  isHeadingThree?: boolean;
+  isHeadingFour?: boolean;
+  isHeadingFive?: boolean;
+  isHeadingSix?: boolean;
+  isBlockQuote?: boolean;
+  icon: ReactNode;
+}
+
+const options: OptionItem[] = [
+  { id: "math-formula", label: "Math Formula", isMath: true, icon: <TbMath /> },
+  {
+    id: "code-snippet",
+    label: "Code Snippet",
+    isCode: true,
+    icon: <LuCode2 />,
+  },
+  {
+    id: "image",
+    label: "Image",
+    isImage: true,
+    icon: <IoImageOutline />,
+  },
+  { id: "divider", label: "Divider", isDivider: true, icon: <DividerIcon /> },
+  { id: "table", label: "Table", isTable: true, icon: <CiViewTable /> },
+  {
+    id: "section-header",
+    label: "Section Header",
+    isSectionHeader: true,
+    icon: <RxSection />,
+  },
+  {
+    id: "embed-video",
+    label: "Embed Video",
+    isEmbedVideo: true,
+    icon: <MdOutlineOndemandVideo />,
+  },
+  {
+    id: "heading-one",
+    label: "Heading One",
+    isHeadingOne: true,
+    icon: <LuHeading1 />,
+  },
+  {
+    id: "heading-two",
+    label: "Heading Two",
+    isHeadingTwo: true,
+    icon: <LuHeading2 />,
+  },
+  {
+    id: "heading-three",
+    label: "Heading Three",
+    isHeadingThree: true,
+    icon: <LuHeading3 />,
+  },
+  {
+    id: "heading-four",
+    label: "Heading Four",
+    isHeadingFour: true,
+    icon: <LuHeading4 />,
+  },
+  {
+    id: "heading-five",
+    label: "Heading Five",
+    isHeadingFive: true,
+    icon: <LuHeading5 />,
+  },
+  {
+    id: "heading-six",
+    label: "Heading Six",
+    isHeadingSix: true,
+    icon: <LuHeading6 />,
+  },
+  {
+    id: "block-quote",
+    label: "Block Quote",
+    isBlockQuote: true,
+    icon: <LuQuote />,
+  },
 ];
+
+// const options = [
+//   "Math Formula",
+//   "Code Snippet",
+//   "Image",
+//   "Horizontal Line",
+//   "Table",
+//   "Section Header",
+//   "Embed Video",
+// ];
+
+export const defaultElement: ParagraphElement = {
+  type: "paragraph",
+  children: [{ text: "" }],
+};
 
 const DropdownMenu = () => {
   const [active, setActive] = useState(0);
   const containerRef = useRef<HTMLSpanElement | null>(null);
   const [show, setShow] = useState(true);
   const activeRef = useRef<HTMLDivElement | null>(null);
-  const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
+  const [filteredOptions, setFilteredOptions] = useState<OptionItem[]>(options);
   // const dropdownRef = useRef();
   const editor = useSlate();
 
@@ -55,8 +186,10 @@ const DropdownMenu = () => {
 
       setFilteredOptions(
         options.filter((option) =>
-          // @ts-ignore
-          option.toLowerCase().includes(textNode.text.slice(1).toLowerCase())
+          option.label
+            .toLowerCase()
+            // @ts-ignore
+            .includes(textNode.text.slice(1).toLowerCase())
         )
       );
     }
@@ -70,93 +203,14 @@ const DropdownMenu = () => {
     };
   }, [show]);
 
-  // useEffect(() => {
-  //   const handleShowDropdownMenu = (event: any) => {
-  //     setPosition(event.detail);
-  //     setActive(0);
-  //     setFilteredOptions(
-  //       options.filter((option) =>
-  //         option.toLowerCase().startsWith(event.detail.query?.toLowerCase?.())
-  //       )
-  //     );
-  //   };
-
-  //   const handleHideDropdownMenu = () => {
-  //     setPosition(null);
-  //     setFilteredOptions([]);
-  //   };
-
-  //   window.addEventListener("show-dropdown-menu", handleShowDropdownMenu);
-  //   window.addEventListener("hide-dropdown-menu", handleHideDropdownMenu);
-
-  //   return () => {
-  //     window.removeEventListener("show-dropdown-menu", handleShowDropdownMenu);
-  //     window.removeEventListener("hide-dropdown-menu", handleHideDropdownMenu);
-  //   };
-  // }, [position]);
-
-  // Handle Outside Click
-  // useEffect(() => {
-  //   function handleClickOutside(event: MouseEvent) {
-  //     if (
-  //       containerRef.current &&
-  //       !containerRef.current.contains(event.target as HTMLElement)
-  //     ) {
-  //       setPosition(null);
-  //     }
-  //   }
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [containerRef]);
-
-  const onSelectOption = (option: string) => {
-    // Code Block
-    // const { selection } = editor;
-    // if (selection && Range.isCollapsed(selection)) {
-    //   const [start] = Range.edges(selection);
-    //   const { path } = start;
-    //   // Replace the current element with the custom element
-    //   const customElement = {
-    //     type: "code-block",
-    //     language: "javascript",
-    //     children: [{ text: option }],
-    //   };
-    //   Transforms.removeNodes(editor, { at: path });
-    //   // @ts-ignore
-    //   Transforms.insertNodes(editor, customElement, { at: path });
-    //   // Hide the dropdown menu
-    //   editor.hideDropdownMenu();
-    // }
-
-    //Image Block
-    // const { selection } = editor;
-    // if (selection && Range.isCollapsed(selection)) {
-    //   const [start] = Range.edges(selection);
-    //   const { path } = start;
-    //   // Replace the current element with the custom element
-    //   const customElement = {
-    //     type: "image-block",
-    //     src: "https://images.pexels.com/photos/1107717/pexels-photo-1107717.jpeg?cs=srgb&dl=pexels-fotios-photos-1107717.jpg&fm=jpg",
-    //     children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
-    //   };
-    //   Transforms.removeNodes(editor, { at: path });
-    //   // @ts-ignore
-    //   Transforms.insertNodes(editor, customElement, { at: path });
-    //   // Hide the dropdown menu
-    //   editor.hideDropdownMenu();
-    // }
-
-    // Math Block
+  const onSelectOption = (option: OptionItem) => {
     const { selection } = editor;
     if (selection && Range.isCollapsed(selection)) {
       const [start] = Range.edges(selection);
       const { path } = start;
       // Adjust the path to point to the root
       const rootPath = [path[0]];
+      let shouldFocus = false;
 
       // Replace the current element with the custom element
       let customElement: CustomElement = {
@@ -164,30 +218,30 @@ const DropdownMenu = () => {
         children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
       };
 
-      if (option === "Math Formula") {
+      if (option.isMath) {
         customElement = {
           type: "math-block",
           latex: "",
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
-      } else if (option === "Code Snippet") {
+      } else if (option.isCode) {
         customElement = {
           type: "code-block",
           code: "",
           language: "javascript",
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
-      } else if (option === "Image") {
+      } else if (option.isImage) {
         customElement = {
           type: "choose-image-ui",
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
-      } else if (option === "Horizontal Line") {
+      } else if (option.isDivider) {
         customElement = {
           type: "horizontal-line",
           children: [{ text: "" }],
         };
-      } else if (option === "Section Header") {
+      } else if (option.isSectionHeader) {
         customElement = {
           type: "section-header",
           title: "",
@@ -195,12 +249,12 @@ const DropdownMenu = () => {
           icon: "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
           children: [{ text: "" }],
         };
-      } else if (option === "Embed Video") {
+      } else if (option.isEmbedVideo) {
         customElement = {
           type: "enter-embed-video-url-ui",
           children: [{ text: "" }],
         };
-      } else if (option === "Table") {
+      } else if (option.isTable) {
         customElement = {
           type: "table",
           children: Array.from({ length: 2 }, () => ({
@@ -211,12 +265,63 @@ const DropdownMenu = () => {
             })),
           })),
         };
+      } else if (option.isHeadingOne) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-one",
+          children: [{ text: "" }],
+        };
+      } else if (option.isHeadingTwo) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-two",
+          children: [{ text: "" }],
+        };
+      } else if (option.isHeadingThree) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-three",
+          children: [{ text: "" }],
+        };
+      } else if (option.isHeadingFour) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-four",
+          children: [{ text: "" }],
+        };
+      } else if (option.isHeadingFive) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-five",
+          children: [{ text: "" }],
+        };
+      } else if (option.isHeadingSix) {
+        shouldFocus = true;
+        customElement = {
+          type: "heading-six",
+          children: [{ text: "" }],
+        };
+      } else if (option.isBlockQuote) {
+        shouldFocus = true;
+        customElement = {
+          type: "block-quote",
+          children: [{ text: "" }],
+        };
       }
 
       Transforms.deselect(editor);
 
       Transforms.removeNodes(editor, { at: rootPath });
       Transforms.insertNodes(editor, customElement, { at: rootPath });
+      if (!hasNextPath(editor, rootPath)) {
+        Transforms.insertNodes(editor, defaultElement, {
+          at: Path.next(rootPath),
+        });
+      }
+
+      if (shouldFocus) {
+        Transforms.select(editor, Editor.end(editor, rootPath));
+      }
 
       // Move the cursor to the newly created element
       // const newPath = [...rootPath, 0];
@@ -273,14 +378,14 @@ const DropdownMenu = () => {
       style={{
         zIndex: 1000,
       }}
-      className="absolute shadow-2xl left-0 top-6 z-10 block max-h-64 w-64 select-none overflow-y-auto rounded-md bg-base-100 bg-white p-2 overflow-auto"
+      className="absolute shadow-2xl left-0 top-6 z-10 block max-h-64 max-w-56 w-[90vw] select-none overflow-y-auto rounded-md bg-base-100 bg-white p-2 overflow-auto"
     >
       {filteredOptions.map((item, index) => (
         <div
-          key={item}
+          key={item.id}
           onMouseEnter={() => setActive(index)}
           contentEditable={false}
-          className={`p-2 cursor-pointer rounded ${
+          className={`p-2 cursor-pointer rounded text-base gap-2 grid justify-items-center grid-cols-[22px_1fr] items-center ${
             active === index ? "bg-gray-100" : ""
           }`}
           onClick={() => onSelectOption(item)}
@@ -290,7 +395,12 @@ const DropdownMenu = () => {
             }
           }}
         >
-          {item}
+          {item.icon}
+          <div className="w-full">
+            <span className="font-featureHeadline text-slate-600">
+              {item.label}
+            </span>
+          </div>
         </div>
       ))}
       {filteredOptions.length === 0 && <div>No results found</div>}

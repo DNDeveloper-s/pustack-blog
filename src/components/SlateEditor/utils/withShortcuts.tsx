@@ -48,6 +48,17 @@ const withShortcuts = (editor: Editor) => {
     }
 
     if (text === "/" && selection && Range.isCollapsed(selection)) {
+      const [tableCell] = Editor.nodes(editor, {
+        // @ts-ignore
+        match: (n) => n.type === "paragraph",
+      });
+
+      if (!tableCell) {
+        // Prevent default behavior when inside a table cell
+        insertText(text);
+        return;
+      }
+
       // @ts-ignore
       if (Editor.marks(editor)?.dropdown) {
         Transforms.setNodes(
@@ -61,205 +72,7 @@ const withShortcuts = (editor: Editor) => {
       insertText(text);
 
       return;
-
-      // if (Editor.marks(editor).dropdown) {
-      //   Transforms.setNodes(
-      //     editor,
-      //     // @ts-ignore
-      //     { dropdown: false },
-      //     { match: Text.isText, split: true }
-      //   );
-      //   // Editor.removeMark(editor, "dropdown");
-      //   // insertText(" ");
-      // }
-      // Editor.addMark(editor, "dropdown", true);
-      // insertText(text);
     }
-
-    // const { selection, path } = editor;
-    // console.log("text - ", text);
-
-    // if (text === "/") {
-    //   insertText("/fasdf");
-    //   Transforms.setNodes(
-    //     editor,
-    //     //@ts-ignore
-    //     { dropdown: true },
-    //     { match: (n) => Text.isText(n), split: true }
-    //   );
-    //   return;
-
-    //   // Editor.addMark(editor, "dropdown", true);
-    //   // insertText("/");
-    //   // const { selection } = editor;
-    //   // if (selection && Range.isCollapsed(selection)) {
-    //   //   const [match] = Editor.nodes(editor, {
-    //   //     //@ts-ignore
-    //   //     match: (n) => n.dropdown === true,
-    //   //   });
-
-    //   //   if (!match) {
-    //   //     Transforms.setNodes(
-    //   //       editor,
-    //   //       //@ts-ignore
-    //   //       { dropdown: true },
-    //   //       { match: (n) => Text.isText(n), split: true }
-    //   //     );
-    //   //     insertText("/");
-    //   //     // Transforms.insertText(editor, text);
-    //   //     return;
-    //   //   }
-    //   // }
-    // }
-
-    // Commented
-    // if (selection && Range.isCollapsed(selection)) {
-    //   if ((text === " " || text === "\n") && dropdownPosition) {
-    //     editor.hideDropdownMenu();
-    //     dropdownPosition = null;
-    //     insertText(text);
-    //     console.log(" - - ");
-    //     return;
-    //   }
-
-    //   const [start] = Range.edges(selection);
-    //   const { path, offset } = start;
-    //   const node = Node.get(editor, path);
-
-    //   // Get the text before the current cursor position
-    //   // @ts-ignore
-    //   const beforeText = node.text.slice(0, offset);
-    //   const splitted = beforeText.split(" ");
-    //   const textToCheck = splitted[splitted.length - 1];
-
-    //   // Check if there is a slash before the current position
-    //   const slashIndex = textToCheck.lastIndexOf("/");
-
-    //   if (slashIndex !== -1) {
-    //     // Insert the new character
-    //     insertText(text);
-
-    //     // Calculate the query text as everything after the last slash
-    //     const query = textToCheck.slice(slashIndex + 1) + text;
-
-    //     // Show or update the dropdown menu
-    //     setTimeout(() => {
-    //       if (!dropdownPosition) {
-    //         const domSelection = window.getSelection();
-    //         if (!domSelection) return insertText(text);
-    //         const domRange = domSelection.getRangeAt(0);
-    //         const rect = domRange.getBoundingClientRect();
-    //         console.log("setting dropdownPosition -");
-    //         dropdownPosition = {
-    //           top: rect.top + window.scrollY + 20,
-    //           left: rect.left + window.scrollX,
-    //         };
-    //       }
-    //       editor.showDropdownMenu({
-    //         ...dropdownPosition,
-    //         query,
-    //       });
-    //     }, 0);
-
-    //     return;
-    //   } else if (text === "/") {
-    //     insertText(text);
-
-    //     setTimeout(() => {
-    //       const domSelection = window.getSelection();
-    //       if (!domSelection) return insertText(text);
-    //       const domRange = domSelection.getRangeAt(0);
-    //       const rect = domRange.getBoundingClientRect();
-    //       console.log("setting dropdownPosition -");
-    //       dropdownPosition = {
-    //         top: rect.top + window.scrollY + 20,
-    //         left: rect.left + window.scrollX,
-    //       };
-    //       editor.showDropdownMenu({
-    //         ...dropdownPosition,
-    //         query: "",
-    //       });
-    //     }, 0);
-
-    //     return;
-    //   }
-    // }
-
-    // Commented
-    // if (text.endsWith(" ") && selection && Range.isCollapsed(selection)) {
-    //   const { anchor } = selection;
-    //   const block = Editor.above(editor, {
-    //     match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
-    //   });
-    //   const path = block ? block[1] : [];
-    //   const start = Editor.start(editor, path);
-    //   const range = { anchor, focus: start };
-    //   const beforeText = Editor.string(editor, range) + text.slice(0, -1);
-    //   // @ts-ignore
-    //   const type = SHORTCUTS[beforeText];
-
-    //   if (type) {
-    //     Transforms.select(editor, range);
-
-    //     if (!Range.isCollapsed(range)) {
-    //       Transforms.delete(editor);
-    //     }
-
-    //     const newProperties: Partial<Element> = {
-    //       type,
-    //     };
-
-    //     Transforms.setNodes<Element>(editor, newProperties, {
-    //       match: (n) => Element.isElement(n) && Editor.isBlock(editor, n),
-    //     });
-
-    //     console.log("type - ", type);
-
-    //     if (type === "list-item") {
-    //       const list: BulletedListElement = {
-    //         type: "bulleted-list",
-    //         children: [],
-    //       };
-    //       console.log("wrappiong - ");
-    //       // @ts-ignore
-    //       Transforms.wrapNodes(editor, list, {
-    //         match: (n) =>
-    //           !Editor.isEditor(n) &&
-    //           Element.isElement(n) &&
-    //           // @ts-ignore
-    //           n.type === "list-item",
-    //       });
-    //     } else if (type === "list-item-number") {
-    //       const list = {
-    //         type: "numbered-list",
-    //         children: [],
-    //       };
-    //       // @ts-ignore
-    //       Transforms.wrapNodes(editor, list, {
-    //         match: (n) =>
-    //           !Editor.isEditor(n) &&
-    //           Element.isElement(n) &&
-    //           // @ts-ignore
-    //           n.type === "list-item-number",
-    //       });
-    //     } else if (type === "list-item-alpha") {
-    //       const list = {
-    //         type: "alphabet-list",
-    //         children: [],
-    //       };
-    //       // @ts-ignore
-    //       Transforms.wrapNodes(editor, list, {
-    //         match: (n) =>
-    //           !Editor.isEditor(n) &&
-    //           Element.isElement(n) &&
-    //           // @ts-ignore
-    //           n.type === "list-item-alpha",
-    //       });
-    //     }
-
-    //     return;
-    //   }
-    // }
 
     insertText(text);
   };
@@ -284,8 +97,17 @@ const withShortcuts = (editor: Editor) => {
 
       // Hide the dropdown menu if the "/" is deleted
       if (charBefore === "/") {
-        editor.hideDropdownMenu();
+        // editor.hideDropdownMenu();
         deleteBackward(...args);
+        // @ts-ignore
+        if (Editor.marks(editor)?.dropdown) {
+          Transforms.setNodes(
+            editor,
+            // @ts-ignore
+            { dropdown: false },
+            { match: Text.isText }
+          );
+        }
         return;
       }
     }

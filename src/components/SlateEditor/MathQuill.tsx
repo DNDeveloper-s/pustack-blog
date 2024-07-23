@@ -3,6 +3,7 @@ import { FaAlignCenter, FaAlignLeft, FaAlignRight } from "react-icons/fa6";
 import { addStyles, EditableMathField, StaticMathField } from "react-mathquill";
 import { Editor, Node, Path, Transforms } from "slate";
 import { ReactEditor, useReadOnly, useSlate } from "slate-react";
+import { defaultElement } from "./DropdownMenu";
 
 // inserts the required css to the <head> block.
 // you can skip this, if you want to do that by yourself.
@@ -107,11 +108,18 @@ const MathQuill = ({
                 const path = ReactEditor.findPath(editor, element);
                 if (Path.isPath(path) && path.length > 0) {
                   // Calculate the previous path
-                  const previousPath = Path.previous(path);
 
                   // Remove the current node
                   Transforms.removeNodes(editor, { at: path });
 
+                  if (path[0] == 0) {
+                    // If the current node is the first node in the editor, return
+                    Transforms.insertNodes(editor, defaultElement, { at: [0] });
+                    Transforms.select(editor, [0]);
+                    return;
+                  }
+
+                  const previousPath = Path.previous(path);
                   // Check if the previous path exists
                   if (Node.has(editor, previousPath)) {
                     // Move the cursor to the end of the previous node

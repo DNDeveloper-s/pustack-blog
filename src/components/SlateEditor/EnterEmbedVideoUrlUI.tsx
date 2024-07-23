@@ -52,7 +52,8 @@ export default function EnterEmbdedVideoUrlUI({
       <button
         className="py-2 px-6 rounded-lg bg-gray-500 text-gray-100"
         onClick={() => {
-          insertEmbeddedVideo(editor, element, inputRef.current?.value ?? "");
+          if (!inputRef.current || inputRef.current.value === "") return;
+          insertEmbeddedVideo(editor, element, inputRef.current.value);
         }}
       >
         Embed
