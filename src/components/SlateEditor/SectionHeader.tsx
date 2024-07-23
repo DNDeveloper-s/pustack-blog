@@ -38,9 +38,11 @@ export default function SectionHeader({ element }: { element: any }) {
   };
 
   if (readonly) {
+    const path = ReactEditor.findPath(editor, element);
+    const isFirstItem = path[0] === 0;
     return (
       <div className="mt-3" id={element.id}>
-        <div className="styles_divider"></div>
+        {!isFirstItem && <div className="styles_divider"></div>}
         <div className="styles_title">
           <p>
             <span className="inline-flex mr-2">

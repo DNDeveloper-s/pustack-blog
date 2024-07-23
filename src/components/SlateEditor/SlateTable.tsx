@@ -2,7 +2,7 @@ import { Popover } from "antd";
 import { useState } from "react";
 import { FaGripLines, FaGripLinesVertical } from "react-icons/fa6";
 import { Editor, Node, Path, Transforms } from "slate";
-import { ReactEditor, useSlate } from "slate-react";
+import { ReactEditor, useReadOnly, useSlate } from "slate-react";
 
 export const TableElement = ({ attributes, children, element }: any) => {
   return (
@@ -342,6 +342,7 @@ export const TableCellElement = ({
   setHoveredCellPath,
 }: any) => {
   const editor = useSlate();
+  const readonly = useReadOnly();
   const [openCol, setOpenCol] = useState(false);
   const [openRow, setOpenRow] = useState(false);
   // const handleInsertColumn = (position: string) => {
@@ -438,13 +439,13 @@ export const TableCellElement = ({
     <td
       {...attributes}
       className="border relative border-slate-400 px-3 py-1.5"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={readonly ? null : handleMouseEnter}
+      onMouseLeave={readonly ? null : handleMouseLeave}
       style={{
         backgroundColor: element.backgroundColor ?? "transparent",
       }}
     >
-      {isFirstCellInHoveredColumn && (
+      {!readonly && isFirstCellInHoveredColumn && (
         <div
           className={
             "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
@@ -472,7 +473,7 @@ export const TableCellElement = ({
           </Popover>
         </div>
       )}
-      {isFirstCellInHoveredRow && (
+      {!readonly && isFirstCellInHoveredRow && (
         <div
           className={
             "absolute bottom-0 left-[-0.9rem] top-0 my-auto h-min w-min space-y-1 " +

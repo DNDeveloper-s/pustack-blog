@@ -467,7 +467,7 @@ const CustomSlateElement = (props: any) => {
 
   const wrapper = (
     <div
-      className="group/line relative w-full px-4 py-2"
+      className={"group/line relative w-full py-2 " + (readonly ? "" : "px-4")}
       contentEditable={
         element.type !== "code-block" &&
         element.type !== "image-block" &&
