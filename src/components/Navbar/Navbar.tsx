@@ -25,6 +25,11 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { FaCaretDown } from "react-icons/fa";
+import {
+  signIn,
+  signOut as signOutWithAuth,
+  useSession,
+} from "next-auth/react";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -53,6 +58,10 @@ export function NavbarDesktop({
   scrollRef?: React.RefObject<HTMLDivElement>;
 }) {
   const { user } = useUser();
+  const session = useSession();
+
+  console.log("session - ", session);
+
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleDrawer = () => {
     setIsNavOpen((prevState) => !prevState);
@@ -204,7 +213,8 @@ export function NavbarDesktop({
                 <div
                   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
                   onClick={() => {
-                    signInWithGoogle();
+                    // signInWithGoogle();
+                    signIn("linkedin");
                   }}
                   style={{
                     fontWeight: 600,
@@ -218,6 +228,7 @@ export function NavbarDesktop({
                   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
                   onClick={() => {
                     signOut();
+                    // signOutWithAuth();
                   }}
                   style={{
                     fontWeight: 600,

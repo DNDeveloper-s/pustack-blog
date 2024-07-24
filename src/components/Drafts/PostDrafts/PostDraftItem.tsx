@@ -179,7 +179,7 @@ export default function PostDraftItem({
         <div className="mt-1 w-8 h-8 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
           <img
             className="w-full h-full object-cover"
-            src="https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-29%20at%204.28.09%E2%80%AFPM.png?alt=media&token=904dcade-3acf-4382-8506-990b4d683cd0"
+            src={post.snippetData?.image ?? "/images/placeholder.png"}
           />
         </div>
         <div className="overflow-hidden">

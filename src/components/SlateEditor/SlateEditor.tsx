@@ -287,7 +287,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
   }));
 
   return (
-    <div key={key} className="minerva-slate min-h-[350px]">
+    <div key={key} className="minerva-slate min-h-[150px]">
       <Slate
         editor={editor}
         initialValue={readonly ? exportSlateState(value) : value}
