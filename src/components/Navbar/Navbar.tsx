@@ -12,7 +12,11 @@ import dayjs from "dayjs";
 import { url } from "@/constants";
 import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
-import { signInWithGoogle, signOut } from "@/lib/firebase/auth";
+import {
+  signInWithGoogle,
+  signInWithLinkedin,
+  signOut,
+} from "@/lib/firebase/auth";
 import useUserSession from "@/hooks/useUserSession";
 import { useUser } from "@/context/UserContext";
 import { useMediaQuery } from "react-responsive";
@@ -25,11 +29,6 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { FaCaretDown } from "react-icons/fa";
-import {
-  signIn,
-  signOut as signOutWithAuth,
-  useSession,
-} from "next-auth/react";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -58,9 +57,6 @@ export function NavbarDesktop({
   scrollRef?: React.RefObject<HTMLDivElement>;
 }) {
   const { user } = useUser();
-  const session = useSession();
-
-  console.log("session - ", session);
 
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleDrawer = () => {
@@ -210,20 +206,77 @@ export function NavbarDesktop({
                 </Dropdown>
               )}
               {!user ? (
-                <div
-                  className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                  onClick={() => {
-                    // signInWithGoogle();
-                    signIn("linkedin");
-                  }}
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
+                <Dropdown
+                  classNames={{
+                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                    base: "!p-[0_10px]",
                   }}
                 >
-                  <span>SIGN IN</span>
-                </div>
+                  <DropdownTrigger className="!scale-100 !opacity-100">
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <p
+                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        SIGN IN
+                      </p>
+                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    classNames={{
+                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                      base: "!p-[0_10px]",
+                    }}
+                  >
+                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
+                      <div
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                        onClick={() => {
+                          signInWithGoogle();
+                        }}
+                      >
+                        <span>GOOGLE</span>
+                      </div>
+                    </DropdownItem>
+                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
+                      <div
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                        onClick={() => {
+                          signInWithLinkedin();
+                        }}
+                      >
+                        <span>LINKEDIN</span>
+                      </div>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               ) : (
+                // <div
+                //   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
+                //   onClick={() => {
+                //     // signInWithGoogle();
+                //     // signIn("linkedin");
+                //     signInWithLinkedin();
+                //   }}
+                //   style={{
+                //     fontWeight: 600,
+                //     fontVariationSettings: '"wght" 700,"opsz" 10',
+                //   }}
+                // >
+                //   <span>SIGN IN</span>
+                // </div>
                 <div
                   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
                   onClick={() => {

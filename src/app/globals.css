@@ -2691,3 +2691,30 @@ font-size: 180px;
   width: 100%;
   height: 100%;
 }
+
+.admin-heading-button-container {
+  zoom: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .admin-heading-button-container {
+    zoom: 0.8;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .admin-heading-button-container {
+    zoom: 0.8;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+
+.ul-m-0 ul {
+  margin: 0 !important;
+}
+
+.ul-p-0 ul {
+  padding: 0 !important;
+}

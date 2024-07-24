@@ -165,10 +165,10 @@ export default function PostDraftsEntry({
           <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
             My Posts
           </h2>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <SortByModal handleApply={handleSortApply} />
             <FilterModal filters={filters} handleApply={handleFiltersApply} />
-          </div>
+          </div> */}
         </div>
 
         <div className="overflow-x-auto bg-lightPrimary">

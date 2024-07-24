@@ -3,6 +3,11 @@ import { useState } from "react";
 import { FaGripLines, FaGripLinesVertical } from "react-icons/fa6";
 import { Editor, Node, Path, Transforms } from "slate";
 import { ReactEditor, useReadOnly, useSlate } from "slate-react";
+import {
+  Popover as NextPopover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@nextui-org/popover";
 
 export const TableElement = ({ attributes, children, element }: any) => {
   return (
@@ -247,12 +252,12 @@ const colOptions = [
 
 function TableColumnOptions({ onClick }: { onClick: (option: any) => void }) {
   return (
-    <div className="max-w-[200px] w-[80vw]  rounded p-2 flex flex-col gap-2 shadow-xl">
+    <div className="max-w-[150px] w-[80vw] rounded flex flex-col gap-1 ">
       {colOptions.map((option) => (
         <div
           key={option.id}
           onClick={() => onClick(option)}
-          className="hover:bg-primary transition-all cursor-pointer text-sm py-1 px-3 rounded"
+          className="hover:bg-primary transition-all cursor-pointer text-sm text-black py-1 px-3 rounded"
         >
           <span>{option.label}</span>
         </div>
@@ -272,12 +277,12 @@ const rowOptions = [
 
 function TableRowOptions({ onClick }: { onClick: (option: any) => void }) {
   return (
-    <div className="max-w-[200px] w-[80vw]  rounded p-2 flex flex-col gap-2 shadow-xl">
+    <div className="max-w-[150px] w-[80vw]  rounded flex flex-col gap-1">
       {rowOptions.map((option) => (
         <div
           key={option.id}
           onClick={() => onClick(option)}
-          className="hover:bg-primary transition-all cursor-pointer text-sm py-1 px-3 rounded"
+          className="hover:bg-primary transition-all cursor-pointer text-sm py-1 px-3 text-black rounded"
         >
           <span>{option.label}</span>
         </div>
@@ -355,17 +360,21 @@ export const TableCellElement = ({
   //   insertRow(editor, tablePath, rowIndex, position);
   // };
   const handleMouseEnter = () => {
-    if (openCol || openRow) {
-      return;
-    }
+    // if (openCol || openRow) {
+    //   return;
+    // }
     setHoverState(editor, cellPath);
+    setOpenCol(false);
+    setOpenRow(false);
   };
 
   const handleMouseLeave = () => {
-    if (openCol || openRow) {
-      return;
-    }
+    // if (openCol || openRow) {
+    //   return;
+    // }
     clearHoverState(editor);
+    setOpenCol(false);
+    setOpenRow(false);
   };
 
   const colIndex = cellPath[cellPath.length - 1];
@@ -445,34 +454,38 @@ export const TableCellElement = ({
         backgroundColor: element.backgroundColor ?? "transparent",
       }}
     >
-      {!readonly && isFirstCellInHoveredColumn && (
-        <div
-          className={
-            "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
-            (isFirstCellInHoveredColumn ? "opacity-100" : "opacity-0")
-          }
-          contentEditable={false}
+      {/* {!readonly && isFirstCellInHoveredColumn && ( */}
+      <div
+        className={
+          "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
+          (isFirstCellInHoveredColumn ? "opacity-100" : "opacity-0")
+        }
+        contentEditable={false}
+      >
+        <NextPopover
+          classNames={{
+            content: "!bg-lightPrimary rounded-none",
+            base: "!w-[150px]",
+          }}
+          placement={"bottom"}
+          color="secondary"
+          offset={-10}
+          isOpen={openCol}
+          onOpenChange={handleOpenColChange}
         >
-          <Popover
-            content={<TableColumnOptions onClick={handleColClick} />}
-            trigger="hover"
-            // open={openCol}
-            // onOpenChange={handleOpenColChange}
-            placement={"bottomLeft"}
-            overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
-            overlayInnerStyle={{
-              background: "var(--antd-arrow-background-color)",
-            }}
-            style={{ padding: 0 }}
-          >
+          <PopoverTrigger>
             <div className="cursor-pointer">
               <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
                 <FaGripLines />
               </div>
             </div>
-          </Popover>
-        </div>
-      )}
+          </PopoverTrigger>
+          <PopoverContent>
+            <TableColumnOptions onClick={handleColClick} />
+          </PopoverContent>
+        </NextPopover>
+      </div>
+      {/* )} */}
       {!readonly && isFirstCellInHoveredRow && (
         <div
           className={
@@ -483,24 +496,28 @@ export const TableCellElement = ({
           }
           contentEditable={false}
         >
-          <Popover
-            content={<TableRowOptions onClick={handleRowClick} />}
-            trigger="hover"
-            // open={openRow}
-            // onOpenChange={handleOpenRowChange}
-            placement={"bottomLeft"}
-            overlayClassName="overlayClassName_icon_list fontSize_overlayClassName"
-            overlayInnerStyle={{
-              background: "var(--antd-arrow-background-color)",
+          <NextPopover
+            classNames={{
+              content: "!bg-lightPrimary rounded-none",
+              base: "!w-[150px]",
             }}
-            style={{ padding: 0 }}
+            placement={"bottom-start"}
+            color="secondary"
+            offset={-10}
+            isOpen={openRow}
+            onOpenChange={handleOpenRowChange}
           >
-            <div className="cursor-pointer">
-              <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
-                <FaGripLinesVertical />
+            <PopoverTrigger>
+              <div className="cursor-pointer">
+                <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
+                  <FaGripLinesVertical />
+                </div>
               </div>
-            </div>
-          </Popover>
+            </PopoverTrigger>
+            <PopoverContent>
+              <TableRowOptions onClick={handleRowClick} />
+            </PopoverContent>
+          </NextPopover>
         </div>
       )}
       {children}

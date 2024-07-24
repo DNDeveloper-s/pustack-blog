@@ -125,199 +125,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
     checkUser();
   }, []);
 
-  const steps: TourProps["steps"] = useMemo(
-    () => [
-      {
-        title: "Text Formatting",
-        description: (
-          <>
-            <div>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={textFormatting.src}
-              />
-              <p className="mt-2 max-w-[460px]">
-                These are the text formatting options to make the selected text{" "}
-                <strong>bold</strong>, <i>italic</i>,{" "}
-                <span style={{ textDecoration: "underline" }}>underline</span>,
-                <s>strike through</s> and using the last option, you can undo
-                the formatting on the selected text.
-              </p>
-            </div>
-          </>
-        ),
-        placement: "center",
-        target: () =>
-          document.querySelector(classes.textFormatGroup) as HTMLElement,
-      },
-      {
-        title: "Color Picker",
-        description: (
-          <div>
-            <BlogImage
-              style={{ aspectRatio: "unset" }}
-              className="w-[500px] h-auto"
-              src={colorPicker.src}
-            />
-          </div>
-        ),
-        placement: "center",
-        target: () =>
-          document.querySelector(classes.colorPickerIcon) as HTMLElement,
-      },
-      {
-        title: "Insert Link",
-        description: (
-          <div>
-            <p className="max-w-[460px]">
-              Create links to other pages or websites.
-            </p>
-          </div>
-        ),
-        placement: "bottom",
-        target: () => {
-          const el = document.querySelector(classes.linkIcon) as HTMLElement;
-
-          // el.querySelector("button")?.click();
-
-          return el as HTMLElement;
-        },
-      },
-      {
-        title: "Insert Section",
-        description: (
-          <>
-            <div>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={insertSection.src}
-              />
-            </div>
-          </>
-        ),
-        placement: "right",
-        target: () =>
-          document.querySelector(classes.insertSection) as HTMLElement,
-      },
-      {
-        title: "Insert Icon",
-        description: (
-          <>
-            <div>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[200px] h-auto"
-                src={iconImage.src}
-              />
-            </div>
-          </>
-        ),
-        placement: "right",
-        target: () => document.querySelector(classes.insertIcon) as HTMLElement,
-      },
-      {
-        title: "Insert Image",
-        description: (
-          <>
-            <div>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={insertImage.src}
-              />
-            </div>
-          </>
-        ),
-        placement: "right",
-        target: () =>
-          document.querySelector(classes.insertImageIcon) as HTMLElement,
-      },
-      {
-        title: "Insert Youtube Video",
-        description: (
-          <>
-            <div>
-              <p className="mb-2 max-w-[460px]">
-                Copy a youtube link and paste it in the editor to see the magic.
-              </p>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={insertYoutubeVideo.src}
-              />
-            </div>
-          </>
-        ),
-        target: null,
-      },
-      {
-        title: "Insert Mathematics Formula",
-        description: (
-          <>
-            <div>
-              <p className="max-w-[460px]">
-                Create a formula using the formula editor and then copy the{" "}
-                <strong>MATH ML</strong> and paste it in the editor using the{" "}
-                <strong>Keep</strong> option.
-              </p>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={createMathsFormula.src}
-              />
-            </div>
-          </>
-        ),
-        placement: "right",
-        target: () =>
-          document.querySelector(classes.createMathsFormula) as HTMLElement,
-      },
-      {
-        title: "Insert Code Snippet",
-        description: (
-          <>
-            <div>
-              <p className="mb-2 max-w-[460px]">
-                Try to paste it with &quot;<strong>Insert Only Text</strong>
-                &quot; option.
-              </p>
-              <BlogImage
-                style={{ aspectRatio: "unset" }}
-                className="w-[500px] h-auto"
-                src={codeTutorial.src}
-              />
-            </div>
-          </>
-        ),
-        placement: "top",
-        target: () => {
-          const el = document.querySelector(classes.insertCode) as HTMLElement;
-
-          // el.querySelector("button")?.click();
-
-          return el as HTMLElement;
-        },
-      },
-      {
-        title: "Preview Editor",
-        description: (
-          <>
-            <p className="max-w-[460px]">
-              Clicking this button will open a preview of the content you have
-              written in the editor.
-            </p>
-          </>
-        ),
-        placement: "top",
-        target: () =>
-          document.querySelector(classes.previewEditorButton) as HTMLElement,
-      },
-    ],
-    []
-  );
-
   useEffect(() => {
     if (requestedPost) {
       if (requestedPost.author.email !== user?.email)
@@ -557,20 +364,186 @@ export default function AdminPage({ postId }: { postId?: string }) {
     }
   }, [haveTakenGuideTour]);
 
+  const isDraftSaving =
+    isPending &&
+    (requestedPost?.status === "draft" || currentPost?.status === "draft");
+
+  async function handleContinuePost() {
+    if (!user) return;
+
+    // const sections = postSectionsRef.current?.getSections();
+    // sections?.forEach((section) => {
+    //   section.updateContent(section.trimContent(section.content));
+    // });
+
+    const inputValue = joditRef.current?.getTitleValue() ?? "";
+    const topic = joditRef.current?.getTopicValue() ?? "";
+
+    const _isValid = joditRef.current?.isValid(inputValue, topic);
+
+    if (!_isValid.isValid) {
+      openNotification(
+        "bottomRight",
+        {
+          message: _isValid.message,
+          closable: true,
+          duration: 2,
+          closeIcon: (
+            <p className="underline text-danger cursor-pointer whitespace-nowrap">
+              Close
+            </p>
+          ),
+          className: "drafts-notification",
+        },
+        "error"
+      );
+      return;
+    }
+
+    let post = new Post(
+      inputValue || "Untitled",
+      {
+        name: user?.name,
+        email: user?.email,
+        photoURL: user?.image_url,
+      },
+      topic,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      joditRef.current?.getSlateValue()
+    );
+
+    console.log("post - ", post);
+
+    if (requestedPost) {
+      post = new Post(
+        inputValue || "Untitled",
+        {
+          name: user?.name,
+          email: user?.email,
+          photoURL: user?.image_url,
+        },
+        topic,
+        [],
+        requestedPost.status ?? "published",
+        requestedPost.id,
+        requestedPost.timestamp,
+        requestedPost.snippetPosition,
+        requestedPost.snippetDesign,
+        requestedPost.displayTitle,
+        requestedPost.displayContent,
+        requestedPost.scheduledTime,
+        true,
+        joditRef.current?.getSlateValue()
+      );
+    }
+
+    // postCreatePost(post);
+    handleContinue(post);
+  }
+
+  async function handleSaveAsDraft() {
+    if (!user) return router.push("/");
+
+    const isDraft = requestedPost?.status === "draft";
+
+    if (!isDraft && requestedPost) return;
+
+    const inputValue = joditRef.current?.getTitleValue() ?? "";
+    const topic = joditRef.current?.getTopicValue() ?? "";
+
+    const _isValid = joditRef.current?.isValid(inputValue, topic);
+
+    if (!_isValid.isValid) {
+      openNotification(
+        "bottomRight",
+        {
+          message: _isValid.message,
+          closable: true,
+          duration: 2,
+          showProgress: true,
+          closeIcon: (
+            <p className="underline text-danger cursor-pointer whitespace-nowrap">
+              Close
+            </p>
+          ),
+          className: "drafts-notification",
+        },
+        "error"
+      );
+      return;
+    }
+
+    let post = new Post(
+      inputValue || "Untitled",
+      {
+        name: user?.name,
+        email: user?.email,
+        photoURL: user?.image_url,
+      },
+      topic,
+      [],
+      "draft",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      joditRef.current?.getSlateValue()
+    );
+
+    if (isDraft && requestedPost) {
+      post = new Post(
+        inputValue || "Untitled",
+        {
+          name: user?.name,
+          email: user?.email,
+          photoURL: user?.image_url,
+        },
+        topic,
+        [],
+        requestedPost?.status ?? "published",
+        requestedPost?.id,
+        requestedPost?.timestamp,
+        requestedPost?.snippetPosition,
+        requestedPost?.snippetDesign,
+        requestedPost?.displayTitle,
+        requestedPost?.displayContent,
+        undefined,
+        true,
+        joditRef.current?.getSlateValue()
+      );
+    }
+
+    handleSaveDraft(post);
+  }
+
   return (
     isAuthInitialized && (
       <main className="max-w-[1440px] h-screen overflow-auto px-3 mx-auto">
         <Navbar />
         <div
           className={
-            isTabletScreen
+            "w-full max-w-[900px] mx-auto " +
+            (isTabletScreen
               ? "h-[calc(100vh-220px)]"
               : isMobileScreen
               ? ""
-              : "h-[calc(100vh-150px)]" + " overflow-auto"
+              : "h-[calc(100vh-150px)]" + " overflow-auto")
           }
         >
-          <div className="flex items-center justify-between mt-8 max-w-[1100px] mx-auto">
+          <div className="flex items-center justify-between mt-8 admin-heading-button-container ">
             <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
               {step === 1
                 ? requestedPost
@@ -578,9 +551,162 @@ export default function AdminPage({ postId }: { postId?: string }) {
                   : "Create Post"
                 : "Choose Design and Position"}
             </h2>
+
+            {step === 1 ? (
+              <div className="flex justify-end gap-4">
+                {(!requestedPost || requestedPost?.status === "draft") && (
+                  <Button
+                    isDisabled={isDraftSaving}
+                    className="font-featureHeadline email_button flex items-center justify-center"
+                    onClick={handleSaveAsDraft}
+                    variant="flat"
+                    color="primary"
+                    // isLoading={isPending}
+                    isLoading={isDraftSaving}
+                  >
+                    Save as Draft
+                  </Button>
+                )}
+                <Button
+                  isDisabled={isDraftSaving}
+                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
+                  // onClick={handleCreatePost}
+                  onClick={() => {
+                    handleContinuePost();
+                  }}
+                  variant="flat"
+                  color="primary"
+                  // isLoading={isPending}
+                >
+                  Continue
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-4 justify-end items-center">
+                <Button
+                  isDisabled={isPending}
+                  className="font-featureHeadline email_button flex items-center justify-center"
+                  // onClick={handleCreatePost}
+                  variant="flat"
+                  color="default"
+                  // isLoading={isPending}
+                  onClick={() => {
+                    if (isPending) return;
+                    setStep(1);
+                  }}
+                >
+                  Back
+                </Button>
+                <Dropdown
+                  // disabled={isPending}
+                  disabled={requestedPost?.status === "published" || isPending}
+                  classNames={{
+                    content: "!bg-appBlue p-0 !rounded-none !min-w-[150px]",
+                    base: "!p-[0_4px] !rounded-none",
+                    arrow: "!bg-appBlue",
+                  }}
+                  style={{
+                    // @ts-ignore
+                    "--nextui-content1": "230 67% 43%",
+                    backgroundColor: "#243bb5",
+                  }}
+                  placement="bottom-end"
+                  showArrow={true}
+                  isDisabled={
+                    requestedPost?.status === "published" || isPending
+                  }
+                >
+                  <div className="flex items-start">
+                    <Button
+                      isDisabled={isPending}
+                      className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
+                      onClick={() => handleSavePost()}
+                      variant="flat"
+                      color="primary"
+                      isLoading={isPending}
+                    >
+                      <IoIosCreate />
+                      <span>
+                        {isPending
+                          ? "Saving..."
+                          : getButtonLabel(requestedPost)}
+                      </span>
+                    </Button>
+                    <DropdownTrigger
+                      className={
+                        "!scale-100 " +
+                        (requestedPost?.status === "published"
+                          ? " !opacity-20"
+                          : " !opacity-100")
+                      }
+                    >
+                      <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlue !text-primary">
+                        <FaCaretDown />
+                      </div>
+                    </DropdownTrigger>
+                  </div>
+                  <DropdownMenu
+                    classNames={{
+                      list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
+                      base: "!p-[0_5px]",
+                    }}
+                  >
+                    <DropdownItem
+                      onClick={() => {
+                        disclosureOptions.onOpen();
+                      }}
+                      className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
+                    >
+                      <p
+                        className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        <MdScheduleSend />
+                        <span>
+                          {currentPost?.status === "scheduled"
+                            ? "UPDATE SCHEDULE"
+                            : "SCHEDULE POST"}
+                        </span>
+                      </p>
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={() => {
+                        handleSaveDraft();
+                      }}
+                      className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
+                    >
+                      <p
+                        className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        <MdDrafts />
+                        <span>SAVE AS DRAFT</span>
+                      </p>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+                {currentPost && (
+                  <PostScheduleModal
+                    disclosureOptions={disclosureOptions}
+                    handleSchedulePost={handleSchedulePost}
+                    isPending={isPending}
+                    post={currentPost ?? requestedPost}
+                    handlePostNow={() => {
+                      handleSavePost();
+                    }}
+                  />
+                )}
+              </div>
+            )}
           </div>
           <div
-            className="w-full max-w-[1100px] mx-auto"
+            className="w-full "
             style={{ display: step === 1 ? "block" : "none" }}
           >
             {error && (
@@ -600,7 +726,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             />
           </div>
           <div
-            className="w-full max-w-[1100px] mx-auto py-2 mt-4"
+            className="w-full max-w-[900px] mx-auto py-2 mt-4"
             style={{ display: step === 2 ? "block" : "none" }}
           >
             {error && (
@@ -608,142 +734,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
             )}
             <hr className=" border-dashed border-[#1f1d1a4d] mt-6 mb-4" />
             <SnippetForm ref={snippetRef} post={currentPost} />
-            <div className="flex gap-4 justify-end items-center">
-              <Button
-                isDisabled={isPending}
-                className="h-9 px-5 rounded text-xs uppercase font-featureRegular"
-                // onClick={handleCreatePost}
-                variant="flat"
-                color="default"
-                // isLoading={isPending}
-                onClick={() => {
-                  if (isPending) return;
-                  setStep(1);
-                }}
-              >
-                Back
-              </Button>
-              <Dropdown
-                // disabled={isPending}
-                disabled={requestedPost?.status === "published" || isPending}
-                classNames={{
-                  content: "!bg-appBlue !rounded-[4px] p-0 !min-w-[150px]",
-                  base: "!p-[0_4px]",
-                  arrow: "!bg-appBlue",
-                }}
-                style={{
-                  // @ts-ignore
-                  "--nextui-content1": "230 67% 43%",
-                  backgroundColor: "#243bb5",
-                  borderRadius: "4px",
-                }}
-                placement="bottom-end"
-                showArrow={true}
-                isDisabled={requestedPost?.status === "published" || isPending}
-              >
-                <div className="flex items-start">
-                  <Button
-                    isDisabled={isPending}
-                    className="h-9 px-3 rounded-tl rounded-bl flex items-center justify-center gap-2 rounded-tr-none rounded-br-none bg-appBlue font-featureBold text-primary border-2 border-appBlue text-xs uppercase"
-                    onClick={() => handleSavePost()}
-                    variant="flat"
-                    color="primary"
-                    isLoading={isPending}
-                  >
-                    <IoIosCreate />
-                    <span>
-                      {isPending ? "Saving..." : getButtonLabel(requestedPost)}
-                    </span>
-                  </Button>
-                  <DropdownTrigger
-                    className={
-                      "!scale-100 " +
-                      (requestedPost?.status === "published"
-                        ? " !opacity-20"
-                        : " !opacity-100")
-                    }
-                  >
-                    <div className="h-9 w-6 border-l border-primary  cursor-pointer flex rounded-tr rounded-br items-center justify-center bg-appBlue text-primary">
-                      <FaCaretDown />
-                    </div>
-                  </DropdownTrigger>
-                </div>
-                <DropdownMenu
-                  classNames={{
-                    list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
-                    base: "!p-[0_5px]",
-                  }}
-                >
-                  <DropdownItem
-                    onClick={() => {
-                      disclosureOptions.onOpen();
-                    }}
-                    className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
-                  >
-                    <p
-                      className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
-                      style={{
-                        fontWeight: 600,
-                        fontVariationSettings: '"wght" 700,"opsz" 10',
-                      }}
-                    >
-                      <MdScheduleSend />
-                      <span>
-                        {currentPost?.status === "scheduled"
-                          ? "UPDATE SCHEDULE"
-                          : "SCHEDULE POST"}
-                      </span>
-                    </p>
-                  </DropdownItem>
-                  <DropdownItem
-                    onClick={() => {
-                      handleSaveDraft();
-                    }}
-                    className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
-                  >
-                    <p
-                      className="text-[10px] grid grid-cols-[13px_1fr] items-center gap-2 bg-appBlue text-primary text-xs uppercase"
-                      style={{
-                        fontWeight: 600,
-                        fontVariationSettings: '"wght" 700,"opsz" 10',
-                      }}
-                    >
-                      <MdDrafts />
-                      <span>SAVE AS DRAFT</span>
-                    </p>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-              {currentPost && (
-                <PostScheduleModal
-                  disclosureOptions={disclosureOptions}
-                  handleSchedulePost={handleSchedulePost}
-                  isPending={isPending}
-                  post={currentPost ?? requestedPost}
-                  handlePostNow={() => {
-                    handleSavePost();
-                  }}
-                />
-              )}
-            </div>
           </div>
           {/* <DraftEditor /> */}
           {/* <button onClick={() => copyIt()}>Copy it</button> */}
-          <Tour
-            current={currentTourStep}
-            onChange={setCurrentTourStep}
-            onFinish={() => {
-              setOpen(false);
-              setCurrentTourStep(0);
-              setHaveTakenGuideTour(true);
-            }}
-            open={open}
-            onClose={() => {
-              setOpen(false);
-              setHaveTakenGuideTour(true);
-            }}
-            steps={steps}
-          />
         </div>
       </main>
     )

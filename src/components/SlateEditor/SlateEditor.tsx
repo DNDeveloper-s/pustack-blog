@@ -54,6 +54,7 @@ export interface SlateEditorRef {
   getValue: () => Descendant[];
   setReadonly: (readonly: boolean) => void;
   hasSomeContent: () => boolean;
+  reset: () => void;
 }
 
 interface SlateEditorProps {

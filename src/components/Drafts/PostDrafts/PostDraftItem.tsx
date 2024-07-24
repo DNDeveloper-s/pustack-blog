@@ -17,6 +17,12 @@ import {
 } from "@nextui-org/dropdown";
 import { IoIosEye } from "react-icons/io";
 import { Tooltip } from "antd";
+import { useMemo } from "react";
+import { getSections } from "@/components/SlateEditor/utils/helpers";
+import { CustomElement } from "../../../../types/slate";
+
+export const noImageUrl =
+  "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
 
 const colorScheme = {
   draft: {
@@ -179,7 +185,7 @@ export default function PostDraftItem({
         <div className="mt-1 w-8 h-8 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
           <img
             className="w-full h-full object-cover"
-            src={post.snippetData?.image ?? "/images/placeholder.png"}
+            src={post.snippetData?.image ?? noImageUrl}
           />
         </div>
         <div className="overflow-hidden">

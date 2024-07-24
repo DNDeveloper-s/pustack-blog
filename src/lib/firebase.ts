@@ -25,7 +25,7 @@
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { OAuthProvider, getAuth } from "firebase/auth";
 import {
   getFirestore,
   doc,
@@ -58,6 +58,11 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
 
+const linkedinProvider = new OAuthProvider("oidc.linkedin");
+linkedinProvider.setCustomParameters({
+  client_secret: "kAo7iKUzPcwcHNEj",
+});
+
 export default app;
 
-export { doc, getDoc, setDoc, serverTimestamp };
+export { doc, getDoc, setDoc, serverTimestamp, linkedinProvider };

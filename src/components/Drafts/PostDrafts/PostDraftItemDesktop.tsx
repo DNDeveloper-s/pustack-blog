@@ -2,12 +2,16 @@ import { useDeletePostDraft } from "@/api/post";
 import JoditPreview from "@/components/AdminEditor/JoditPreview";
 import { DeletePostModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { Checkbox } from "@/components/SignUpForNewsLetters/SignUpForNewsLetters";
+import { getSections } from "@/components/SlateEditor/utils/helpers";
 import { Post } from "@/firebase/post-v2";
 import { useDisclosure } from "@nextui-org/modal";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { FaEye } from "react-icons/fa";
 import { MdDelete, MdModeEdit } from "react-icons/md";
+import { CustomElement } from "../../../../types/slate";
+import { noImageUrl } from "./PostDraftItem";
 
 const colorScheme = {
   draft: {
@@ -62,6 +66,14 @@ export default function PostDraftItemDesktop({
     error: deletionError,
   } = useDeletePostDraft();
 
+  const sections = useMemo(() => {
+    if (!post) return [];
+    if (post.nodes) {
+      return getSections(post.nodes as CustomElement[]);
+    }
+    return post.sections;
+  }, [post?.sections, post?.nodes]);
+
   return (
     <div
       className={
@@ -79,7 +91,7 @@ export default function PostDraftItemDesktop({
         <div className="mt-1 w-16 h-16 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
           <img
             className="w-full h-full object-cover"
-            src="https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FScreenshot%202024-06-29%20at%204.28.09%E2%80%AFPM.png?alt=media&token=904dcade-3acf-4382-8506-990b4d683cd0"
+            src={post.snippetData?.image ?? noImageUrl}
           />
         </div>
         <div className="overflow-hidden">
@@ -90,7 +102,7 @@ export default function PostDraftItemDesktop({
           </div>
           <p className="leading-[120%] text-sm line-clamp-3">
             <span className="text-tertiary">Sections:</span>{" "}
-            <strong>{post.sections.length ?? 0}</strong>
+            <strong>{sections.length ?? 0}</strong>
           </p>
         </div>
       </div>

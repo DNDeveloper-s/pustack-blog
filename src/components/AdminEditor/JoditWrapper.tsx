@@ -111,7 +111,7 @@ function JoditWrapper(
   const currentContent = useRef<string>("");
   const postSectionsRef = useRef<PostSectionsRef>(null);
   const slateEditorRef = useRef<SlateEditorRef>(null);
-  const [sectionsIndexKey, setSectionsIndexKey] = useState(0);
+  const [slateEditorKey, setSlateEditorKey] = useState(0);
   const { openNotification } = useNotification();
 
   console.log("prePost?.nodes - ", prePost?.nodes, prePost);
@@ -141,24 +141,33 @@ function JoditWrapper(
     reset: () => {
       setTopic("");
       // setInitialContent("");
-      setSectionsIndexKey((c) => c + 1);
+      setSlateEditorKey((prev) => prev + 1);
       currentContent.current = "";
       if (inputRef.current) inputRef.current.value = "";
     },
     getSlateValue: () => {
       return slateEditorRef.current?.getValue();
     },
+    handleContinuePost: () => {
+      handleContinuePost();
+    },
+    handleSaveAsDraft: () => {
+      handleSaveAsDraft();
+    },
+    getTopicValue: () => topic,
+    getTitleValue: () => inputRef.current?.value ?? "",
+    isValid: () => isValid(inputRef.current?.value ?? "", topic),
   }));
 
-  const isValid = () => {
+  const isValid = (titleValue: string, topicValue: string) => {
     const sections = postSectionsRef.current?.getSections();
     sections?.forEach((section) => {
       section.updateContent(section.trimContent(section.content));
     });
-    const _isValid = inputRef.current?.value && topic;
+    const _isValid = titleValue && topicValue;
 
-    const field = inputRef.current?.value
-      ? topic
+    const field = titleValue
+      ? topicValue
         ? sections && Section.mergedContent(sections).length > 0
           ? null
           : "sections"
@@ -200,7 +209,7 @@ function JoditWrapper(
     //   section.updateContent(section.trimContent(section.content));
     // });
 
-    const _isValid = isValid();
+    const _isValid = isValid(inputRef.current?.value ?? "", topic);
 
     if (!_isValid.isValid) {
       openNotification(
@@ -277,12 +286,7 @@ function JoditWrapper(
 
     if (!isDraft && prePost) return;
 
-    const sections = postSectionsRef.current?.getSections();
-    sections?.forEach((section) => {
-      section.updateContent(section.trimContent(section.content));
-    });
-
-    const _isValid = isValid();
+    const _isValid = isValid(inputRef.current?.value ?? "", topic);
 
     if (!_isValid.isValid) {
       openNotification(
@@ -312,7 +316,17 @@ function JoditWrapper(
         photoURL: user?.image_url || dummyAuthor.photoURL,
       },
       topic,
-      sections
+      [],
+      "draft",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+      slateEditorRef.current?.getValue()
     );
 
     if (isDraft && prePost) {
@@ -324,7 +338,7 @@ function JoditWrapper(
           photoURL: user?.image_url || dummyAuthor.photoURL,
         },
         topic,
-        sections,
+        [],
         prePost?.status ?? "published",
         prePost?.id,
         prePost?.timestamp,
@@ -365,7 +379,7 @@ function JoditWrapper(
   };
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto py-2">
+    <div className="w-full max-w-[900px] mx-auto py-2">
       {/* <div>
         <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
           Create Post
@@ -439,7 +453,10 @@ function JoditWrapper(
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
           Content
         </h4>
-        <div className="border text-[16px] w-full flex-1 flex-shrink bg-lightPrimary">
+        <div
+          className="border text-[16px] w-full flex-1 flex-shrink bg-lightPrimary"
+          key={slateEditorKey}
+        >
           <SlateEditor
             key={JSON.stringify(prePost?.nodes)}
             value={prePost?.nodes as CustomElement[] | undefined}
@@ -464,42 +481,6 @@ function JoditWrapper(
         />
         <span>Preview Mode</span>
       </label>
-      <div className="flex justify-end gap-4 mb-10 mt-8">
-        {/* <Button
-          isDisabled={isDraftSaving}
-          className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
-          onClick={handlePreview}
-          variant="flat"
-          color="primary"
-          // isLoading={isPending}
-        >
-          Preview
-        </Button> */}
-        {(!prePost || isDraft) && (
-          <Button
-            isDisabled={isDraftSaving}
-            className="h-9 px-5 rounded bg-warning-500 text-primary text-xs uppercase font-featureRegular preview-editor-button"
-            onClick={handleSaveAsDraft}
-            variant="flat"
-            color="primary"
-            // isLoading={isPending}
-            isLoading={isDraftSaving}
-          >
-            Save as Draft
-          </Button>
-        )}
-        <Button
-          isDisabled={isDraftSaving}
-          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-          // onClick={handleCreatePost}
-          onClick={handleContinuePost}
-          variant="flat"
-          color="primary"
-          // isLoading={isPending}
-        >
-          Continue
-        </Button>
-      </div>
 
       <JoditPreview
         disclosureOptions={disclosureOptions}
