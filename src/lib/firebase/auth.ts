@@ -60,7 +60,7 @@ export async function signInWithLinkedin() {
   const params = new URLSearchParams({
     response_type: "code",
     client_id: "86t7tfffgkiqe8",
-    redirect_uri: `http://localhost:3000/api/linkedin`,
+    redirect_uri: `https://pustack-blog.vercel.app/api/linkedin`,
     scope: "email openid profile",
     state: state,
   });
