@@ -145,7 +145,7 @@ export default function CodeSnippet({
             </Select>
           )}
         </div>
-        {element.code.length > 0 && (
+        {element.code?.trim().length > 0 && (
           <div
             style={{
               fontSize: "11px",

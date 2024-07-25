@@ -135,7 +135,7 @@ const headings = {
   h6: [],
 };
 
-type PostStatus = "draft" | "published" | "scheduled";
+export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
@@ -377,7 +377,7 @@ export class Post {
   }
 
   async saveToFirestore(returnBatch: boolean | WriteBatch = false) {
-    const postId = await this.generateUniqueId();
+    const postId = this.id ?? (await this.generateUniqueId());
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
 
     if (returnBatch) {
@@ -448,24 +448,38 @@ export class Post {
     return id;
   }
 
-  static async deleteDraftFromFirestore(
-    id: string,
-    returnBatch: boolean | WriteBatch = false
-  ) {
+  static async unpublishPostInFirestore(id: string) {
     if (!id) {
       throw new Error("Post id is missing");
     }
 
-    const postRef = doc(db, "post_drafts", id).withConverter(postConverter);
+    const postRef = doc(db, "posts", id);
 
-    if (returnBatch) {
-      const batch =
-        returnBatch instanceof WriteBatch ? returnBatch : writeBatch(db);
-      batch.delete(postRef);
-      return batch;
+    await setDoc(
+      postRef,
+      {
+        status: "unpublished",
+      },
+      { merge: true }
+    );
+
+    return id;
+  }
+
+  static async publishPostInFirestore(id: string) {
+    if (!id) {
+      throw new Error("Post id is missing");
     }
 
-    await deleteDoc(postRef);
+    const postRef = doc(db, "posts", id);
+
+    await setDoc(
+      postRef,
+      {
+        status: "published",
+      },
+      { merge: true }
+    );
 
     return id;
   }
@@ -497,6 +511,10 @@ export class Post {
    */
   draftPost() {
     this._status = "draft";
+  }
+
+  unpublishPost() {
+    this._status = "unpublished";
   }
 
   /**

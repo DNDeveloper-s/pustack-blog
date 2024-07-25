@@ -4,6 +4,7 @@ import { functions } from "@/lib/firebase";
 import { httpsCallable } from "firebase/functions";
 import {
   DefinedUseQueryResult,
+  Query,
   QueryFunctionContext,
   QueryKey,
   UseMutationOptions,
@@ -314,7 +315,7 @@ export const useDeletePostDraft = (
   const qc = useQueryClient();
 
   const deletePostDraft = async (postId: string) => {
-    await Post.deleteDraftFromFirestore(postId);
+    // await Post.deleteDraftFromFirestore(postId);
     return postId;
   };
 
@@ -326,6 +327,58 @@ export const useDeletePostDraft = (
       });
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_DRAFT_POST_BY_ID(data),
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useUnPublishPost = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const unpublishPost = async (postId: string) => {
+    await Post.unpublishPostInFirestore(postId);
+    return postId;
+  };
+
+  return useMutation({
+    mutationFn: unpublishPost,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        predicate: (query: Query) =>
+          // @ts-ignore
+          query.queryKey[0].includes(API_QUERY.QUERY_POSTS()[0]),
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_POST_BY_ID(data),
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const usePublishPost = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const publishPost = async (postId: string) => {
+    await Post.publishPostInFirestore(postId);
+    return postId;
+  };
+
+  return useMutation({
+    mutationFn: publishPost,
+    onSettled: (data: any) => {
+      qc.invalidateQueries({
+        predicate: (query: Query) =>
+          // @ts-ignore
+          query.queryKey[0].includes(API_QUERY.QUERY_POSTS()[0]),
+      });
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_POST_BY_ID(data),
       });
     },
     ...(options ?? {}),

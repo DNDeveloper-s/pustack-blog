@@ -1,13 +1,23 @@
-import { useDeletePostDraft } from "@/api/post";
+import {
+  useDeletePostDraft,
+  usePublishPost,
+  useUnPublishPost,
+} from "@/api/post";
 import JoditPreview from "@/components/AdminEditor/JoditPreview";
-import { DeletePostModalBase } from "@/components/BlogPost/v2/BlogPost";
+import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { Checkbox } from "@/components/SignUpForNewsLetters/SignUpForNewsLetters";
-import { Post } from "@/firebase/post-v2";
+import { Post, PostStatus } from "@/firebase/post-v2";
 import { useDisclosure } from "@nextui-org/modal";
 import dayjs from "@/lib/dayjsConfig";
 import { useRouter } from "next/navigation";
 import { FaEye } from "react-icons/fa";
-import { MdDelete, MdEdit, MdModeEdit } from "react-icons/md";
+import {
+  MdDelete,
+  MdEdit,
+  MdModeEdit,
+  MdPublish,
+  MdUnpublished,
+} from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
 import {
   Dropdown,
@@ -37,16 +47,24 @@ const colorScheme = {
     bg: "#32CD32",
     text: "#228B22",
   },
+  unpublished: {
+    bg: "#A9A9A9",
+    text: "#ffffff",
+  },
 };
 
 function PostItemActions({
   disclosureOptions,
-  disclosureOptionsDelete,
+  disclosureOptionsPublish,
+  disclosureOptionsUnPublish,
   postId,
+  status,
 }: {
   disclosureOptions: any;
-  disclosureOptionsDelete: any;
+  disclosureOptionsPublish: any;
+  disclosureOptionsUnPublish: any;
   postId: string;
+  status: PostStatus;
 }) {
   const router = useRouter();
   // const disclosureOptions = useDisclosure();
@@ -111,7 +129,9 @@ function PostItemActions({
         </DropdownItem>
         <DropdownItem
           onClick={() => {
-            disclosureOptionsDelete.onOpen();
+            status === "unpublished"
+              ? disclosureOptionsPublish.onOpen()
+              : disclosureOptionsUnPublish.onOpen();
           }}
           className="!p-[6px_9px_9px] !pl-1 !rounded-none !bg-transparent"
         >
@@ -122,8 +142,17 @@ function PostItemActions({
               fontVariationSettings: '"wght" 700,"opsz" 10',
             }}
           >
-            <MdDelete />
-            <span>Delete</span>
+            {status === "unpublished" ? (
+              <>
+                <MdPublish />
+                <span>Publish</span>
+              </>
+            ) : (
+              <>
+                <MdUnpublished />
+                <span>Unpublish</span>
+              </>
+            )}
           </p>
         </DropdownItem>
       </DropdownMenu>
@@ -161,12 +190,26 @@ export default function PostDraftItem({
   const disclosureOptions = useDisclosure();
   const router = useRouter();
 
-  const disclosureOptionsDelete = useDisclosure();
+  const disclosureOptionsUnPublish = useDisclosure();
+  const disclosureOptionsPublish = useDisclosure();
   const {
-    mutate: postDeleteDraft,
+    mutate: postUnpublishPost,
     isPending,
-    error: deletionError,
-  } = useDeletePostDraft();
+    error: unpublishError,
+  } = useUnPublishPost({
+    onSuccess: () => {
+      disclosureOptionsUnPublish.onClose();
+    },
+  });
+  const {
+    mutate: postPublishPost,
+    isPending: isPublishPending,
+    error: publishError,
+  } = usePublishPost({
+    onSuccess: () => {
+      disclosureOptionsPublish.onClose();
+    },
+  });
 
   return (
     <div
@@ -230,20 +273,44 @@ export default function PostDraftItem({
       <div className="flex items-center justify-center gap-5 text-xs">
         <PostItemActions
           disclosureOptions={disclosureOptions}
-          disclosureOptionsDelete={disclosureOptionsDelete}
+          disclosureOptionsPublish={disclosureOptionsPublish}
+          disclosureOptionsUnPublish={disclosureOptionsUnPublish}
           postId={post.id as string}
+          status={post.status}
         />
       </div>
-      <JoditPreview
-        disclosureOptions={disclosureOptions}
-        sections={post.sections}
-      />
-      <DeletePostModalBase
-        disclosureOptions={disclosureOptionsDelete}
+      <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
+      <PostActionModalBase
+        disclosureOptions={disclosureOptionsUnPublish}
         isLoading={isPending}
-        onDelete={postDeleteDraft}
-        error={deletionError}
+        onConfirm={postUnpublishPost}
+        error={unpublishError}
         post={post}
+        title={"Unpublish Post"}
+        content={
+          <p>
+            Are you sure you want to unpublish the post &quot;
+            <strong>{post?.displayTitle}</strong>&quot;
+          </p>
+        }
+        cancelButton={"Cancel"}
+        confirmButton={"Unpublish"}
+      />
+      <PostActionModalBase
+        disclosureOptions={disclosureOptionsPublish}
+        isLoading={isPublishPending}
+        onConfirm={postPublishPost}
+        error={publishError}
+        post={post}
+        title={"Publish Post"}
+        content={
+          <p>
+            Are you sure you want to publish the post &quot;
+            <strong>{post?.displayTitle}</strong>&quot;
+          </p>
+        }
+        cancelButton={"Cancel"}
+        confirmButton={"Publish"}
       />
     </div>
   );

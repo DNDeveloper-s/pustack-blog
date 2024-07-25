@@ -1,6 +1,10 @@
-import { useDeletePostDraft } from "@/api/post";
+import {
+  useDeletePostDraft,
+  usePublishPost,
+  useUnPublishPost,
+} from "@/api/post";
 import JoditPreview from "@/components/AdminEditor/JoditPreview";
-import { DeletePostModalBase } from "@/components/BlogPost/v2/BlogPost";
+
 import { Checkbox } from "@/components/SignUpForNewsLetters/SignUpForNewsLetters";
 import { getSections } from "@/components/SlateEditor/utils/helpers";
 import { Post } from "@/firebase/post-v2";
@@ -9,9 +13,11 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { FaEye } from "react-icons/fa";
-import { MdDelete, MdModeEdit } from "react-icons/md";
+import { MdDelete, MdModeEdit, MdPublish, MdUnpublished } from "react-icons/md";
 import { CustomElement } from "../../../../types/slate";
 import { noImageUrl } from "./PostDraftItem";
+import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
+import { Tooltip } from "antd";
 
 const colorScheme = {
   draft: {
@@ -25,6 +31,10 @@ const colorScheme = {
   published: {
     bg: "#32CD32",
     text: "#228B22",
+  },
+  unpublished: {
+    bg: "#A9A9A9",
+    text: "#ffffff",
   },
 };
 
@@ -59,12 +69,26 @@ export default function PostDraftItemDesktop({
   const disclosureOptions = useDisclosure();
   const router = useRouter();
 
-  const disclosureOptionsDelete = useDisclosure();
+  const disclosureOptionsUnPublish = useDisclosure();
+  const disclosureOptionsPublish = useDisclosure();
   const {
-    mutate: postDeleteDraft,
+    mutate: postUnpublishPost,
     isPending,
-    error: deletionError,
-  } = useDeletePostDraft();
+    error: unpublishError,
+  } = useUnPublishPost({
+    onSuccess: () => {
+      disclosureOptionsUnPublish.onClose();
+    },
+  });
+  const {
+    mutate: postPublishPost,
+    isPending: isPublishPending,
+    error: publishError,
+  } = usePublishPost({
+    onSuccess: () => {
+      disclosureOptionsPublish.onClose();
+    },
+  });
 
   const sections = useMemo(() => {
     if (!post) return [];
@@ -152,25 +176,58 @@ export default function PostDraftItemDesktop({
         >
           <FaEye />
         </div>
-        <div
-          className="flex items-center gap-1 cursor-pointer text-danger-500 hover:text-danger-700"
-          onClick={() => {
-            disclosureOptionsDelete.onOpen();
-          }}
+        <Tooltip
+          title={post.status === "unpublished" ? "Publish" : "Unpublish"}
         >
-          <MdDelete />
-        </div>
+          <div
+            className={
+              "flex items-center gap-1 cursor-pointer " +
+              (post.status === "unpublished"
+                ? " text-green-500 hover:text-green-700 text-lg"
+                : " text-danger-500 hover:text-danger-700")
+            }
+            onClick={() => {
+              post.status === "unpublished"
+                ? disclosureOptionsPublish.onOpen()
+                : disclosureOptionsUnPublish.onOpen();
+            }}
+          >
+            {post.status === "unpublished" ? <MdPublish /> : <MdUnpublished />}
+          </div>
+        </Tooltip>
       </div>
-      <JoditPreview
-        disclosureOptions={disclosureOptions}
-        sections={post.sections}
-      />
-      <DeletePostModalBase
-        disclosureOptions={disclosureOptionsDelete}
+      <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
+      <PostActionModalBase
+        disclosureOptions={disclosureOptionsUnPublish}
         isLoading={isPending}
-        onDelete={postDeleteDraft}
-        error={deletionError}
+        onConfirm={postUnpublishPost}
+        error={unpublishError}
         post={post}
+        title={"Unpublish Post"}
+        content={
+          <p>
+            Are you sure you want to unpublish the post &quot;
+            <strong>{post?.displayTitle}</strong>&quot;
+          </p>
+        }
+        cancelButton={"Cancel"}
+        confirmButton={"Unpublish"}
+      />
+      <PostActionModalBase
+        disclosureOptions={disclosureOptionsPublish}
+        isLoading={isPublishPending}
+        onConfirm={postPublishPost}
+        error={publishError}
+        post={post}
+        title={"Publish Post"}
+        content={
+          <p>
+            Are you sure you want to publish the post &quot;
+            <strong>{post?.displayTitle}</strong>&quot;
+          </p>
+        }
+        cancelButton={"Cancel"}
+        confirmButton={"Publish"}
       />
     </div>
   );

@@ -156,10 +156,15 @@ function JoditWrapper(
     },
     getTopicValue: () => topic,
     getTitleValue: () => inputRef.current?.value ?? "",
-    isValid: () => isValid(inputRef.current?.value ?? "", topic),
+    isValid: (titleValue: string, topicValue: string, silent: boolean) =>
+      isValid(titleValue, topicValue, silent),
   }));
 
-  const isValid = (titleValue: string, topicValue: string) => {
+  const isValid = (
+    titleValue: string,
+    topicValue: string,
+    silent: boolean = false
+  ) => {
     const sections = postSectionsRef.current?.getSections();
     sections?.forEach((section) => {
       section.updateContent(section.trimContent(section.content));
@@ -175,20 +180,24 @@ function JoditWrapper(
       : "title";
 
     if (field === "title") {
-      inputRef.current?.scrollIntoView({
-        block: "center",
-        behavior: "smooth",
-      });
-      inputRef.current?.focus();
+      if (!silent) {
+        inputRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        inputRef.current?.focus();
+      }
       return { isValid: false, field, message: "Please enter the post title" };
     }
 
     if (field === "topic") {
-      topicRef.current?.scrollIntoView({
-        block: "center",
-        behavior: "smooth",
-      });
-      topicRef.current?.focus();
+      if (!silent) {
+        topicRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        topicRef.current?.focus();
+      }
       return { isValid: false, field, message: "Please select a topic" };
     }
 
@@ -453,10 +462,7 @@ function JoditWrapper(
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
           Content
         </h4>
-        <div
-          className="border text-[16px] w-full flex-1 flex-shrink bg-lightPrimary"
-          key={slateEditorKey}
-        >
+        <div key={slateEditorKey}>
           <SlateEditor
             key={JSON.stringify(prePost?.nodes)}
             value={prePost?.nodes as CustomElement[] | undefined}
@@ -482,10 +488,6 @@ function JoditWrapper(
         <span>Preview Mode</span>
       </label>
 
-      <JoditPreview
-        disclosureOptions={disclosureOptions}
-        sections={postSectionsRef.current?.getSections()}
-      />
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

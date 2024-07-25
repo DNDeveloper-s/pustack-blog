@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import Script from "next/script";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
+import { Suspense } from "react";
+import { NavigationEvents } from "@/components/NavigationEvents";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +30,10 @@ export default async function RootLayout({
         <ErrorBoundary errorComponent={ErrorMasterComponent}>
           <Providers>{children}</Providers>
         </ErrorBoundary>
+
+        <Suspense fallback={null}>
+          <NavigationEvents />
+        </Suspense>
       </body>
     </html>
   );

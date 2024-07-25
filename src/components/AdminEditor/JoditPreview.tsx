@@ -14,13 +14,15 @@ import { BlogImageDefault } from "../shared/BlogImage";
 import { filterAndTrimStrings } from "../BlogPost/BlogPost";
 import { Section } from "./Sections/Section";
 import BlogPostSection from "../BlogPost/v2/BlogPostSection";
+import SlateEditor from "../SlateEditor/SlateEditor";
+import { CustomElement } from "../../../types/slate";
 
 export default function JoditPreview({
   disclosureOptions,
-  sections,
+  nodes,
 }: {
   disclosureOptions: ReturnType<typeof useDisclosure>;
-  sections?: Section[];
+  nodes?: any;
 }) {
   return (
     <Modal
@@ -36,13 +38,12 @@ export default function JoditPreview({
           Preview
         </ModalHeader>
         <ModalBody>
-          {sections?.map((section, index) => (
-            <BlogPostSection
-              className="blog-post-container relative mb-2 py-2"
-              key={section.id}
-              section={section}
-            />
-          ))}
+          <SlateEditor
+            key={JSON.stringify(nodes)}
+            value={nodes as CustomElement[] | undefined}
+            readonly
+            // ref={slateEditorRef}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

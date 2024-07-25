@@ -9,6 +9,7 @@ import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { Highlight, themes } from "prism-react-renderer";
 import dynamic from "next/dynamic";
 import {
+  ReactNode,
   createElement,
   forwardRef,
   useCallback,
@@ -205,18 +206,26 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
   );
 }
 
-export function DeletePostModalBase({
+export function PostActionModalBase({
   disclosureOptions,
   post,
   error,
   isLoading,
-  onDelete,
+  onConfirm,
+  title,
+  content,
+  confirmButton,
+  cancelButton,
 }: {
   disclosureOptions: any;
   post?: Post;
   error?: Error | null;
   isLoading: boolean;
-  onDelete: (postId: string) => void;
+  onConfirm: (postId: string) => void;
+  title: string;
+  content: ReactNode;
+  confirmButton: ReactNode;
+  cancelButton: ReactNode;
 }) {
   const { isOpen, onOpenChange } = disclosureOptions;
   return (
@@ -230,17 +239,16 @@ export function DeletePostModalBase({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              Delete Post
-            </ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
             <ModalBody>
-              <p>
-                Are you sure you want to delete post &quot;
+              {/* <p>
+                Are you sure you want to unpublish the post &quot;
                 <strong>{post?.displayTitle}</strong>&quot;
-              </p>
+              </p> */}
+              {content}
               {error && (
                 <p className="text-sm my-1 text-gray-500 bg-[#fffdf2] p-[4px_8px] rounded">
-                  Deletion Error:{" "}
+                  Error:{" "}
                   <span className="italic pl-1 text-danger-500 ">
                     {error.message}
                   </span>
@@ -249,7 +257,7 @@ export function DeletePostModalBase({
             </ModalBody>
             <ModalFooter>
               <Button color="default" variant="light" onPress={onClose}>
-                Cancel
+                {cancelButton}
               </Button>
               <Button
                 color="danger"
@@ -258,11 +266,11 @@ export function DeletePostModalBase({
                     console.error("Post id not found");
                     return;
                   }
-                  onDelete(post?.id);
+                  onConfirm(post?.id);
                 }}
                 isLoading={isLoading}
               >
-                Delete
+                {confirmButton}
               </Button>
             </ModalFooter>
           </>

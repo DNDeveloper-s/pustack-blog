@@ -79,8 +79,6 @@ export async function generateMetadata(
 }
 
 export default async function PostId(props: { params: { postId: string[] } }) {
-  // console.log("props", props);
-
   // const post = await Post.get(props.params.postId[0], true);
 
   // console.log("post - ", post.title);

@@ -469,7 +469,7 @@ const CustomSlateElement = (props: any) => {
     <div
       className={
         "group/line relative mx-auto " +
-        (readonly ? "w-full" : " py-2 w-[96%] px-4")
+        (readonly ? "w-full" : " py-2 w-[95.25%] px-2")
       }
       contentEditable={
         element.type !== "code-block" &&
@@ -493,7 +493,7 @@ const CustomSlateElement = (props: any) => {
             >
               <FaArrowUp />
             </div>
-            <div
+            <div  
               className="cursor-pointer px-0.5 py-1 transition-all hover:bg-gray-200 rounded"
               onClick={moveDown}
             >

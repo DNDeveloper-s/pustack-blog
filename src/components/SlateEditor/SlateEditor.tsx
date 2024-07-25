@@ -93,8 +93,6 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
   const renderLeaf = (props: any) => {
     let { attributes, children, leaf } = props;
 
-    console.log("props - ", props);
-
     if (leaf.bold) {
       children = <strong>{children}</strong>;
     }
@@ -288,7 +286,13 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
   }));
 
   return (
-    <div key={key} className="minerva-slate min-h-[150px]">
+    <div
+      key={key}
+      className={
+        "minerva-slate min-h-[150px] text-[16px] w-full flex-1 flex-shrink " +
+        (readonly ? " bg-transparent mt-5" : " border bg-lightPrimary")
+      }
+    >
       <Slate
         editor={editor}
         initialValue={readonly ? exportSlateState(value) : value}
