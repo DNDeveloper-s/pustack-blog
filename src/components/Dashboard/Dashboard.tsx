@@ -84,6 +84,8 @@ function DashboardDesktop({
     }),
   });
 
+  console.log("_serverPosts - ", _serverPosts, posts);
+
   // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
   //   useInView();
 
@@ -126,23 +128,18 @@ function DashboardDesktop({
     }
 
     const titlePost = posts.find(
-      (post: any) => post.snippetPosition === SnippetPosition.TITLE
+      (post: any) => !!post.snippetData?.image || !!post.meta?.image
     );
 
     const rightPosts = compact(
       difference(posts, [titlePost])?.filter(
-        (post) =>
-          post?.snippetPosition === SnippetPosition.RIGHT ||
-          post?.snippetPosition === SnippetPosition.TITLE
+        (post) => !!post.snippetData?.image || !!post.meta?.image
       )
     ).slice(0, 2);
 
     const midContentPosts = compact(
       difference(posts, [...[titlePost], ...rightPosts])?.filter(
-        (post) =>
-          post?.snippetPosition === SnippetPosition.MID_CONTENT ||
-          post?.snippetPosition === SnippetPosition.RIGHT ||
-          post?.snippetPosition === SnippetPosition.TITLE
+        (post) => !!post.snippetData?.image || !!post.meta?.image
       )
     ).slice(0, 12);
 

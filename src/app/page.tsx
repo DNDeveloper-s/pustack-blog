@@ -38,7 +38,7 @@ export default async function Home() {
     postsRef,
     where("status", "==", "published"),
     orderBy("timestamp", "desc"),
-    limit(50)
+    limit(10)
   );
 
   const docs = await getDocs(_query);
