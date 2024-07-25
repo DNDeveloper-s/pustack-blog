@@ -105,6 +105,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
   const { isMobileScreen, isTabletScreen } = useScreenSize();
 
+  const isDraftSavingRef = useRef<boolean>(false);
+
   const [step, setStep] = useState(1);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const disclosureOptions = useDisclosure();
@@ -153,6 +155,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
   } = useCreatePost({
     onSuccess: (data: Post) => {
       window.localStorage.removeItem("editor_state");
+      isDraftSavingRef.current = false;
 
       if (data.status === "draft") {
         newlySavedDraftRef.current = data;
@@ -214,6 +217,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
     },
     onError: (error) => {
       console.log("error - ", error);
+      isDraftSavingRef.current = false;
       openNotification(
         NotificationPlacements[5],
         {
@@ -250,6 +254,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
   } = useUpdatePost({
     onSuccess: (data: Post) => {
       window.localStorage.removeItem("editor_state");
+      isDraftSavingRef.current = false;
 
       if (data.status === "draft") {
         newlySavedDraftRef.current = data;
@@ -301,6 +306,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
       // window.location = "/" + data;
     },
     onError: (error) => {
+      isDraftSavingRef.current = false;
       openNotification(
         NotificationPlacements[5],
         {
@@ -370,6 +376,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
     currentPost.livePost();
 
+    isDraftSavingRef.current = false;
+
     requestedPost
       ? postUpdatePost(currentPost)
       : postCreatePost({
@@ -395,6 +403,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
     currentPost.schedulePost(scheduledTime.toISOString());
 
     setCurrentPost(currentPost);
+
+    isDraftSavingRef.current = false;
 
     requestedPost
       ? postUpdatePost(currentPost)
@@ -429,6 +439,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
       setCurrentPost(post);
 
+      isDraftSavingRef.current = true;
+
       requestedPost
         ? postUpdatePost(post)
         : postCreatePost({
@@ -450,9 +462,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
     }
   }, [haveTakenGuideTour]);
 
-  const isDraftSaving =
-    isPending &&
-    (requestedPost?.status === "draft" || currentPost?.status === "draft");
+  const isDraftSaving = isPending && isDraftSavingRef.current;
 
   async function handleContinuePost() {
     if (!user) return;
@@ -664,7 +674,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
               <div className="flex justify-end gap-4">
                 {(!requestedPost || requestedPost?.status === "draft") && (
                   <Button
-                    isDisabled={isDraftSaving}
+                    isDisabled={isPending}
                     className="font-featureHeadline email_button flex items-center justify-center"
                     onClick={() => {
                       intervalSaveDraftRef.current = false;
@@ -704,11 +714,11 @@ export default function AdminPage({ postId }: { postId?: string }) {
                       onClick={() => handleSavePost()}
                       variant="flat"
                       color="primary"
-                      isLoading={isPending}
+                      isLoading={isPending && !isDraftSaving}
                     >
                       <IoIosCreate />
                       <span>
-                        {isPending
+                        {isPending && !isDraftSaving
                           ? "Saving..."
                           : getButtonLabel(requestedPost)}
                       </span>
