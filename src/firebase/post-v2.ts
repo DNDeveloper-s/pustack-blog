@@ -459,6 +459,7 @@ export class Post {
       postRef,
       {
         status: "unpublished",
+        scheduledTime: null,
       },
       { merge: true }
     );

@@ -2,7 +2,12 @@
 
 import { url } from "@/constants";
 import Link from "next/link";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import {
+  CSSProperties,
+  forwardRef,
+  useImperativeHandle,
+  useState,
+} from "react";
 import SignUpForNewsLettersButton from "../shared/SignUpForNewsLettersButton";
 
 function CheckboxControl(
@@ -10,10 +15,12 @@ function CheckboxControl(
     onChange,
     defaultValue,
     id,
+    style,
   }: {
     onChange?: (checked: boolean) => void;
     defaultValue?: boolean;
     id: string;
+    style?: CSSProperties;
   },
   ref: any
 ) {
@@ -25,7 +32,7 @@ function CheckboxControl(
   }));
 
   return (
-    <div className="relative">
+    <div className="relative" style={style}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width={26}

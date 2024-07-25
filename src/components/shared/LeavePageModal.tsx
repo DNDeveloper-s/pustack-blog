@@ -24,12 +24,14 @@ interface LeavePageModalProps {
   shouldConfirm?: boolean;
   handleConfirm?: () => void;
   isPending?: boolean;
+  onClose?: () => void;
 }
 function LeavePageModalRef(
   {
     shouldConfirm = true,
     handleConfirm: _handleConfirm,
     isPending,
+    onClose,
   }: LeavePageModalProps,
   ref: any
 ) {
@@ -133,6 +135,7 @@ function LeavePageModalRef(
         base: "!max-w-[500px] !w-[90vw]",
       }}
       isDismissable={false}
+      onClose={onClose}
     >
       <ModalContent className="h-auto max-h-[90vh] overflow-auto jodit-table bg-primary no-preflight">
         <ModalHeader style={{ borderBottom: "1px dashed #1f1f1f1d" }}>

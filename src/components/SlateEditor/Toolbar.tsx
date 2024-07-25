@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa6";
 import { PiListBulletsDuotone, PiListNumbersDuotone } from "react-icons/pi";
 import { RiLinkUnlinkM } from "react-icons/ri";
-import { Editor, Element, Text, Transforms } from "slate";
+import { Editor, Element, Path, Text, Transforms } from "slate";
 import { ReactEditor, useSlate } from "slate-react";
 import SlateColorPopover, { SlateColorGroup } from "./SlateColorPicker";
 import { MdFormatColorText } from "react-icons/md";
@@ -20,6 +20,8 @@ import FontSize from "./FontSize";
 import { Popover } from "antd";
 import { useEffect, useState } from "react";
 import { Range } from "slate";
+import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
+import { Node } from "slate";
 
 export type ToolType =
   | "bold"
@@ -220,10 +222,12 @@ export const toggleFormat = (editor: Editor, format: string) => {
 };
 
 const applyTextColor = (editor: Editor, color: string) => {
+  if (!getTopmostElement(editor)) return;
   Editor.addMark(editor, "color", color);
 };
 
 const applyBackgroundColor = (editor: Editor, color: string) => {
+  if (!getTopmostElement(editor)) return;
   const { selection } = editor;
 
   if (selection && Range.isCollapsed(selection)) {
@@ -297,6 +301,7 @@ function LinkTool() {
             : " bg-[#f6f1c1]")
         }
         onClick={() => {
+          if (!getTopmostElement(editor)) return;
           toggleFormat(editor, "link");
           if (!window.localStorage.getItem("finished_link_tutorial")) {
             setShowIconTutorial(true);
@@ -312,38 +317,63 @@ function LinkTool() {
   );
 }
 
-interface ToolbarProps {}
+export const getTopmostElement = (editor: Editor) => {
+  const { selection } = editor;
+
+  if (!selection) {
+    return null;
+  }
+
+  const [start, end] = Range.edges(selection);
+
+  // Find the common ancestor path
+  const commonAncestorPath = Path.common(start.path, end.path);
+
+  // Get the node at the common ancestor path
+  const topmostElement = Node.get(editor, commonAncestorPath);
+
+  return topmostElement;
+};
+
+interface ToolbarProps {
+  readonly?: boolean;
+  setReadonly?: (readonly: boolean) => void;
+}
 export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
 
   return (
-    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0 z-20">
-      {tools.map((group, i) => (
-        <div key={i} className="flex gap-0">
-          <div className="mr-0"></div>
-          {group.map((tool) => (
-            <Button
-              key={tool.id}
-              className={
-                "w-10 flex flex-shrink-0 p-0 min-w-[unset] justify-center items-center h-8 hover:bg-[#f6f1c1] rounded-none " +
-                (activeTools.includes(tool.id) &&
-                (isMarkActiveAcrossSelection(editor, tool.id) ||
-                  isBlockActive(editor, tool.id))
-                  ? "bg-[#fffcdb]"
-                  : " bg-[#f6f1c1]")
-              }
-              onClick={() => {
-                toggleFormat(editor, tool.id);
-              }}
-            >
-              {tool.icon}
-            </Button>
-          ))}
-        </div>
-      ))}
-      <div className="flex flex-wrap gap-0">
-        <LinkTool />
-        {/* <SlateColorPopover
+    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky h-8 top-0 z-20">
+      {!props.readonly &&
+        tools.map((group, i) => (
+          <div key={i} className="flex gap-0">
+            <div className="mr-0"></div>
+            {group.map((tool) => (
+              <Button
+                key={tool.id}
+                className={
+                  "w-10 flex flex-shrink-0 p-0 min-w-[unset] justify-center items-center h-8 hover:bg-[#f6f1c1] rounded-none " +
+                  (activeTools.includes(tool.id) &&
+                  (isMarkActiveAcrossSelection(editor, tool.id) ||
+                    isBlockActive(editor, tool.id))
+                    ? "bg-[#fffcdb]"
+                    : " bg-[#f6f1c1]")
+                }
+                onClick={() => {
+                  if (!getTopmostElement(editor)) return;
+                  toggleFormat(editor, tool.id);
+                }}
+              >
+                {tool.icon}
+              </Button>
+            ))}
+          </div>
+        ))}
+      <div className="flex flex-1 flex-wrap gap-0">
+        {!props.readonly && (
+          <>
+            <LinkTool />
+            {/* <SlateColorPopover
           icon={<MdFormatColorText />}
           onApply={(color: string) => applyTextColor(editor, color)}
         />
@@ -351,12 +381,33 @@ export default function Toolbar(props: ToolbarProps) {
           icon={<IoMdColorFill />}
           onApply={(color: string) => applyBackgroundColor(editor, color)}
         /> */}
-        <SlateColorGroup
-          applyTextColor={applyTextColor}
-          applyBackgroundColor={applyBackgroundColor}
-          editor={editor}
-        />
-        <FontSize />
+            <SlateColorGroup
+              applyTextColor={applyTextColor}
+              applyBackgroundColor={applyBackgroundColor}
+              editor={editor}
+            />
+            <FontSize />
+          </>
+        )}
+        <div className="flex-1"></div>
+        <label
+          htmlFor="1"
+          className="flex cursor-pointer items-center justify-end gap-2 px-2"
+        >
+          <Checkbox
+            onChange={(checked: boolean) => {
+              // console.log(
+              //   "slateEditorRef.current?.getValue(); - ",
+              //   slateEditorRef.current?.getValue()
+              // );
+              props.setReadonly?.(checked);
+            }}
+            defaultValue={false}
+            id="1"
+            style={{ zoom: 0.74 }}
+          />
+          <span className="text-[12px]">Preview Mode</span>
+        </label>
       </div>
     </div>
   );

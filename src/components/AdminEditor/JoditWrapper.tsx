@@ -89,12 +89,14 @@ function JoditWrapper(
     prePost,
     isDraftSaving,
     isDraft,
+    onChange,
   }: {
     handleContinue: (post: Post) => void;
     prePost?: Post;
     handleSaveDraft: (post: Post) => void;
     isDraftSaving: boolean;
     isDraft: boolean;
+    onChange: () => void;
   },
   ref: any
 ) {
@@ -113,8 +115,6 @@ function JoditWrapper(
   const slateEditorRef = useRef<SlateEditorRef>(null);
   const [slateEditorKey, setSlateEditorKey] = useState(0);
   const { openNotification } = useNotification();
-
-  console.log("prePost?.nodes - ", prePost?.nodes, prePost);
 
   useEffect(() => {
     const getContent = localStorage.getItem("editor_state") ?? "{}";
@@ -409,7 +409,10 @@ function JoditWrapper(
             borderInlineEnd: 0,
           }}
           ref={inputRef}
-          onChange={(e) => updateLocalStorage("title", e.target.value)}
+          onChange={(e) => {
+            onChange();
+            updateLocalStorage("title", e.target.value);
+          }}
         />
       </div>
       <div className="mt-5">
@@ -422,6 +425,7 @@ function JoditWrapper(
           value={topic}
           onChange={(e) => {
             setTopic(e.target.value);
+            onChange();
             updateLocalStorage("topic", e.target.value);
           }}
           className="border text-[16px] w-full flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
@@ -459,34 +463,20 @@ function JoditWrapper(
         />
       </DndProvider> */}
       <div className="mt-5">
-        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-          Content
-        </h4>
+        <div className="flex justify-between gap-2">
+          <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+            Content
+          </h4>
+        </div>
         <div key={slateEditorKey}>
           <SlateEditor
+            onChange={onChange}
             key={JSON.stringify(prePost?.nodes)}
             value={prePost?.nodes as CustomElement[] | undefined}
             ref={slateEditorRef}
           />
         </div>
       </div>
-      <label
-        htmlFor="1"
-        className="flex cursor-pointer items-center justify-end mt-5 gap-2"
-      >
-        <Checkbox
-          onChange={(checked: boolean) => {
-            // console.log(
-            //   "slateEditorRef.current?.getValue(); - ",
-            //   slateEditorRef.current?.getValue()
-            // );
-            slateEditorRef.current?.setReadonly(checked);
-          }}
-          defaultValue={false}
-          id="1"
-        />
-        <span>Preview Mode</span>
-      </label>
 
       <Modal
         isOpen={isOpen}

@@ -6,6 +6,7 @@ import {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -60,6 +61,7 @@ export interface SlateEditorRef {
 interface SlateEditorProps {
   readonly?: boolean;
   value?: CustomElement[];
+  onChange?: () => void;
 }
 const SlateEditor = (props: SlateEditorProps, ref: any) => {
   const editor = useMemo(
@@ -290,18 +292,21 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
       key={key}
       className={
         "minerva-slate min-h-[150px] text-[16px] w-full flex-1 flex-shrink " +
-        (readonly ? " bg-transparent mt-5" : " border bg-lightPrimary")
+        (readonly ? " bg-transparent" : " border bg-lightPrimary")
       }
     >
       <Slate
         editor={editor}
         initialValue={readonly ? exportSlateState(value) : value}
         // @ts-ignore
-        onValueChange={setValue}
+        onValueChange={(val) => {
+          props.onChange?.();
+          setValue(val as any);
+        }}
         // @ts-ignore
         onChange={setValue}
       >
-        {!readonly && <Toolbar />}
+        <Toolbar readonly={readonly} setReadonly={setReadonly} />
         <Editable
           readOnly={readonly}
           onDOMBeforeInput={handleDOMBeforeInput}

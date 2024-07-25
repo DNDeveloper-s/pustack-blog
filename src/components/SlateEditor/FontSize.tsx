@@ -3,7 +3,7 @@ import { Popover } from "antd";
 import { useEffect, useState } from "react";
 import { FaCaretDown } from "react-icons/fa6";
 import { useSlate } from "slate-react";
-import { isMarkActiveAcrossSelection } from "./Toolbar";
+import { getTopmostElement, isMarkActiveAcrossSelection } from "./Toolbar";
 import { Editor, Text, Transforms } from "slate";
 
 const fontSizes = [
@@ -118,6 +118,7 @@ export default function FontSize() {
   }, [editor, editor.selection]);
 
   function handleChangeSize(size: string) {
+    if (!getTopmostElement(editor)) return;
     Transforms.setNodes(
       editor,
       // @ts-ignore

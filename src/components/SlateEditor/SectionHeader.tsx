@@ -6,6 +6,7 @@ import { FaCaretDown } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { Transforms } from "slate";
 import { ReactEditor, useReadOnly, useSlate } from "slate-react";
+import { getTopmostElement } from "./Toolbar";
 
 export default function SectionHeader({ element }: { element: any }) {
   const [open, setOpen] = useState(false);
@@ -120,7 +121,6 @@ export default function SectionHeader({ element }: { element: any }) {
               );
             }}
             ref={titleInputRef}
-            // onChange={(e) => section.updateTitle(e.target.value)}
           />
         </div>
       </div>
