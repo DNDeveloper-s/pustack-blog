@@ -98,6 +98,9 @@ export default function PostDraftItemDesktop({
     return post.sections;
   }, [post?.sections, post?.nodes]);
 
+  const isReadyToPublish =
+    post.status === "draft" || post.status === "unpublished";
+
   return (
     <div
       className={
@@ -176,23 +179,21 @@ export default function PostDraftItemDesktop({
         >
           <FaEye />
         </div>
-        <Tooltip
-          title={post.status === "unpublished" ? "Publish" : "Unpublish"}
-        >
+        <Tooltip title={isReadyToPublish ? "Publish" : "Unpublish"}>
           <div
             className={
               "flex items-center gap-1 cursor-pointer " +
-              (post.status === "unpublished"
+              (isReadyToPublish
                 ? " text-green-500 hover:text-green-700 text-lg"
                 : " text-danger-500 hover:text-danger-700")
             }
             onClick={() => {
-              post.status === "unpublished"
+              isReadyToPublish
                 ? disclosureOptionsPublish.onOpen()
                 : disclosureOptionsUnPublish.onOpen();
             }}
           >
-            {post.status === "unpublished" ? <MdPublish /> : <MdUnpublished />}
+            {isReadyToPublish ? <MdPublish /> : <MdUnpublished />}
           </div>
         </Tooltip>
       </div>

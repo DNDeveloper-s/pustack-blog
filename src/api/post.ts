@@ -27,13 +27,13 @@ export const useQueryPosts = ({
   enabled = true,
   dateRange,
   topics,
+  limit = 10,
 }: {
   userEmail?: string;
   initialData: any;
   enabled?: boolean;
+  limit?: number;
 } & Partial<PostFilters>) => {
-  const LIMIT = 10;
-
   const queryPosts = async (
     pageParam: any,
     queryKey: QueryKey,
@@ -50,7 +50,7 @@ export const useQueryPosts = ({
         _flatten: true,
         _startAfter: pageParam,
         status: status ? status.split(",") : [],
-        _limit: LIMIT as number,
+        _limit: limit as number,
         sort: sort as { field: string; order: "asc" | "desc" }[],
         dateRange: dateRange as PostFilters["dateRange"],
         topics: topics as PostFilters["topics"],
@@ -68,7 +68,7 @@ export const useQueryPosts = ({
       queryPosts(pageParam, queryKey, direction),
     initialPageParam: undefined,
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.lastDoc || lastPage?.data?.length < LIMIT) return undefined;
+      if (!lastPage.lastDoc || lastPage?.data?.length < limit) return undefined;
       return lastPage.lastDoc as any;
     },
     enabled,

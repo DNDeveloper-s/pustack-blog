@@ -15,6 +15,7 @@ import { ReactEditor, useReadOnly, useSlate } from "slate-react";
 import { FaCopy } from "react-icons/fa";
 import { MdOutlineDone } from "react-icons/md";
 import { Select, SelectItem } from "@nextui-org/select";
+import useScreenSize from "@/hooks/useScreenSize";
 
 const languages = [
   { id: "javascript", label: "JavaScript" },
@@ -67,7 +68,7 @@ export default function CodeSnippet({
 }) {
   const editor = useSlate();
   const readonly = useReadOnly();
-  const [value, setValue] = React.useState(element.language);
+  const { isMobileScreen } = useScreenSize();
 
   const [copied, setCopied] = React.useState(false);
 
@@ -104,7 +105,6 @@ export default function CodeSnippet({
       },
       { at: path }
     );
-    setValue(language ?? "javascript");
   };
 
   return (
@@ -179,12 +179,13 @@ export default function CodeSnippet({
         )}
       </div>
       <CodeMirror
-        value={element.code}
-        height="200px"
+        value={readonly ? element.code.trim() + "\n" : element.code}
+        // height="200px"
         theme="dark"
         extensions={[languageExtension]}
         onChange={onChange}
         editable={!readonly}
+        maxHeight={isMobileScreen ? "231px" : "455px"}
       />
     </div>
   );

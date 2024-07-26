@@ -62,6 +62,7 @@ interface SlateEditorProps {
   readonly?: boolean;
   value?: CustomElement[];
   onChange?: () => void;
+  showToolbar?: boolean;
 }
 const SlateEditor = (props: SlateEditorProps, ref: any) => {
   const editor = useMemo(
@@ -252,29 +253,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     [editor]
   );
 
-  function handleSave() {
-    // const _value = JSON.stringify(value);
-    // window.localStorage.setItem("slate_content", _value);
-
-    // const has = hasContent(editor);
-
-    console.log("value - ", value);
-
-    // const text = getFirstExistingText(value);
-    // const src = getFirstImage(value);
-    // console.log("text - ", text);
-    // console.log("src - ", src);
-  }
-
   const [key, setKey] = useState(0);
-
-  function handleLoad() {
-    const _value = window.localStorage.getItem("slate_content");
-    if (_value) {
-      setKey((prev) => prev + 1);
-      setValue(JSON.parse(_value));
-    }
-  }
 
   useImperativeHandle(ref, () => ({
     getValue: () => value,
@@ -306,7 +285,9 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         // @ts-ignore
         onChange={setValue}
       >
-        <Toolbar readonly={readonly} setReadonly={setReadonly} />
+        {props.showToolbar && (
+          <Toolbar readonly={readonly} setReadonly={setReadonly} />
+        )}
         <Editable
           readOnly={readonly}
           onDOMBeforeInput={handleDOMBeforeInput}

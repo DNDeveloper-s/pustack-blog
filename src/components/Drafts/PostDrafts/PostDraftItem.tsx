@@ -68,6 +68,8 @@ function PostItemActions({
 }) {
   const router = useRouter();
   // const disclosureOptions = useDisclosure();
+  const isReadyToPublish = status === "draft" || status === "unpublished";
+
   return (
     <Dropdown
       classNames={{
@@ -129,7 +131,7 @@ function PostItemActions({
         </DropdownItem>
         <DropdownItem
           onClick={() => {
-            status === "unpublished"
+            isReadyToPublish
               ? disclosureOptionsPublish.onOpen()
               : disclosureOptionsUnPublish.onOpen();
           }}
@@ -142,7 +144,7 @@ function PostItemActions({
               fontVariationSettings: '"wght" 700,"opsz" 10',
             }}
           >
-            {status === "unpublished" ? (
+            {isReadyToPublish ? (
               <>
                 <MdPublish />
                 <span>Publish</span>

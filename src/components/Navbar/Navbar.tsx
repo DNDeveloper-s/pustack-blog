@@ -7,7 +7,7 @@ import navOpen from "@/assets/svgs/nav-open.svg";
 import navClose from "@/assets/svgs/nav-close.svg";
 import Link from "next/link";
 import { WorldClockWithLabel } from "../shared/WorldClock2";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { url } from "@/constants";
 import { navYouAreHere } from "@/assets";
@@ -29,6 +29,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { FaCaretDown } from "react-icons/fa";
+import AccountsModal from "./Accounts/AccountsModal";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -102,7 +103,18 @@ export function NavbarDesktop({
     };
   }, []);
 
-  const showCreatePostButton = !pathname.includes("/admin") && !!user;
+  const showCreatePostButton = !!user;
+
+  const managePostList = useMemo(() => {
+    if (pathname === "/admin")
+      return [
+        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+      ];
+    return [
+      { key: "create-post", label: "CREATE POST", href: "/admin" },
+      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+    ];
+  }, [pathname]);
 
   // <div className="h-[150px]">
   return (
@@ -178,30 +190,23 @@ export function NavbarDesktop({
                       base: "!p-[0_10px]",
                     }}
                   >
-                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
-                      <Link
-                        href="/admin"
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
+                    {managePostList.map((link) => (
+                      <DropdownItem
+                        key={link.key}
+                        className="!p-[4px_0_2px] !rounded-none !bg-transparent"
                       >
-                        <span>CREATE POST</span>
-                      </Link>
-                    </DropdownItem>
-                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
-                      <Link
-                        href="/admin/drafts"
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                      >
-                        <span>VIEW MY POSTS</span>
-                      </Link>
-                    </DropdownItem>
+                        <Link
+                          href={link.href}
+                          className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                          style={{
+                            fontWeight: 600,
+                            fontVariationSettings: '"wght" 700,"opsz" 10',
+                          }}
+                        >
+                          <span>{link.label}</span>
+                        </Link>
+                      </DropdownItem>
+                    ))}
                   </DropdownMenu>
                 </Dropdown>
               )}
@@ -277,19 +282,23 @@ export function NavbarDesktop({
                 // >
                 //   <span>SIGN IN</span>
                 // </div>
-                <div
-                  className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                  onClick={() => {
-                    signOut();
-                    // signOutWithAuth();
-                  }}
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
-                  }}
-                >
-                  <span>SIGN OUT</span>
-                </div>
+                <AccountsModal
+                  Trigger={
+                    <div
+                      className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
+                      // onClick={() => {
+                      //   // signOut();
+                      //   // signOutWithAuth();
+                      // }}
+                      style={{
+                        fontWeight: 600,
+                        fontVariationSettings: '"wght" 700,"opsz" 10',
+                      }}
+                    >
+                      <span>SIGN OUT</span>
+                    </div>
+                  }
+                />
               )}
             </div>
           </div>

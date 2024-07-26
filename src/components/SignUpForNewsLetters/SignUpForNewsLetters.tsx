@@ -240,7 +240,7 @@ export default function SignUpForNewsLetters() {
           {status.error || status.sucess}
         </div>
       </div> */}
-      <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
+      {/* <div className="flex flex-col divide-y divide-dashed divide-[#1f1d1a4d] my-4">
         <div className="text-center mb-2">
           <p>{checkedLetters.length} newsletters selected</p>
         </div>
@@ -258,7 +258,7 @@ export default function SignUpForNewsLetters() {
             }}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

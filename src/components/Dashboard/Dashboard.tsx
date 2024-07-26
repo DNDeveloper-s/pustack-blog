@@ -13,6 +13,7 @@ import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 import DashboardMobile from "./DashboardMobile";
+import { useUser } from "@/context/UserContext";
 
 function DashboardDesktop({
   posts: _serverPosts,
@@ -21,6 +22,7 @@ function DashboardDesktop({
   posts: any;
   signals: any;
 }) {
+  const { user } = useUser();
   const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
   const {
     signals: _clientSignals,
@@ -79,12 +81,12 @@ function DashboardDesktop({
         data.displayTitle,
         data.displayContent,
         data.scheduledTime,
-        data.is_v2
+        data.is_v2,
+        data.nodes
       );
     }),
+    limit: 40,
   });
-
-  console.log("_serverPosts - ", _serverPosts, posts);
 
   // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
   //   useInView();
@@ -127,21 +129,21 @@ function DashboardDesktop({
       };
     }
 
+    console.log("posts - ", posts);
+
     const titlePost = posts.find(
       (post: any) => !!post.snippetData?.image || !!post.meta?.image
     );
 
-    const rightPosts = compact(
+    const midContentPosts = compact(
       difference(posts, [titlePost])?.filter(
         (post) => !!post.snippetData?.image || !!post.meta?.image
       )
-    ).slice(0, 2);
-
-    const midContentPosts = compact(
-      difference(posts, [...[titlePost], ...rightPosts])?.filter(
-        (post) => !!post.snippetData?.image || !!post.meta?.image
-      )
     ).slice(0, 12);
+
+    const rightPosts = compact(
+      difference(posts, [titlePost, ...midContentPosts])
+    ).slice(0, 6);
 
     const listPosts = compact(
       difference(posts, [
@@ -166,6 +168,8 @@ function DashboardDesktop({
   //   [...(fullCPosts?.slice(2) ?? []), ...(fullQPosts ?? [])],
   //   2
   // );
+
+  // console.log("postsByPosition - ", postsByPosition);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] relative">
@@ -229,7 +233,7 @@ function DashboardDesktop({
       </div>
       <div className="px-0 md:pl-7 md:pr-0 py-2">
         <div className="grid grid-cols-1 gap-4">
-          {postsByPosition.rightPosts?.slice(0, 3)?.map((post) => (
+          {postsByPosition.rightPosts?.map((post) => (
             <DesignedBlog
               size="sm"
               linkClassName="block"
@@ -239,7 +243,7 @@ function DashboardDesktop({
           ))}
         </div>
         {/* <BlogWithAuthor post={fullCPosts?.[1]} size="sm" /> */}
-        {!isTabletScreen && (
+        {!user && !isTabletScreen && (
           <div className="mt-4">
             <SignUpForNewsLetters />
           </div>

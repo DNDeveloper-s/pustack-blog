@@ -474,6 +474,7 @@ function JoditWrapper(
             key={JSON.stringify(prePost?.nodes)}
             value={prePost?.nodes as CustomElement[] | undefined}
             ref={slateEditorRef}
+            showToolbar
           />
         </div>
       </div>

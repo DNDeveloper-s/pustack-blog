@@ -2718,3 +2718,38 @@ font-size: 180px;
 .ul-p-0 ul {
   padding: 0 !important;
 }
+
+.big-shadow {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+}
+
+.small-around-shadow {
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+:where(
+    .css-dev-only-do-not-override-1uq9j6g
+  ).ant-switch.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background: #8f8948;
+}
+
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-switch:hover:not(
+    .ant-switch-disabled
+  ),
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-switch {
+  background: rgba(59, 59, 59, 0.164);
+}
+
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-switch.ant-switch-checked {
+  background: #8f8948;
+}
+
+.slick-slide[data-index="1"] {
+  height: 628px;
+}
+
+.slick-slide[data-index="1"] > div {
+  height: 100%;
+}

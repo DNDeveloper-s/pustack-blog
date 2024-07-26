@@ -641,7 +641,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
     intervalIdRef.current = setInterval(() => {
       intervalSaveDraftRef.current = true;
       handleSaveAsDraft(true, newlySavedDraftRef.current?.id);
-    }, 10000);
+    }, 1000 * 60 * 5);
 
     return () => {
       if (intervalIdRef.current) clearInterval(intervalIdRef.current);

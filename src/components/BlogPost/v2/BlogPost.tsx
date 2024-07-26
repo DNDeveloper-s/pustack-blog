@@ -544,38 +544,17 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
               <div className="flex gap-5 items-center justify-between">
                 <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
                   <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                    {/* Updated May 29, 2024, 3:10 am GMT+5:30 {''} */}
                     Updated{" "}
                     {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
                       " " +
                       " GMT " +
                       dayjs(post?.timestamp).format("Z")}
                   </p>
-                  <p
-                    className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]"
-                    style={
-                      {
-                        // fontWeight: "300",
-                        // fontVariationSettings: '"wght" 400,"opsz" 10',
-                      }
-                    }
-                  >
+                  <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
                     {post?.topic}
                   </p>
                 </div>
                 <NavigatorShare handleShare={handleShare} />
-                {/* {typeof navigator?.canShare === "function" &&
-                  navigator?.canShare() && (
-                    <div
-                      className="flex gap-2 items-center"
-                      onClick={handleShare}
-                    >
-                      <button className="text-[13px] font-helvetica font-bold text-appBlue underline uppercase leading-[1px]">
-                        Share
-                      </button>
-                      <HiOutlineExternalLink className="text-appBlue" />
-                    </div>
-                  )} */}
               </div>
               <div className="mt-4">
                 <h2
@@ -588,16 +567,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                 >
                   {post?.snippetData?.title}
                 </h2>
-                {/* <figure className="mt-4 w-[70%]">
-              <img
-                src={
-                  post?.snippetData?.image
-                    ? post?.snippetData?.image
-                    : imageOne.src
-                }
-                alt="Image One"
-              /> 
-              </figure> */}
                 {post?.snippetData?.image && (
                   <BlogImage
                     className="mt-4 w-[77%] cover-figure"
@@ -628,38 +597,13 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                       Read it now.
                     </Link>
                   </p>
-                  {/* <h2
-                  className="text-[16px] font-bold font-featureHeadline"
-                  style={{
-                    fontVariationSettings: '"wght" 495,"opsz" 10',
-                    fontWeight: 395,
-                  }}
-                >
-                  Sign up for Minerva Principals:
-                </h2>
-                <p>What the White House is reading.</p>
-                <Link href="#" className="underline">
-                  Read it now.
-                </Link> */}
                 </div>
-                {/* <div className="flex mt-1">
-                <input
-                  className="font-featureHeadline email_input"
-                  placeholder="Your Email address"
-                  type="text"
-                  style={{
-                    fontVariationSettings: '"wght" 400,"opsz" 10',
-                    borderInlineEnd: 0,
-                  }}
-                />
-                <button className="font-featureHeadline email_button">
-                  Sign Up
-                </button>
-              </div> */}
-                <SignUpForNewsLettersButton
-                  containerClassName="flex mt-1"
-                  checkedLetters={newsLettersList}
-                />
+                {!user && (
+                  <SignUpForNewsLettersButton
+                    containerClassName="flex mt-1"
+                    checkedLetters={newsLettersList}
+                  />
+                )}
               </div>
               {sections?.length > 0 && (
                 <div className="flex flex-col gap-1">
@@ -704,56 +648,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                       </div>
                     </>
                   ))}
-                  {/* <div className="flex gap-2 items-center">
-                <Image
-                  className="w-[20px] flex-shrink-0"
-                  src={iImage}
-                  alt="i-image"
-                />
-                <h3
-                  className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                  style={{
-                    fontWeight: 400,
-                    fontVariationSettings: '"wght" 500,"opsz" 10',
-                  }}
-                >
-                  The News
-                </h3>
-              </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-2 items-center">
-                <Image
-                  className="w-[20px] flex-shrink-0"
-                  src={dotImage}
-                  alt="i-image"
-                />
-                <h3
-                  className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                  style={{
-                    fontWeight: 400,
-                    fontVariationSettings: '"wght" 500,"opsz" 10',
-                  }}
-                >
-                  Kadia&apos;s View
-                </h3>
-              </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-2 items-center">
-                <Image
-                  className="w-[20px] flex-shrink-0"
-                  src={notableImage}
-                  alt="i-image"
-                />
-                <h3
-                  className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                  style={{
-                    fontWeight: 400,
-                    fontVariationSettings: '"wght" 500,"opsz" 10',
-                  }}
-                >
-                  Notable
-                </h3>
-              </div> */}
                 </div>
               )}
             </div>
