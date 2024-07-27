@@ -76,6 +76,13 @@ export type MathElement = {
   latex: string;
   dropdown?: boolean;
   children: EmptyText[];
+  isInnerLevel?: boolean;
+};
+
+export type MathContainerElement = {
+  type: "math-block-container";
+  align?: string;
+  children: MathElement[];
 };
 
 export type LinkElement = { type: "link"; url: string; children: Descendant[] };
@@ -231,6 +238,7 @@ type CustomElement =
   | TableRowElement
   | TableCellElement
   | MathElement
+  | MathContainerElement
   | CodeBlockElement
   | CodeLineElement;
 

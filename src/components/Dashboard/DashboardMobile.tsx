@@ -78,7 +78,8 @@ export default function DashboardMobile({
         data.displayTitle,
         data.displayContent,
         data.scheduledTime,
-        data.is_v2
+        data.is_v2,
+        data.nodes
       );
     }),
   });
@@ -93,26 +94,21 @@ export default function DashboardMobile({
       };
     }
 
+    console.log("posts - ", posts);
+
     const titlePost = posts.find(
-      (post: any) => post.snippetPosition === SnippetPosition.TITLE
+      (post: any) => !!post.snippetData?.image || !!post.meta?.image
     );
 
-    const rightPosts = compact(
-      difference(posts, [titlePost])?.filter(
-        (post) =>
-          post?.snippetPosition === SnippetPosition.RIGHT ||
-          post?.snippetPosition === SnippetPosition.TITLE
-      )
-    ).slice(0, 2);
-
     const midContentPosts = compact(
-      difference(posts, [...[titlePost], ...rightPosts])?.filter(
-        (post) =>
-          post?.snippetPosition === SnippetPosition.MID_CONTENT ||
-          post?.snippetPosition === SnippetPosition.RIGHT ||
-          post?.snippetPosition === SnippetPosition.TITLE
+      difference(posts, [titlePost])?.filter(
+        (post) => !!post.snippetData?.image || !!post.meta?.image
       )
     ).slice(0, 12);
+
+    const rightPosts = compact(
+      difference(posts, [titlePost, ...midContentPosts])
+    ).slice(0, 3);
 
     const listPosts = compact(
       difference(posts, [
@@ -160,7 +156,7 @@ export default function DashboardMobile({
         />
       </div>
       <div className="grid grid-cols-1 gap-4">
-        {postsByPosition.rightPosts?.slice(0, 3)?.map((post) => (
+        {postsByPosition.rightPosts?.map((post) => (
           <DesignedBlog
             size="sm"
             linkClassName="block"

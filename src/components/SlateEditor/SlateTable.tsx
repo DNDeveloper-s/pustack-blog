@@ -10,6 +10,18 @@ import {
 } from "@nextui-org/popover";
 
 export const TableElement = ({ attributes, children, element }: any) => {
+  const readonly = useReadOnly();
+
+  if (readonly) {
+    return (
+      <div className="max-w-full overflow-x-auto">
+        <table {...attributes} className="w-full">
+          <tbody>{children}</tbody>
+        </table>
+      </div>
+    );
+  }
+
   return (
     <table {...attributes} className="w-full">
       <tbody>{children}</tbody>
@@ -379,25 +391,6 @@ export const TableCellElement = ({
 
   const colIndex = cellPath[cellPath.length - 1];
   const rowIndex = cellPath[cellPath.length - 2];
-
-  // if (rowIndex === 0) {
-  //   console.log("First row - ", cellPath);
-  // }
-
-  // if (colIndex === 0) {
-  //   console.log("First column - ", cellPath);
-  // }
-
-  // console.log("hoveredCellPath - ", hoveredCellPath);
-
-  // const isFirstCellInHoveredColumn =
-  //   hoveredCellPath &&
-  //   hoveredCellPath[hoveredCellPath.length - 1] === colIndex &&
-  //   rowIndex === 0;
-  // const isFirstCellInHoveredRow =
-  //   hoveredCellPath &&
-  //   hoveredCellPath[hoveredCellPath.length - 2] === rowIndex &&
-  //   colIndex === 0;
 
   const handleOpenColChange = (open: boolean) => {
     setOpenCol(open);

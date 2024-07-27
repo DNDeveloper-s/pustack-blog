@@ -11,6 +11,21 @@ import { Switch } from "antd";
 import { MdAlternateEmail } from "react-icons/md";
 import { IoBookmarkSharp, IoChevronBack } from "react-icons/io5";
 import { BsFillInfoCircleFill } from "react-icons/bs";
+import dayjs from "dayjs";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import Lottie from "lottie-react-web";
+import { greenTickLottie } from "@/assets";
+import { Spinner } from "@nextui-org/spinner";
+import { useUpdateUser } from "@/api/user";
+import { useUser } from "@/context/UserContext";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { extractCountryCodeAndNumber } from "@/lib/phonenumber";
+import { handleUpload } from "@/lib/firebase/upload";
+import { Progress } from "@nextui-org/progress";
+import { signOut } from "@/lib/firebase/auth";
+import useScreenSize from "@/hooks/useScreenSize";
+
 const userImageUrl = "https://www.w3schools.com/howto/img_avatar2.png";
 
 export const starPath =
@@ -32,17 +47,45 @@ const RSVPIcon = (props: any) => (
   </svg>
 );
 
-export function AccountStepOne({ goNext, goPrev }: any) {
+interface AccountStepProps {
+  handleGearClick: () => void;
+  handleBackClick: () => void;
+  userDetails: {
+    name: string;
+    email: string;
+    isSubscribed?: boolean;
+    image?: string;
+    sign_up_ts: string;
+    app_rating: number;
+  };
+  onSubscriptionChange: (checked: boolean, event: any) => void;
+}
+export function AccountStepOne({
+  handleGearClick,
+  onSubscriptionChange,
+  handleBackClick,
+  userDetails,
+}: AccountStepProps) {
+  const [hasRated, setHasRated] = useState(false);
+  const { isMobileScreen } = useScreenSize();
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <div className={"px-4"}>
         <div
           className={"flex items-center justify-between font-featureHeadline"}
         >
-          <h2 className="font-featureHeadline text-2xl py-2">Account</h2>
+          <h2 className="flex items-center gap-2 py-2">
+            {isMobileScreen && (
+              <IoChevronBack
+                className="text-xl cursor-pointer"
+                onClick={handleBackClick}
+              />
+            )}
+            <span className="font-featureHeadline text-2xl">Account</span>
+          </h2>
           <div
             className="bg-gray-200 text-sm rounded-full p-1 cursor-pointer"
-            onClick={goNext}
+            onClick={handleGearClick}
           >
             <FaGear />
           </div>
@@ -72,11 +115,11 @@ export function AccountStepOne({ goNext, goPrev }: any) {
                 draggable={false}
               />
             </div>
-            <Image
+            <img
               height={66}
               width={66}
               className="relative z-10 rounded-xl"
-              src={"https://www.w3schools.com/howto/img_avatar2.png"}
+              src={userDetails.image || userImageUrl}
               alt="userdp"
               draggable={false}
             />
@@ -100,8 +143,8 @@ export function AccountStepOne({ goNext, goPrev }: any) {
 
           <div className="absolute bottom-0 flex justify-between w-full py-2 px-3">
             <div className="text-xs">
-              <h2 className="text-base font-medium">Saurabh Singh</h2>
-              <p>saurs2000@gmail.com</p>
+              <h2 className="text-base font-medium">{userDetails.name}</h2>
+              <p>{userDetails.email}</p>
             </div>
             <div className="flex items-center justify-center flex-col text-xs">
               <Image
@@ -111,51 +154,43 @@ export function AccountStepOne({ goNext, goPrev }: any) {
                 alt="member-since"
                 draggable={false}
               />
-              <h6>2022</h6>
+              <h6>{dayjs(userDetails.sign_up_ts).year()}</h6>
             </div>
           </div>
         </div>
         <div className="page-content my-5 mb-2">
-          <div className={"py-2 px-3 pb-3 rounded-lg small-around-shadow"}>
-            <h6 className="text-xs font-featureHeadline mb-1 text-gray-500 font-medium">
-              Rate Experience
-            </h6>
-            <StarRatings
-              name="rating"
-              rating={2}
-              numberOfStars={5}
-              starSpacing="2px"
-              starDimension="20px"
-              svgIconPath={starPath}
-              starHoverColor="#fec107"
-              starRatedColor="#fec107"
-              // changeRating={changeRating}
-              svgIconViewBox="0 0 207.802 207.748"
-            />
-            {/* {!hasRated ? (
-                <>
-                  <h6>Rate Experience</h6>
-                  <StarRatings
-                    name="rating"
-                    rating={rating}
-                    numberOfStars={5}
-                    starSpacing="2px"
-                    starDimension="20px"
-                    svgIconPath={starPath}
-                    starHoverColor="#fec107"
-                    starRatedColor="#fec107"
-                    changeRating={changeRating}
-                    svgIconViewBox="0 0 207.802 207.748"
-                  />
-                </>
-              ) : (
-                <div className="fadeIn">
-                  <h5>Thank you for rating us</h5>
-                  <span role="img" aria-label="smiley">
-                    😊
-                  </span>
-                </div>
-              )} */}
+          <div className={"py-2 px-3 pb-2 rounded-lg small-around-shadow"}>
+            {!hasRated ? (
+              <>
+                <h6 className="text-xs font-featureHeadline mb-1 text-gray-500 font-medium">
+                  Rate Experience
+                </h6>
+                <StarRatings
+                  name="rating"
+                  rating={2}
+                  numberOfStars={5}
+                  starSpacing="2px"
+                  starDimension="20px"
+                  svgIconPath={starPath}
+                  starHoverColor="#fec107"
+                  starRatedColor="#fec107"
+                  changeRating={() => {
+                    setHasRated(true);
+                    setTimeout(() => {
+                      setHasRated(false);
+                    }, 4000);
+                  }}
+                  svgIconViewBox="0 0 207.802 207.748"
+                />
+              </>
+            ) : (
+              <div className="animate-appearance-in text-center">
+                <h5>Thank you for rating us</h5>
+                <span role="img" aria-label="smiley">
+                  😊
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="divide-y">
@@ -177,7 +212,10 @@ export function AccountStepOne({ goNext, goPrev }: any) {
               </div>
             </div>
             <div>
-              <Switch defaultChecked />
+              <Switch
+                onChange={onSubscriptionChange}
+                checked={!!userDetails.isSubscribed}
+              />
             </div>
           </div>
           <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
@@ -199,6 +237,7 @@ export function AccountStepOne({ goNext, goPrev }: any) {
         </div>
         <div></div>
       </div>
+      <div className="flex-1"></div>
       <div className="border-t border-dashed border-[#1f1f1d1a] w-full py-2 text-xs mt-7 flex items-center justify-center gap-4">
         <div>
           <span>Terms of Service</span>
@@ -212,65 +251,259 @@ export function AccountStepOne({ goNext, goPrev }: any) {
   );
 }
 
-export function AccountStepTwo({ goNext, goPrev }: any) {
-  return (
-    <div className="flex flex-col h-full">
-      <div
-        className={
-          "flex items-center justify-between font-featureHeadline px-3 pr-4"
-        }
-      >
-        <h2 className="flex items-center gap-2 py-2">
-          <IoChevronBack className="text-xl cursor-pointer" onClick={goPrev} />
-          <span className="font-featureHeadline text-2xl">Settings</span>
-        </h2>
-        <span className="font-featureHeadline text-appBlue font-bold text-sm">
-          Done
+interface FormInputProps {
+  label: string;
+  placeholder?: string;
+  input?: (
+    value: string | undefined,
+    onChange: (e: any) => void,
+    setIsChanged: (val: boolean) => void,
+    inputRef: React.RefObject<HTMLInputElement>
+  ) => ReactNode;
+  value?: string;
+  onChange?: (e: any) => void;
+  onUpdate: (val: string) => void;
+  isPending?: boolean;
+  isSuccess?: boolean;
+  onCompleteAnimation?: () => void;
+  noBottomBorder?: boolean;
+}
+function FormInput(props: FormInputProps) {
+  const [isChanged, setIsChanged] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(props.value);
+
+  const handleChange = (e: any) => {
+    const _isChanged = (props.value?.trim() ?? "") !== e.target.value.trim();
+    setIsChanged(_isChanged);
+    props.onChange?.(e);
+    setValue(e.target.value);
+  };
+
+  const handleUpdate = () => {
+    setIsChanged(false);
+    props.onUpdate?.(inputRef.current?.value ?? "");
+  };
+
+  const id = useMemo(() => props.label.split(" ").join("-"), [props.label]);
+
+  const renderStatus = () => {
+    console.log("props - ", props);
+    if (props.isPending) {
+      return (
+        <Spinner
+          size="sm"
+          classNames={{
+            base: "!w-[14px] !h-[14px]",
+            wrapper: "!w-full !h-full",
+            circle1: "!border !border-b-appBlue",
+            circle2: "!border !border-b-appBlue",
+          }}
+        />
+      );
+    }
+
+    if (props.isSuccess) {
+      return (
+        <div className="w-[20px] h-[20px]">
+          <Lottie
+            options={{ animationData: greenTickLottie, loop: false }}
+            eventListeners={[
+              {
+                eventName: "complete",
+                callback: () => props.onCompleteAnimation?.(),
+              },
+            ]}
+          />
+        </div>
+      );
+    }
+
+    if (isChanged) {
+      return (
+        <span className="cursor-pointer" onClick={handleUpdate}>
+          Update
         </span>
-      </div>
-      <div className="w-full flex justify-center px-4">
-        <label
-          htmlFor="profile-input"
-          className="flex justify-center items-center flex-col gap-2 cursor-pointer"
-        >
-          <div className="relative big-shadow  flex items-center justify-center rounded-xl overflow-hidden w-[72px] h-[72px]">
-            <div
-              className="w-full h-full absolute"
-              style={{
-                transform: "rotate(149deg) scale(1.28)",
-              }}
-            >
-              <Image
-                height={100}
-                width={100}
-                className="w-full h-full object-cover -z-10"
-                src={goldCard}
-                alt="user-card-bg"
-                draggable={false}
-              />
-            </div>
-            <Image
-              height={66}
-              width={66}
-              className="relative z-10 rounded-xl"
-              src={"https://www.w3schools.com/howto/img_avatar2.png"}
-              alt="userdp"
-              draggable={false}
-            />
-          </div>
-          <h4 className="text-[12px] font-medium text-appBlue">
-            Change Profile Photo
-          </h4>
-          <input id="profile-input" type="file" accept="image/*" hidden />
-        </label>
-      </div>
+      );
+    }
 
-      <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-5" />
+    return null;
+  };
 
+  return (
+    <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+      <label className="text-sm mb-1" htmlFor={id}>
+        {props.label}
+      </label>
       <div>
+        {props.input ? (
+          props.input(value, handleChange, setIsChanged, inputRef)
+        ) : (
+          <input
+            type="text"
+            id={id}
+            placeholder={props.placeholder ?? "Enter here"}
+            className={
+              "w-full bg-transparent py-2 text-sm font-featureBold !outline-none pr-[45px] " +
+              (props.noBottomBorder
+                ? ""
+                : "border-b border-dashed border-[#1f1d1a4d]")
+            }
+            onChange={handleChange}
+            value={value}
+            ref={inputRef}
+            // value={profileName}
+            // onChange={handleProfileNameChange}
+          />
+        )}
+        {/* <Lottie /> */}
+        <div className="absolute text-xs top-1/2 transform -translate-y-1/2 right-[25px]">
+          {renderStatus()}
+        </div>
+      </div>
+    </form>
+  );
+}
+
+interface ImagePickerProps {
+  image_url: string;
+}
+function ImagePicker(props: ImagePickerProps) {
+  const [isPending, setIsPending] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [url, setUrl] = useState(props.image_url);
+
+  const handleImageChange = (e: any) => {
+    handleUpload(e.target.files[0], {
+      setProgress: setProgress,
+      setIsPending: setIsPending,
+      handleComplete: (_url) => {
+        setProgress(0);
+        setUrl(_url);
+      },
+    });
+
+    e.target.value = "";
+    // e.target.files = null;
+  };
+
+  console.log("url - ", url);
+  console.log("progress - ", progress);
+
+  useEffect(() => {
+    console.log("remounted - ");
+  }, []);
+
+  return (
+    <label
+      htmlFor="profile-input"
+      className="flex justify-center items-center flex-col gap-2 cursor-pointer"
+    >
+      <div className="relative big-shadow  flex flex-col items-center justify-center rounded-xl overflow-hidden w-[72px] h-[72px]">
+        <div
+          className="w-full h-full absolute"
+          style={{
+            transform: "rotate(149deg) scale(1.28)",
+          }}
+        >
+          <Image
+            height={100}
+            width={100}
+            className="w-full h-full object-cover -z-10"
+            src={goldCard}
+            alt="user-card-bg"
+            draggable={false}
+          />
+        </div>
+        <Progress
+          className="absolute top-0 h-[3px]"
+          classNames={{
+            track: "!h-full !bg-transparent",
+            indicator: "!bg-appBlue",
+          }}
+          value={progress}
+        />
+        <img
+          // height={66}
+          // width={66}
+          className="w-[66px] h-[66px] relative z-10 rounded-xl"
+          src={url}
+          alt="userdp"
+          draggable={false}
+        />
+      </div>
+      <h4 className="text-[12px] font-medium text-appBlue">
+        Change Profile Photo
+      </h4>
+      <input
+        onChange={handleImageChange}
+        id="profile-input"
+        type="file"
+        accept="image/*"
+        hidden
+      />
+    </label>
+  );
+}
+
+// : (
+//   <Lottie
+//     options={{ animationData: greenTickLottie, loop: false }}
+//   />
+// )
+
+interface AccountStepTwoProps {
+  handleBackClick: () => void;
+}
+export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
+  // const activeField = useRef<"name" | "email" | "phone" | "company">();
+  const [activeField, setActiveField] = useState<
+    "name" | "email" | "phone" | "company"
+  >();
+  const { user } = useUser();
+  const {
+    isPending,
+    isSuccess,
+    mutate: postUpdateUser,
+  } = useUpdateUser({
+    onSettled: () => {
+      // activeField.current = undefined;
+    },
+  });
+
+  const handleCompleteAnimation = () => {
+    setActiveField(undefined);
+  };
+
+  return (
+    user?.uid && (
+      <div className="flex flex-col h-full">
+        <div
+          className={
+            "flex items-center justify-between font-featureHeadline px-3 pr-4"
+          }
+        >
+          <h2 className="flex items-center gap-2 py-2">
+            <IoChevronBack
+              className="text-xl cursor-pointer"
+              onClick={handleBackClick}
+            />
+            <span className="font-featureHeadline text-2xl">Settings</span>
+          </h2>
+          <span className="font-featureHeadline text-appBlue font-bold text-sm">
+            Done
+          </span>
+        </div>
+        <div className="w-full flex justify-center px-4">
+          <ImagePicker image_url={user.image_url} />
+        </div>
+
+        <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-5" />
+
         <div>
           <div>
-            <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+            <div>
+              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
                 Name
               </label>
@@ -287,10 +520,56 @@ export function AccountStepTwo({ goNext, goPrev }: any) {
                   Update
                 </span>
               </div>
-            </form>
-          </div>
-          <div>
-            <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+            </form> */}
+              <FormInput
+                label="Name"
+                onUpdate={(value: string) => {
+                  setActiveField("name");
+                  postUpdateUser({
+                    name: value,
+                    userId: user?.uid,
+                  });
+                }}
+                onCompleteAnimation={handleCompleteAnimation}
+                isPending={activeField === "name" && isPending}
+                isSuccess={activeField === "name" && isSuccess}
+                placeholder="Enter Name"
+                value={user?.name}
+              />
+            </div>
+            <div>
+              <FormInput
+                label="Phone"
+                onUpdate={(value: string) => {
+                  setActiveField("phone");
+                  const { nationalNumber, countryCode } =
+                    extractCountryCodeAndNumber(value);
+                  postUpdateUser({
+                    phone: nationalNumber,
+                    phone_country_code: countryCode,
+                    userId: user?.uid,
+                  });
+                }}
+                input={(value, onChange, _, inputRef) => (
+                  <PhoneInput
+                    inputProps={{
+                      ref: inputRef,
+                    }}
+                    country={"in"}
+                    containerClass="border-b border-dashed border-[#1f1d1a4d]"
+                    inputClass="!border-none !w-full !bg-transparent py-2 pt-3 text-sm font-featureBold !outline-none pr-[45px] !pl-[34px]"
+                    buttonClass="!bg-transparent !border-none minerva-account-modal-phone-input"
+                    value={value}
+                    onChange={(phone) => onChange({ target: { value: phone } })}
+                  />
+                )}
+                onCompleteAnimation={handleCompleteAnimation}
+                isPending={activeField === "phone" && isPending}
+                isSuccess={activeField === "phone" && isSuccess}
+                placeholder="Enter here"
+                value={(user?.phone_country_code ?? "") + (user?.phone ?? "")}
+              />
+              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
                 Phone
               </label>
@@ -307,10 +586,25 @@ export function AccountStepTwo({ goNext, goPrev }: any) {
                   Update
                 </span>
               </div>
-            </form>
-          </div>
-          <div>
-            <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+            </form> */}
+            </div>
+            <div>
+              <FormInput
+                label="Email"
+                onUpdate={(value: string) => {
+                  setActiveField("email");
+                  postUpdateUser({
+                    email: value,
+                    userId: user?.uid,
+                  });
+                }}
+                onCompleteAnimation={handleCompleteAnimation}
+                isPending={activeField === "email" && isPending}
+                isSuccess={activeField === "email" && isSuccess}
+                placeholder="Enter here"
+                value={user?.email}
+              />
+              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
                 Email
               </label>
@@ -327,10 +621,26 @@ export function AccountStepTwo({ goNext, goPrev }: any) {
                   Update
                 </span>
               </div>
-            </form>
-          </div>
-          <div>
-            <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+            </form> */}
+            </div>
+            <div>
+              <FormInput
+                label="Company"
+                onUpdate={(value: string) => {
+                  setActiveField("company");
+                  postUpdateUser({
+                    company: value,
+                    userId: user?.uid,
+                  });
+                }}
+                onCompleteAnimation={handleCompleteAnimation}
+                isPending={activeField === "company" && isPending}
+                isSuccess={activeField === "company" && isSuccess}
+                placeholder="Enter here"
+                value={user?.company}
+                noBottomBorder
+              />
+              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
                 Company
               </label>
@@ -347,9 +657,9 @@ export function AccountStepTwo({ goNext, goPrev }: any) {
                   Update
                 </span>
               </div>
-            </form>
-          </div>
-          {/* <div className="user-settings-form">
+            </form> */}
+            </div>
+            {/* <div className="user-settings-form">
                 <form
                   onClick={() => {
                     // setSwipeFlow(() => {
@@ -367,38 +677,39 @@ export function AccountStepTwo({ goNext, goPrev }: any) {
                   />
                 </form>
               </div> */}
+          </div>
+          <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-0.5" />
+          <div className="flex flex-col text-sm font-medium text-appBlue divide-y divide-dashed divide-[#1f1d1a4d]">
+            <h6 className="pb-2 px-4">
+              <span>Terms of Service</span>
+            </h6>
+            <h6 className="py-2 px-4">
+              <span>Privacy Policy</span>
+            </h6>
+            <h6 className="py-2 px-4 cursor-pointer" onClick={() => signOut()}>
+              <span>Log Out saurs2000@gmail.com</span>
+            </h6>
+            <h6 className="py-2 px-4">
+              <span className="delete text-red-500">Delete Account</span>
+            </h6>
+          </div>
         </div>
-        <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-0.5" />
-        <div className="flex flex-col text-sm font-medium text-appBlue divide-y divide-dashed divide-[#1f1d1a4d]">
-          <h6 className="pb-2 px-4">
-            <span>Terms of Service</span>
-          </h6>
-          <h6 className="py-2 px-4">
-            <span>Privacy Policy</span>
-          </h6>
-          <h6 className="py-2 px-4">
-            <span>Log Out saurs2000@gmail.com</span>
-          </h6>
-          <h6 className="py-2 px-4">
-            <span className="delete text-red-500">Delete Account</span>
-          </h6>
+        <div className="flex-1"></div>
+        <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-10" />
+        <div className="flex items-center flex-col justify-center pb-3 gap-2 pt-1">
+          <Image
+            height={100}
+            width={130}
+            className="powered__by__icon"
+            src={minervaBlack}
+            alt="pustack-logo"
+            draggable={false}
+          />
+          <p className="text-xs">
+            Powered By <strong>PuStack Education</strong>
+          </p>
         </div>
       </div>
-      <div className="flex-1"></div>
-      <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-10" />
-      <div className="flex items-center flex-col justify-center pb-3 gap-2 pt-1">
-        <Image
-          height={100}
-          width={130}
-          className="powered__by__icon"
-          src={minervaBlack}
-          alt="pustack-logo"
-          draggable={false}
-        />
-        <p className="text-xs">
-          Powered By <strong>PuStack Education</strong>
-        </p>
-      </div>
-    </div>
+    )
   );
 }

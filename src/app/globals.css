@@ -2721,12 +2721,12 @@ font-size: 180px;
 
 .big-shadow {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
-    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px !important;
 }
 
 .small-around-shadow {
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px !important;
 }
 
 :where(
@@ -2750,6 +2750,28 @@ font-size: 180px;
   height: 628px;
 }
 
+.slick-slide[data-index="0"] > div,
 .slick-slide[data-index="1"] > div {
   height: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .slick-slide {
+    height: 100vh !important;
+  }
+}
+
+.large-shadow {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px !important;
+}
+
+.minerva-account-modal-phone-input > .selected-flag {
+  padding-left: 0 !important;
+  width: 30px !important;
+  background: transparent !important;
+}
+
+.readonly .mq-empty {
+  background: transparent !important;
 }

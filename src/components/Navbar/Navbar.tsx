@@ -7,7 +7,7 @@ import navOpen from "@/assets/svgs/nav-open.svg";
 import navClose from "@/assets/svgs/nav-close.svg";
 import Link from "next/link";
 import { WorldClockWithLabel } from "../shared/WorldClock2";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { url } from "@/constants";
 import { navYouAreHere } from "@/assets";
@@ -29,7 +29,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/dropdown";
 import { FaCaretDown } from "react-icons/fa";
-import AccountsModal from "./Accounts/AccountsModal";
+import AccountsModal, { AccountsDrawer } from "./Accounts/AccountsModal";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -110,6 +110,8 @@ export function NavbarDesktop({
       return [
         { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
       ];
+    if (pathname === "/admin/drafts")
+      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
     return [
       { key: "create-post", label: "CREATE POST", href: "/admin" },
       { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
@@ -563,7 +565,20 @@ export function NavbarTablet({
     };
   }, []);
 
-  const showCreatePostButton = !pathname.includes("/admin") && !!user;
+  const showCreatePostButton = !!user;
+
+  const managePostList = useMemo(() => {
+    if (pathname === "/admin")
+      return [
+        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+      ];
+    if (pathname === "/admin/drafts")
+      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
+    return [
+      { key: "create-post", label: "CREATE POST", href: "/admin" },
+      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+    ];
+  }, [pathname]);
 
   return (
     <div className="h-[220px]">
@@ -592,43 +607,149 @@ export function NavbarTablet({
             </div>
             <div className="flex-1 flex items-start gap-3 justify-end">
               {showCreatePostButton && (
-                <Link
-                  href="/admin"
-                  className="text-[10px] flex justify-end font-helvetica text-primaryText"
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
+                // <Link
+                //   href="/admin"
+                //   className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                //   style={{
+                //     fontWeight: 600,
+                //     fontVariationSettings: '"wght" 700,"opsz" 10',
+                //   }}
+                // >
+                //   <span>CREATE POST</span>
+                // </Link>
+                <Dropdown
+                  classNames={{
+                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                    base: "!p-[0_10px]",
                   }}
                 >
-                  <span>CREATE POST</span>
-                </Link>
+                  <DropdownTrigger className="!scale-100 !opacity-100">
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <p
+                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        MANAGE POSTS
+                      </p>
+                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    classNames={{
+                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                      base: "!p-[0_10px]",
+                    }}
+                  >
+                    {managePostList.map((link) => (
+                      <DropdownItem
+                        key={link.key}
+                        className="!p-[4px_0_2px] !rounded-none !bg-transparent"
+                      >
+                        <Link
+                          href={link.href}
+                          className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                          style={{
+                            fontWeight: 600,
+                            fontVariationSettings: '"wght" 700,"opsz" 10',
+                          }}
+                        >
+                          <span>{link.label}</span>
+                        </Link>
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </Dropdown>
               )}
               {!user ? (
-                <div
-                  className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                  onClick={() => {
-                    signInWithGoogle();
-                  }}
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
+                <Dropdown
+                  classNames={{
+                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                    base: "!p-[0_10px]",
                   }}
                 >
-                  <span>SIGN IN</span>
-                </div>
+                  <DropdownTrigger className="!scale-100 !opacity-100">
+                    <div className="flex items-center gap-1 cursor-pointer">
+                      <p
+                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                      >
+                        SIGN IN
+                      </p>
+                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    classNames={{
+                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                      base: "!p-[0_10px]",
+                    }}
+                  >
+                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
+                      <div
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                        onClick={() => {
+                          signInWithGoogle();
+                        }}
+                      >
+                        <span>GOOGLE</span>
+                      </div>
+                    </DropdownItem>
+                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
+                      <div
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                        onClick={() => {
+                          signInWithLinkedin();
+                        }}
+                      >
+                        <span>LINKEDIN</span>
+                      </div>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               ) : (
-                <div
-                  className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                  onClick={() => {
-                    signOut();
-                  }}
-                  style={{
-                    fontWeight: 600,
-                    fontVariationSettings: '"wght" 700,"opsz" 10',
-                  }}
-                >
-                  <span>SIGN OUT</span>
-                </div>
+                // <div
+                //   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
+                //   onClick={() => {
+                //     signOut();
+                //   }}
+                //   style={{
+                //     fontWeight: 600,
+                //     fontVariationSettings: '"wght" 700,"opsz" 10',
+                //   }}
+                // >
+                //   <span>SIGN OUT</span>
+                // </div>
+                <AccountsModal
+                  Trigger={
+                    <div
+                      className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
+                      // onClick={() => {
+                      //   // signOut();
+                      //   // signOutWithAuth();
+                      // }}
+                      style={{
+                        fontWeight: 600,
+                        fontVariationSettings: '"wght" 700,"opsz" 10',
+                      }}
+                    >
+                      <span>SIGN OUT</span>
+                    </div>
+                  }
+                />
               )}
               {/* <div className="text-[10px] flex justify-end font-helvetica">
         <span>SIGN IN</span>
@@ -947,6 +1068,7 @@ export function NavbarMobile() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { user } = useUser();
   const pathname = usePathname();
+  const accountsDrawerRef = useRef<any>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -960,7 +1082,20 @@ export function NavbarMobile() {
       clearInterval(interval);
     };
   }, []);
-  const showCreatePostButton = !pathname.includes("/admin") && !!user;
+  const showCreatePostButton = !!user;
+
+  const managePostList = useMemo(() => {
+    if (pathname === "/admin")
+      return [
+        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+      ];
+    if (pathname === "/admin/drafts")
+      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
+    return [
+      { key: "create-post", label: "CREATE POST", href: "/admin" },
+      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+    ];
+  }, [pathname]);
 
   return (
     <header className="w-full max-w-[1100px] mx-auto py-2">
@@ -982,35 +1117,124 @@ export function NavbarMobile() {
         </div>
         <div className="flex-1 flex items-start gap-3 justify-end">
           {showCreatePostButton && (
-            <Link
-              href="/admin"
-              className="text-[10px] flex justify-end font-helvetica text-primaryText"
-              style={{
-                fontWeight: 600,
-                fontVariationSettings: '"wght" 700,"opsz" 10',
+            // <Link
+            //   href="/admin"
+            //   className="text-[10px] flex justify-end font-helvetica text-primaryText"
+            //   style={{
+            //     fontWeight: 600,
+            //     fontVariationSettings: '"wght" 700,"opsz" 10',
+            //   }}
+            // >
+            //   <span>CREATE POST</span>
+            // </Link>
+            <Dropdown
+              classNames={{
+                content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                base: "!p-[0_10px]",
               }}
             >
-              <span>CREATE POST</span>
-            </Link>
+              <DropdownTrigger className="!scale-100 !opacity-100">
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <p
+                    className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                  >
+                    MANAGE POSTS
+                  </p>
+                  <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                </div>
+              </DropdownTrigger>
+              <DropdownMenu
+                classNames={{
+                  list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                  base: "!p-[0_10px]",
+                }}
+              >
+                {managePostList.map((link) => (
+                  <DropdownItem
+                    key={link.key}
+                    className="!p-[4px_0_2px] !rounded-none !bg-transparent"
+                  >
+                    <Link
+                      href={link.href}
+                      className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                      style={{
+                        fontWeight: 600,
+                        fontVariationSettings: '"wght" 700,"opsz" 10',
+                      }}
+                    >
+                      <span>{link.label}</span>
+                    </Link>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           )}
           {!user ? (
-            <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-              onClick={() => {
-                signInWithGoogle();
-              }}
-              style={{
-                fontWeight: 600,
-                fontVariationSettings: '"wght" 700,"opsz" 10',
+            <Dropdown
+              classNames={{
+                content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
+                base: "!p-[0_10px]",
               }}
             >
-              <span>SIGN IN</span>
-            </div>
+              <DropdownTrigger className="!scale-100 !opacity-100">
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <p
+                    className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                  >
+                    SIGN IN
+                  </p>
+                  <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+                </div>
+              </DropdownTrigger>
+              <DropdownMenu
+                classNames={{
+                  list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
+                  base: "!p-[0_10px]",
+                }}
+              >
+                <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
+                  <div
+                    className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                    onClick={() => {
+                      signInWithGoogle();
+                    }}
+                  >
+                    <span>GOOGLE</span>
+                  </div>
+                </DropdownItem>
+                <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
+                  <div
+                    className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
+                    }}
+                    onClick={() => {
+                      signInWithLinkedin();
+                    }}
+                  >
+                    <span>LINKEDIN</span>
+                  </div>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           ) : (
             <div
               className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
-                signOut();
+                accountsDrawerRef.current?.showDrawer();
               }}
               style={{
                 fontWeight: 600,
@@ -1169,6 +1393,7 @@ export function NavbarMobile() {
       {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 
       {/* <hr className="border-dashed border-[#1f1d1a4d]" /> */}
+      <AccountsDrawer ref={accountsDrawerRef} />
     </header>
   );
 }

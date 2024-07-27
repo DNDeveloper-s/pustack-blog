@@ -41,6 +41,7 @@ const DividerIcon = (props: any) => (
 interface OptionItem {
   id: string;
   label: string;
+  isMathBlock?: boolean;
   isMath?: boolean;
   isCode?: boolean;
   isImage?: boolean;
@@ -59,6 +60,12 @@ interface OptionItem {
 }
 
 const options: OptionItem[] = [
+  {
+    id: "math-block",
+    label: "Math Block",
+    isMathBlock: true,
+    icon: <TbMath />,
+  },
   { id: "math-formula", label: "Math Formula", isMath: true, icon: <TbMath /> },
   {
     id: "code-snippet",
@@ -219,7 +226,20 @@ const DropdownMenu = () => {
         children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
       };
 
-      if (option.isMath) {
+      if (option.isMathBlock) {
+        customElement = {
+          type: "math-block-container",
+          align: "left",
+          children: [
+            {
+              type: "math-block",
+              latex: "",
+              isInnerLevel: true,
+              children: [{ text: "" }],
+            },
+          ], // Make sure to add children, as Slate expects all nodes to have children
+        };
+      } else if (option.isMath) {
         customElement = {
           type: "math-block",
           latex: "",

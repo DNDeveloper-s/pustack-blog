@@ -21,6 +21,7 @@ import { moveCursorto } from "./utils/helpers";
 import { Range } from "slate";
 import { TableCellElement, TableElement, TableRowElement } from "./SlateTable";
 import { useState } from "react";
+import MathBlockElement from "./MathBlockElement";
 
 const allowedTypes = [
   "paragraph",
@@ -385,6 +386,9 @@ const CustomSlateElement = (props: any) => {
     case "image-block":
       el = <ResizableImage {...props} />;
       break;
+    case "math-block-container":
+      el = <MathBlockElement {...props} />;
+      break;
     case "math-block":
       el = <MathQuill {...props} />;
       break;
@@ -437,6 +441,7 @@ const CustomSlateElement = (props: any) => {
   const showSideTools =
     !isNestedListItem &&
     !readonly &&
+    !element.isInnerLevel &&
     !["table-row", "table-cell"].includes(element.type);
 
   const moveUp = () => {
@@ -469,7 +474,13 @@ const CustomSlateElement = (props: any) => {
     <div
       className={
         "group/line relative mx-auto " +
-        (readonly ? "w-full my-2" : " py-2 w-[95.25%] px-2")
+        (readonly
+          ? element.isInnerLevel
+            ? "w-full my-1"
+            : "w-full my-2"
+          : element.isInnerLevel
+          ? " w-[90.2%] md:w-[95.25%] px-2 !my-1 "
+          : " py-2 w-[90.2%] md:w-[95.25%] px-2")
       }
       contentEditable={
         element.type !== "code-block" &&

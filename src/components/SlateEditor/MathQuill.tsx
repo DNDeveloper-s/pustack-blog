@@ -41,7 +41,8 @@ const MathQuill = ({
   return (
     <div
       className={
-        "flex w-full px-2 relative group/formula " + (readonly ? "" : "py-4")
+        "flex w-full px-2 relative group/formula " +
+        (readonly ? " readonly" : element.isInnerLevel ? "py-1" : "py-4")
       }
       style={{
         justifyContent:
@@ -53,45 +54,50 @@ const MathQuill = ({
       }}
     >
       {readonly ? (
-        <StaticMathField style={mathQuillStyles}>{latex}</StaticMathField>
+        <StaticMathField contentEditable={false} style={mathQuillStyles}>
+          {latex}
+        </StaticMathField>
       ) : (
         <>
-          <div className="group-hover/formula:opacity-100 opacity-0 transition-all absolute z-10 -top-2 left-1/2 transform -translate-x-1/2 flex items-center gap-3 text-sm bg-gray-600 p-1 rounded text-white">
-            <div
-              className={
-                "p-1 hover:bg-gray-500 cursor-pointer rounded " +
-                (element.align === "left" ? "!bg-gray-500" : "")
-              }
-              onClick={() => {
-                handleAlignMent("left");
-              }}
-            >
-              <FaAlignLeft />
+          {!element.isInnerLevel && (
+            <div className="group-hover/formula:opacity-100 opacity-0 transition-all absolute z-10 -top-2 left-1/2 transform -translate-x-1/2 flex items-center gap-3 text-sm bg-gray-600 p-1 rounded text-white">
+              <div
+                className={
+                  "p-1 hover:bg-gray-500 cursor-pointer rounded " +
+                  (element.align === "left" ? "!bg-gray-500" : "")
+                }
+                onClick={() => {
+                  handleAlignMent("left");
+                }}
+              >
+                <FaAlignLeft />
+              </div>
+              <div
+                className={
+                  "p-1 hover:bg-gray-500 cursor-pointer rounded " +
+                  (element.align === "center" ? "!bg-gray-500" : "")
+                }
+                onClick={() => {
+                  handleAlignMent("center");
+                }}
+              >
+                <FaAlignCenter />
+              </div>
+              <div
+                className={
+                  "p-1 hover:bg-gray-500 cursor-pointer rounded " +
+                  (element.align === "right" ? "!bg-gray-500" : "")
+                }
+                onClick={() => {
+                  handleAlignMent("right");
+                }}
+              >
+                <FaAlignRight />
+              </div>
             </div>
-            <div
-              className={
-                "p-1 hover:bg-gray-500 cursor-pointer rounded " +
-                (element.align === "center" ? "!bg-gray-500" : "")
-              }
-              onClick={() => {
-                handleAlignMent("center");
-              }}
-            >
-              <FaAlignCenter />
-            </div>
-            <div
-              className={
-                "p-1 hover:bg-gray-500 cursor-pointer rounded " +
-                (element.align === "right" ? "!bg-gray-500" : "")
-              }
-              onClick={() => {
-                handleAlignMent("right");
-              }}
-            >
-              <FaAlignRight />
-            </div>
-          </div>
+          )}
           <EditableMathField
+            autoFocus
             suppressContentEditableWarning
             contentEditable={!readonly}
             latex={latex}
@@ -140,7 +146,12 @@ const MathQuill = ({
                 const newPath = Path.next(path);
                 Transforms.insertNodes(
                   editor,
-                  { type: "paragraph", children: [{ text: "" }] },
+                  {
+                    type: "math-block",
+                    latex: "",
+                    isInnerLevel: element.isInnerLevel,
+                    children: [{ text: "" }],
+                  },
                   { at: newPath }
                 );
                 Transforms.select(editor, Editor.start(editor, newPath));

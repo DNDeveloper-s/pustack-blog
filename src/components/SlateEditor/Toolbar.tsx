@@ -56,15 +56,11 @@ const tools: Tool[][] = [
       label: "Underline",
       icon: <FaUnderline />,
     },
-  ],
-  [
     {
       id: "strike-through",
       label: "Strike Through",
       icon: <FaStrikethrough />,
     },
-  ],
-  [
     {
       id: "bulleted-list",
       label: "Bullet List",
@@ -80,8 +76,6 @@ const tools: Tool[][] = [
       label: "Numbered List",
       icon: <PiListNumbersDuotone />,
     },
-  ],
-  [
     {
       id: "left",
       label: "Left Align",
@@ -343,10 +337,10 @@ export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
 
   return (
-    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky h-8 top-0 z-20">
+    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0 z-20">
       {!props.readonly &&
         tools.map((group, i) => (
-          <div key={i} className="flex gap-0">
+          <div key={i} className="flex gap-0 h-8 flex-wrap">
             <div className="mr-0"></div>
             {group.map((tool) => (
               <Button
@@ -369,7 +363,7 @@ export default function Toolbar(props: ToolbarProps) {
             ))}
           </div>
         ))}
-      <div className="flex flex-1 flex-wrap gap-0">
+      <div className="flex flex-1 flex-wrap gap-0 h-8">
         {!props.readonly && (
           <>
             <LinkTool />

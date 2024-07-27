@@ -25,6 +25,9 @@ export interface UserDocumentData {
   name: string;
   sign_up_ts: string;
   uid: string;
+  phone?: string;
+  phone_country_code?: string;
+  company?: string;
 }
 
 export function UserProvider({
