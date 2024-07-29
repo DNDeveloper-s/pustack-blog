@@ -1,3 +1,4 @@
+import { UserDocumentData, transformUserData } from "@/context/UserContext";
 import { db, firebaseConfig } from "@/lib/firebase";
 import { onAuthStateChanged } from "@/lib/firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -28,10 +29,8 @@ export default function useUserSession(initialUser: any) {
     const unsubscribe = onAuthStateChanged(async (authUser) => {
       if (authUser) {
         const user = await getDoc(doc(db, "users", authUser.uid));
-        console.log("Setting User | 31 : ");
-        setUser(user.data());
+        setUser(transformUserData(user));
       } else {
-        console.log("Setting User | 34 : ");
         setUser(null);
       }
     });

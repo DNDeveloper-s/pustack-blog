@@ -713,6 +713,33 @@ export class Post {
     };
   }
 
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  static async getSavedPosts(userId: string): Promise<(Post | PostV1)[]> {
+    const userRef = collection(db, "users", userId, "bookmarks");
+    const docs = await getDocs(userRef);
+    const bookMarks = docs.docs.map((doc) => doc.id);
+
+    console.log("bookMarks - ", bookMarks);
+
+    const postsRef = collection(db, "posts").withConverter(postConverter);
+
+    const _query = query(
+      postsRef,
+      where("id", "in", bookMarks),
+      orderBy("timestamp", "desc")
+    );
+
+    const postDocs = await getDocs(_query);
+
+    console.log("postDocs - ", postDocs);
+
+    return compact(flattenQueryData(postDocs));
+  }
+
   static async getPublishedPosts(): Promise<PostQuerySnapshot>;
   static async getPublishedPosts({
     _startAfter,
@@ -826,6 +853,7 @@ export const postConverter = {
   toFirestore: (post: Post) => {
     return {
       title: post.title,
+      id: post.id,
       author: post.author,
       topic: post.topic,
       timestamp: serverTimestamp(),

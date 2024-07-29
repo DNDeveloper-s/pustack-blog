@@ -1,10 +1,12 @@
 import { auth, db, firebaseConfig } from "@/lib/firebase";
 import { onAuthStateChanged } from "@/lib/firebase/auth";
+import { DocumentSnapshot } from "firebase-admin/firestore";
 import { User } from "firebase/auth";
 import {
   DocumentData,
   doc,
   getDoc,
+  onSnapshot,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -28,6 +30,15 @@ export interface UserDocumentData {
   phone?: string;
   phone_country_code?: string;
   company?: string;
+  subscriber?: boolean;
+}
+
+export function transformUserData(user?: any): UserDocumentData {
+  return {
+    ...(user?.data() ?? {}),
+    uid: user?.id ?? user?.data()?.uid,
+    sign_up_ts: user?.data()?.sign_up_ts?.toDate().toISOString(),
+  } as UserDocumentData;
 }
 
 export function UserProvider({
@@ -60,7 +71,7 @@ export function UserProvider({
       await auth.authStateReady();
       if (auth.currentUser) {
         const user = await getDoc(doc(db, "users", auth.currentUser.uid));
-        setUser(user.data() as UserDocumentData);
+        setUser(transformUserData(user));
       }
     }
     checkUser();
@@ -73,7 +84,7 @@ export function UserProvider({
         const user = await getDoc(userRef);
         if (user.exists()) {
           console.log("Setting User | 74 : ");
-          setUser(user.data() as UserDocumentData);
+          setUser(transformUserData(user));
         } else {
           await setDoc(userRef, {
             name: authUser.displayName,
@@ -85,7 +96,7 @@ export function UserProvider({
           });
           const user = await getDoc(userRef);
           console.log("Setting User | 85 : ");
-          setUser(user.data() as UserDocumentData);
+          setUser(transformUserData(user));
         }
       } else {
         console.log("Setting User | 89 : ");
@@ -95,9 +106,21 @@ export function UserProvider({
       }
     });
 
+    if (user) {
+      let userRef = doc(db, "users", user.uid);
+      const unsub = onSnapshot(userRef, (user) => {
+        setUser(transformUserData(user));
+      });
+
+      return () => {
+        unsub();
+        unsubscribe();
+      };
+    }
+
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.uid]);
 
   useEffect(() => {
     onAuthStateChanged((authUser) => {

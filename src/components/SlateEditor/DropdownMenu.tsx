@@ -243,6 +243,7 @@ const DropdownMenu = () => {
         customElement = {
           type: "math-block",
           latex: "",
+          isInnerLevel: false,
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
       } else if (option.isCode) {

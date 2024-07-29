@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaAlignCenter, FaAlignLeft, FaAlignRight } from "react-icons/fa6";
 import { addStyles, EditableMathField, StaticMathField } from "react-mathquill";
 import { Editor, Node, Path, Transforms } from "slate";
@@ -30,12 +30,23 @@ const MathQuill = ({
   const editor = useSlate();
   const readonly = useReadOnly();
 
+  const focusMethod = useRef<any>(null);
+
   const handleAlignMent = (align: "center" | "left" | "right") => {
-    Transforms.setNodes(
-      editor,
-      { align },
-      { at: ReactEditor.findPath(editor, element) }
-    );
+    // Transforms.setNodes(
+    //   editor,
+    //   { align },
+    //   { at: ReactEditor.findPath(editor, element) }
+    // );
+    // const el3 = document.querySelector(".mq-root-block");
+    // @ts-ignore
+    // el?.focus();
+    // @ts-ignore
+    // el1?.focus();
+    // @ts-ignore
+    // el2?.focus();
+    // @ts-ignore
+    // el3?.focus();
   };
 
   return (
@@ -52,6 +63,7 @@ const MathQuill = ({
             ? "flex-end"
             : "flex-start",
       }}
+      {...attributes}
     >
       {readonly ? (
         <StaticMathField contentEditable={false} style={mathQuillStyles}>
@@ -68,6 +80,7 @@ const MathQuill = ({
                 }
                 onClick={() => {
                   handleAlignMent("left");
+                  focusMethod.current();
                 }}
               >
                 <FaAlignLeft />
@@ -109,7 +122,17 @@ const MathQuill = ({
                 { at: ReactEditor.findPath(editor, element) }
               );
             }}
+            itemRef="math-field-dnd"
             onKeyDownCapture={(e: any) => {
+              // if (e.key === "Backspace") {
+              //   const path = ReactEditor.findPath(editor, element);
+              //   const parentPath = Path.parent(path);
+              //   const [parentNode] = Editor.node(editor, parentPath);
+
+              //   console.log("parentNode - ", parentNode);
+              //   console.log("parentPath - ", parentPath, path);
+              // }
+
               if (e.key === "Backspace" && latex === "") {
                 const path = ReactEditor.findPath(editor, element);
                 if (Path.isPath(path) && path.length > 0) {
@@ -117,31 +140,78 @@ const MathQuill = ({
 
                   // Remove the current node
                   Transforms.removeNodes(editor, { at: path });
-
-                  if (path[0] == 0) {
-                    // If the current node is the first node in the editor, return
-                    Transforms.insertNodes(editor, defaultElement, { at: [0] });
-                    Transforms.select(editor, [0]);
-                    return;
-                  }
-
-                  const previousPath = Path.previous(path);
-                  // Check if the previous path exists
-                  if (Node.has(editor, previousPath)) {
-                    // Move the cursor to the end of the previous node
-                    const end = Editor.end(editor, previousPath);
+                  if (!element.isInnerLevel) {
+                    Transforms.insertNodes(
+                      editor,
+                      {
+                        type: "paragraph",
+                        align: "left",
+                        children: [{ text: "" }],
+                      },
+                      { at: path }
+                    );
+                    const end = Editor.end(editor, path);
                     Transforms.select(editor, end);
+                    ReactEditor.focus(editor);
                   } else {
-                    // If the previous path does not exist, move the cursor to the start of the editor
-                    Transforms.select(editor, Editor.start(editor, []));
-                  }
+                    if (path[0] == 0) {
+                      // If the current node is the first node in the editor, return
+                      Transforms.insertNodes(editor, defaultElement, {
+                        at: [0],
+                      });
+                      Transforms.select(editor, [0]);
+                      return;
+                    }
+                    if (path.at(-1) === 0) {
+                      const parentPath = Path.parent(path);
+                      const [parentNode] = Editor.node(editor, parentPath);
 
-                  // Ensure the editor is focused
-                  ReactEditor.focus(editor);
+                      Transforms.deselect(editor);
+                      Transforms.removeNodes(editor, { at: parentPath });
+                      Transforms.insertNodes(editor, defaultElement, {
+                        at: parentPath,
+                      });
+                      const end = Editor.end(editor, parentPath);
+                      Transforms.select(editor, end);
+                      ReactEditor.focus(editor);
+                      return;
+                    }
+                    const previousPath = Path.previous(path);
+                    // Check if the previous path exists
+                    if (Node.has(editor, previousPath)) {
+                      const previousNode = Node.get(editor, previousPath);
+                      const previousEl = ReactEditor.toDOMNode(
+                        editor,
+                        previousNode
+                      );
+                      // @ts-ignore
+                      if (previousNode.type === "math-block") {
+                        console.log("previousEl - ", previousEl);
+                        // Transforms.deselect(editor);
+                        setTimeout(() => {
+                          const el3 = previousEl?.querySelector(
+                            ".mq-textarea textarea"
+                          );
+                          // @ts-ignore
+                          el3?.focus();
+                        }, 10);
+                      } else {
+                        // Move the cursor to the end of the previous node
+                        const end = Editor.end(editor, previousPath);
+                        Transforms.select(editor, end);
+                      }
+                    } else {
+                      // If the previous path does not exist, move the cursor to the start of the editor
+                      Transforms.select(editor, Editor.start(editor, []));
+                    }
+                    // Ensure the editor is focused
+                    // ReactEditor.focus(editor);
+                  }
                 }
 
                 e.preventDefault();
               } else if (e.key === "Enter") {
+                Transforms.deselect(editor);
                 const path = ReactEditor.findPath(editor, element);
                 const newPath = Path.next(path);
                 Transforms.insertNodes(
@@ -161,6 +231,9 @@ const MathQuill = ({
             }}
             style={mathQuillStyles}
             mathquillDidMount={(mathField: any) => {
+              focusMethod.current = () => {
+                mathField.focus();
+              };
               mathField.focus();
             }}
           />

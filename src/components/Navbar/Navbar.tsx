@@ -30,6 +30,7 @@ import {
 } from "@nextui-org/dropdown";
 import { FaCaretDown } from "react-icons/fa";
 import AccountsModal, { AccountsDrawer } from "./Accounts/AccountsModal";
+import AppImage from "../shared/AppImage";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -52,7 +53,44 @@ interface CurrentTime {
   date: string;
 }
 
-export function NavbarDesktop({
+function SignOutButton() {
+  const { user } = useUser();
+
+  return (
+    <div className="flex items-center gap-2 cursor-pointer">
+      <div>
+        <AppImage
+          height={13}
+          width={13}
+          className="w-[13px] h-[13px] relative z-10 rounded-full object-cover border border-primaryText border-opacity-30"
+          src={user?.image_url}
+          alt="userdp"
+          // @ts-ignore
+          unoptimized
+          draggable={false}
+        />
+      </div>
+      <div
+        className="text-[10px] flex justify-end font-helvetica text-primaryText"
+        // onClick={() => {
+        //   // signOut();
+        //   // signOutWithAuth();
+        // }}
+        style={{
+          fontWeight: 600,
+          fontVariationSettings: '"wght" 700,"opsz" 10',
+        }}
+      >
+        <span className="max-w-[70px] overflow-hidden overflow-ellipsis whitespace-nowrap uppercase">
+          {user?.name?.split(" ")[0] ?? "My Account"}
+        </span>
+      </div>
+      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+    </div>
+  );
+}
+
+function NavbarDesktop({
   scrollRef,
 }: {
   scrollRef?: React.RefObject<HTMLDivElement>;
@@ -286,18 +324,8 @@ export function NavbarDesktop({
                 // </div>
                 <AccountsModal
                   Trigger={
-                    <div
-                      className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                      // onClick={() => {
-                      //   // signOut();
-                      //   // signOutWithAuth();
-                      // }}
-                      style={{
-                        fontWeight: 600,
-                        fontVariationSettings: '"wght" 700,"opsz" 10',
-                      }}
-                    >
-                      <span>SIGN OUT</span>
+                    <div>
+                      <SignOutButton />
                     </div>
                   }
                 />
@@ -515,7 +543,7 @@ export function NavbarDesktop({
   );
 }
 
-export function NavbarTablet({
+function NavbarTablet({
   scrollRef,
 }: {
   scrollRef?: React.RefObject<HTMLDivElement>;
@@ -733,23 +761,7 @@ export function NavbarTablet({
                 // >
                 //   <span>SIGN OUT</span>
                 // </div>
-                <AccountsModal
-                  Trigger={
-                    <div
-                      className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
-                      // onClick={() => {
-                      //   // signOut();
-                      //   // signOutWithAuth();
-                      // }}
-                      style={{
-                        fontWeight: 600,
-                        fontVariationSettings: '"wght" 700,"opsz" 10',
-                      }}
-                    >
-                      <span>SIGN OUT</span>
-                    </div>
-                  }
-                />
+                <AccountsModal Trigger={<div>SignOutButton</div>} />
               )}
               {/* <div className="text-[10px] flex justify-end font-helvetica">
         <span>SIGN IN</span>
@@ -1060,7 +1072,7 @@ export function NavbarTablet({
   );
 }
 
-export function NavbarMobile() {
+function NavbarMobile() {
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
     time: dayjs().format("h:mm A"),
     date: dayjs().format("dddd MMMM DD, YYYY"),
@@ -1142,7 +1154,7 @@ export function NavbarMobile() {
                       fontVariationSettings: '"wght" 700,"opsz" 10',
                     }}
                   >
-                    MANAGE POSTS
+                    MANAGE
                   </p>
                   <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                 </div>
@@ -1232,16 +1244,11 @@ export function NavbarMobile() {
             </Dropdown>
           ) : (
             <div
-              className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
               onClick={() => {
                 accountsDrawerRef.current?.showDrawer();
               }}
-              style={{
-                fontWeight: 600,
-                fontVariationSettings: '"wght" 700,"opsz" 10',
-              }}
             >
-              <span>SIGN OUT</span>
+              <SignOutButton />
             </div>
           )}
           {/* <div className="text-[10px] flex justify-end font-helvetica">

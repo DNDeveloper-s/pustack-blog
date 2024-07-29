@@ -11,6 +11,7 @@ interface UseUpdateUserOptions {
   phone?: string;
   phone_country_code?: string;
   company?: string;
+  subscriber?: boolean;
   userId: string;
 }
 export const useUpdateUser = (
@@ -25,7 +26,7 @@ export const useUpdateUser = (
 
     await setDoc(
       userRef,
-      omitBy(variables, (value) => !value),
+      omitBy(variables, (value) => value === undefined),
       { merge: true }
     );
 
@@ -33,6 +34,7 @@ export const useUpdateUser = (
   };
   return useMutation({
     mutationFn: updateUser,
+    onSettled: () => {},
     ...options,
   });
 };

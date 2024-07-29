@@ -8,6 +8,10 @@ export const API_QUERY = {
     dateRange?: [Dayjs | null, Dayjs | null],
     topics?: string[]
   ) => ["query-posts", userEmail, status?.join(","), sort, dateRange, topics],
+  QUERY_SAVED_POSTS: (userId?: string | null | undefined) => [
+    "query-saved-posts",
+    userId,
+  ],
   QUERY_DRAFT_POSTS: (...status: string[]) => [
     "query-draft-posts",
     status.join(","),

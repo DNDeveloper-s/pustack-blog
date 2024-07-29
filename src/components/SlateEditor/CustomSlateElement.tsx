@@ -22,6 +22,8 @@ import { Range } from "slate";
 import { TableCellElement, TableElement, TableRowElement } from "./SlateTable";
 import { useState } from "react";
 import MathBlockElement from "./MathBlockElement";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import ErrorComponent from "../shared/ErrorComponent";
 
 const allowedTypes = [
   "paragraph",
@@ -387,10 +389,18 @@ const CustomSlateElement = (props: any) => {
       el = <ResizableImage {...props} />;
       break;
     case "math-block-container":
-      el = <MathBlockElement {...props} />;
+      el = (
+        <ErrorBoundary errorComponent={ErrorComponent}>
+          <MathBlockElement {...props} />
+        </ErrorBoundary>
+      );
       break;
     case "math-block":
-      el = <MathQuill {...props} />;
+      el = (
+        <ErrorBoundary errorComponent={ErrorComponent}>
+          <MathQuill {...props} />
+        </ErrorBoundary>
+      );
       break;
     case "embed-video":
       el = <ResizableEmbedVideo {...props} />;
@@ -485,6 +495,7 @@ const CustomSlateElement = (props: any) => {
       contentEditable={
         element.type !== "code-block" &&
         element.type !== "image-block" &&
+        element.type !== "math-block-container" &&
         element.type !== "math-block" &&
         element.type !== "choose-image-ui" &&
         element.type !== "section-header" &&

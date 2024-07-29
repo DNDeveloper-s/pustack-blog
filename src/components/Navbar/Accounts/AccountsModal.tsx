@@ -5,6 +5,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { AccountStepOne, AccountStepTwo } from "./AccountSteps";
 import { useUser } from "@/context/UserContext";
 import dayjs from "dayjs";
+import { useUpdateUser } from "@/api/user";
 
 const popOverShadowStyles = {
   boxShadow:
@@ -17,9 +18,17 @@ interface AccountsModalProps {
 export default function AccountsModal(props: AccountsModalProps) {
   const carouselRef = useRef<CarouselRef>(null);
   const { user } = useUser();
+  const {
+    isPending,
+    isSuccess,
+    mutate: postUpdateUser,
+  } = useUpdateUser({
+    onSettled: () => {
+      // activeField.current = undefined;
+    },
+  });
   const [slide, setSlide] = useState(0);
   const onChange = (currentSlide: number) => {
-    console.log(currentSlide);
     setSlide(currentSlide);
   };
 
@@ -32,8 +41,6 @@ export default function AccountsModal(props: AccountsModalProps) {
     if (slide === 0) return;
     carouselRef.current?.prev();
   };
-
-  console.log("user - ", user);
 
   return (
     <Popover
@@ -72,11 +79,13 @@ export default function AccountsModal(props: AccountsModalProps) {
                 app_rating: 0,
                 sign_up_ts:
                   // @ts-ignore
-                  user?.sign_up_ts.toDate().toISOString() ??
-                  dayjs().toISOString(),
-                isSubscribed: false,
+                  user?.sign_up_ts ?? dayjs().toISOString(),
+                isSubscribed: user?.subscriber,
               }}
-              onSubscriptionChange={(value) => console.log(value)}
+              onSubscriptionChange={(value) => {
+                user?.uid &&
+                  postUpdateUser({ userId: user?.uid, subscriber: value });
+              }}
               handleGearClick={goNext}
               handleBackClick={() => {}}
             />
@@ -149,8 +158,7 @@ function AccountsDrawerRef(props: any, ref: any) {
               app_rating: 0,
               sign_up_ts:
                 // @ts-ignore
-                user?.sign_up_ts.toDate().toISOString() ??
-                dayjs().toISOString(),
+                user?.sign_up_ts ?? dayjs().toISOString(),
               isSubscribed: false,
             }}
             onSubscriptionChange={(value) => console.log(value)}

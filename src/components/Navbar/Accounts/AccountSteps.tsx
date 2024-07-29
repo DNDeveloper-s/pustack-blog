@@ -22,9 +22,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { extractCountryCodeAndNumber } from "@/lib/phonenumber";
 import { handleUpload } from "@/lib/firebase/upload";
-import { Progress } from "@nextui-org/progress";
 import { signOut } from "@/lib/firebase/auth";
 import useScreenSize from "@/hooks/useScreenSize";
+import AppImage from "@/components/shared/AppImage";
+import { Progress } from "@nextui-org/progress";
+import Link from "next/link";
 
 const userImageUrl = "https://www.w3schools.com/howto/img_avatar2.png";
 
@@ -62,12 +64,23 @@ interface AccountStepProps {
 }
 export function AccountStepOne({
   handleGearClick,
-  onSubscriptionChange,
+  onSubscriptionChange: _onSubscriptionChange,
   handleBackClick,
   userDetails,
 }: AccountStepProps) {
   const [hasRated, setHasRated] = useState(false);
   const { isMobileScreen } = useScreenSize();
+  const [_isSubscribed, setIsSubscribed] = useState(!!userDetails.isSubscribed);
+
+  const onSubscriptionChange = (checked: boolean, event: any) => {
+    setIsSubscribed(checked);
+    _onSubscriptionChange(checked, event);
+  };
+
+  useEffect(() => {
+    setIsSubscribed(!!userDetails.isSubscribed);
+  }, [userDetails.isSubscribed]);
+
   return (
     <div className="flex flex-col h-full">
       <div className={"px-4"}>
@@ -115,12 +128,22 @@ export function AccountStepOne({
                 draggable={false}
               />
             </div>
-            <img
+            {/* <img
               height={66}
               width={66}
               className="relative z-10 rounded-xl"
               src={userDetails.image || userImageUrl}
               alt="userdp"
+              draggable={false}
+            /> */}
+            <AppImage
+              height={66}
+              width={66}
+              className="w-[66px] h-[66px] relative z-10 rounded-xl object-cover"
+              src={userDetails.image || userImageUrl}
+              alt="userdp"
+              // @ts-ignore
+              unoptimized
               draggable={false}
             />
           </div>
@@ -194,14 +217,17 @@ export function AccountStepOne({
           </div>
         </div>
         <div className="divide-y">
-          <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
+          <Link
+            href={"/saved"}
+            className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
+          >
             <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
               <IoBookmarkSharp />
             </div>
             <div>
               <span>Saved Posts</span>
             </div>
-          </div>
+          </Link>
           <div className="flex items-center justify-between">
             <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
               <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
@@ -212,10 +238,7 @@ export function AccountStepOne({
               </div>
             </div>
             <div>
-              <Switch
-                onChange={onSubscriptionChange}
-                checked={!!userDetails.isSubscribed}
-              />
+              <Switch onChange={onSubscriptionChange} checked={_isSubscribed} />
             </div>
           </div>
           <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
@@ -366,20 +389,31 @@ function FormInput(props: FormInputProps) {
 }
 
 interface ImagePickerProps {
-  image_url: string;
+  url: string;
+  setUrl: (url: string) => void;
 }
-function ImagePicker(props: ImagePickerProps) {
+function ImagePicker({ url, setUrl }: ImagePickerProps) {
   const [isPending, setIsPending] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [url, setUrl] = useState(props.image_url);
+  // const [url, setUrl] = useState(props.image_url);
+  // const [hide, setHide] = useState(false);
 
   const handleImageChange = (e: any) => {
+    // setProgress(60);
+    // setUrl(
+    //   "https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2F452380345_374227215435694_2191457578537821322_n.png?alt=media&token=8429bf54-a8c7-4517-91eb-e83745a6a9ec"
+    // );
     handleUpload(e.target.files[0], {
-      setProgress: setProgress,
-      setIsPending: setIsPending,
-      handleComplete: (_url) => {
-        setProgress(0);
+      setProgress: (val) => setProgress(val),
+      setIsPending: (val) => setIsPending(val),
+      handleComplete: (_url: any) => {
         setUrl(_url);
+        setIsPending(false);
+        setProgress(0);
+        // setHide(true);
+        // setTimeout(() => {
+        //   setHide(false);
+        // }, 500);
       },
     });
 
@@ -387,19 +421,15 @@ function ImagePicker(props: ImagePickerProps) {
     // e.target.files = null;
   };
 
-  console.log("url - ", url);
-  console.log("progress - ", progress);
-
-  useEffect(() => {
-    console.log("remounted - ");
-  }, []);
-
   return (
-    <label
-      htmlFor="profile-input"
-      className="flex justify-center items-center flex-col gap-2 cursor-pointer"
+    <div
+      // htmlFor="profile-input"
+      className="flex justify-center items-center flex-col gap-2 cursor-pointer relative"
     >
-      <div className="relative big-shadow  flex flex-col items-center justify-center rounded-xl overflow-hidden w-[72px] h-[72px]">
+      <div
+        className="relative big-shadow  flex flex-col items-center justify-center rounded-xl overflow-hidden w-[72px] h-[72px]"
+        key={url}
+      >
         <div
           className="w-full h-full absolute"
           style={{
@@ -415,34 +445,46 @@ function ImagePicker(props: ImagePickerProps) {
             draggable={false}
           />
         </div>
-        <Progress
-          className="absolute top-0 h-[3px]"
-          classNames={{
-            track: "!h-full !bg-transparent",
-            indicator: "!bg-appBlue",
-          }}
-          value={progress}
-        />
-        <img
-          // height={66}
-          // width={66}
-          className="w-[66px] h-[66px] relative z-10 rounded-xl"
+        {progress > 0 && (
+          <Progress
+            className="absolute top-0 h-[3px]"
+            classNames={{
+              track: "!h-full !bg-transparent",
+              indicator: "!bg-appBlue",
+            }}
+            value={parseInt(progress.toString())}
+          />
+        )}
+
+        <AppImage
+          height={66}
+          width={66}
+          className="w-[66px] h-[66px] relative z-10 rounded-xl object-cover"
           src={url}
           alt="userdp"
+          // @ts-ignore
+          unoptimized
           draggable={false}
         />
       </div>
       <h4 className="text-[12px] font-medium text-appBlue">
         Change Profile Photo
       </h4>
-      <input
-        onChange={handleImageChange}
-        id="profile-input"
-        type="file"
-        accept="image/*"
-        hidden
-      />
-    </label>
+      <div
+        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+        // htmlFor="profile-input"
+        aria-label="profile-input"
+      >
+        <input
+          onChange={handleImageChange}
+          id="profile-input"
+          type="file"
+          accept="image/*"
+          className="w-full h-full cursor-pointer"
+          // hidden
+        />
+      </div>
+    </div>
   );
 }
 
@@ -457,10 +499,12 @@ interface AccountStepTwoProps {
 }
 export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
   // const activeField = useRef<"name" | "email" | "phone" | "company">();
+
   const [activeField, setActiveField] = useState<
     "name" | "email" | "phone" | "company"
   >();
   const { user } = useUser();
+  const [url, setUrl] = useState(user?.image_url ?? "");
   const {
     isPending,
     isSuccess,
@@ -495,7 +539,16 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
           </span>
         </div>
         <div className="w-full flex justify-center px-4">
-          <ImagePicker image_url={user.image_url} />
+          <ImagePicker
+            url={url}
+            setUrl={(url: string) => {
+              setUrl(url);
+              postUpdateUser({
+                userId: user?.uid,
+                image_url: url,
+              });
+            }}
+          />
         </div>
 
         <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-5" />

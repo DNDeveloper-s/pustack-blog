@@ -1,20 +1,17 @@
 import { API_QUERY } from "@/config/api-query";
 import { Post } from "@/firebase/post-v2";
-import { functions } from "@/lib/firebase";
-import { httpsCallable } from "firebase/functions";
 import {
   DefinedUseQueryResult,
   Query,
   QueryFunctionContext,
   QueryKey,
   UseMutationOptions,
-  UseQueryOptions,
+  UseQueryResult,
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { WriteBatch, writeBatch } from "firebase/firestore";
 import { useMemo } from "react";
 import { useUser } from "@/context/UserContext";
 import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
@@ -410,5 +407,23 @@ export const useUpdatePostDraft = (
       });
     },
     ...(options ?? {}),
+  });
+};
+
+export const useQuerySavedPosts = (): UseQueryResult<any, Error> => {
+  const { user } = useUser();
+  const querySavedPosts = async ({ queryKey }: QueryFunctionContext) => {
+    const [, userId] = queryKey;
+    if (!userId || typeof userId !== "string") {
+      throw new Error("User ID is required");
+    }
+
+    const posts = await Post.getSavedPosts(userId);
+    return posts;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
+    queryFn: querySavedPosts,
   });
 };
