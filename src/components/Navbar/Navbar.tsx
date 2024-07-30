@@ -31,6 +31,15 @@ import {
 import { FaCaretDown } from "react-icons/fa";
 import AccountsModal, { AccountsDrawer } from "./Accounts/AccountsModal";
 import AppImage from "../shared/AppImage";
+import dynamic from "next/dynamic";
+const DeleteAccountModal = dynamic(
+  () => import("./Accounts/DeleteAccountModal"),
+  {
+    ssr: false,
+  }
+);
+// import DeleteAccountModal from "./Accounts/DeleteAccountModal";
+import { useDisclosure } from "@nextui-org/modal";
 
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
@@ -101,6 +110,7 @@ function NavbarDesktop({
   const toggleDrawer = () => {
     setIsNavOpen((prevState) => !prevState);
   };
+  const disclosureOptions = useDisclosure();
   const [isOnTop, setIsOnTop] = useState(true);
 
   const pathname = usePathname();
@@ -328,6 +338,7 @@ function NavbarDesktop({
                       <SignOutButton />
                     </div>
                   }
+                  deleteAccountDisclosure={disclosureOptions}
                 />
               )}
             </div>
@@ -539,6 +550,7 @@ function NavbarDesktop({
           </Drawer>
         </header>
       </div>
+      {user && <DeleteAccountModal disclosureOptions={disclosureOptions} />}
     </div>
   );
 }
@@ -554,6 +566,7 @@ function NavbarTablet({
     setIsNavOpen((prevState) => !prevState);
   };
   const [isOnTop, setIsOnTop] = useState(true);
+  const disclosureOptions = useDisclosure();
 
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
@@ -761,7 +774,10 @@ function NavbarTablet({
                 // >
                 //   <span>SIGN OUT</span>
                 // </div>
-                <AccountsModal Trigger={<div>SignOutButton</div>} />
+                <AccountsModal
+                  deleteAccountDisclosure={disclosureOptions}
+                  Trigger={<div>SignOutButton</div>}
+                />
               )}
               {/* <div className="text-[10px] flex justify-end font-helvetica">
         <span>SIGN IN</span>
@@ -1068,6 +1084,7 @@ function NavbarTablet({
           </Drawer>
         </header>
       </div>
+      {user && <DeleteAccountModal disclosureOptions={disclosureOptions} />}
     </div>
   );
 }
@@ -1081,6 +1098,7 @@ function NavbarMobile() {
   const { user } = useUser();
   const pathname = usePathname();
   const accountsDrawerRef = useRef<any>(null);
+  const disclosureOptions = useDisclosure();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1400,7 +1418,11 @@ function NavbarMobile() {
       {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 
       {/* <hr className="border-dashed border-[#1f1d1a4d]" /> */}
-      <AccountsDrawer ref={accountsDrawerRef} />
+      <AccountsDrawer
+        ref={accountsDrawerRef}
+        deleteAccountDisclosure={disclosureOptions}
+      />
+      {user && <DeleteAccountModal disclosureOptions={disclosureOptions} />}
     </header>
   );
 }

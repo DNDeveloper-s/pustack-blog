@@ -1,7 +1,14 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { Carousel, Drawer } from "antd";
 import { CarouselRef } from "antd/es/carousel";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import SwipeableViews from "react-swipeable-views";
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { AccountStepOne, AccountStepTwo } from "./AccountSteps";
 import { useUser } from "@/context/UserContext";
 import dayjs from "dayjs";
@@ -14,9 +21,13 @@ const popOverShadowStyles = {
 
 interface AccountsModalProps {
   Trigger: React.ReactNode;
+  deleteAccountDisclosure: any;
 }
 export default function AccountsModal(props: AccountsModalProps) {
   const carouselRef = useRef<CarouselRef>(null);
+  const accountStepTwoRef = useRef<any>(null);
+  const [isTransitionPending, startTransition] = useTransition();
+  const [stepTwoKey, setStepTwoKey] = useState(0);
   const { user } = useUser();
   const {
     isPending,
@@ -28,19 +39,27 @@ export default function AccountsModal(props: AccountsModalProps) {
     },
   });
   const [slide, setSlide] = useState(0);
-  const onChange = (currentSlide: number) => {
+  const onChange = (currentSlide: number, latestSlide: number) => {
+    console.log("currentSlide", currentSlide);
+    console.log("latestSlide", latestSlide);
     setSlide(currentSlide);
   };
 
   const goNext = () => {
     if (slide === 1) return;
-    carouselRef.current?.next();
+    // carouselRef.current?.next();
+    setSlide(1);
   };
 
   const goPrev = () => {
     if (slide === 0) return;
-    carouselRef.current?.prev();
+    setSlide(0);
+    accountStepTwoRef.current?.reset();
+    // carouselRef.current?.prev();
+    // setStepTwoKey((prev) => prev + 1);
   };
+
+  console.log("rerendered -- slide", slide);
 
   return (
     <Popover
@@ -51,7 +70,16 @@ export default function AccountsModal(props: AccountsModalProps) {
       placement={"bottom-end"}
       color="secondary"
       offset={-5}
-      onClose={() => setSlide(0)}
+      backdrop="transparent"
+      onClose={() => {
+        setSlide(0);
+        document.body.style.overflow = "unset";
+      }}
+      onOpenChange={(open) => {
+        if (open) {
+          document.body.style.overflow = "hidden";
+        }
+      }}
       //   isOpen={openRow}
       //   onOpenChange={handleOpenRowChange}
     >
@@ -64,13 +92,14 @@ export default function AccountsModal(props: AccountsModalProps) {
         {props.Trigger}
       </PopoverTrigger>
       <PopoverContent>
-        <div className="w-[350px] h-auto bg-primary rounded-lg">
-          <Carousel
+        <div className="w-[350px] h-auto bg-primary rounded-lg text-appBlack">
+          {/* <Carousel
             slide={slide.toString()}
             ref={carouselRef}
             dots={false}
             afterChange={onChange}
-          >
+          > */}
+          <SwipeableViews index={slide} onChangeIndex={onChange}>
             <AccountStepOne
               userDetails={{
                 name: user?.name ?? "",
@@ -89,15 +118,20 @@ export default function AccountsModal(props: AccountsModalProps) {
               handleGearClick={goNext}
               handleBackClick={() => {}}
             />
-            <AccountStepTwo handleBackClick={goPrev} />
-          </Carousel>
+            <AccountStepTwo
+              deleteAccountDisclosure={props.deleteAccountDisclosure}
+              handleBackClick={goPrev}
+              ref={accountStepTwoRef}
+            />
+          </SwipeableViews>
+          {/* </Carousel> */}
         </div>
       </PopoverContent>
     </Popover>
   );
 }
 
-function AccountsDrawerRef(props: any, ref: any) {
+function AccountsDrawerRef(props: { deleteAccountDisclosure: any }, ref: any) {
   const carouselRef = useRef<CarouselRef>(null);
   const { user } = useUser();
   const [slide, setSlide] = useState(0);
@@ -122,12 +156,12 @@ function AccountsDrawerRef(props: any, ref: any) {
 
   const goNext = () => {
     if (slide === 1) return;
-    carouselRef.current?.next();
+    setSlide(1);
   };
 
   const goPrev = () => {
     if (slide === 0) return;
-    carouselRef.current?.prev();
+    setSlide(0);
   };
 
   return (
@@ -144,12 +178,7 @@ function AccountsDrawerRef(props: any, ref: any) {
       }}
     >
       <div className="w-screen h-screen bg-primary">
-        <Carousel
-          slide={slide.toString()}
-          ref={carouselRef}
-          dots={false}
-          afterChange={onChange}
-        >
+        <SwipeableViews index={slide} onChangeIndex={onChange}>
           <AccountStepOne
             userDetails={{
               name: user?.name ?? "",
@@ -165,8 +194,12 @@ function AccountsDrawerRef(props: any, ref: any) {
             handleGearClick={goNext}
             handleBackClick={onClose}
           />
-          <AccountStepTwo handleBackClick={goPrev} />
-        </Carousel>
+          <AccountStepTwo
+            deleteAccountDisclosure={props.deleteAccountDisclosure}
+            key={slide}
+            handleBackClick={goPrev}
+          />
+        </SwipeableViews>
       </div>
     </Drawer>
   );

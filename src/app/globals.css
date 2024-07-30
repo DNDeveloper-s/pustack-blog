@@ -2775,3 +2775,8 @@ font-size: 180px;
 .readonly .mq-empty {
   background: transparent !important;
 }
+
+.minerva-account-modal-input input::placeholder {
+  color: #9e9b9b9d !important;
+  font-size: 12px;
+}

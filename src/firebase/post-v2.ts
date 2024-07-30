@@ -42,6 +42,7 @@ export interface Author {
   name: string;
   email: string;
   photoURL: string;
+  uid: string;
 }
 
 export enum PostPosition {
@@ -116,7 +117,7 @@ interface QueryParams extends Partial<PostFilters> {
   _startAfter?: string;
   _limit?: number;
   _flatten?: boolean;
-  _userEmail?: string;
+  _userId?: string;
   status?: string[];
 }
 
@@ -625,7 +626,7 @@ export class Post {
     _startAfter?: QueryParams["_startAfter"];
     _limit?: QueryParams["_limit"];
     _flatten: true;
-    _userEmail?: string | undefined;
+    _userId?: string | undefined;
   } & Partial<PostFilters>): Promise<GetAllReturnType<Post[]>>;
   static async getAll({
     _startAfter,
@@ -650,7 +651,7 @@ export class Post {
       _flatten,
       status: _status,
       sort: _sort,
-      _userEmail,
+      _userId,
       topics: _topics,
       dateRange: _dateRange,
     } = queryParams ?? {};
@@ -684,8 +685,8 @@ export class Post {
     }
 
     // Add additional conditions based on _userEmail and _startAfter
-    if (_userEmail) {
-      _query = query(_query, where("author.email", "==", _userEmail));
+    if (_userId) {
+      _query = query(_query, where("author.uid", "==", _userId));
     }
     // Add sorting to the query
     if (_sort && _sort.length > 0) {

@@ -2,12 +2,12 @@ import { Dayjs } from "dayjs";
 
 export const API_QUERY = {
   QUERY_POSTS: (
-    userEmail?: string | null | undefined,
+    userId?: string | null | undefined,
     status?: string[],
     sort?: { field: string; order: "asc" | "desc" }[],
     dateRange?: [Dayjs | null, Dayjs | null],
     topics?: string[]
-  ) => ["query-posts", userEmail, status?.join(","), sort, dateRange, topics],
+  ) => ["query-posts", userId, status?.join(","), sort, dateRange, topics],
   QUERY_SAVED_POSTS: (userId?: string | null | undefined) => [
     "query-saved-posts",
     userId,

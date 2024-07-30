@@ -120,7 +120,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
       );
     }
 
-    if (leaf.dropdown) {
+    if (leaf.dropdown && !readonly) {
       return (
         <span {...attributes} className="relative">
           <span>{children}</span>

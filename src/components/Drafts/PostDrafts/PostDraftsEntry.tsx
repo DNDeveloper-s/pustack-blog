@@ -57,7 +57,7 @@ export interface PostFilters {
 export default function PostDraftsEntry({
   _serverPosts,
 }: {
-  _serverPosts: any;
+  _serverPosts?: any;
 }) {
   const [filters, setFilters] = useState<PostFilters>({
     status: [],
@@ -77,34 +77,34 @@ export default function PostDraftsEntry({
     isLoading,
     hasNextPage,
   } = useQueryPosts({
-    initialData: _serverPosts.map((data: any) => {
-      return new Post(
-        data.title,
-        data.author,
-        data.topic,
-        data.sections,
-        data.status ?? "published",
-        data.id,
-        data.timestamp,
-        data.position,
-        data.design,
-        data.displayTitle,
-        data.displayContent,
-        data.scheduledTime,
-        data.is_v2
-      );
-    }),
+    // initialData: _serverPosts.map((data: any) => {
+    //   return new Post(
+    //     data.title,
+    //     data.author,
+    //     data.topic,
+    //     data.sections,
+    //     data.status ?? "published",
+    //     data.id,
+    //     data.timestamp,
+    //     data.position,
+    //     data.design,
+    //     data.displayTitle,
+    //     data.displayContent,
+    //     data.scheduledTime,
+    //     data.is_v2
+    //   );
+    // }),
     status: filters.status,
     dateRange: filters.dateRange,
     topics: filters.topics,
     sort: filters.sort,
-    userEmail: user?.email,
-    enabled: !!user?.email,
+    enabled: !!user?.uid,
+    userId: user?.uid,
   });
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { isMobileScreen } = useScreenSize();
 
-  const posts = _clientPosts || _serverPosts;
+  const posts = _clientPosts || _serverPosts || [];
   const hasSignals = posts?.length > 0;
 
   const { ref: lastItemRef, isInView } = useInView();

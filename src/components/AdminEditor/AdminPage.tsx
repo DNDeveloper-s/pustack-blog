@@ -466,6 +466,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   async function handleContinuePost() {
     if (!user) return;
+    setShouldConfirm(false);
 
     // const sections = postSectionsRef.current?.getSections();
     // sections?.forEach((section) => {
@@ -502,6 +503,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
         name: user?.name,
         email: user?.email,
         photoURL: user?.image_url,
+        uid: user?.uid,
       },
       topic,
       undefined,
@@ -517,8 +519,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
       joditRef.current?.getSlateValue()
     );
 
-    console.log("post - ", post);
-
     if (requestedPost) {
       post = new Post(
         inputValue || "Untitled",
@@ -526,6 +526,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           name: user?.name,
           email: user?.email,
           photoURL: user?.image_url,
+          uid: user?.uid,
         },
         topic,
         [],
@@ -591,6 +592,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
         {
           name: user?.name,
           email: user?.email,
+          uid: user?.uid,
           photoURL: user?.image_url,
         },
         topic,
@@ -613,6 +615,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           {
             name: user?.name,
             email: user?.email,
+            uid: user?.uid,
             photoURL: user?.image_url,
           },
           topic,
@@ -677,6 +680,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                     isDisabled={isPending}
                     className="font-featureHeadline email_button flex items-center justify-center"
                     onClick={() => {
+                      setShouldConfirm(false);
                       intervalSaveDraftRef.current = false;
                       handleSaveAsDraft();
                     }}

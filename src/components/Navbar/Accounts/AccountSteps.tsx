@@ -1,3 +1,5 @@
+"use client";
+
 import { FaGear, FaWhatsapp } from "react-icons/fa6";
 import goldCard from "@/assets/images/userMenu/gold.jpg";
 import goldSim from "@/assets/images/userMenu/sim.svg";
@@ -12,7 +14,15 @@ import { MdAlternateEmail } from "react-icons/md";
 import { IoBookmarkSharp, IoChevronBack } from "react-icons/io5";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import dayjs from "dayjs";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Lottie from "lottie-react-web";
 import { greenTickLottie } from "@/assets";
 import { Spinner } from "@nextui-org/spinner";
@@ -27,6 +37,8 @@ import useScreenSize from "@/hooks/useScreenSize";
 import AppImage from "@/components/shared/AppImage";
 import { Progress } from "@nextui-org/progress";
 import Link from "next/link";
+import DeleteAccountModal from "./DeleteAccountModal";
+import { useDisclosure } from "@nextui-org/modal";
 
 const userImageUrl = "https://www.w3schools.com/howto/img_avatar2.png";
 
@@ -82,7 +94,9 @@ export function AccountStepOne({
   }, [userDetails.isSubscribed]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div
+      className={"flex flex-col " + (isMobileScreen ? " h-screen" : " h-full")}
+    >
       <div className={"px-4"}>
         <div
           className={"flex items-center justify-between font-featureHeadline"}
@@ -291,7 +305,7 @@ interface FormInputProps {
   onCompleteAnimation?: () => void;
   noBottomBorder?: boolean;
 }
-function FormInput(props: FormInputProps) {
+function FormInputRef(props: FormInputProps, ref: any) {
   const [isChanged, setIsChanged] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(props.value);
@@ -310,8 +324,31 @@ function FormInput(props: FormInputProps) {
 
   const id = useMemo(() => props.label.split(" ").join("-"), [props.label]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      reset: () => {
+        console.log("reset | 323 - ", props.value, value);
+        setValue((c: any) => {
+          console.log("c - ", c);
+          return props.value;
+        });
+        setIsChanged(false);
+      },
+    }),
+    [props.value, value, setValue, setIsChanged]
+  );
+
+  useEffect(() => {
+    console.log("value, isChanged - ", value, isChanged);
+  }, [value, isChanged]);
+
+  // Synchronize `value` state with `props.value`
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+
   const renderStatus = () => {
-    console.log("props - ", props);
     if (props.isPending) {
       return (
         <Spinner
@@ -354,10 +391,8 @@ function FormInput(props: FormInputProps) {
   };
 
   return (
-    <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
-      <label className="text-sm mb-1" htmlFor={id}>
-        {props.label}
-      </label>
+    <div className="relative grid grid-cols-[90px_1fr] items-center px-4 minerva-account-modal-input">
+      <div className="text-sm mb-1">{props.label}</div>
       <div>
         {props.input ? (
           props.input(value, handleChange, setIsChanged, inputRef)
@@ -384,9 +419,11 @@ function FormInput(props: FormInputProps) {
           {renderStatus()}
         </div>
       </div>
-    </form>
+    </div>
   );
 }
+
+const FormInput = forwardRef(FormInputRef);
 
 interface ImagePickerProps {
   url: string;
@@ -422,8 +459,8 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
   };
 
   return (
-    <div
-      // htmlFor="profile-input"
+    <label
+      htmlFor="profile-input"
       className="flex justify-center items-center flex-col gap-2 cursor-pointer relative"
     >
       <div
@@ -432,10 +469,22 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
       >
         <div
           className="w-full h-full absolute"
-          style={{
-            transform: "rotate(149deg) scale(1.28)",
-          }}
+          style={
+            {
+              // transform: "rotate(149deg) scale(1.28)",
+            }
+          }
         >
+          {isPending && (
+            <div
+              className="w-full h-full absolute top-0 left-0 transition-all"
+              style={{
+                background: `conic-gradient(#243bb5 ${progress}%, 0deg, transparent ${
+                  100 - parseInt(progress.toString())
+                }%)`,
+              }}
+            ></div>
+          )}
           <Image
             height={100}
             width={100}
@@ -445,21 +494,10 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
             draggable={false}
           />
         </div>
-        {progress > 0 && (
-          <Progress
-            className="absolute top-0 h-[3px]"
-            classNames={{
-              track: "!h-full !bg-transparent",
-              indicator: "!bg-appBlue",
-            }}
-            value={parseInt(progress.toString())}
-          />
-        )}
-
         <AppImage
           height={66}
           width={66}
-          className="w-[66px] h-[66px] relative z-10 rounded-xl object-cover"
+          className="w-[66px] h-[66px] relative z-10 rounded-[.6rem] object-cover"
           src={url}
           alt="userdp"
           // @ts-ignore
@@ -468,23 +506,27 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
         />
       </div>
       <h4 className="text-[12px] font-medium text-appBlue">
-        Change Profile Photo
+        {isPending
+          ? `Uploading ${parseInt(progress.toString())}%`
+          : "Change Profile Photo"}
       </h4>
-      <div
+      {/* <div
         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
         // htmlFor="profile-input"
         aria-label="profile-input"
       >
-        <input
-          onChange={handleImageChange}
-          id="profile-input"
-          type="file"
-          accept="image/*"
-          className="w-full h-full cursor-pointer"
-          // hidden
-        />
-      </div>
-    </div>
+        
+      </div> */}
+      <input
+        disabled={isPending}
+        onChange={handleImageChange}
+        id="profile-input"
+        type="file"
+        accept="image/*"
+        className="w-full h-full cursor-pointer"
+        hidden
+      />
+    </label>
   );
 }
 
@@ -496,9 +538,18 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
 
 interface AccountStepTwoProps {
   handleBackClick: () => void;
+  deleteAccountDisclosure: ReturnType<typeof useDisclosure>;
 }
-export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
+function AccountStepTwoRef(
+  { handleBackClick, deleteAccountDisclosure }: AccountStepTwoProps,
+  ref: any
+) {
   // const activeField = useRef<"name" | "email" | "phone" | "company">();
+  const nameInputRef = useRef<any>(null);
+  const emailInputRef = useRef<any>(null);
+  const phoneInputRef = useRef<any>(null);
+  const companyInputRef = useRef<any>(null);
+  const { isMobileScreen } = useScreenSize();
 
   const [activeField, setActiveField] = useState<
     "name" | "email" | "phone" | "company"
@@ -515,13 +566,31 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
     },
   });
 
+  useEffect(() => {
+    console.log("rerendered -- ");
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      console.log("reset | 541 - ");
+      nameInputRef.current?.reset();
+      emailInputRef.current?.reset();
+      phoneInputRef.current?.reset();
+      companyInputRef.current?.reset();
+    },
+  }));
+
   const handleCompleteAnimation = () => {
     setActiveField(undefined);
   };
 
   return (
     user?.uid && (
-      <div className="flex flex-col h-full">
+      <div
+        className={
+          "flex flex-col " + (isMobileScreen ? " h-screen" : " h-full")
+        }
+      >
         <div
           className={
             "flex items-center justify-between font-featureHeadline px-3 pr-4"
@@ -534,7 +603,10 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
             />
             <span className="font-featureHeadline text-2xl">Settings</span>
           </h2>
-          <span className="font-featureHeadline text-appBlue font-bold text-sm">
+          <span
+            className="font-featureHeadline text-appBlue font-bold text-sm cursor-pointer"
+            onClick={handleBackClick}
+          >
             Done
           </span>
         </div>
@@ -588,6 +660,7 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
                 isSuccess={activeField === "name" && isSuccess}
                 placeholder="Enter Name"
                 value={user?.name}
+                ref={nameInputRef}
               />
             </div>
             <div>
@@ -621,6 +694,7 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
                 isSuccess={activeField === "phone" && isSuccess}
                 placeholder="Enter here"
                 value={(user?.phone_country_code ?? "") + (user?.phone ?? "")}
+                ref={phoneInputRef}
               />
               {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
@@ -656,6 +730,7 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
                 isSuccess={activeField === "email" && isSuccess}
                 placeholder="Enter here"
                 value={user?.email}
+                ref={emailInputRef}
               />
               {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
@@ -692,6 +767,7 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
                 placeholder="Enter here"
                 value={user?.company}
                 noBottomBorder
+                ref={companyInputRef}
               />
               {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">
@@ -733,16 +809,29 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-0.5" />
           <div className="flex flex-col text-sm font-medium text-appBlue divide-y divide-dashed divide-[#1f1d1a4d]">
-            <h6 className="pb-2 px-4">
+            <a
+              href="https://pustack.com/terms_of_service"
+              target="_blank"
+              className="pb-2 px-4"
+            >
               <span>Terms of Service</span>
-            </h6>
-            <h6 className="py-2 px-4">
+            </a>
+            <a
+              href="https://pustack.com/privacy_policy"
+              target="_blank"
+              className="py-2 px-4"
+            >
               <span>Privacy Policy</span>
-            </h6>
+            </a>
             <h6 className="py-2 px-4 cursor-pointer" onClick={() => signOut()}>
-              <span>Log Out saurs2000@gmail.com</span>
+              <span>Log Out {user?.email}</span>
             </h6>
-            <h6 className="py-2 px-4">
+            <h6
+              className="py-2 px-4 cursor-pointer"
+              onClick={() => {
+                deleteAccountDisclosure.onOpen();
+              }}
+            >
               <span className="delete text-red-500">Delete Account</span>
             </h6>
           </div>
@@ -766,3 +855,5 @@ export function AccountStepTwo({ handleBackClick }: AccountStepTwoProps) {
     )
   );
 }
+
+export const AccountStepTwo = forwardRef(AccountStepTwoRef);

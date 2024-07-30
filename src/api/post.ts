@@ -20,30 +20,30 @@ export const useQueryPosts = ({
   initialData,
   status = ["published"],
   sort = [{ field: "timestamp", order: "desc" }],
-  userEmail,
   enabled = true,
   dateRange,
+  userId,
   topics,
   limit = 10,
 }: {
-  userEmail?: string;
-  initialData: any;
+  initialData?: any;
   enabled?: boolean;
   limit?: number;
+  userId?: string;
 } & Partial<PostFilters>) => {
   const queryPosts = async (
     pageParam: any,
     queryKey: QueryKey,
     direction: "forward" | "backward"
   ) => {
-    const [, userEmail, status, sort, dateRange, topics] = queryKey;
+    const [, userId, status, sort, dateRange, topics] = queryKey;
     if (typeof status !== "string") {
       throw new Error("Status is required");
     }
 
     try {
       const posts = await Post.getAll({
-        _userEmail: userEmail as string,
+        _userId: userId as string,
         _flatten: true,
         _startAfter: pageParam,
         status: status ? status.split(",") : [],
@@ -60,7 +60,7 @@ export const useQueryPosts = ({
   };
 
   const query = useInfiniteQuery({
-    queryKey: API_QUERY.QUERY_POSTS(userEmail, status, sort, dateRange, topics),
+    queryKey: API_QUERY.QUERY_POSTS(userId, status, sort, dateRange, topics),
     queryFn: ({ pageParam, queryKey, direction }: any) =>
       queryPosts(pageParam, queryKey, direction),
     initialPageParam: undefined,
@@ -72,7 +72,9 @@ export const useQueryPosts = ({
   });
 
   const posts = useMemo(() => {
-    return query.data?.pages.map((page) => page.data).flat() ?? initialData;
+    return (
+      query.data?.pages.map((page) => page.data).flat() ?? initialData ?? []
+    );
   }, [query.data]);
 
   return {

@@ -1,7 +1,14 @@
+"use client";
+
 import { useUser } from "@/context/UserContext";
-import { db } from "@/lib/firebase";
+import { auth, db, linkedinProvider } from "@/lib/firebase";
 import { UseMutationOptions, useMutation } from "@tanstack/react-query";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  GoogleAuthProvider,
+  OAuthProvider,
+  reauthenticateWithPopup,
+} from "firebase/auth";
+import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import { omitBy } from "lodash";
 
 interface UseUpdateUserOptions {
@@ -34,6 +41,68 @@ export const useUpdateUser = (
   };
   return useMutation({
     mutationFn: updateUser,
+    onSettled: () => {},
+    ...options,
+  });
+};
+
+async function reauthenticateUser(providerId: string) {
+  try {
+    var user = auth.currentUser;
+    var provider;
+
+    // Determine which provider to use for re-authentication
+    if (providerId === "google.com") {
+      provider = new GoogleAuthProvider();
+    } else if (providerId === "oidc.linkedin") {
+      provider = linkedinProvider;
+    } else {
+      console.error("Unsupported provider");
+      throw new Error("Unsupported provider");
+    }
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const credential = await reauthenticateWithPopup(user, provider);
+
+    return true;
+  } catch (e: any) {
+    console.log("e - ", e, e?.message);
+    return false;
+  }
+}
+
+export const useDeleteAccount = (
+  options?: UseMutationOptions<any, Error, void>
+) => {
+  const deleteUser = async () => {
+    console.log("auth.currentUser - ", auth.currentUser);
+    if (!auth.currentUser) {
+      throw new Error("User not found");
+    }
+
+    let providerIds = auth.currentUser.providerData.map((c) => c.providerId);
+
+    let providerId = providerIds[0];
+    if (providerIds.includes("google.com")) {
+      providerId = "google.com";
+    }
+    const isLoggedIN = await reauthenticateUser(providerId);
+
+    if (isLoggedIN) {
+      const uid = auth.currentUser.uid;
+      const userRef = doc(db, "users", uid);
+      await auth.currentUser.delete();
+      await deleteDoc(userRef);
+    } else {
+      throw new Error("User not re-authenticated");
+    }
+  };
+
+  return useMutation({
+    mutationFn: deleteUser,
     onSettled: () => {},
     ...options,
   });
