@@ -52,7 +52,7 @@ const MathQuill = ({
   return (
     <div
       className={
-        "flex w-full px-2 relative group/formula " +
+        "flex w-full overflow-auto px-2 relative group/formula " +
         (readonly ? " readonly" : element.isInnerLevel ? "py-1" : "py-4")
       }
       style={{

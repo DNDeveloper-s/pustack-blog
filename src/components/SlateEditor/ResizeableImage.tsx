@@ -104,12 +104,12 @@ const ResizableImage = ({
     return (
       <div
         {...attributes}
-        className={(attributes.className ?? "") + " relative "}
+        className={(attributes.className ?? "") + " relative w-full "}
       >
         <div
           /* @ts-ignore */
           className={alignmentClass[element.align]}
-          style={{ width, height }}
+          style={{ width, height, maxWidth: "100%" }}
         >
           <BlogImageDefault
             className="max-w-full block"
