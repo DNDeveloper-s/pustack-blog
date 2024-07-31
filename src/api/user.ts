@@ -102,7 +102,7 @@ export const useDeleteAccount = (
         let providerIds = auth.currentUser.providerData.map(
           (c) => c.providerId
         );
-        let providerId = providerIds[1];
+        let providerId = providerIds[0];
         const isLoggedIN = await reauthenticateUser(providerId);
         if (isLoggedIN) {
           await deleteAuthUser(auth.currentUser);
