@@ -2,6 +2,7 @@
 
 import { useDeleteAccount } from "@/api/user";
 import { SnackbarContent } from "@/components/AdminEditor/AdminPage";
+import LinkedinAuth from "@/components/shared/LinkedinAuth";
 import { useNotification } from "@/context/NotificationContext";
 import { Button } from "@nextui-org/button";
 import {
@@ -92,6 +93,9 @@ export default function DeleteAccountModal({
                 onChange={(e) => setValue(e.target.value)}
               />
             </label>
+            {/* <LinkedinAuth>
+
+            </LinkedinAuth> */}
             {error && (
               <p className="text-sm my-1 text-gray-500 bg-[#fffdf2] p-[4px_8px] rounded">
                 Deletion Error:{" "}

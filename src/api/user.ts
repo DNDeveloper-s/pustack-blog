@@ -1,11 +1,13 @@
 "use client";
 
+import { linkedinAuth } from "@/components/shared/LinkedinAuth";
 import { useUser } from "@/context/UserContext";
 import { auth, db, linkedinProvider } from "@/lib/firebase";
 import { UseMutationOptions, useMutation } from "@tanstack/react-query";
 import {
   GoogleAuthProvider,
   OAuthProvider,
+  User,
   reauthenticateWithPopup,
 } from "firebase/auth";
 import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
@@ -51,21 +53,21 @@ async function reauthenticateUser(providerId: string) {
     var user = auth.currentUser;
     var provider;
 
-    // Determine which provider to use for re-authentication
-    if (providerId === "google.com") {
-      provider = new GoogleAuthProvider();
-    } else if (providerId === "oidc.linkedin") {
-      provider = linkedinProvider;
-    } else {
-      console.error("Unsupported provider");
-      throw new Error("Unsupported provider");
-    }
-
     if (!user) {
       throw new Error("User not found");
     }
 
-    const credential = await reauthenticateWithPopup(user, provider);
+    // Determine which provider to use for re-authentication
+    if (providerId === "google.com") {
+      provider = new GoogleAuthProvider();
+      const credential = await reauthenticateWithPopup(user, provider);
+    } else if (providerId === "oidc.linkedin") {
+      provider = linkedinProvider;
+      await linkedinAuth();
+    } else {
+      console.error("Unsupported provider");
+      throw new Error("Unsupported provider");
+    }
 
     return true;
   } catch (e: any) {
@@ -77,27 +79,39 @@ async function reauthenticateUser(providerId: string) {
 export const useDeleteAccount = (
   options?: UseMutationOptions<any, Error, void>
 ) => {
+  const deleteAuthUser = async (user: User) => {
+    await user.delete();
+    const userRef = doc(db, "users", user.uid);
+    await deleteDoc(userRef);
+  };
+
   const deleteUser = async () => {
     console.log("auth.currentUser - ", auth.currentUser);
     if (!auth.currentUser) {
       throw new Error("User not found");
     }
 
-    let providerIds = auth.currentUser.providerData.map((c) => c.providerId);
-
-    let providerId = providerIds[0];
-    if (providerIds.includes("google.com")) {
-      providerId = "google.com";
-    }
-    const isLoggedIN = await reauthenticateUser(providerId);
-
-    if (isLoggedIN) {
-      const uid = auth.currentUser.uid;
-      const userRef = doc(db, "users", uid);
-      await auth.currentUser.delete();
-      await deleteDoc(userRef);
-    } else {
-      throw new Error("User not re-authenticated");
+    try {
+      await deleteAuthUser(auth.currentUser);
+    } catch (e: any) {
+      if (e.message && e.message.includes("auth/requires-recent-login")) {
+        console.log(
+          "auth.currentUser.providerData - ",
+          auth.currentUser.providerData
+        );
+        let providerIds = auth.currentUser.providerData.map(
+          (c) => c.providerId
+        );
+        let providerId = providerIds[1];
+        const isLoggedIN = await reauthenticateUser(providerId);
+        if (isLoggedIN) {
+          await deleteAuthUser(auth.currentUser);
+          return;
+        } else {
+          throw new Error("User not re-authenticated");
+        }
+      }
+      throw e;
     }
   };
 

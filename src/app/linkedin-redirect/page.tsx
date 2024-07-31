@@ -13,30 +13,43 @@ const LinkedInRedirectContent = () => {
   const query = useSearchParams();
 
   useEffect(() => {
-    const handleSignIn = async () => {
-      try {
-        const accessToken = query.get("access_token");
-        const idToken = query.get("id_token");
+    const accessToken = query.get("access_token");
+    const idToken = query.get("id_token");
 
-        if (accessToken && idToken) {
-          const credential = linkedinProvider.credential({
-            accessToken,
-            idToken,
-          });
+    if (accessToken || idToken) {
+      window.opener.postMessage(
+        { accessToken, idToken },
+        window.location.origin
+      );
+      window.close();
+    }
+  }, [query]);
 
-          await signInWithCredential(auth, credential);
-          router.push("/");
-        } else {
-          throw new Error("Custom token not found");
-        }
-      } catch (error: any) {
-        console.error("Error signing in with LinkedIn:", error);
-        setError(error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const handleSignIn = async () => {
+    //   try {
+    //     const accessToken = query.get("access_token");
+    //     const idToken = query.get("id_token");
 
-    handleSignIn();
-  }, [query, router]);
+    //     if (accessToken && idToken) {
+    //       const credential = linkedinProvider.credential({
+    //         accessToken,
+    //         idToken,
+    //       });
+
+    //       await signInWithCredential(auth, credential);
+    //       router.push("/");
+    //     } else {
+    //       throw new Error("Custom token not found");
+    //     }
+    //   } catch (error: any) {
+    //     console.error("Error signing in with LinkedIn:", error);
+    //     setError(error.message);
+    //   }
+    // };
+
+  //   handleSignIn();
+  // }, [query, router]);
 
   if (error) {
     return redirect("/");
