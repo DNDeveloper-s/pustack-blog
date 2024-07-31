@@ -24,6 +24,7 @@ import { useState } from "react";
 import MathBlockElement from "./MathBlockElement";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import ErrorComponent from "../shared/ErrorComponent";
+import ImageCarousel from "./ImageCarousel";
 
 const allowedTypes = [
   "paragraph",
@@ -387,6 +388,7 @@ const CustomSlateElement = (props: any) => {
       break;
     case "image-block":
       el = <ResizableImage {...props} />;
+      // el = <ImageCarousel {...props} />;
       break;
     case "math-block-container":
       el = (
@@ -489,7 +491,7 @@ const CustomSlateElement = (props: any) => {
             ? "w-full my-1"
             : "w-full my-2"
           : element.isInnerLevel
-          ? " w-[90.2%] md:w-[95.25%] px-2 !my-1 "
+          ? " w-full px-2 !my-1 "
           : " py-2 w-[90.2%] md:w-[95.25%] px-2")
       }
       contentEditable={

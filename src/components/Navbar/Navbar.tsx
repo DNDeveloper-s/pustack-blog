@@ -13,6 +13,7 @@ import { url } from "@/constants";
 import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
 import {
+  attachUIDToAllThePosts,
   signInWithGoogle,
   signInWithLinkedin,
   signOut,
@@ -187,6 +188,9 @@ function NavbarDesktop({
                     mixBlendMode: "multiply",
                     transform: "translateZ(0)",
                   }}
+                  // onClick={() => {
+                  //   attachUIDToAllThePosts();
+                  // }}
                 />
                 <span>{currentTime.time}</span>
                 <span>{currentTime.date}</span>

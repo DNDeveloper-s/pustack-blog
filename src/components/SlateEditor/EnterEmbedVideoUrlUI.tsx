@@ -53,7 +53,7 @@ export default function EnterEmbdedVideoUrlUI({
       <div className="w-full flex items-center gap-3">
         <input
           type="text"
-          placeholder="Enter video URL"
+          placeholder="Enter Youtube Video URL"
           className="py-2 px-5 rounded-lg border-gray-300 bg-gray-100 flex-1"
           ref={inputRef}
         />

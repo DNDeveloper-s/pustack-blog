@@ -7,7 +7,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "!./src/components/AdminEditor/JoditEditor.tsx",
-    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|popover|progress|select|spinner|tabs|ripple|menu|divider|listbox|scroll-shadow).js"
+    "./node_modules/@nextui-org/theme/dist/components/(button|dropdown|modal|popover|progress|select|slider|spinner|tabs|ripple|menu|divider|listbox|scroll-shadow).js"
   ],
   theme: {
     extend: {

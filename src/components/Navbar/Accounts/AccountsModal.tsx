@@ -1,6 +1,5 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Carousel, Drawer } from "antd";
-import { CarouselRef } from "antd/es/carousel";
+import { Drawer } from "antd";
 import SwipeableViews from "react-swipeable-views";
 import {
   forwardRef,
@@ -13,6 +12,7 @@ import { AccountStepOne, AccountStepTwo } from "./AccountSteps";
 import { useUser } from "@/context/UserContext";
 import dayjs from "dayjs";
 import { useUpdateUser } from "@/api/user";
+import useStateWithQuery from "@/hooks/useStateWithQuery";
 
 const popOverShadowStyles = {
   boxShadow:
@@ -24,7 +24,6 @@ interface AccountsModalProps {
   deleteAccountDisclosure: any;
 }
 export default function AccountsModal(props: AccountsModalProps) {
-  const carouselRef = useRef<CarouselRef>(null);
   const accountStepTwoRef = useRef<any>(null);
   const [isTransitionPending, startTransition] = useTransition();
   const [stepTwoKey, setStepTwoKey] = useState(0);
@@ -132,10 +131,9 @@ export default function AccountsModal(props: AccountsModalProps) {
 }
 
 function AccountsDrawerRef(props: { deleteAccountDisclosure: any }, ref: any) {
-  const carouselRef = useRef<CarouselRef>(null);
   const { user } = useUser();
   const [slide, setSlide] = useState(0);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useStateWithQuery("accounts-drawer");
 
   useImperativeHandle(ref, () => ({
     showDrawer,

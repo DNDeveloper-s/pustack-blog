@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth, linkedinProvider } from "../firebase";
+import { auth, db, getDoc, linkedinProvider } from "../firebase";
 import {
   GoogleAuthProvider,
   NextOrObserver,
@@ -8,6 +8,16 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { linkedinAuth } from "@/components/shared/LinkedinAuth";
+import {
+  collection,
+  doc,
+  getDocs,
+  limit,
+  query,
+  setDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 
 export function onAuthStateChanged(callback: NextOrObserver<User | null>) {
   return auth.onAuthStateChanged(callback);
@@ -66,4 +76,61 @@ export async function signInWithLinkedin() {
   // });
   // const authUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
   // window.location.href = authUrl;
+}
+
+export async function attachUIDToAllThePosts() {
+  const postsRef = collection(db, "posts");
+  const _postsQuery = query(postsRef, limit(100));
+  const posts = await getDocs(_postsQuery);
+
+  const batch = writeBatch(db);
+
+  for (let i = 0; i < posts.docs.length; i++) {
+    const post = posts.docs[i];
+    const authorOfThePost = post.data().author;
+    const usersColRef = collection(db, "users");
+    const _query = query(
+      usersColRef,
+      where("email", "==", authorOfThePost.email),
+      limit(1)
+    );
+    const users = getDocs(_query);
+    const user = (await users).docs[0];
+
+    if (!user) {
+      // batch.delete(doc(db, "posts", post.id));
+    } else {
+      batch.set(
+        doc(db, "posts", post.id),
+        {
+          author: {
+            email: authorOfThePost.email,
+            uid: user.id,
+            name: authorOfThePost.name,
+            photoURL: authorOfThePost.photoURL,
+          },
+        },
+        { merge: true }
+      );
+    }
+
+    // await setDoc(
+    //   doc(db, "posts", post.id),
+    //   {
+    //     author: {
+    //       email: authorOfThePost.email,
+    //       uid: user.id,
+    //       name: authorOfThePost.name,
+    //       photoURL: authorOfThePost.photoURL,
+    //     },
+    //   },
+    //   { merge: true }
+    // );
+
+    // await db.collection("posts").doc(post.id).update({
+    //   uid: "123",
+    // });
+  }
+
+  await batch.commit();
 }

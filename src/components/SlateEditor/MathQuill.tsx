@@ -12,7 +12,7 @@ addStyles();
 const mathQuillStyles = {
   border: "none",
   boxShadow: "none",
-  background: "rgb(249 244 192)",
+  // background: "rgb(249 244 192)",
   padding: "4px 10px",
   borderRadius: "5px",
 };
@@ -33,11 +33,11 @@ const MathQuill = ({
   const focusMethod = useRef<any>(null);
 
   const handleAlignMent = (align: "center" | "left" | "right") => {
-    // Transforms.setNodes(
-    //   editor,
-    //   { align },
-    //   { at: ReactEditor.findPath(editor, element) }
-    // );
+    Transforms.setNodes(
+      editor,
+      { align },
+      { at: ReactEditor.findPath(editor, element) }
+    );
     // const el3 = document.querySelector(".mq-root-block");
     // @ts-ignore
     // el?.focus();
@@ -53,7 +53,7 @@ const MathQuill = ({
     <div
       className={
         "flex w-full overflow-auto px-2 relative group/formula " +
-        (readonly ? " readonly" : element.isInnerLevel ? "py-1" : "py-4")
+        (readonly ? " readonly" : element.isInnerLevel ? "py-1" : "py-6")
       }
       style={{
         justifyContent:
@@ -72,7 +72,7 @@ const MathQuill = ({
       ) : (
         <>
           {!element.isInnerLevel && (
-            <div className="group-hover/formula:opacity-100 opacity-0 transition-all absolute z-10 -top-2 left-1/2 transform -translate-x-1/2 flex items-center gap-3 text-sm bg-gray-600 p-1 rounded text-white">
+            <div className="group-hover/formula:opacity-100 opacity-0 transition-all absolute z-10 top-0 left-1/2 transform -translate-x-1/2 flex items-center gap-3 text-sm bg-gray-600 p-1 rounded text-white">
               <div
                 className={
                   "p-1 hover:bg-gray-500 cursor-pointer rounded " +
@@ -80,7 +80,6 @@ const MathQuill = ({
                 }
                 onClick={() => {
                   handleAlignMent("left");
-                  focusMethod.current();
                 }}
               >
                 <FaAlignLeft />

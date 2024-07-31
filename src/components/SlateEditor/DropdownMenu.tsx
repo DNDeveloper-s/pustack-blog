@@ -89,7 +89,7 @@ const options: OptionItem[] = [
   },
   {
     id: "embed-video",
-    label: "Embed Video",
+    label: "Embed Youtube Video",
     isEmbedVideo: true,
     icon: <MdOutlineOndemandVideo />,
   },
