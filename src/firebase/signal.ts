@@ -1,6 +1,7 @@
 import { API_QUERY } from "@/config/api-query";
 import { db } from "@/lib/firebase";
 import { QueryClient } from "@tanstack/react-query";
+import { Dayjs } from "dayjs";
 import {
   DocumentSnapshot,
   QuerySnapshot,
@@ -14,10 +15,12 @@ import {
   limitToLast,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   startAfter,
   startAt,
+  where,
 } from "firebase/firestore";
 import { compact } from "lodash";
 
@@ -25,6 +28,7 @@ export interface Author {
   name: string;
   email: string;
   photoURL: string;
+  uid: string;
 }
 
 export function toDashCase(str: string) {
@@ -82,6 +86,7 @@ interface QueryParams {
   _flatten?: boolean;
   _startAt?: string | string[];
   _direction?: "forward" | "backward";
+  _userId?: string;
 }
 
 const headings = {
@@ -226,6 +231,7 @@ export class Signal {
     _flatten,
     _startAt,
     _direction,
+    _userId,
   }: QueryParams & { _flatten: true }): Promise<
     GetAllReturnType<SignalQuerySnapshot>
   >;
@@ -236,45 +242,68 @@ export class Signal {
       _flatten,
       _startAt,
       _direction = "forward",
+      _userId,
     } = queryParams ?? {};
     const signalsRef = collection(db, "signals").withConverter(signalConverter);
     let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(_limit));
 
+    if (_userId) {
+      _query = query(_query, where("author.uid", "==", _userId));
+    }
+
     if (_direction === "forward") {
       if (_startAfter) {
-        _query = query(
-          signalsRef,
-          orderBy("timestamp", "desc"),
-          startAfter(_startAfter),
-          limit(_limit)
-        );
-      } else if (_startAt) {
+        _query = query(_query, startAfter(_startAfter));
+      }
+      if (_startAt) {
         const _doc = await getDoc(doc(signalsRef, _startAt as string));
-        _query = query(
-          signalsRef,
-          orderBy("timestamp", "desc"),
-          startAt(_doc),
-          limit(_limit)
-        );
+        _query = query(_query, startAt(_doc));
       }
     } else if (_direction === "backward") {
       if (_startAfter) {
-        _query = query(
-          signalsRef,
-          orderBy("timestamp", "desc"),
-          endBefore(_startAfter),
-          limitToLast(_limit)
-        );
-      } else if (_startAt) {
+        _query = query(_query, endBefore(_startAfter), limitToLast(_limit));
+      }
+      if (_startAt) {
         const _doc = await getDoc(doc(signalsRef, _startAt as string));
-        _query = query(
-          signalsRef,
-          orderBy("timestamp", "desc"),
-          endAt(_doc),
-          limit(_limit)
-        );
+        _query = query(_query, endAt(_doc));
       }
     }
+
+    // if (_direction === "forward") {
+    //   if (_startAfter) {
+    //     _query = query(
+    //       signalsRef,
+    //       orderBy("timestamp", "desc"),
+    //       startAfter(_startAfter),
+    //       limit(_limit)
+    //     );
+    //   } else if (_startAt) {
+    //     const _doc = await getDoc(doc(signalsRef, _startAt as string));
+    //     _query = query(
+    //       signalsRef,
+    //       orderBy("timestamp", "desc"),
+    //       startAt(_doc),
+    //       limit(_limit)
+    //     );
+    //   }
+    // } else if (_direction === "backward") {
+    //   if (_startAfter) {
+    //     _query = query(
+    //       signalsRef,
+    //       orderBy("timestamp", "desc"),
+    //       endBefore(_startAfter),
+    //       limitToLast(_limit)
+    //     );
+    //   } else if (_startAt) {
+    //     const _doc = await getDoc(doc(signalsRef, _startAt as string));
+    //     _query = query(
+    //       signalsRef,
+    //       orderBy("timestamp", "desc"),
+    //       endAt(_doc),
+    //       limit(_limit)
+    //     );
+    //   }
+    // }
 
     const docs = await getDocs(_query);
 
@@ -283,6 +312,52 @@ export class Signal {
       data: _flatten ? flattenQueryData(docs) : docs,
       lastDoc: docs.docs[docs.docs.length - 1],
     };
+  }
+
+  static flaggedDateFormat(date: Dayjs) {
+    return date.format("YYYY-MM-DD");
+  }
+
+  static async markAsFlagship(id: string, date: Dayjs) {
+    const signalRef = doc(db, "signals", id);
+    const metadataRef = doc(db, "metadata", "flagshipDates");
+
+    // Use a transaction to ensure consistency
+    await runTransaction(db, async (transaction) => {
+      const signalDoc = await transaction.get(signalRef);
+
+      if (!signalDoc.exists) {
+        throw new Error("Signal does not exist!");
+      }
+
+      // Update signal document
+      transaction.update(signalRef, {
+        isFlagship: true,
+        flagshipDate: date,
+      });
+
+      // Update metadata document
+      const metadataDoc = await transaction.get(metadataRef);
+      const flagshipDates = metadataDoc.data()?.dates || {};
+      flagshipDates[Signal.flaggedDateFormat(date)] = id;
+      transaction.update(metadataRef, { dates: flagshipDates });
+    });
+  }
+
+  static async getTodaysFlagship(): Promise<Signal> {
+    const metadataRef = doc(db, "metadata", "flagshipDates");
+
+    const metadataDoc = await getDoc(metadataRef);
+    const today = new Date().toISOString().split("T")[0];
+    const flagshipDates = metadataDoc.data()?.dates ?? {};
+
+    if (flagshipDates && flagshipDates[today]) {
+      const signalId = flagshipDates[today];
+      return Signal.get(signalId, true);
+    } else {
+      const signals = await Signal.getAll({ _limit: 1, _flatten: true });
+      return signals.data[0];
+    }
   }
 }
 

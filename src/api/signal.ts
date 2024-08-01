@@ -74,8 +74,8 @@ import { useMemo } from "react";
 
 export const useGetFlagshipSignal = () => {
   const getFlagshipSignal = async () => {
-    const posts = await Signal.getAll({ _limit: 1 });
-    return posts.data.docs[0];
+    const signal = await Signal.getTodaysFlagship();
+    return signal;
   };
 
   return useQuery({
@@ -90,30 +90,33 @@ export const useQuerySignals = ({
   initialPageParam,
   startAt,
   limit = 10,
+  userId,
 }: {
   // initialData: Signal[];
   initialPageParam?: string;
   startAt?: string | string[];
   limit?: number;
+  userId?: string;
 }): any => {
   const querySignals = async (
     pageParam: any,
     queryKey: QueryKey,
     direction: "forward" | "backward"
   ) => {
-    const [, limit, startAt] = queryKey;
+    const [, userId, limit, startAt] = queryKey;
     const signals = await Signal.getAll({
       _flatten: true,
       _startAfter: pageParam,
       _limit: limit as number,
       _startAt: startAt as string | string[],
       _direction: direction,
+      _userId: userId as string,
     });
     return signals;
   };
 
   const query = useInfiniteQuery({
-    queryKey: API_QUERY.QUERY_SIGNALS(limit, startAt),
+    queryKey: API_QUERY.QUERY_SIGNALS(userId, limit, startAt),
     queryFn: ({ pageParam, queryKey, direction }: any) =>
       querySignals(pageParam, queryKey, direction),
     // initialData: {
@@ -157,7 +160,9 @@ export const useCreateSignal = (
     mutationFn: createSignal,
     onSettled: () => {
       qc.invalidateQueries({
-        queryKey: API_QUERY.QUERY_SIGNALS(10),
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
+        },
       });
     },
     ...(options ?? {}),

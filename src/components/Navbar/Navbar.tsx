@@ -42,6 +42,13 @@ const DeleteAccountModal = dynamic(
 // import DeleteAccountModal from "./Accounts/DeleteAccountModal";
 import { useDisclosure } from "@nextui-org/modal";
 
+const managePaths = [
+  { key: "create-post", label: "CREATE POST", href: "/admin" },
+  { key: "create-signal", label: "CREATE SIGNAL", href: "/signals/create" },
+  { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
+  { key: "view-signals", label: "VIEW MY SIGNALS", href: "/signals" },
+];
+
 const navLinks = [
   { key: "home", label: "Home", href: "/" },
   { key: "politics", label: "Politics", href: "/politics" },
@@ -154,17 +161,8 @@ function NavbarDesktop({
 
   const showCreatePostButton = !!user;
 
-  const managePostList = useMemo(() => {
-    if (pathname === "/admin")
-      return [
-        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-      ];
-    if (pathname === "/admin/drafts")
-      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
-    return [
-      { key: "create-post", label: "CREATE POST", href: "/admin" },
-      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-    ];
+  const manageList = useMemo(() => {
+    return managePaths.filter((path) => path.href !== pathname);
   }, [pathname]);
 
   // <div className="h-[150px]">
@@ -233,7 +231,7 @@ function NavbarDesktop({
                           fontVariationSettings: '"wght" 700,"opsz" 10',
                         }}
                       >
-                        MANAGE POSTS
+                        MANAGE
                       </p>
                       <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                     </div>
@@ -244,7 +242,7 @@ function NavbarDesktop({
                       base: "!p-[0_10px]",
                     }}
                   >
-                    {managePostList.map((link) => (
+                    {manageList.map((link) => (
                       <DropdownItem
                         key={link.key}
                         className="!p-[4px_0_2px] !rounded-none !bg-transparent"
@@ -612,17 +610,8 @@ function NavbarTablet({
 
   const showCreatePostButton = !!user;
 
-  const managePostList = useMemo(() => {
-    if (pathname === "/admin")
-      return [
-        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-      ];
-    if (pathname === "/admin/drafts")
-      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
-    return [
-      { key: "create-post", label: "CREATE POST", href: "/admin" },
-      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-    ];
+  const manageList = useMemo(() => {
+    return managePaths.filter((path) => path.href !== pathname);
   }, [pathname]);
 
   return (
@@ -677,7 +666,7 @@ function NavbarTablet({
                           fontVariationSettings: '"wght" 700,"opsz" 10',
                         }}
                       >
-                        MANAGE POSTS
+                        MANAGE
                       </p>
                       <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                     </div>
@@ -688,7 +677,7 @@ function NavbarTablet({
                       base: "!p-[0_10px]",
                     }}
                   >
-                    {managePostList.map((link) => (
+                    {manageList.map((link) => (
                       <DropdownItem
                         key={link.key}
                         className="!p-[4px_0_2px] !rounded-none !bg-transparent"
@@ -1118,17 +1107,8 @@ function NavbarMobile() {
   }, []);
   const showCreatePostButton = !!user;
 
-  const managePostList = useMemo(() => {
-    if (pathname === "/admin")
-      return [
-        { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-      ];
-    if (pathname === "/admin/drafts")
-      return [{ key: "create-post", label: "CREATE POST", href: "/admin" }];
-    return [
-      { key: "create-post", label: "CREATE POST", href: "/admin" },
-      { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-    ];
+  const manageList = useMemo(() => {
+    return managePaths.filter((path) => path.href !== pathname);
   }, [pathname]);
 
   return (
@@ -1187,7 +1167,7 @@ function NavbarMobile() {
                   base: "!p-[0_10px]",
                 }}
               >
-                {managePostList.map((link) => (
+                {manageList.map((link) => (
                   <DropdownItem
                     key={link.key}
                     className="!p-[4px_0_2px] !rounded-none !bg-transparent"

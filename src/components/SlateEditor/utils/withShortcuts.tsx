@@ -166,37 +166,37 @@ const withShortcuts = (editor: Editor) => {
 
     // deleteBackward(...args);
 
-    // // @ts-ignore
-    // const { anchor } = selection;
-    // const block = Editor.above(editor, {
-    //   match: (n: any) => Editor.isBlock(editor, n),
-    // });
+    // @ts-ignore
+    const { anchor } = selection;
+    const block = Editor.above(editor, {
+      match: (n: any) => Editor.isBlock(editor, n),
+    });
 
-    // if (block) {
-    //   const [, path] = block;
-    //   const start = Editor.start(editor, path);
+    if (block) {
+      const [, path] = block;
+      const start = Editor.start(editor, path);
 
-    //   const before = Editor.before(editor, anchor, { unit: "character" });
-    //   const charBefore = before
-    //     ? Editor.string(editor, { anchor: before, focus: anchor })
-    //     : null;
+      const before = Editor.before(editor, anchor, { unit: "character" });
+      const charBefore = before
+        ? Editor.string(editor, { anchor: before, focus: anchor })
+        : null;
 
-    //   // Hide the dropdown menu if the "/" is deleted
-    //   if (charBefore === "/") {
-    //     // editor.hideDropdownMenu();
-    //     deleteBackward(...args);
-    //     // @ts-ignore
-    //     if (Editor.marks(editor)?.dropdown) {
-    //       Transforms.setNodes(
-    //         editor,
-    //         // @ts-ignore
-    //         { dropdown: false },
-    //         { match: Text.isText }
-    //       );
-    //     }
-    //     return;
-    //   }
-    // }
+      // Hide the dropdown menu if the "/" is deleted
+      if (charBefore === "/") {
+        // editor.hideDropdownMenu();
+        deleteBackward(...args);
+        // @ts-ignore
+        if (Editor.marks(editor)?.dropdown) {
+          Transforms.setNodes(
+            editor,
+            // @ts-ignore
+            { dropdown: false },
+            { match: Text.isText }
+          );
+        }
+        return;
+      }
+    }
 
     // if (selection && Range.isCollapsed(selection)) {
     //   {

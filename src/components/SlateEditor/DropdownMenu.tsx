@@ -217,6 +217,15 @@ const DropdownMenu = () => {
     };
   }, [show]);
 
+  useEffect(() => {
+    if (filteredOptions) {
+      setActive((c) => {
+        if (c >= filteredOptions.length) return 0;
+        return c;
+      });
+    }
+  }, [filteredOptions]);
+
   const onSelectOption = (option: OptionItem) => {
     const { selection } = editor;
     if (selection && Range.isCollapsed(selection)) {

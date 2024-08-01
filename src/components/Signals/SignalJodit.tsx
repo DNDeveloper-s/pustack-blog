@@ -132,6 +132,7 @@ function SignalJodit(props: any, ref: any) {
         name: user?.name || dummyAuthor.name,
         email: user?.email || dummyAuthor.email,
         photoURL: user?.image_url || dummyAuthor.photoURL,
+        uid: user?.uid || "unknown",
       },
       sourceInputRef.current?.value || "Unknown"
     );
@@ -195,9 +196,6 @@ function SignalJodit(props: any, ref: any) {
           ref={sourceInputRef}
           onChange={(e) => updateLocalStorage("source", e.target.value)}
         />
-      </div>
-      <div className="mt-5">
-        <Button onClick={onOpen}>Create Maths Formula</Button>
       </div>
       <JoditEditor
         content={content}

@@ -447,45 +447,41 @@ export const TableCellElement = ({
         backgroundColor: element.backgroundColor ?? "transparent",
       }}
     >
-      {/* {!readonly && isFirstCellInHoveredColumn && ( */}
-      <div
-        className={
-          "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all " +
-          (isFirstCellInHoveredColumn ? "opacity-100" : "opacity-0")
-        }
-        contentEditable={false}
-      >
-        <NextPopover
-          classNames={{
-            content: "!bg-lightPrimary rounded-none",
-            base: "!w-[150px]",
-          }}
-          placement={"bottom"}
-          color="secondary"
-          offset={-10}
-          isOpen={openCol}
-          onOpenChange={handleOpenColChange}
+      {!readonly && isFirstCellInHoveredColumn && (
+        <div
+          className={
+            "absolute left-0 right-0 top-[-0.6rem] mx-auto w-min transition-all "
+          }
+          contentEditable={false}
         >
-          <PopoverTrigger>
-            <div className="cursor-pointer">
-              <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
-                <FaGripLines />
+          <NextPopover
+            classNames={{
+              content: "!bg-lightPrimary rounded-none",
+              base: "!w-[150px]",
+            }}
+            placement={"bottom"}
+            color="secondary"
+            offset={-10}
+            isOpen={openCol}
+            onOpenChange={handleOpenColChange}
+          >
+            <PopoverTrigger>
+              <div className="cursor-pointer">
+                <div className="cursor-pointer rounded-lg border bg-gray-100 px-1 hover:bg-gray-300 transition-all">
+                  <FaGripLines />
+                </div>
               </div>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent>
-            <TableColumnOptions onClick={handleColClick} />
-          </PopoverContent>
-        </NextPopover>
-      </div>
-      {/* )} */}
+            </PopoverTrigger>
+            <PopoverContent>
+              <TableColumnOptions onClick={handleColClick} />
+            </PopoverContent>
+          </NextPopover>
+        </div>
+      )}
       {!readonly && isFirstCellInHoveredRow && (
         <div
           className={
-            "absolute bottom-0 left-[-0.9rem] top-0 my-auto h-min w-min space-y-1 " +
-            (isFirstCellInHoveredRow
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none")
+            "absolute bottom-0 left-[-0.9rem] top-0 my-auto h-min w-min space-y-1 "
           }
           contentEditable={false}
         >

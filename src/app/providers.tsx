@@ -16,6 +16,8 @@ import {
   NotificationPlacement,
 } from "antd/es/notification/interface";
 import { NotificationContextProvider } from "@/context/NotificationContext";
+import { JoinModalContextProvider } from "@/context/JoinModalContext";
+import JoinModal from "@/components/shared/JoinModal";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -96,19 +98,24 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BlogImageContextProvider>
+      <JoinModalContextProvider>
         <>
-          <NotificationContextProvider
-            openNotification={openNotification}
-            destroy={api.destroy}
-          >
+          <BlogImageContextProvider>
             <>
-              {contextHolder}
-              <UserProvider>{children}</UserProvider>
+              <NotificationContextProvider
+                openNotification={openNotification}
+                destroy={api.destroy}
+              >
+                <>
+                  {contextHolder}
+                  <UserProvider>{children}</UserProvider>
+                </>
+              </NotificationContextProvider>
             </>
-          </NotificationContextProvider>
+          </BlogImageContextProvider>
+          <JoinModal />
         </>
-      </BlogImageContextProvider>
+      </JoinModalContextProvider>
     </QueryClientProvider>
   );
 }

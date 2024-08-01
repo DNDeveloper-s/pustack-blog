@@ -81,6 +81,7 @@ import {
   extractTextFromEditor,
   getSections,
 } from "@/components/SlateEditor/utils/helpers";
+import { useJoinModal } from "@/context/JoinModalContext";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -300,6 +301,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const { isTabletScreen, isDesktopScreen, isMobileScreen } = useScreenSize();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
+  const { setOpen } = useJoinModal();
+
   useEffect(() => {
     const _storageRef = storageRef(storage, `static/minerva.png`);
     getDownloadURL(_storageRef)
@@ -370,6 +373,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   }, [pageTimeSpent, post?.sections, post?.id, user]);
 
   function handleBookMark(bookmarked: boolean) {
+    if (!user?.uid) {
+      return setOpen(true);
+    }
     if (!post?.id || !user?.uid) return;
     const oldState = isBookMarked;
     setIsBookMarked(bookmarked);

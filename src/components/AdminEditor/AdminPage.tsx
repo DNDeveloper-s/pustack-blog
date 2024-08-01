@@ -209,7 +209,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
           },
           "success"
         );
-        router.push("/");
+
+        // @ts-ignore
+        window.location = "/";
       }
 
       // @ts-ignore
@@ -299,7 +301,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
           },
           "success"
         );
-        router.push("/" + data.id);
+
+        // @ts-ignore
+        window.location = "/" + data.id;
       }
 
       // @ts-ignore

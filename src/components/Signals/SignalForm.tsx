@@ -32,6 +32,9 @@ export default function SignalForm() {
           <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
             Create Signal
           </h2>
+          <div>
+            
+          </div>
         </div>
         <div>
           <MathJaxContext>

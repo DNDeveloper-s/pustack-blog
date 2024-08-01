@@ -136,6 +136,7 @@ export default function CreateImageCarouselUI({
         onChange={handleChange}
         className="my-classname"
         rootClassName="root-classname"
+        accept="image/*"
         itemRender={(
           originNode,
           file,
