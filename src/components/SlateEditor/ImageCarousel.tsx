@@ -5,21 +5,14 @@ import { Slider as SliderNext } from "@nextui-org/slider";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {
+  MdEdit,
   MdOutlineArrowBackIos,
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
 import BlogImage from "../shared/BlogImage";
 import { useRef, useState } from "react";
-
-const imageUrl = [
-  "https://i.natgeofe.com/n/2a832501-483e-422f-985c-0e93757b7d84/6_3x2.jpg",
-  "https://cdn.pixabay.com/photo/2012/08/27/14/19/mountains-55067_640.png",
-  "https://img.artpal.com/565372/14-23-4-8-13-3-53m.jpg",
-  "https://www.superprof.co.in/blog/wp-content/uploads/2018/02/landscape-photography-tutorials.jpg",
-  "https://cdn.prod.website-files.com/63a02e61e7ffb565c30bcfc7/65ea99845e53084280471b71_most%20beautiful%20landscapes%20in%20the%20world.webp",
-  "https://cdn.pixabay.com/photo/2023/11/04/10/03/bear-8364583_640.png",
-  "https://images.unsplash.com/photo-1476610182048-b716b8518aae?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8Nnx8fGVufDB8fHx8fA%3D%3D",
-];
+import { useReadOnly } from "slate-react";
+import CreateImageCarouselUI from "./CreateImageCarouselUI";
 
 function calculateProgress(currentIndex: number, totalImages: number) {
   if (currentIndex < 1 || currentIndex > totalImages) {
@@ -28,9 +21,22 @@ function calculateProgress(currentIndex: number, totalImages: number) {
   return ((currentIndex - 1) / (totalImages - 1)) * 100;
 }
 
-export default function ImageCarousel() {
+interface ImageCarouselProps {
+  attributes: any;
+  element: any;
+  setPreviewMode: any;
+  readonly: boolean;
+}
+function ImageCarousel({
+  attributes,
+  element,
+  setPreviewMode,
+  readonly,
+}: ImageCarouselProps) {
   const sliderRef = useRef<Slider>();
   const [curSlide, setCurSlide] = useState(0);
+
+  const imageUrls = element.images.map((image: any) => image.src);
 
   const settings = {
     className: "slider variable-width",
@@ -47,19 +53,19 @@ export default function ImageCarousel() {
     },
   };
   return (
-    <div className="w-full h-[250px]">
-      <div className="group slider-container editor-in-slider overflow-hidden">
+    <div {...attributes} className="w-full h-[250px]">
+      <div className="group slider-container border border-dashed border-[#1f1d1a2b] editor-in-slider overflow-hidden">
         <Slider
           {...settings}
           ref={(slider: Slider) => {
             sliderRef.current = slider;
           }}
         >
-          {imageUrl.map((url) => (
+          {imageUrls.map((url: string) => (
             <div
               key={url}
               style={{ padding: "5px", width: 350 }}
-              className="px-5 h-full"
+              className="p-4 h-full"
             >
               {/* <img
                 className="w-full h-full object-cover image"
@@ -79,6 +85,17 @@ export default function ImageCarousel() {
           ))}
         </Slider>
         <div className="opacity-0 group-hover:opacity-100">
+          {!readonly && (
+            <div
+              onClick={() => {
+                setPreviewMode(false);
+              }}
+              className="absolute top-3 right-3 rounded flex items-center gap-1 text-sm justify-center bg-lightPrimary text-appBlack cursor-pointer"
+            >
+              <MdEdit className="text-sm" />
+              <span>Edit</span>
+            </div>
+          )}
           <div
             onClick={() => {
               sliderRef.current?.slickPrev();
@@ -98,7 +115,7 @@ export default function ImageCarousel() {
           <div className="w-full flex items-center gap-4 px-5 py-2 absolute bottom-0 h-10 bg-lightPrimary bg-opacity-65">
             <div>
               <span className="text-appBlack font-helvetica text-sm">
-                {curSlide + 1} / {imageUrl.length}
+                {curSlide + 1} / {imageUrls.length}
               </span>
             </div>
             <div className="flex-1">
@@ -112,12 +129,35 @@ export default function ImageCarousel() {
                 size="sm"
                 color="foreground"
                 className="max-w-md"
-                value={calculateProgress(curSlide + 1, imageUrl.length)}
+                value={calculateProgress(curSlide + 1, imageUrls.length)}
               />
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ImageCarouselEntry({ element, attributes }: any) {
+  const readonly = useReadOnly();
+  const [previewMode, setPreviewMode] = useState(false);
+
+  if (readonly || previewMode)
+    return (
+      <ImageCarousel
+        element={element}
+        attributes={attributes}
+        setPreviewMode={setPreviewMode}
+        readonly={readonly}
+      />
+    );
+
+  return (
+    <CreateImageCarouselUI
+      attributes={attributes}
+      element={element}
+      setPreviewMode={setPreviewMode}
+    />
   );
 }

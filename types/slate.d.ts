@@ -105,6 +105,12 @@ export type ImageElement = {
   children: Descendant[];
 };
 
+export type ImageCarouselElement = {
+  type: "image-carousel";
+  images: { src: string; caption: string }[];
+  children: EmptyText[];
+};
+
 export type MentionElement = {
   type: "mention";
   character: string;
@@ -219,6 +225,7 @@ type CustomElement =
   | HeadingSixElement
   | EnterEmbedVideoUrlUIElement
   | ImageElement
+  | ImageCarouselElement
   | LinkElement
   | ChooseImageElement
   | ButtonElement

@@ -17,7 +17,7 @@ import {
 import { IoImageOutline } from "react-icons/io5";
 import { CiViewTable } from "react-icons/ci";
 import { RxSection } from "react-icons/rx";
-import { MdOutlineOndemandVideo } from "react-icons/md";
+import { MdOutlineOndemandVideo, MdOutlineViewCarousel } from "react-icons/md";
 import { hasNextPath } from "./utils/helpers";
 
 const DividerIcon = (props: any) => (
@@ -45,6 +45,7 @@ interface OptionItem {
   isMath?: boolean;
   isCode?: boolean;
   isImage?: boolean;
+  isImageCaraousel?: boolean;
   isDivider?: boolean;
   isTable?: boolean;
   isSectionHeader?: boolean;
@@ -78,6 +79,12 @@ const options: OptionItem[] = [
     label: "Image",
     isImage: true,
     icon: <IoImageOutline />,
+  },
+  {
+    id: "image-carousel",
+    label: "Image Carousel",
+    isImageCaraousel: true,
+    icon: <MdOutlineViewCarousel />,
   },
   { id: "divider", label: "Divider", isDivider: true, icon: <DividerIcon /> },
   { id: "table", label: "Table", isTable: true, icon: <CiViewTable /> },
@@ -256,6 +263,12 @@ const DropdownMenu = () => {
       } else if (option.isImage) {
         customElement = {
           type: "choose-image-ui",
+          children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
+        };
+      } else if (option.isImageCaraousel) {
+        customElement = {
+          type: "image-carousel",
+          images: [],
           children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
         };
       } else if (option.isDivider) {

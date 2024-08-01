@@ -24,7 +24,7 @@ import { useState } from "react";
 import MathBlockElement from "./MathBlockElement";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import ErrorComponent from "../shared/ErrorComponent";
-import ImageCarousel from "./ImageCarousel";
+import ImageCarouselEntry from "./ImageCarousel";
 
 const allowedTypes = [
   "paragraph",
@@ -390,6 +390,9 @@ const CustomSlateElement = (props: any) => {
       el = <ResizableImage {...props} />;
       // el = <ImageCarousel {...props} />;
       break;
+    case "image-carousel":
+      el = <ImageCarouselEntry {...props} />;
+      break;
     case "math-block-container":
       el = (
         <ErrorBoundary errorComponent={ErrorComponent}>
@@ -504,6 +507,7 @@ const CustomSlateElement = (props: any) => {
         element.type !== "hr" &&
         element.type !== "embed-video" &&
         element.type !== "enter-embed-video-url-ui" &&
+        element.type !== "image-carousel" &&
         !readonly
       }
       // data-slate-void={element.type === "code-block"}
