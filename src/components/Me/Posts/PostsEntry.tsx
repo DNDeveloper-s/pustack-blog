@@ -4,7 +4,7 @@ import { useQueryDraftPosts, useQueryPosts } from "@/api/post";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Post } from "@/firebase/post-v2";
-import PostDraftItem, { PostDraftItemHeader } from "./PostDraftItem";
+import PostDraftItem, { PostItemHeader } from "./PostItem";
 import { Select } from "antd";
 import { SVGAttributes, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -15,9 +15,7 @@ import FilterModal from "./FilterModal";
 import { useUser } from "@/context/UserContext";
 import { Dayjs } from "dayjs";
 import useScreenSize from "@/hooks/useScreenSize";
-import PostDraftItemDesktop, {
-  PostDraftItemDesktopHeader,
-} from "./PostDraftItemDesktop";
+import PostDraftItemDesktop, { PostItemDesktopHeader } from "./PostItemDesktop";
 
 const options = [
   { value: "draft", label: "Drafts" },
@@ -54,11 +52,7 @@ export interface PostFilters {
   topics: string[];
 }
 
-export default function PostDraftsEntry({
-  _serverPosts,
-}: {
-  _serverPosts?: any;
-}) {
+export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
   const [filters, setFilters] = useState<PostFilters>({
     status: [],
     sort: [{ field: "timestamp", order: "desc" }],
@@ -172,11 +166,7 @@ export default function PostDraftsEntry({
         </div>
 
         <div className="overflow-x-auto bg-lightPrimary">
-          {isMobileScreen ? (
-            <PostDraftItemHeader />
-          ) : (
-            <PostDraftItemDesktopHeader />
-          )}
+          {isMobileScreen ? <PostItemHeader /> : <PostItemDesktopHeader />}
           {/* <button
             onClick={() => {
               setFilters((c) => ({

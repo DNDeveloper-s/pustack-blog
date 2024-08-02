@@ -18,7 +18,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { PostFilters } from "./PostDraftsEntry";
+import { PostFilters } from "./PostsEntry";
 
 const CheckboxGroup = Checkbox.Group;
 

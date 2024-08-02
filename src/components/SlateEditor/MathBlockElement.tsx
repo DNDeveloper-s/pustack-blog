@@ -12,13 +12,10 @@ export default function MathBlockElement({
   const handleAlignMent = (align: "center" | "left" | "right") => {
     const path = ReactEditor.findPath(editor, element);
 
-    console.log("path - ", path);
     Transforms.deselect(editor);
 
     Transforms.setNodes(editor, { align }, { at: path });
   };
-
-  console.log("element - ", element);
 
   const handleInnerAlignMent = (align: "center" | "left" | "right") => {
     const path = ReactEditor.findPath(editor, element);

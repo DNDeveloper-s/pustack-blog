@@ -29,6 +29,8 @@ import Footer from "../shared/Footer";
 import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
 import { Button } from "@nextui-org/button";
 import useScreenSize from "@/hooks/useScreenSize";
+import SlateEditor from "../SlateEditor/SlateEditor";
+import { CustomElement } from "../../../types/slate";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -38,148 +40,7 @@ function filterAndTrimStrings(arr: any[]) {
 }
 
 function SignalComponent({ signal }: { signal: Signal }) {
-  const [elements, setElements] = useState<
-    string | JSX.Element | JSX.Element[]
-  >([]);
-
-  useEffect(() => {
-    if (signal?.content) {
-      let index = 0;
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(signal?.content, "text/html");
-      const body = doc.body;
-
-      // const preElement = body.querySelector("pre");
-
-      function trimArray(arr: ChildNode[]) {
-        let index = 0;
-        while (true) {
-          const el = arr[index];
-          if (
-            el.textContent?.trim() !== "" ||
-            !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
-          ) {
-            break;
-          }
-          index++;
-        }
-        return arr.slice(index);
-      }
-      function nodesToInnerHTMLString(nodes: any[]) {
-        const container = document.createElement("div");
-        nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
-        return container.innerHTML;
-      }
-      function trimEmptyElements(parentNode: HTMLElement) {
-        const children = Array.from(parentNode.childNodes);
-        const arr = trimArray(children);
-        const finalArray = trimArray(arr.reverse());
-
-        finalArray.reverse();
-
-        return nodesToInnerHTMLString(finalArray);
-      }
-      const trimmedContent = trimEmptyElements(body);
-
-      const content = parse(trimmedContent, {
-        library: {
-          createElement(type, props, ...children) {
-            if (type === "pre") {
-              return <BlogPostCode code={children[0]} />;
-            }
-
-            if (type === "table") {
-              return <ScrollableContent>{children[0]}</ScrollableContent>;
-            }
-
-            if (
-              type === "img" &&
-              // @ts-ignore
-              props?.className?.includes("blog-image")
-            ) {
-              return (
-                <BlogImageDefault
-                  className="max-w-full block"
-                  // @ts-ignore
-                  src={props.src}
-                  imageProps={{
-                    ...props,
-                    // @ts-ignore
-                    className: "max-w-full h-auto " + (props.className ?? ""),
-                  }}
-                />
-              );
-            }
-
-            if (type === "section") {
-              let title = children[0]
-                .find((c: any) => c.props?.className?.includes("styles_title"))
-                ?.props?.children.find((c: any) => c.type === "h2")
-                .props.children;
-
-              // title &&
-              //   setTitles((prev) => [
-              //     ...prev,
-              //     { titleWithIcons: title, title: filterAndTrimStrings(title) },
-              //   ]);
-
-              // console.log("title | |||| - ", title);
-
-              const isFirstSection = index === 0;
-              index++;
-              return createElement(
-                type,
-                {
-                  id: filterAndTrimStrings(title),
-                  ...props,
-                  style: { paddingTop: "10px" },
-                  className: isFirstSection ? "first_section" : "",
-                },
-                ...children
-              );
-            }
-
-            if (type === "iframe") {
-              return (
-                <iframe
-                  {...props}
-                  style={{
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                    // @ts-ignore
-                    ...(props?.style ?? {}),
-                  }}
-                />
-              );
-            }
-
-            if (type === "blockquote") {
-              return createElement(
-                type,
-                {
-                  ...props,
-                  // @ts-ignore
-                  className: "minerva-blockquote-1 " + (props?.className ?? ""),
-                },
-                ...children
-              );
-            }
-
-            return createElement(type, props, ...children);
-            // return <div>Create Element</div>;
-          },
-          cloneElement(element, props, ...children) {
-            return <div>Clone Element</div>;
-          },
-          isValidElement(element) {
-            return true;
-          },
-        },
-      });
-      setElements(content);
-    }
-  }, [signal?.content]);
-
+  console.log("signal - ", signal);
   return (
     <div className={classes.body_block} id={signal.id}>
       <div className={classes.connector}>
@@ -193,7 +54,9 @@ function SignalComponent({ signal }: { signal: Signal }) {
           </div>
           <span>{signal.source}</span>
         </div>
-        <div className={classes.signal_para}>{elements}</div>
+        <div className={classes.signal_para}>
+          <SlateEditor readonly value={signal.nodes as CustomElement[]} />
+        </div>
       </div>
     </div>
   );
@@ -221,14 +84,16 @@ function Signals(
     isFetchingNextPage,
     fetchPreviousPage,
     error,
-  } = useQuerySignals({ limit: 10 });
+  } = useQuerySignals({ limit: 10, status: "published" });
+
+  console.log("error - ", error);
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
       (data: any) =>
         new Signal(
           data.title,
-          data.content,
+          data.nodes,
           data.author,
           data.source,
           data.id,

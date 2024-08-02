@@ -210,7 +210,6 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
 
   useEffect(() => {
     if (_post) {
-      console.log("Reading time - ", readingTime(_post.content));
       setPost(
         new Post(
           _post.title,
@@ -564,7 +563,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   {user?.email === post?.author.email && (
                     <MdModeEdit
                       className="cursor-pointer"
-                      onClick={() => router.push("/admin?post_id=" + post?.id)}
+                      onClick={() => router.push("/posts/create?post_id=" + post?.id)}
                     />
                   )}
                   {user?.email === post?.author.email && (

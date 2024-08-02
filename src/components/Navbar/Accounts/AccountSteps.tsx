@@ -328,20 +328,12 @@ function FormInputRef(props: FormInputProps, ref: any) {
     ref,
     () => ({
       reset: () => {
-        console.log("reset | 323 - ", props.value, value);
-        setValue((c: any) => {
-          console.log("c - ", c);
-          return props.value;
-        });
+        setValue(props.value);
         setIsChanged(false);
       },
     }),
     [props.value, value, setValue, setIsChanged]
   );
-
-  useEffect(() => {
-    console.log("value, isChanged - ", value, isChanged);
-  }, [value, isChanged]);
 
   // Synchronize `value` state with `props.value`
   useEffect(() => {
@@ -566,13 +558,8 @@ function AccountStepTwoRef(
     },
   });
 
-  useEffect(() => {
-    console.log("rerendered -- ");
-  }, []);
-
   useImperativeHandle(ref, () => ({
     reset: () => {
-      console.log("reset | 541 - ");
       nameInputRef.current?.reset();
       emailInputRef.current?.reset();
       phoneInputRef.current?.reset();

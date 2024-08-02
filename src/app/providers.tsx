@@ -98,24 +98,26 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <JoinModalContextProvider>
-        <>
-          <BlogImageContextProvider>
-            <>
-              <NotificationContextProvider
-                openNotification={openNotification}
-                destroy={api.destroy}
-              >
-                <>
-                  {contextHolder}
-                  <UserProvider>{children}</UserProvider>
-                </>
-              </NotificationContextProvider>
-            </>
-          </BlogImageContextProvider>
-          <JoinModal />
-        </>
-      </JoinModalContextProvider>
+      <>
+        <BlogImageContextProvider>
+          <>
+            <NotificationContextProvider
+              openNotification={openNotification}
+              destroy={api.destroy}
+            >
+              <>
+                {contextHolder}
+                <UserProvider>
+                  <JoinModalContextProvider>
+                    {children}
+                    <JoinModal />
+                  </JoinModalContextProvider>
+                </UserProvider>
+              </>
+            </NotificationContextProvider>
+          </>
+        </BlogImageContextProvider>
+      </>
     </QueryClientProvider>
   );
 }

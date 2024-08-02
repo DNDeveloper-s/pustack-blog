@@ -45,7 +45,7 @@ export const useConfirmPageLeave = (shouldConfirm: boolean) => {
         );
         if (!shouldProceed) {
           // window.history.pushState(null, "", window.location.href + "admin");
-          router.push("/admin");
+          router.push("/posts/create");
         }
       }
       // if (shouldWarn) {
@@ -84,7 +84,7 @@ export const useConfirmPageLeave = (shouldConfirm: boolean) => {
   };
 
   useInterceptAppRouter("push", (original, ...args) => {
-    if (args[0] === "/admin") {
+    if (args[0] === "/posts/create") {
       original(...args);
       return;
     }

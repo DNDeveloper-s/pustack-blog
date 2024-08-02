@@ -24,7 +24,7 @@ const joinModalState = {
 export const JoinModalContext =
   createContext<UseJoinModalContextType>(joinModalState);
 
-const JoinModalContextProvider: FC<{ children: React.ReactElement }> = ({
+const JoinModalContextProvider: FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const context = useJoinModalContext();

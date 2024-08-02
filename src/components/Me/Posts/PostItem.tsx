@@ -99,7 +99,7 @@ function PostItemActions({
       >
         <DropdownItem
           onClick={() => {
-            router.push("/admin?post_id=" + postId);
+            router.push("/posts/create?post_id=" + postId);
           }}
           className="!p-[9px_9px_5px] !pl-1 !rounded-none !bg-transparent"
         >
@@ -162,7 +162,7 @@ function PostItemActions({
   );
 }
 
-export function PostDraftItemHeader() {
+export function PostItemHeader() {
   return (
     <div
       className={
@@ -180,7 +180,7 @@ export function PostDraftItemHeader() {
   );
 }
 
-export default function PostDraftItem({
+export default function PostItem({
   post,
   handleSelectChange,
   isSelected,

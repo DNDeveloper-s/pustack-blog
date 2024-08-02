@@ -155,8 +155,6 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
     },
   });
 
-  console.log("saurabh-singh-post-title - ", error);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -263,6 +261,7 @@ export function PostActionModalBase({
               <Button
                 color="danger"
                 onPress={() => {
+                  if (!post) return onConfirm("");
                   if (!post?.id) {
                     console.error("Post id not found");
                     return;
@@ -533,7 +532,9 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
                   {user?.email === post?.author.email && (
                     <MdModeEdit
                       className="cursor-pointer"
-                      onClick={() => router.push("/admin?post_id=" + post?.id)}
+                      onClick={() =>
+                        router.push("/posts/create?post_id=" + post?.id)
+                      }
                     />
                   )}
                   {user?.email === post?.author.email && (

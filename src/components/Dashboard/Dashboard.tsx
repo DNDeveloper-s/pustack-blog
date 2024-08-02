@@ -39,7 +39,7 @@ function DashboardDesktop({
       (data: any) =>
         new Signal(
           data.title,
-          data.content,
+          data.nodes,
           data.author,
           data.source,
           data.id,
@@ -128,8 +128,6 @@ function DashboardDesktop({
         listPosts: [],
       };
     }
-
-    console.log("posts - ", posts);
 
     const titlePost = posts.find(
       (post: any) => !!post.snippetData?.image || !!post.meta?.image

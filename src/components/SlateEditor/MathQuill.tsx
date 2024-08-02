@@ -185,7 +185,6 @@ const MathQuill = ({
                       );
                       // @ts-ignore
                       if (previousNode.type === "math-block") {
-                        console.log("previousEl - ", previousEl);
                         // Transforms.deselect(editor);
                         setTimeout(() => {
                           const el3 = previousEl?.querySelector(

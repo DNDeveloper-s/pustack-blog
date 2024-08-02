@@ -12,6 +12,8 @@ export function linkedinAuth() {
         return;
       }
 
+      console.log("event.data - ", event.data);
+
       try {
         const accessToken = event.data.accessToken;
         const idToken = event.data.idToken;
@@ -25,14 +27,10 @@ export function linkedinAuth() {
           await signInWithCredential(auth, credential);
           completed = true;
           resolve(true);
-        } else {
-          completed = true;
-          reject();
         }
       } catch (error: any) {
-        console.error("Error signing in with LinkedIn:", error);
         completed = true;
-        reject();
+        reject(new Error("Couldn't sign in with LinkedIn"));
       }
     };
 
@@ -57,10 +55,10 @@ export function linkedinAuth() {
           clearInterval(checkWindowClosed);
           if (!completed) {
             completed = true;
-            reject();
+            reject(new Error("Couldn't sign in with LinkedIn"));
           }
         }
-      }, 1000);
+      }, 5000);
     };
 
     linkedInAuth();

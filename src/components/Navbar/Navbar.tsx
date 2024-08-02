@@ -43,10 +43,10 @@ const DeleteAccountModal = dynamic(
 import { useDisclosure } from "@nextui-org/modal";
 
 const managePaths = [
-  { key: "create-post", label: "CREATE POST", href: "/admin" },
+  { key: "create-post", label: "CREATE POST", href: "/posts/create" },
   { key: "create-signal", label: "CREATE SIGNAL", href: "/signals/create" },
-  { key: "view-posts", label: "VIEW MY POSTS", href: "/admin/drafts" },
-  { key: "view-signals", label: "VIEW MY SIGNALS", href: "/signals" },
+  { key: "view-posts", label: "VIEW MY POSTS", href: "/me/posts" },
+  { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
 ];
 
 const navLinks = [
@@ -769,7 +769,11 @@ function NavbarTablet({
                 // </div>
                 <AccountsModal
                   deleteAccountDisclosure={disclosureOptions}
-                  Trigger={<div>SignOutButton</div>}
+                  Trigger={
+                    <div>
+                      <SignOutButton />
+                    </div>
+                  }
                 />
               )}
               {/* <div className="text-[10px] flex justify-end font-helvetica">

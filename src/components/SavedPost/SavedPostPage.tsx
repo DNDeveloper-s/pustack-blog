@@ -12,7 +12,6 @@ import { Post } from "@/firebase/post-v2";
 export default function SavedPostPage() {
   const { data: posts, error } = useQuerySavedPosts();
 
-  console.log("error - ", error);
   return (
     <div className="max-w-[1440px] w-screen h-screen flex flex-col overflow-auto px-3 mx-auto">
       <Navbar />

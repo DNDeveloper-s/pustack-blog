@@ -36,7 +36,7 @@ export default function DashboardMobile({
       (data: any) =>
         new Signal(
           data.title,
-          data.content,
+          data.nodes,
           data.author,
           data.source,
           data.id,
@@ -93,8 +93,6 @@ export default function DashboardMobile({
         listPosts: [],
       };
     }
-
-    console.log("posts - ", posts);
 
     const titlePost = posts.find(
       (post: any) => !!post.snippetData?.image || !!post.meta?.image

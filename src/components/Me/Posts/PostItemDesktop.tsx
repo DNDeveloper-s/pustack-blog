@@ -15,11 +15,11 @@ import { useMemo } from "react";
 import { FaEye } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdPublish, MdUnpublished } from "react-icons/md";
 import { CustomElement } from "../../../../types/slate";
-import { noImageUrl } from "./PostDraftItem";
+import { noImageUrl } from "./PostItem";
 import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { Tooltip } from "antd";
 
-const colorScheme = {
+export const colorScheme = {
   draft: {
     bg: "#FFA500",
     text: "#CC7A00",
@@ -38,7 +38,7 @@ const colorScheme = {
   },
 };
 
-export function PostDraftItemDesktopHeader() {
+export function PostItemDesktopHeader() {
   return (
     <div
       className={
@@ -57,7 +57,7 @@ export function PostDraftItemDesktopHeader() {
   );
 }
 
-export default function PostDraftItemDesktop({
+export default function PostItemDesktop({
   post,
   handleSelectChange,
   isSelected,
@@ -168,7 +168,7 @@ export default function PostDraftItemDesktop({
         <div
           className="flex items-center gap-1 cursor-pointer hover:text-appBlue"
           onClick={() => {
-            router.push("/admin?post_id=" + post.id);
+            router.push("/posts/create?post_id=" + post.id);
           }}
         >
           <MdModeEdit />

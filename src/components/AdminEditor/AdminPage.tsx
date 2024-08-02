@@ -141,11 +141,11 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   useEffect(() => {
     if (requestedPost) {
-      if (requestedPost.author.email !== user?.email)
+      if (requestedPost.author.uid !== user?.uid)
         return router.push("/" + postId);
       setCurrentPost(requestedPost);
     }
-  }, [requestedPost, user?.email]);
+  }, [requestedPost, user?.uid, postId]);
 
   const {
     mutate: postCreatePost,
@@ -177,7 +177,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             showProgress: true,
             closeIcon: (
               <Link
-                href="/admin/drafts?status=draft"
+                href="/me/posts?status=draft"
                 className="underline text-appBlue cursor-pointer whitespace-nowrap"
               >
                 View Drafts
@@ -231,7 +231,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           // showProgress: true,
           // closeIcon: (
           //   <Link
-          //     href="/admin/drafts?status=draft"
+          //     href="/me/posts?status=draft"
           //     className="underline text-appBlue cursor-pointer whitespace-nowrap"
           //   >
           //     View Drafts
@@ -278,7 +278,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             showProgress: true,
             closeIcon: (
               <Link
-                href="/admin/drafts?status=draft"
+                href="/me/posts?status=draft"
                 className="underline text-appBlue cursor-pointer whitespace-nowrap"
               >
                 View Drafts
@@ -322,7 +322,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           // showProgress: true,
           // closeIcon: (
           //   <Link
-          //     href="/admin/drafts?status=draft"
+          //     href="/me/posts?status=draft"
           //     className="underline text-appBlue cursor-pointer whitespace-nowrap"
           //   >
           //     View Drafts
@@ -553,7 +553,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   const handleSaveAsDraft = useCallback(
     async (silent: boolean = false, id?: string) => {
-      console.log("postId - ", id);
       if (!user) return router.push("/");
 
       const isDraft = requestedPost?.status === "draft";

@@ -23,6 +23,12 @@ export function onAuthStateChanged(callback: NextOrObserver<User | null>) {
   return auth.onAuthStateChanged(callback);
 }
 
+export async function signInWithGoogleAsync() {
+  const provider = new GoogleAuthProvider();
+
+  return signInWithPopup(auth, provider);
+}
+
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 

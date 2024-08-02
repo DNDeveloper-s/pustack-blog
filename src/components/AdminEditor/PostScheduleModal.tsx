@@ -36,8 +36,6 @@ export default function PostScheduleModal({
     }
   }, [post]);
 
-  console.log("sdfasdf-asdf - ", post);
-
   return (
     <Modal
       isOpen={disclosureOptions.isOpen}

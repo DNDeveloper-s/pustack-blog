@@ -77,7 +77,6 @@ const deleteElementAndFocusNext = (editor: Editor, path: Path) => {
     const node = Node.get(editor, path);
     //@ts-ignore
     const targetNodeType = node.type;
-    console.log("targetNodeType", allowedTypes.includes(targetNodeType));
     if (allowedTypes.includes(targetNodeType)) {
       const end = Editor.end(editor, path);
       moveCursorto(editor, end);

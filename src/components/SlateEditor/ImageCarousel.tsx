@@ -10,7 +10,7 @@ import {
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
 import BlogImage from "../shared/BlogImage";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReadOnly } from "slate-react";
 import CreateImageCarouselUI from "./CreateImageCarouselUI";
 
@@ -19,6 +19,15 @@ function calculateProgress(currentIndex: number, totalImages: number) {
     throw new Error("Invalid current index");
   }
   return ((currentIndex - 1) / (totalImages - 1)) * 100;
+}
+
+function isTouchDevice() {
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    // @ts-ignore
+    navigator.msMaxTouchPoints > 0
+  );
 }
 
 interface ImageCarouselProps {
@@ -35,6 +44,12 @@ function ImageCarousel({
 }: ImageCarouselProps) {
   const sliderRef = useRef<Slider>();
   const [curSlide, setCurSlide] = useState(0);
+
+  const [isTouchDeviceState, setIsTouchDeviceState] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDeviceState(isTouchDevice());
+  }, []);
 
   const imageUrls = element.images.map((image: any) => image.src);
 
@@ -54,7 +69,13 @@ function ImageCarousel({
   };
   return (
     <div {...attributes} className="w-full h-[250px]">
-      <div className="group slider-container border border-dashed border-[#1f1d1a2b] editor-in-slider overflow-hidden">
+      <div
+        className="group slider-container border border-dashed border-[#1f1d1a2b] editor-in-slider overflow-hidden"
+        style={{
+          // @ts-ignore
+          "--slick-track-width": imageUrls.length * 350 + "px",
+        }}
+      >
         <Slider
           {...settings}
           ref={(slider: Slider) => {
@@ -84,7 +105,13 @@ function ImageCarousel({
             </div>
           ))}
         </Slider>
-        <div className="opacity-0 group-hover:opacity-100">
+        <div
+          className={
+            isTouchDeviceState
+              ? "opacity-100"
+              : "opacity-0 group-hover:opacity-100"
+          }
+        >
           {!readonly && (
             <div
               onClick={() => {

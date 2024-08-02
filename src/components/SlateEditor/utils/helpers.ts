@@ -2,6 +2,7 @@ import { Descendant, Editor, Location, Path, Text, Transforms } from "slate";
 import { SlateContextValue } from "slate-react/dist/hooks/use-slate";
 import { CustomElement } from "../../../../types/slate";
 import { Node } from "slate";
+import { defaultElement } from "../DropdownMenu";
 
 export const moveCursorto = (editor: Editor, target: Location) => {
   try {
@@ -13,9 +14,14 @@ export const moveCursorto = (editor: Editor, target: Location) => {
 
 export const exportSlateState = (value: CustomElement[]) => {
   // Filter out the elements that has type in ["choose-image-ui", "enter-embed-video-url-ui"]
-  return value.filter(
+  const arr = value.filter(
     (v) => !["choose-image-ui", "enter-embed-video-url-ui"].includes(v.type)
   );
+  if (arr.length === 0) {
+    return [defaultElement];
+  }
+
+  return arr;
 };
 
 const exceptionTypes = [

@@ -29,8 +29,9 @@ export const API_QUERY = {
   QUERY_SIGNALS: (
     userId?: string,
     limit?: number,
-    startAt?: string | string[]
-  ) => ["query-signals", userId, limit, startAt],
+    startAt?: string | string[],
+    status?: string
+  ) => ["query-signals", userId, limit, startAt, status],
   GET_SIGNAL_BY_ID: (signalId?: string | null) => [
     "get-signal-by-id",
     signalId,

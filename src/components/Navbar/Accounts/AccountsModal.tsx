@@ -39,8 +39,6 @@ export default function AccountsModal(props: AccountsModalProps) {
   });
   const [slide, setSlide] = useState(0);
   const onChange = (currentSlide: number, latestSlide: number) => {
-    console.log("currentSlide", currentSlide);
-    console.log("latestSlide", latestSlide);
     setSlide(currentSlide);
   };
 
@@ -57,8 +55,6 @@ export default function AccountsModal(props: AccountsModalProps) {
     // carouselRef.current?.prev();
     // setStepTwoKey((prev) => prev + 1);
   };
-
-  console.log("rerendered -- slide", slide);
 
   return (
     <Popover
@@ -148,7 +144,6 @@ function AccountsDrawerRef(props: { deleteAccountDisclosure: any }, ref: any) {
   };
 
   const onChange = (currentSlide: number) => {
-    console.log(currentSlide);
     setSlide(currentSlide);
   };
 

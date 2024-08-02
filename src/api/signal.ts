@@ -1,8 +1,11 @@
 import { API_QUERY } from "@/config/api-query";
 import { Signal } from "@/firebase/signal";
 import {
+  QueryFunctionContext,
   QueryKey,
+  UseInfiniteQueryResult,
   UseMutationOptions,
+  UseQueryResult,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -91,13 +94,17 @@ export const useQuerySignals = ({
   startAt,
   limit = 10,
   userId,
+  enabled = true,
+  status,
 }: {
   // initialData: Signal[];
   initialPageParam?: string;
   startAt?: string | string[];
   limit?: number;
   userId?: string;
-}): any => {
+  enabled?: boolean;
+  status?: string;
+}): UseInfiniteQueryResult & { signals: any } => {
   const querySignals = async (
     pageParam: any,
     queryKey: QueryKey,
@@ -111,12 +118,13 @@ export const useQuerySignals = ({
       _startAt: startAt as string | string[],
       _direction: direction,
       _userId: userId as string,
+      _status: status as string,
     });
     return signals;
   };
 
   const query = useInfiniteQuery({
-    queryKey: API_QUERY.QUERY_SIGNALS(userId, limit, startAt),
+    queryKey: API_QUERY.QUERY_SIGNALS(userId, limit, startAt, status),
     queryFn: ({ pageParam, queryKey, direction }: any) =>
       querySignals(pageParam, queryKey, direction),
     // initialData: {
@@ -134,6 +142,7 @@ export const useQuerySignals = ({
         return undefined;
       return firstPage.firstDoc as any;
     },
+    enabled,
   });
 
   const signals = useMemo(() => {
@@ -146,18 +155,129 @@ export const useQuerySignals = ({
   };
 };
 
+export const useGetSignalById = (signalId?: string | null) => {
+  const getSignal = async ({ queryKey }: QueryFunctionContext) => {
+    const [, signalId] = queryKey;
+    if (!signalId || typeof signalId !== "string") {
+      throw new Error("Signal ID is required");
+    }
+    const signal = await Signal.get(signalId, true);
+    return signal;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_SIGNAL_BY_ID(signalId),
+    queryFn: getSignal,
+    enabled: !!signalId,
+  });
+};
+
 export const useCreateSignal = (
-  options?: UseMutationOptions<any, Error, Signal>
+  options?: UseMutationOptions<Signal, Error, Signal>
 ) => {
   const qc = useQueryClient();
 
   const createSignal = async (signal: Signal) => {
-    const newSignalId = await signal.saveToFirestore();
-    return newSignalId;
+    const newSignal = await signal.saveToFirestore();
+    return newSignal;
   };
 
   return useMutation({
     mutationFn: createSignal,
+    onSettled: () => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
+        },
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useUpdateSignal = (
+  options?: UseMutationOptions<any, Error, Signal>
+) => {
+  const qc = useQueryClient();
+
+  const updateSignal = async (signal: Signal) => {
+    if (!signal.id) {
+      throw new Error("Signal ID is required");
+    }
+    await signal.updateInFirestore();
+  };
+
+  return useMutation({
+    mutationFn: updateSignal,
+    onSettled: () => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
+        },
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useDeleteSignal = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const deleteSignal = async (signalId: string) => {
+    await Signal.deleteFromFirestore(signalId);
+    return signalId;
+  };
+
+  return useMutation({
+    mutationFn: deleteSignal,
+    onSettled: () => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
+        },
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useUnPublishSignal = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const unPublishSignal = async (signalId: string) => {
+    await Signal.updatePublishStatusInFirestore(signalId, false);
+    return signalId;
+  };
+
+  return useMutation({
+    mutationFn: unPublishSignal,
+    onSettled: () => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
+        },
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const usePublishSignal = (
+  options?: UseMutationOptions<any, Error, string>
+) => {
+  const qc = useQueryClient();
+
+  const publishSignal = async (signalId: string) => {
+    await Signal.updatePublishStatusInFirestore(signalId, true);
+    return signalId;
+  };
+
+  return useMutation({
+    mutationFn: publishSignal,
     onSettled: () => {
       qc.invalidateQueries({
         predicate: (query) => {

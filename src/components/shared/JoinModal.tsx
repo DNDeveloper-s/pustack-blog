@@ -1,10 +1,17 @@
 import { useJoinModal } from "@/context/JoinModalContext";
+import { useUser } from "@/context/UserContext";
+import { signInWithGoogleAsync } from "@/lib/firebase/auth";
 import { Button } from "@nextui-org/button";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { linkedinAuth } from "./LinkedinAuth";
 
 export default function JoinModal() {
   const { open, setOpen } = useJoinModal();
+  const [loading, setLoading] = useState<"google" | "linkedin" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useUser();
 
   const onOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -13,6 +20,29 @@ export default function JoinModal() {
   const onClose = () => {
     setOpen(false);
   };
+
+  const handleClick = (provider: "google" | "linkedin") => async () => {
+    try {
+      if (loading) return;
+      setError(null);
+      setLoading(provider);
+      if (provider === "google") {
+        await signInWithGoogleAsync();
+      } else if (provider === "linkedin") {
+        await linkedinAuth();
+      }
+    } catch (error: any) {
+      setLoading(null);
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.uid) {
+      setLoading(null);
+      onClose();
+    }
+  }, [user?.uid]);
 
   return (
     <Modal
@@ -31,7 +61,12 @@ export default function JoinModal() {
         </ModalHeader>
         <ModalBody>
           <div className="flex flex-col pt-5 pb-8 w-full max-w-[450px] items-center gap-7">
-            <button className="border border-appBlack w-full max-w-[260px] h-[45px] flex items-center justify-between px-4">
+            <Button
+              isDisabled={!!loading}
+              isLoading={loading === "google"}
+              onClick={handleClick("google")}
+              className="border border-appBlack !rounded-none bg-transparent w-full max-w-[260px] h-[45px] flex items-center justify-between px-4"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 version="1.1"
@@ -77,8 +112,13 @@ export default function JoinModal() {
                 </g>
               </svg>
               <span className="flex-1 text-center">Join With Google</span>
-            </button>
-            <button className="border border-appBlack w-full max-w-[260px] h-[45px] flex items-center justify-between px-4">
+            </Button>
+            <Button
+              isDisabled={!!loading}
+              isLoading={loading === "linkedin"}
+              onClick={handleClick("linkedin")}
+              className="border border-appBlack !rounded-none bg-transparent w-full max-w-[260px] h-[45px] flex items-center justify-between px-4"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 version="1.1"
@@ -112,10 +152,16 @@ export default function JoinModal() {
                 </g>
               </svg>
               <span className="flex-1 text-center">Join With Linkedin</span>
-            </button>
+            </Button>
+
+            {error && (
+              <p className="text-xs mt-4 max-w-[350px] w-full text-center leading-[18px] text-danger-500">
+                {error}
+              </p>
+            )}
 
             <p className="text-xs mt-4 max-w-[350px] w-full text-center leading-[18px] text-appBlack text-opacity-60">
-              Click &quot;Sign up&quot; to agree to Minerva&apos;s{" "}
+              Click &quot;Join&quot; to agree to Minerva&apos;s{" "}
               <Link target="_blank" href="https://pustack.com/terms_of_service">
                 <u>Terms of Service</u>
               </Link>{" "}

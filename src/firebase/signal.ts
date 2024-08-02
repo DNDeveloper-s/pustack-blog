@@ -6,6 +6,7 @@ import {
   DocumentSnapshot,
   QuerySnapshot,
   collection,
+  deleteDoc,
   doc,
   endAt,
   endBefore,
@@ -23,6 +24,7 @@ import {
   where,
 } from "firebase/firestore";
 import { compact } from "lodash";
+import { Descendant } from "slate";
 
 export interface Author {
   name: string;
@@ -87,6 +89,7 @@ interface QueryParams {
   _startAt?: string | string[];
   _direction?: "forward" | "backward";
   _userId?: string;
+  _status?: string;
 }
 
 const headings = {
@@ -98,12 +101,16 @@ const headings = {
   h6: [],
 };
 
+export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
+
 export class Signal {
   _id: string | undefined = undefined;
   readonly title: string;
-  readonly content: string;
   readonly source: string;
   readonly author: Author;
+  private _status: PostStatus = "draft";
+  private _scheduledTime: string | undefined = undefined;
+  readonly _nodes: Descendant[] | undefined = undefined;
   readonly timestamp: string | undefined = undefined;
 
   get id(): string | undefined {
@@ -116,20 +123,34 @@ export class Signal {
     this._id = id;
   }
 
+  get status() {
+    return this._status;
+  }
+
+  get scheduledTime() {
+    return this._scheduledTime;
+  }
+
+  get nodes() {
+    return this._nodes;
+  }
+
   constructor(
     title: string,
-    content: string,
+    nodes: Descendant[] | undefined,
     author: Author,
     source: string,
     id?: string,
-    timestamp?: string
+    timestamp?: string,
+    status?: PostStatus
   ) {
     this.title = title;
-    this.content = content;
+    this._nodes = nodes;
     this.author = author;
     this.source = source;
     this._id = id;
     this.timestamp = timestamp;
+    this._status = status ?? "draft";
   }
 
   private async generateUniqueId() {
@@ -150,14 +171,95 @@ export class Signal {
   }
 
   async saveToFirestore() {
-    const signalId = await this.generateUniqueId();
+    const signalId = this.id ?? (await this.generateUniqueId());
 
     const signalRef = doc(db, "signals", signalId).withConverter(
       signalConverter
     );
-    setDoc(signalRef, this);
 
-    return signalId;
+    await setDoc(signalRef, this, { merge: true });
+
+    return this;
+  }
+
+  async updateInFirestore() {
+    if (!this.id) {
+      throw new Error("Signal ID is required to update the document");
+    }
+
+    const signalRef = doc(db, "signals", this.id).withConverter(
+      signalConverter
+    );
+
+    await setDoc(signalRef, this, { merge: true });
+
+    return this;
+  }
+
+  static async deleteFromFirestore(id: string) {
+    if (!id) {
+      throw new Error("Signal id is missing");
+    }
+
+    const signalRef = doc(db, "signals", id).withConverter(signalConverter);
+
+    await deleteDoc(signalRef);
+
+    return id;
+  }
+
+  /**
+   * Publishes the post.
+   */
+  live() {
+    this._status = "published";
+    this._scheduledTime = undefined;
+  }
+
+  /**
+   *
+   * @param scheduledTime - The time to schedule the post in ISO string format.
+   */
+  schedule(scheduledTime: string) {
+    // Check if the input time is valid ISO string
+    if (!new Date(scheduledTime).toISOString()) {
+      throw new Error("Invalid Scheduled Time");
+    }
+
+    this._status = "scheduled";
+    this._scheduledTime = scheduledTime;
+  }
+
+  /**
+   * Publishes the post.
+   */
+  draft() {
+    this._status = "draft";
+  }
+
+  unpublish() {
+    this._status = "unpublished";
+  }
+
+  static async updatePublishStatusInFirestore(
+    id: string,
+    isPublished: boolean
+  ) {
+    if (!id) {
+      throw new Error("Signal id is missing");
+    }
+
+    const signalRef = doc(db, "signals", id);
+
+    await setDoc(
+      signalRef,
+      {
+        status: isPublished ? "published" : "unpublished",
+      },
+      { merge: true }
+    );
+
+    return id;
   }
 
   /**
@@ -232,6 +334,7 @@ export class Signal {
     _startAt,
     _direction,
     _userId,
+    _status,
   }: QueryParams & { _flatten: true }): Promise<
     GetAllReturnType<SignalQuerySnapshot>
   >;
@@ -243,12 +346,17 @@ export class Signal {
       _startAt,
       _direction = "forward",
       _userId,
+      _status,
     } = queryParams ?? {};
     const signalsRef = collection(db, "signals").withConverter(signalConverter);
     let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(_limit));
 
     if (_userId) {
       _query = query(_query, where("author.uid", "==", _userId));
+    }
+
+    if (_status) {
+      _query = query(_query, where("status", "==", _status));
     }
 
     if (_direction === "forward") {
@@ -365,11 +473,12 @@ export const signalConverter = {
   toFirestore: (signal: Signal) => {
     return {
       title: signal.title,
-      content: signal.content,
+      nodes: signal.nodes,
       author: signal.author,
       source: signal.source,
       timestamp: serverTimestamp(),
       id: signal.id,
+      status: signal.status,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -377,11 +486,12 @@ export const signalConverter = {
     const data = snapshot.data();
     return new Signal(
       data.title,
-      data.content,
+      data.nodes,
       data.author,
       data.source,
       snapshot.id,
-      data.timestamp.toDate().toISOString()
+      data.timestamp.toDate().toISOString(),
+      data.status
     );
   },
 };

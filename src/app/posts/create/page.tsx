@@ -11,16 +11,11 @@ export default async function Admin({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const postId = searchParams.post_id;
-  // const user = await getAuthenticatedAppForUser();
-
-  // if (!user.currentUser?.uid) return redirect("/");
 
   return (
     <>
       <ErrorBoundary errorComponent={ErrorMasterComponent}>
-        <AdminPage
-          postId={postId as string}
-        />
+        <AdminPage postId={postId as string} />
       </ErrorBoundary>
     </>
   );

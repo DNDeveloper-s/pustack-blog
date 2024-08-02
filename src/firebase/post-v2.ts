@@ -30,7 +30,7 @@ import { toDashCase } from "./signal";
 import { Section } from "@/components/AdminEditor/Sections/Section";
 import { Post as PostV1 } from "@/firebase/post";
 import readingTime from "reading-time";
-import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
+import { PostFilters } from "@/components/Me/Posts/PostsEntry";
 import { Descendant } from "slate";
 import {
   extractTextFromEditor,
@@ -381,14 +381,7 @@ export class Post {
     const postId = this.id ?? (await this.generateUniqueId());
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
 
-    if (returnBatch) {
-      const batch =
-        returnBatch instanceof WriteBatch ? returnBatch : writeBatch(db);
-      batch.set(postRef, this);
-      return batch;
-    }
-
-    await setDoc(postRef, this);
+    await setDoc(postRef, this, { merge: true });
 
     return this;
   }
@@ -409,7 +402,7 @@ export class Post {
     }
 
     const postRef = doc(db, "posts", this.id).withConverter(postConverter);
-    await setDoc(postRef, this);
+    await setDoc(postRef, this, { merge: true });
 
     return this;
   }

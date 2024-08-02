@@ -195,9 +195,6 @@ const DropdownMenu = () => {
 
       const [textNode] = node;
 
-      // @ts-ignore
-      console.log("textNodde - ", textNode, textNode.text);
-
       setFilteredOptions(
         options.filter((option) =>
           option.label
@@ -494,8 +491,6 @@ export function StaticDropdownMenu() {
         mode: "all",
       })
     );
-
-    console.log("nodes - ", nodes);
   }
 
   return !show ? null : (

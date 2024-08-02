@@ -2826,3 +2826,9 @@ font-size: 180px;
   width: 100%;
   height: 100%;
 }
+
+@media screen and (max-width: 500px) {
+  .editor-in-slider .slick-track {
+    width: var(--slick-track-width) !important;
+  }
+}

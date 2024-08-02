@@ -11,6 +11,7 @@ import {
   orderBy,
   query,
   endAt,
+  where,
 } from "firebase/firestore";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
@@ -22,14 +23,22 @@ export default async function SignalPage({
   // const signals = await Signal.getAll({ _flatten: true });
   const signalsRef = collection(db, "signals");
 
-  let _query = query(signalsRef, orderBy("timestamp", "desc"), limit(10));
-
-  console.log("searchParams - ", searchParams);
+  let _query = query(
+    signalsRef,
+    where("status", "==", "published"),
+    orderBy("timestamp", "desc"),
+    limit(10)
+  );
 
   if (searchParams.id) {
     const docRef = doc(db, "signals", searchParams.id as string);
     const _doc = await getDoc(docRef);
-    _query = query(signalsRef, orderBy("timestamp", "desc"), endAt(_doc));
+    _query = query(
+      signalsRef,
+      where("status", "==", "published"),
+      orderBy("timestamp", "desc"),
+      endAt(_doc)
+    );
   }
 
   const docs = await getDocs(_query);

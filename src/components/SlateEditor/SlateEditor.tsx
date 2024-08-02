@@ -58,6 +58,20 @@ export interface SlateEditorRef {
   reset: () => void;
 }
 
+function isValidSlateValue(value: any): value is CustomElement[] {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every(
+      (v) =>
+        typeof v === "object" &&
+        "type" in v &&
+        "children" in v &&
+        Array.isArray(v.children)
+    )
+  );
+}
+
 interface SlateEditorProps {
   readonly?: boolean;
   value?: CustomElement[];
@@ -69,7 +83,9 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     () => withShortcuts(withReact(withHistory(createEditor()))),
     []
   );
-  const [value, setValue] = useState(props.value ?? initialValue);
+  const [value, setValue] = useState(
+    isValidSlateValue(props.value) ? props.value : initialValue
+  );
   const [readonly, setReadonly] = useState(props.readonly ?? false);
   const moveUp = useCallback(() => {
     if (editor.selection) {
@@ -276,7 +292,7 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     >
       <Slate
         editor={editor}
-        initialValue={readonly ? exportSlateState(value) : value}
+        initialValue={readonly && !!value ? exportSlateState(value) : value}
         // @ts-ignore
         onValueChange={(val) => {
           props.onChange?.();

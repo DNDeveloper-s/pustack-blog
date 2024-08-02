@@ -22,6 +22,9 @@ import { useUser } from "@/context/UserContext";
 import JoditEditor from "../AdminEditor/JoditEditor";
 import { useCreateSignal } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
+import SlateEditor, { SlateEditorRef } from "../SlateEditor/SlateEditor";
+import { useNotification } from "@/context/NotificationContext";
+import { CustomElement } from "../../../types/slate";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -42,105 +45,94 @@ const TOPICS = [
   { key: "others", value: "Others" },
 ];
 
-function SignalJodit(props: any, ref: any) {
-  const [content, setContent] = useState("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const sourceInputRef = useRef<HTMLInputElement | null>(null);
+interface SignalJoditProps {
+  preSignal?: Signal;
+}
+function SignalJodit(props: SignalJoditProps, ref: any) {
+  const { preSignal } = props;
+
+  // Local State
   const [error, setError] = useState<string | null>(null);
+  const [slateEditorKey, setSlateEditorKey] = useState(0);
+
+  // Third-Party hooks
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  // Contexts
   const { user } = useUser();
-  const { mutate: postCreateSignal, isPending } = useCreateSignal({
-    onSuccess: () => {
-      setContent("");
-      if (inputRef.current) inputRef.current.value = "";
-      if (sourceInputRef.current) sourceInputRef.current.value = "";
-      window.localStorage.removeItem("signal_editor_state");
-      router.push("/");
-    },
-  });
+  const { openNotification } = useNotification();
 
-  useEffect(() => {
-    const getContent = localStorage.getItem("signal_editor_state") ?? "{}";
-    const storageContent = JSON.parse(getContent);
+  // Refs
+  const slateEditorRef = useRef<SlateEditorRef>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const sourceInputRef = useRef<HTMLInputElement | null>(null);
 
-    if (storageContent) {
-      setContent(storageContent.content);
-      if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
-      if (sourceInputRef.current)
-        sourceInputRef.current.value = storageContent.source ?? "";
-    }
-  }, []);
-
+  // Imperative Handle
   useImperativeHandle(ref, () => ({
     reset: () => {
-      setContent("");
+      setSlateEditorKey((prev) => prev + 1);
       if (inputRef.current) inputRef.current.value = "";
       if (sourceInputRef.current) sourceInputRef.current.value = "";
     },
+    getSlateValue: () => {
+      return slateEditorRef.current?.getValue();
+    },
+    getSourceValue: () => sourceInputRef.current?.value ?? "",
+    getTitleValue: () => inputRef.current?.value ?? "",
+    isValid: (titleValue: string, sourceValue: string, silent: boolean) =>
+      isValid(titleValue, sourceValue, silent),
   }));
 
-  async function handleCreateSignal() {
-    if (!user) return;
-
-    const isValid =
-      inputRef.current?.value && content && sourceInputRef.current?.value;
-
-    if (!isValid) {
-      setError("Please fill all fields");
-      return;
+  // Use Effects
+  useEffect(() => {
+    if (preSignal) {
+      if (sourceInputRef.current)
+        sourceInputRef.current.value = preSignal.source ?? "";
+      if (inputRef.current) inputRef.current.value = preSignal.title ?? "";
     }
+  }, [preSignal]);
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
-    const body = doc.body;
-    function trimArray(arr: ChildNode[]) {
-      let index = 0;
-      while (true) {
-        const el = arr[index];
-        if (
-          el?.nodeName === "IFRAME" ||
-          el?.textContent?.trim() !== "" ||
-          !Array.from(el.childNodes).every((c) => c.nodeName === "BR")
-        ) {
-          break;
-        }
-        index++;
+  // Functions
+  const isValid = (
+    titleValue: string,
+    sourceValue: string,
+    silent: boolean = false
+  ) => {
+    const _isValid = titleValue && sourceValue;
+
+    const field = titleValue ? (sourceValue ? null : "source") : "title";
+
+    if (field === "title") {
+      if (!silent) {
+        inputRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        inputRef.current?.focus();
       }
-      return arr.slice(index);
+      return { isValid: false, field, message: "Please enter the post title" };
     }
-    function nodesToInnerHTMLString(nodes: any[]) {
-      const container = document.createElement("div");
-      nodes.forEach((node) => container.appendChild(node.cloneNode(true)));
-      return container.innerHTML;
+
+    if (field === "source") {
+      if (!silent) {
+        sourceInputRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        sourceInputRef.current?.focus();
+      }
+      return { isValid: false, field, message: "Please fill in the source" };
     }
-    function trimEmptyElements(parentNode: HTMLElement) {
-      const children = Array.from(parentNode.childNodes);
-      const arr = trimArray(children);
-      const finalArray = trimArray(arr.reverse());
 
-      finalArray.reverse();
-
-      return nodesToInnerHTMLString(finalArray);
+    // slateEditorRef.current?.getValue();
+    if (slateEditorRef.current?.hasSomeContent() === false) {
+      return { isValid: false, field, message: "Please enter some content" };
     }
-    const trimmedContent = trimEmptyElements(body);
 
-    const signal = new Signal(
-      inputRef.current?.value || "Untitled",
-      trimmedContent,
-      {
-        name: user?.name || dummyAuthor.name,
-        email: user?.email || dummyAuthor.email,
-        photoURL: user?.image_url || dummyAuthor.photoURL,
-        uid: user?.uid || "unknown",
-      },
-      sourceInputRef.current?.value || "Unknown"
-    );
-
-    // // postCreatePost(post);
-    // handleContinue(post);
-    // postCreateSignal(signal);
-  }
+    // return { isValid: _isValid, field, message: "Please fill all fields." };
+    return { isValid: true, field: "", message: "" };
+  };
 
   const updateLocalStorage = (key: string, value: any) => {
     const getContent = localStorage.getItem("signal_editor_state") ?? "{}";
@@ -197,7 +189,7 @@ function SignalJodit(props: any, ref: any) {
           onChange={(e) => updateLocalStorage("source", e.target.value)}
         />
       </div>
-      <JoditEditor
+      {/* <JoditEditor
         content={content}
         setContent={(_content) => {
           setContent(_content);
@@ -205,18 +197,26 @@ function SignalJodit(props: any, ref: any) {
         updateLiveContent={(content) => {
           updateLocalStorage("content", content);
         }}
-      />
-      <div className="flex justify-end gap-4 mb-10">
-        {/* <Button
-          isDisabled={isPending}
-          className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
-          onClick={handleCreatePost}
-          variant="flat"
-          color="primary"
-          isLoading={isPending}
-        >
-          Create Post
-        </Button> */}
+      /> */}
+      <div className="mt-5">
+        <div className="flex justify-between gap-2">
+          <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+            Content
+          </h4>
+        </div>
+        <div key={slateEditorKey}>
+          <SlateEditor
+            // onChange={onChange}
+            // key={JSON.stringify(prePost?.nodes)}
+            // value={prePost?.nodes as CustomElement[] | undefined}
+            key={JSON.stringify(preSignal?.nodes)}
+            value={preSignal?.nodes as CustomElement[] | undefined}
+            ref={slateEditorRef}
+            showToolbar
+          />
+        </div>
+      </div>
+      {/* <div className="flex justify-end gap-4 mb-10">
         <Button
           isDisabled={isPending}
           className="h-9 px-5 rounded bg-appBlue text-primary text-xs uppercase font-featureRegular"
@@ -228,29 +228,7 @@ function SignalJodit(props: any, ref: any) {
         >
           Create Signal
         </Button>
-      </div>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        classNames={{
-          wrapper: "bg-black bg-opacity-50",
-          base: "!max-w-[900px] !w-[90vw]",
-        }}
-      >
-        <ModalContent>
-          <ModalHeader>Mathematics Formula</ModalHeader>
-          <ModalBody>
-            <iframe
-              src="https://www.imatheq.com/imatheq/com/imatheq/math-equation-editor-latex-mathml.html"
-              style={{
-                width: "100%",
-                height: "80vh",
-                maxHeight: "800px",
-              }}
-            ></iframe>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      </div> */}
     </div>
   );
 }

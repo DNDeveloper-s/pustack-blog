@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useUser } from "@/context/UserContext";
-import { PostFilters } from "@/components/Drafts/PostDrafts/PostDraftsEntry";
+import { PostFilters } from "@/components/Me/Posts/PostsEntry";
 
 export const useQueryPosts = ({
   initialData,
@@ -96,7 +96,6 @@ export const useGetPostById = (postId?: string | null) => {
   return useQuery({
     queryKey: API_QUERY.GET_POST_BY_ID(postId),
     queryFn: getPostById,
-    staleTime: 1000 * 60 * 5, // 5 minutes
     enabled: !!postId,
   });
 };

@@ -117,24 +117,10 @@ function JoditWrapper(
   const { openNotification } = useNotification();
 
   useEffect(() => {
-    const getContent = localStorage.getItem("editor_state") ?? "{}";
-    const storageContent = JSON.parse(getContent);
-
     if (prePost) {
       setTopic(prePost.topic);
       if (inputRef.current) inputRef.current.value = prePost.title ?? "";
     }
-
-    /**
-     * @disabled
-     * This code is not needed as we are not storing the content in local storage
-     */
-    // else if (storageContent) {
-    //   // setInitialContent(storageContent.content);
-    //   // currentContent.current = storageContent.content;
-    //   setTopic(storageContent.topic);
-    //   if (inputRef.current) inputRef.current.value = storageContent.title ?? "";
-    // }
   }, [prePost]);
 
   useImperativeHandle(ref, () => ({
@@ -261,8 +247,6 @@ function JoditWrapper(
       slateEditorRef.current?.getValue()
       // sections
     );
-
-    console.log("post - ", post);
 
     if (prePost) {
       post = new Post(
@@ -482,22 +466,6 @@ function JoditWrapper(
           />
         </div>
       </div>
-
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        classNames={{
-          wrapper: "bg-black bg-opacity-50",
-          base: "!max-w-[900px] !w-[90vw]",
-        }}
-      >
-        <ModalContent>
-          <ModalHeader>Mathematics Formula</ModalHeader>
-          <ModalBody>
-            <MathsFormulaIframe />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </div>
   );
 }
