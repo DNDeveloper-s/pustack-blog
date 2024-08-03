@@ -1,10 +1,11 @@
 import { Button } from "@nextui-org/button";
 import { Popover } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaCaretDown } from "react-icons/fa6";
 import { useSlate } from "slate-react";
 import { getTopmostElement, isMarkActiveAcrossSelection } from "./Toolbar";
 import { Editor, Text, Transforms } from "slate";
+import { useSlateConfig } from "@/context/SlateContext";
 
 const fontSizes = [
   "8px",
@@ -56,6 +57,28 @@ const fontSizes = [
   "100px",
 ];
 
+function parseFontSize(size: string): number {
+  return parseInt(size.replace("px", ""));
+}
+
+function isValidFontSize(size?: string): boolean {
+  if (!size) return false;
+  return !isNaN(parseFontSize(size));
+}
+
+function isSizeDisabled(
+  size: string,
+  disabledSizes?: number[] | { min: number; max: number }
+) {
+  if (!disabledSizes) return false;
+  if (Array.isArray(disabledSizes)) {
+    return disabledSizes.includes(parseFontSize(size));
+  }
+
+  const fontSize = parseFontSize(size);
+  return fontSize < disabledSizes.min || fontSize > disabledSizes.max;
+}
+
 function FontSizePicker({
   value,
   onChange,
@@ -63,12 +86,22 @@ function FontSizePicker({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const { fontSize } = useSlateConfig();
+
+  const enabledFontSizes = useMemo(() => {
+    if (!fontSize?.shouldHideDisabled) return fontSizes;
+    return fontSizes.filter(
+      (size) => !isSizeDisabled(size, fontSize?.disabledSizes)
+    );
+  }, [fontSize]);
+
   return (
     <div className="max-h-[300px] overflow-y-scroll pr-[8px]">
-      {fontSizes.map((size) => (
+      {enabledFontSizes.map((size) => (
         <Button
           key={size}
           onClick={() => onChange(size)}
+          isDisabled={isSizeDisabled(size, fontSize?.disabledSizes)}
           className={
             "h-8 w-full min-w-[unset] p-0 px-2 flex-shrink-0 flex items-center justify-start  rounded-none hover:bg-primary active:bg-primary " +
             (value === size ? "bg-primary" : " bg-transparent")
@@ -81,7 +114,10 @@ function FontSizePicker({
   );
 }
 
-export const getFontSizeInSelection = (editor: Editor) => {
+export const getFontSizeInSelection = (
+  editor: Editor,
+  defaultSize: string = "16px"
+) => {
   const { selection } = editor;
   if (!selection) return false;
 
@@ -102,19 +138,24 @@ export const getFontSizeInSelection = (editor: Editor) => {
   const [leafNode] = node;
 
   // @ts-ignore
-  return leafNode?.fontSize ?? "16px";
+  return leafNode?.fontSize ?? defaultSize;
 };
 
 export default function FontSize() {
+  const { fontSize: fontSizeConfig } = useSlateConfig();
   const [open, setOpen] = useState(false);
-  const [fontSize, setFontSize] = useState("16px");
+  const [fontSize, setFontSize] = useState(
+    fontSizeConfig?.defaultFontSize ?? "16px"
+  );
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
   };
   const editor = useSlate();
 
   useEffect(() => {
-    setFontSize(getFontSizeInSelection(editor));
+    setFontSize(
+      getFontSizeInSelection(editor, fontSizeConfig?.defaultFontSize)
+    );
   }, [editor, editor.selection]);
 
   function handleChangeSize(size: string) {
@@ -125,7 +166,7 @@ export default function FontSize() {
       { fontSize: size },
       { match: Text.isText, split: true }
     );
-    setFontSize(size);
+    setFontSize(size as any);
     setOpen(false);
   }
 

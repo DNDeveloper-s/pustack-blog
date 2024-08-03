@@ -21,12 +21,14 @@ import { useUser } from "@/context/UserContext";
 import { useNotification } from "@/context/NotificationContext";
 import { Signal } from "@/firebase/signal";
 import {
+  setAllSignalsToPublished,
   useCreateSignal,
   useGetSignalById,
   useUpdateSignal,
 } from "@/api/signal";
 import { NotificationPlacements } from "antd/es/notification/interface";
 import { SnackbarContent } from "../AdminEditor/AdminPage";
+import MarkAsFlagshipButton from "./MarkAsFlagshipButton";
 
 const getButtonLabel = (requestedSignal?: Signal) => {
   if (requestedSignal?.status === "draft") return "Create Signal";
@@ -52,6 +54,7 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
   // Refs
   const joditRef = useRef<any>(null);
   const isDraftSavingRef = useRef<boolean>(false);
+  const markAsFlagshipButtonRef = useRef<any>(null);
 
   // React Query hooks
   const { data: requestedSignal } = useGetSignalById(signalId);
@@ -235,6 +238,8 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
       );
     }
 
+    signal.setFlagshipDate(markAsFlagshipButtonRef.current?.getFlagshipDate());
+
     // TODO:
 
     return signal;
@@ -298,6 +303,10 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
               </h2>
 
               <div className="flex justify-end gap-4">
+                <MarkAsFlagshipButton
+                  value={requestedSignal?.flagshipDate}
+                  ref={markAsFlagshipButtonRef}
+                />
                 {(!requestedSignal || requestedSignal?.status === "draft") && (
                   <Button
                     isDisabled={isPending}
@@ -306,6 +315,7 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
                       // setShouldConfirm(false);
                       // intervalSaveDraftRef.current = false;
                       handleSaveDraftSignal();
+                      // setAllSignalsToPublished();
                     }}
                     variant="flat"
                     color="primary"

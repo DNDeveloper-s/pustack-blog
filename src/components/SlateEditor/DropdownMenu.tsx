@@ -60,6 +60,24 @@ interface OptionItem {
   icon: ReactNode;
 }
 
+export type DropdownItemType =
+  | "math-block"
+  | "math-formula"
+  | "code-snippet"
+  | "image"
+  | "image-carousel"
+  | "divider"
+  | "table"
+  | "section-header"
+  | "embed-video"
+  | "heading-one"
+  | "heading-two"
+  | "heading-three"
+  | "heading-four"
+  | "heading-five"
+  | "heading-six"
+  | "block-quote";
+
 const options: OptionItem[] = [
   {
     id: "math-block",

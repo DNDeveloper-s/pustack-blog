@@ -2686,6 +2686,10 @@ font-size: 180px;
   white-space: nowrap;
 }
 
+li[data-placeholder]::before {
+  left: 20px;
+}
+
 .cover-figure > [data-rmiz],
 .cover-figure > [data-rmiz] > [data-rmiz-content="found"] {
   width: 100%;
@@ -2831,4 +2835,11 @@ font-size: 180px;
   .editor-in-slider .slick-track {
     width: var(--slick-track-width) !important;
   }
+}
+
+.ant-picker-calendar,
+.ant-picker-panel,
+.ant-select-selector,
+.ant-radio-button-wrapper {
+  background: transparent !important;
 }

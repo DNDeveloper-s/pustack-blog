@@ -1,7 +1,7 @@
 import { API_QUERY } from "@/config/api-query";
 import { db } from "@/lib/firebase";
 import { QueryClient } from "@tanstack/react-query";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import {
   DocumentSnapshot,
   QuerySnapshot,
@@ -112,6 +112,7 @@ export class Signal {
   private _scheduledTime: string | undefined = undefined;
   readonly _nodes: Descendant[] | undefined = undefined;
   readonly timestamp: string | undefined = undefined;
+  private _flagshipDate: string | undefined | null = undefined;
 
   get id(): string | undefined {
     if (this._id) return this._id;
@@ -135,6 +136,10 @@ export class Signal {
     return this._nodes;
   }
 
+  get flagshipDate() {
+    return this._flagshipDate;
+  }
+
   constructor(
     title: string,
     nodes: Descendant[] | undefined,
@@ -142,7 +147,8 @@ export class Signal {
     source: string,
     id?: string,
     timestamp?: string,
-    status?: PostStatus
+    status?: PostStatus,
+    _flagshipDate?: string
   ) {
     this.title = title;
     this._nodes = nodes;
@@ -151,6 +157,11 @@ export class Signal {
     this._id = id;
     this.timestamp = timestamp;
     this._status = status ?? "draft";
+    this._flagshipDate = _flagshipDate;
+  }
+
+  static collectionRef() {
+    return collection(db, "signals");
   }
 
   private async generateUniqueId() {
@@ -239,6 +250,32 @@ export class Signal {
 
   unpublish() {
     this._status = "unpublished";
+  }
+
+  setFlagshipDate(date: Dayjs | null) {
+    this._flagshipDate = date ? date.format("DD-MM-YYY") : null;
+  }
+
+  static async getTodayFlagship(): Promise<Signal | undefined> {
+    const signalRef = collection(db, "signals").withConverter(signalConverter);
+    const _query = query(
+      signalRef,
+      where("flagshipDate", "==", dayjs().format("DD-MM-YYY")),
+      limit(1),
+      orderBy("timestamp", "desc")
+    );
+
+    const docs = await getDocs(_query);
+
+    const signals = flattenQueryData(docs);
+
+    const flagship = signals[0];
+
+    if (!flagship) {
+      return (await Signal.getAll({ _limit: 1, _flatten: true })).data[0];
+    }
+
+    return signals[0];
   }
 
   static async updatePublishStatusInFirestore(
@@ -452,21 +489,21 @@ export class Signal {
     });
   }
 
-  static async getTodaysFlagship(): Promise<Signal> {
-    const metadataRef = doc(db, "metadata", "flagshipDates");
+  // static async getTodaysFlagship(): Promise<Signal> {
+  //   const metadataRef = doc(db, "metadata", "flagshipDates");
 
-    const metadataDoc = await getDoc(metadataRef);
-    const today = new Date().toISOString().split("T")[0];
-    const flagshipDates = metadataDoc.data()?.dates ?? {};
+  //   const metadataDoc = await getDoc(metadataRef);
+  //   const today = new Date().toISOString().split("T")[0];
+  //   const flagshipDates = metadataDoc.data()?.dates ?? {};
 
-    if (flagshipDates && flagshipDates[today]) {
-      const signalId = flagshipDates[today];
-      return Signal.get(signalId, true);
-    } else {
-      const signals = await Signal.getAll({ _limit: 1, _flatten: true });
-      return signals.data[0];
-    }
-  }
+  //   if (flagshipDates && flagshipDates[today]) {
+  //     const signalId = flagshipDates[today];
+  //     return Signal.get(signalId, true);
+  //   } else {
+  //     const signals = await Signal.getAll({ _limit: 1, _flatten: true });
+  //     return signals.data[0];
+  //   }
+  // }
 }
 
 export const signalConverter = {
@@ -479,6 +516,7 @@ export const signalConverter = {
       timestamp: serverTimestamp(),
       id: signal.id,
       status: signal.status,
+      flagshipDate: signal.flagshipDate,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -491,7 +529,8 @@ export const signalConverter = {
       data.source,
       snapshot.id,
       data.timestamp.toDate().toISOString(),
-      data.status
+      data.status,
+      data.flagshipDate
     );
   },
 };

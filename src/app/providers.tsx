@@ -18,6 +18,7 @@ import {
 import { NotificationContextProvider } from "@/context/NotificationContext";
 import { JoinModalContextProvider } from "@/context/JoinModalContext";
 import JoinModal from "@/components/shared/JoinModal";
+import { SlateContextProvider } from "@/context/SlateContext";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -100,7 +101,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <>
         <BlogImageContextProvider>
-          <>
+          <SlateContextProvider>
             <NotificationContextProvider
               openNotification={openNotification}
               destroy={api.destroy}
@@ -115,7 +116,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 </UserProvider>
               </>
             </NotificationContextProvider>
-          </>
+          </SlateContextProvider>
         </BlogImageContextProvider>
       </>
     </QueryClientProvider>

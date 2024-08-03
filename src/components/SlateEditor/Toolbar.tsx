@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { Range } from "slate";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { Node } from "slate";
+import { useSlateConfig } from "@/context/SlateContext";
 
 export type ToolType =
   | "bold"
@@ -37,8 +38,21 @@ export type ToolType =
   | "right"
   | "link";
 
+export type ToolWithIconType =
+  | "bold"
+  | "italic"
+  | "underline"
+  | "strike-through"
+  | "bulleted-list"
+  | "numbered-list"
+  | "alphabet-list"
+  | "left"
+  | "center"
+  | "right"
+  | "link";
+
 type Tool = {
-  id: ToolType;
+  id: ToolWithIconType;
   label: string;
   icon: JSX.Element;
 };
@@ -335,6 +349,7 @@ interface ToolbarProps {
 }
 export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
+  const { toolbars } = useSlateConfig();
 
   return (
     <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0 z-20">
@@ -357,6 +372,7 @@ export default function Toolbar(props: ToolbarProps) {
                   if (!getTopmostElement(editor)) return;
                   toggleFormat(editor, tool.id);
                 }}
+                isDisabled={toolbars?.[tool.id]?.disabled}
               >
                 {tool.icon}
               </Button>

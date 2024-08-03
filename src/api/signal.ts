@@ -11,6 +11,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { getDocs, writeBatch } from "firebase/firestore";
 import { useMemo } from "react";
 
 // export const useGetMessages = ({
@@ -77,7 +78,7 @@ import { useMemo } from "react";
 
 export const useGetFlagshipSignal = () => {
   const getFlagshipSignal = async () => {
-    const signal = await Signal.getTodaysFlagship();
+    const signal = await Signal.getTodayFlagship();
     return signal;
   };
 
@@ -204,7 +205,8 @@ export const useUpdateSignal = (
     if (!signal.id) {
       throw new Error("Signal ID is required");
     }
-    await signal.updateInFirestore();
+    const updatedSignal = await signal.updateInFirestore();
+    return updatedSignal;
   };
 
   return useMutation({
@@ -288,3 +290,16 @@ export const usePublishSignal = (
     ...(options ?? {}),
   });
 };
+
+export async function setAllSignalsToPublished() {
+  const signalRef = Signal.collectionRef();
+  const batch = writeBatch(signalRef.firestore);
+
+  const docs = await getDocs(signalRef);
+
+  docs.forEach((doc) => {
+    batch.update(doc.ref, { status: "published", published: null });
+  });
+
+  await batch.commit();
+}

@@ -25,6 +25,7 @@ import { Signal } from "@/firebase/signal";
 import SlateEditor, { SlateEditorRef } from "../SlateEditor/SlateEditor";
 import { useNotification } from "@/context/NotificationContext";
 import { CustomElement } from "../../../types/slate";
+import { SlateContextProvider } from "@/context/SlateContext";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -205,15 +206,38 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
           </h4>
         </div>
         <div key={slateEditorKey}>
-          <SlateEditor
-            // onChange={onChange}
-            // key={JSON.stringify(prePost?.nodes)}
-            // value={prePost?.nodes as CustomElement[] | undefined}
-            key={JSON.stringify(preSignal?.nodes)}
-            value={preSignal?.nodes as CustomElement[] | undefined}
-            ref={slateEditorRef}
-            showToolbar
-          />
+          <SlateContextProvider
+            value={{
+              toolbars: {
+                "alphabet-list": {
+                  disabled: true,
+                },
+                "bulleted-list": {
+                  disabled: true,
+                },
+                "numbered-list": {
+                  disabled: true,
+                },
+              },
+              fontSize: {
+                disabledSizes: {
+                  min: 18,
+                  max: 18,
+                },
+                defaultFontSize: "18px",
+              },
+            }}
+          >
+            <SlateEditor
+              // onChange={onChange}
+              // key={JSON.stringify(prePost?.nodes)}
+              // value={prePost?.nodes as CustomElement[] | undefined}
+              key={JSON.stringify(preSignal?.nodes)}
+              value={preSignal?.nodes as CustomElement[] | undefined}
+              ref={slateEditorRef}
+              showToolbar
+            />
+          </SlateContextProvider>
         </div>
       </div>
       {/* <div className="flex justify-end gap-4 mb-10">
