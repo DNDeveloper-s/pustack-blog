@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { ReactEditor, useSlate } from "slate-react";
 import { CustomElement, ParagraphElement } from "../../../types/slate";
 import { Path, Range, Text, Transforms } from "slate";
@@ -19,6 +19,7 @@ import { CiViewTable } from "react-icons/ci";
 import { RxSection } from "react-icons/rx";
 import { MdOutlineOndemandVideo, MdOutlineViewCarousel } from "react-icons/md";
 import { hasNextPath } from "./utils/helpers";
+import { useSlateConfig } from "@/context/SlateContext";
 
 const DividerIcon = (props: any) => (
   <svg
@@ -78,7 +79,7 @@ export type DropdownItemType =
   | "heading-six"
   | "block-quote";
 
-const options: OptionItem[] = [
+const _options: OptionItem[] = [
   {
     id: "math-block",
     label: "Math Block",
@@ -182,9 +183,23 @@ const DropdownMenu = () => {
   const containerRef = useRef<HTMLSpanElement | null>(null);
   const [show, setShow] = useState(true);
   const activeRef = useRef<HTMLDivElement | null>(null);
-  const [filteredOptions, setFilteredOptions] = useState<OptionItem[]>(options);
+  const [filteredOptions, setFilteredOptions] = useState<OptionItem[]>([]);
   // const dropdownRef = useRef();
   const editor = useSlate();
+  const { dropdowns } = useSlateConfig();
+
+  const options = useMemo(() => {
+    if (dropdowns?.enabledItems) {
+      return _options.filter((option) =>
+        dropdowns?.enabledItems?.includes(option.id as DropdownItemType)
+      );
+    }
+    return _options;
+  }, [dropdowns]);
+
+  useEffect(() => {
+    if (options) setFilteredOptions(options);
+  }, [options]);
 
   useEffect(() => {
     if (!show) return;

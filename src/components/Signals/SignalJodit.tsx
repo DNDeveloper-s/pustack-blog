@@ -226,6 +226,9 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
                 },
                 defaultFontSize: "18px",
               },
+              dropdowns: {
+                enabledItems: ["image"],
+              },
             }}
           >
             <SlateEditor

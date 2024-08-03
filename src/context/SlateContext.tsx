@@ -11,7 +11,8 @@ interface ToolConfig {
 }
 
 interface DropdownConfig {
-  disabled: boolean;
+  enabledItems?: DropdownItemType[];
+  item?: Partial<Record<DropdownItemType, { disabled?: boolean }>>;
 }
 
 interface FontSizeConfig {
@@ -23,7 +24,7 @@ interface FontSizeConfig {
 
 export interface ISlateConfig {
   toolbars?: Partial<Record<ToolWithIconType, ToolConfig>>;
-  dropdowns?: Partial<Record<DropdownItemType, DropdownConfig>>;
+  dropdowns?: DropdownConfig;
   fontSize?: FontSizeConfig;
 }
 

@@ -253,14 +253,14 @@ export class Signal {
   }
 
   setFlagshipDate(date: Dayjs | null) {
-    this._flagshipDate = date ? date.format("DD-MM-YYY") : null;
+    this._flagshipDate = date ? date.format("DD-MM-YYYY") : null;
   }
 
   static async getTodayFlagship(): Promise<Signal | undefined> {
     const signalRef = collection(db, "signals").withConverter(signalConverter);
     const _query = query(
       signalRef,
-      where("flagshipDate", "==", dayjs().format("DD-MM-YYY")),
+      where("flagshipDate", "==", dayjs().format("DD-MM-YYYY")),
       limit(1),
       orderBy("timestamp", "desc")
     );

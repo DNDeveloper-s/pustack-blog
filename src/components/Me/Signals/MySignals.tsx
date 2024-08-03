@@ -58,6 +58,7 @@ import {
 } from "@nextui-org/modal";
 import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -250,6 +251,14 @@ export function SavedPostItemV2({ signal }: { signal: Signal }) {
                 <span className="uppercase">{signal.source}</span> */}
                 <div className="w-1 h-1 rounded-full bg-gray-300"></div>
                 <span>2d ago</span>
+                {signal.flagshipDate && (
+                  <>
+                    <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                    <span>
+                      Flagged: {dayjs(signal.flagshipDate).format("DD-MM-YYYY")}
+                    </span>
+                  </>
+                )}
               </div>
               <div className="flex items-center gap-3 text-base text-appBlack text-opacity-60">
                 <span className="cursor-pointer" onClick={handleEdit}>
