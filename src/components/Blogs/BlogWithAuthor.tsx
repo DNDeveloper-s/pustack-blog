@@ -1,14 +1,13 @@
 import { arrowSignalBlue, avatar, circlesBlue, imageOne } from "@/assets";
-import { url } from "@/constants";
 import { Post } from "@/firebase/post-v2";
 import Image from "next/image";
 import Link from "next/link";
 import TrimmedPara from "../shared/TrimmedPara";
 import BlogImage from "../shared/BlogImage";
-import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { ReactNode } from "react";
-
+import { FaStar } from "react-icons/fa6";
+import { Tooltip } from "antd";
+import { Spinner } from "@nextui-org/spinner";
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -80,21 +79,29 @@ export default function BlogWithAuthor({
   post,
   noLink,
   linkClassName,
-}: BlogBaseProps & { post?: Post }) {
+  showUnBookmarkButton,
+  handleBookMark,
+  isPending,
+}: BlogBaseProps & {
+  post?: Post;
+  showUnBookmarkButton?: boolean;
+  handleBookMark?: (isBookmarked: boolean) => void;
+  isPending?: boolean;
+}) {
   if (!post) return defaultBlogWithAuthor(size);
 
   const content = (
     <div className="py-3 group h-full flex flex-col">
       <div className="flex">
-        <div className="mr-2">
+        <div className="mr-2 flex-shrink-0">
           <img
             className="w-[38px] h-[38px]"
             src={post.author.photoURL ?? avatar.src}
             alt="avatar"
           />
         </div>
-        <div>
-          <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
+        <div className="flex-1 overflow-hidden">
+          <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
             {post.author.name}
           </h3>
           <p
@@ -107,6 +114,33 @@ export default function BlogWithAuthor({
             {post.topic}
           </p>
         </div>
+        {showUnBookmarkButton && (
+          <div className="flex-shrink-0 relative">
+            <Tooltip title="Delete Bookmark">
+              <FaStar
+                className={
+                  "text-[#d9c503] cursor-pointer " +
+                  (isPending ? "opacity-0" : "opacity-100")
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleBookMark?.(false);
+                }}
+              />
+            </Tooltip>
+            {isPending && (
+              <Spinner
+                size="sm"
+                classNames={{
+                  circle1: "!border-b-appBlack",
+                  circle2: "!border-b-appBlack",
+                }}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              />
+            )}
+          </div>
+        )}
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
       <div className="flex-1">
@@ -179,7 +213,7 @@ export default function BlogWithAuthor({
   return noLink ? (
     content
   ) : (
-    <Link className={linkClassName} href={`/${post.id}`}>
+    <Link className={linkClassName} href={`/posts/${post.id}`}>
       {content}
     </Link>
   );
@@ -425,7 +459,7 @@ export function BlogWithAuthorV2({
   return noLink ? (
     content
   ) : (
-    <Link className={linkClassName} href={`/${post.id}`}>
+    <Link className={linkClassName} href={`/posts/${post.id}`}>
       {content}
     </Link>
   );

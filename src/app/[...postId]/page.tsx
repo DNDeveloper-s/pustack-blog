@@ -24,74 +24,99 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   //fetch data
   // const post = await Post.get(params.postId[0], true);
-  const docRef = doc(db, "posts", params.postId[0]);
-  const data = await getDoc(docRef);
+  try {
+    const docRef = doc(db, "posts", params.postId[0]);
+    const data = await getDoc(docRef);
 
-  const post = flattenDocumentData(data);
+    const post = flattenDocumentData(data);
 
-  const dom = new JSDOM(post.content, {
-    contentType: "text/html",
-  });
+    const dom = new JSDOM(post.content, {
+      contentType: "text/html",
+    });
 
-  const _images = Array.from(
-    dom.window.document.getElementsByTagName("img")
-  ).reduce(srcReducer, []);
+    const _images = Array.from(
+      dom.window.document.getElementsByTagName("img")
+    ).reduce(srcReducer, []);
 
-  const _imageUrl = _images[0];
+    const _imageUrl = _images[0];
 
-  const imageUrl = encodeURIComponent(_imageUrl);
+    const imageUrl = encodeURIComponent(_imageUrl);
 
-  const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
-  const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
-  const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
-  const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
+    const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
 
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
+    // optionally access and extend (rather than replace) parent metadata
+    // const previousImages = (await parent).openGraph?.images || [];
 
-  return {
-    title: post.title,
-    description: post.content,
-    openGraph: {
+    return {
       title: post.title,
       description: post.content,
-      url: "https://pustack-blog.vercel.app/",
-      siteName: "Minerva",
-      images: [
-        {
-          url: processedImageUrl2,
-          width: 450,
-          height: 235,
-        },
-        {
-          url: processedImageUrl,
-          width: 450,
-          height: 300,
-        },
-        {
-          url: processedImageUrl3,
-          width: 400,
-          height: 400,
-        },
-      ],
-      locale: "en_US",
-      type: "website",
-    },
-  };
+      openGraph: {
+        title: post.title,
+        description: post.content,
+        url: "https://pustack-blog.vercel.app/",
+        siteName: "Minerva",
+        images: [
+          {
+            url: processedImageUrl2,
+            width: 450,
+            height: 235,
+          },
+          {
+            url: processedImageUrl,
+            width: 450,
+            height: 300,
+          },
+          {
+            url: processedImageUrl3,
+            width: 400,
+            height: 400,
+          },
+        ],
+        locale: "en_US",
+        type: "website",
+      },
+    };
+  } catch (e) {
+    return {
+      title: "Minerva",
+      description: "Minerva",
+      openGraph: {
+        title: "Minerva",
+        description: "Minerva",
+        url: "https://pustack-blog.vercel.app/",
+        siteName: "Minerva",
+        images: [
+          {
+            url: "https://pustack-blog.vercel.app/minerva.svg",
+          },
+        ],
+        locale: "en_US",
+        type: "website",
+      },
+    };
+  }
 }
 
 export default async function PostId(props: { params: { postId: string[] } }) {
   // const post = await Post.get(props.params.postId[0], true);
 
   // console.log("post - ", post.title);
-  const docRef = doc(db, "posts", props.params.postId[0]);
-  const data = await getDoc(docRef);
+  let post = null;
+  try {
+    const docRef = doc(db, "posts", props.params.postId[0]);
+    const data = await getDoc(docRef);
 
-  if (data.exists() === false) {
+    if (data.exists() === false) {
+      return redirect("/");
+    }
+
+    post = flattenDocumentData(data);
+  } catch (e) {
     return redirect("/");
   }
-
-  const post = flattenDocumentData(data);
 
   return (
     <div>

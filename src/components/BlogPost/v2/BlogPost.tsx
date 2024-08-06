@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeletePost, useGetPostById } from "@/api/post";
+import { useDeletePost, useGetPostById, usePostBookmark } from "@/api/post";
 import Navbar from "@/components/Navbar/Navbar";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -82,6 +82,8 @@ import {
   getSections,
 } from "@/components/SlateEditor/utils/helpers";
 import { useJoinModal } from "@/context/JoinModalContext";
+import { QueryClient } from "@tanstack/react-query";
+import { API_QUERY } from "@/config/api-query";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -207,7 +209,6 @@ function DeletePostModal({ post }: { post?: Post }, ref: any) {
 
 export function PostActionModalBase({
   disclosureOptions,
-  post,
   error,
   isLoading,
   onConfirm,
@@ -220,7 +221,7 @@ export function PostActionModalBase({
   post?: Post;
   error?: Error | null;
   isLoading: boolean;
-  onConfirm: (postId: string) => void;
+  onConfirm: () => void;
   title: string;
   content: ReactNode;
   confirmButton: ReactNode;
@@ -261,12 +262,7 @@ export function PostActionModalBase({
               <Button
                 color="danger"
                 onPress={() => {
-                  if (!post) return onConfirm("");
-                  if (!post?.id) {
-                    console.error("Post id not found");
-                    return;
-                  }
-                  onConfirm(post?.id);
+                  onConfirm();
                 }}
                 isLoading={isLoading}
               >
@@ -299,6 +295,8 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const router = useRouter();
   const { isTabletScreen, isDesktopScreen, isMobileScreen } = useScreenSize();
   const scrollerRef = useRef<HTMLDivElement>(null);
+
+  const { mutate: postBookmark, isSuccess, error } = usePostBookmark();
 
   const { setOpen } = useJoinModal();
 
@@ -376,18 +374,26 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
       return setOpen(true);
     }
     if (!post?.id || !user?.uid) return;
+    const qc = new QueryClient();
     const oldState = isBookMarked;
     setIsBookMarked(bookmarked);
     try {
-      const docRef = doc(db, "users", user.uid, "bookmarks", post.id);
-      if (bookmarked) {
-        setDoc(docRef, {
-          id: post.id,
-          bookmarked_at: serverTimestamp(),
-        });
-      } else {
-        deleteDoc(docRef);
-      }
+      // const docRef = doc(db, "users", user.uid, "bookmarks", post.id);
+      // if (bookmarked) {
+      //   setDoc(docRef, {
+      //     id: post.id,
+      //     bookmarked_at: serverTimestamp(),
+      //   });
+      // } else {
+      //   deleteDoc(docRef);
+      // }
+      // qc.invalidateQueries({
+      //   queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
+      // });
+      postBookmark({
+        post,
+        bookmarked,
+      });
     } catch (e) {
       console.log("Error while bookmarking - ", e);
       setIsBookMarked(oldState);

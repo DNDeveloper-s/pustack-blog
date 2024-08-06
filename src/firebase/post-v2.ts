@@ -479,6 +479,38 @@ export class Post {
     return id;
   }
 
+  async saveToBookmark(userId?: string) {
+    if (!userId) {
+      throw new Error("User id is missing");
+    }
+    if (!this.id) {
+      throw new Error("Post id is missing");
+    }
+    const userRef = doc(db, "users", userId, "bookmarks", this.id);
+
+    await setDoc(userRef, {
+      id: this.id,
+      bookmarked_at: serverTimestamp(),
+    });
+
+    return this.id;
+  }
+
+  async removeFromBookmark(userId?: string) {
+    if (!userId) {
+      throw new Error("User id is missing");
+    }
+    if (!this.id) {
+      throw new Error("Post id is missing");
+    }
+
+    const userRef = doc(db, "users", userId, "bookmarks", this.id);
+
+    await deleteDoc(userRef);
+
+    return this;
+  }
+
   /**
    * Publishes the post.
    */
@@ -718,7 +750,6 @@ export class Post {
     const bookMarks = docs.docs.map((doc) => doc.id);
 
     console.log("bookMarks - ", bookMarks);
-
     const postsRef = collection(db, "posts").withConverter(postConverter);
 
     const _query = query(

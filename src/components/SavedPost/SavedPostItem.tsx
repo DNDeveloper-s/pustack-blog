@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaShare, FaStar } from "react-icons/fa6";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { useState } from "react";
+import { Spinner } from "@nextui-org/spinner";
 
 const VerifyIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -31,10 +32,16 @@ const VerifyIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 interface SavedPostItemProps {
   post: Post;
+  isPending?: boolean;
+  handleBookMark?: (bookmarked: boolean) => void;
 }
-export default function SavedPostItem({ post }: SavedPostItemProps) {
+export default function SavedPostItem({
+  post,
+  isPending,
+  handleBookMark,
+}: SavedPostItemProps) {
   return (
-    <Link href={"/" + post?.id}>
+    <Link href={"/posts/" + post?.id}>
       <div className="flex gap-2 bg-[#f7f1ae] p-[4px_8px] items-stretch rounded-md">
         <div className="h-full w-auto aspect-square rounded-md overflow-hidden basis-[25%] lg:basis-[30%]">
           <AppImage
@@ -75,6 +82,30 @@ export default function SavedPostItem({ post }: SavedPostItemProps) {
               <span className=" text-[11px] lg:text-[14px]">
                 {dayjs(post?.timestamp).format("MMMM D, YYYY")}
               </span>
+            </div>
+            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+            <div className="flex-1 flex justify-end items-center flex-shrink-0 relative">
+              <FaStar
+                className={
+                  "text-[#d9c503] cursor-pointer " +
+                  (isPending ? "opacity-0" : "opacity-100")
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleBookMark?.(false);
+                }}
+              />
+              {isPending && (
+                <Spinner
+                  size="sm"
+                  classNames={{
+                    circle1: "!border-b-appBlack",
+                    circle2: "!border-b-appBlack",
+                  }}
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                />
+              )}
             </div>
           </div>
         </div>

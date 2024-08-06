@@ -80,7 +80,7 @@ function MinervaBlogPost({ post }: { post: Post }) {
     </>
   );
 
-  return wrapper(<Link href={`/${post.id}`}>{content}</Link>);
+  return wrapper(<Link href={`/posts/${post.id}`}>{content}</Link>);
 
   // return noLink ? content :  (
   //   <Link href={`/${post.id}`}>{content}</Link>
@@ -100,7 +100,6 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
       .slice(0, 4);
     return chunk(_posts ?? [], 2);
   }, [posts, params?.postId?.[0]]);
-
 
   const hasNoPosts = !isLoading && !posts?.length;
 

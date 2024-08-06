@@ -28,8 +28,14 @@ import {
 import { IoIosEye } from "react-icons/io";
 import { Tooltip } from "antd";
 import { useMemo } from "react";
-import { getSections } from "@/components/SlateEditor/utils/helpers";
+import {
+  getFirstImage,
+  getSections,
+} from "@/components/SlateEditor/utils/helpers";
 import { CustomElement } from "../../../../types/slate";
+import { usePublishSignal, useUnPublishSignal } from "@/api/signal";
+import { Signal } from "@/firebase/signal";
+import AppImage from "@/components/shared/AppImage";
 
 export const noImageUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -53,7 +59,7 @@ const colorScheme = {
   },
 };
 
-function PostItemActions({
+function SignalItemActions({
   disclosureOptions,
   disclosureOptionsPublish,
   disclosureOptionsUnPublish,
@@ -99,7 +105,7 @@ function PostItemActions({
       >
         <DropdownItem
           onClick={() => {
-            router.push("/posts/create?post_id=" + postId);
+            router.push("/signals/create?signal_id=" + postId);
           }}
           className="!p-[9px_9px_5px] !pl-1 !rounded-none !bg-transparent"
         >
@@ -162,7 +168,7 @@ function PostItemActions({
   );
 }
 
-export function PostItemHeader() {
+export function SignalItemHeader() {
   return (
     <div
       className={
@@ -170,22 +176,22 @@ export function PostItemHeader() {
       }
     >
       {/* <div className="self-center">
-        <Checkbox id={"item.key"} />
-      </div> */}
-      <div className="min-w-[120px]">Post Title</div>
-      <div className="text-center">Topic</div>
+          <Checkbox id={"item.key"} />
+        </div> */}
+      <div className="min-w-[120px]">Signal Title</div>
+      <div className="text-center">Source</div>
       <div className="text-center">Timestamp</div>
       <div className="text-center">Act.</div>
     </div>
   );
 }
 
-export default function PostItem({
-  post,
+export default function SignalItem({
+  signal,
   handleSelectChange,
   isSelected,
 }: {
-  post: Post;
+  signal: Signal;
   handleSelectChange: (id: string, selected: boolean) => void;
   isSelected: boolean;
 }) {
@@ -195,19 +201,19 @@ export default function PostItem({
   const disclosureOptionsUnPublish = useDisclosure();
   const disclosureOptionsPublish = useDisclosure();
   const {
-    mutate: postUnpublishPost,
+    mutate: postUnpublishSignal,
     isPending,
     error: unpublishError,
-  } = useUnPublishPost({
+  } = useUnPublishSignal({
     onSuccess: () => {
       disclosureOptionsUnPublish.onClose();
     },
   });
   const {
-    mutate: postPublishPost,
+    mutate: postPublishSignal,
     isPending: isPublishPending,
     error: publishError,
-  } = usePublishPost({
+  } = usePublishSignal({
     onSuccess: () => {
       disclosureOptionsPublish.onClose();
     },
@@ -221,99 +227,109 @@ export default function PostItem({
       }
     >
       {/* <div className="self-center">
-        <Checkbox
-          id={"item.key"}
-          onChange={(checked) => handleSelectChange(post.id as string, checked)}
-        />
-      </div> */}
+          <Checkbox
+            id={"item.key"}
+            onChange={(checked) => handleSelectChange(post.id as string, checked)}
+          />
+        </div> */}
       <div className="flex items-start gap-3 overflow-hidden min-w-[120px]">
         <div className="mt-1 w-8 h-8 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
-          <img
-            className="w-full h-full object-cover"
-            src={post.snippetData?.image ?? noImageUrl}
-          />
+          {getFirstImage(signal.nodes ?? []) && (
+            <AppImage
+              alt="sd"
+              src={getFirstImage(signal.nodes ?? []) ?? noImageUrl}
+              width={200}
+              height={200}
+              className="w-full h-full object-cover rounded-[4px] bg-gray-400"
+            />
+          )}
         </div>
         <div className="overflow-hidden">
-          <div className="flex items-center justify-start overflow-hidden gap-2">
+          <div className="flex items-center justify-center overflow-hidden gap-2">
             <h2 className="text-[16px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden">
-              {post.displayTitle ?? post.title}
+              {signal.title}
             </h2>
           </div>
         </div>
       </div>
       <div className="flex items-center justify-center">
         <Tooltip
-          title={post.status.toUpperCase()}
+          title={signal.status.toUpperCase()}
           style={{ fontSize: "13px" }}
           placement="top"
         >
           <span
             className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
-            style={{ backgroundColor: colorScheme[post.status]?.bg }}
+            style={{ backgroundColor: colorScheme[signal.status]?.bg }}
           ></span>
         </Tooltip>
         <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-          {post.topic}
+          {signal.source}
         </span>
       </div>
       {/* <div className="flex items-center justify-center">
-        <span
-          className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
-          style={{
-            backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
-            fontVariationSettings: `'wght' 700`,
-          }}
-        >
-          {post.status}
-        </span>
-      </div> */}
+          <span
+            className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
+            style={{
+              backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
+              fontVariationSettings: `'wght' 700`,
+            }}
+          >
+            {post.status}
+          </span>
+        </div> */}
       <div>
         <p className="leading-[120%] font-helvetica text-center text-tertiary text-[10px]">
-          <span>{dayjs().to(dayjs(post?.timestamp))}</span>
+          <span>{dayjs().to(dayjs(signal?.timestamp))}</span>
         </p>
       </div>
       <div className="flex items-center justify-center gap-5 text-xs">
-        <PostItemActions
+        <SignalItemActions
           disclosureOptions={disclosureOptions}
           disclosureOptionsPublish={disclosureOptionsPublish}
           disclosureOptionsUnPublish={disclosureOptionsUnPublish}
-          postId={post.id as string}
-          status={post.status}
+          postId={signal.id as string}
+          status={signal.status}
         />
       </div>
-      <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
-      <PostActionModalBase
-        disclosureOptions={disclosureOptionsUnPublish}
-        isLoading={isPending}
-        onConfirm={() => postUnpublishPost(post.id as string)}
-        error={unpublishError}
-        post={post}
-        title={"Unpublish Post"}
-        content={
-          <p>
-            Are you sure you want to unpublish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
-          </p>
-        }
-        cancelButton={"Cancel"}
-        confirmButton={"Unpublish"}
+      <JoditPreview
+        disclosureOptions={disclosureOptions}
+        nodes={signal.nodes}
       />
-      <PostActionModalBase
-        disclosureOptions={disclosureOptionsPublish}
-        isLoading={isPublishPending}
-        onConfirm={() => postPublishPost(post.id as string)}
-        error={publishError}
-        post={post}
-        title={"Publish Post"}
-        content={
-          <p>
-            Are you sure you want to publish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
-          </p>
-        }
-        cancelButton={"Cancel"}
-        confirmButton={"Publish"}
-      />
+      {signal?.id && (
+        <PostActionModalBase
+          disclosureOptions={disclosureOptionsUnPublish}
+          isLoading={isPending}
+          onConfirm={() => postUnpublishSignal(signal.id as string)}
+          error={unpublishError}
+          title={"Unpublish Post"}
+          content={
+            <p>
+              Are you sure you want to unpublish the post &quot;
+              <strong>{signal?.title}</strong>&quot;
+            </p>
+          }
+          cancelButton={"Cancel"}
+          confirmButton={"Unpublish"}
+        />
+      )}
+      {signal?.id && (
+        <PostActionModalBase
+          disclosureOptions={disclosureOptionsPublish}
+          isLoading={isPublishPending}
+          onConfirm={() => postPublishSignal(signal?.id as string)}
+          error={publishError}
+          title={"Publish Post"}
+          content={
+            <p>
+              Are you sure you want to publish the post &quot;
+              <strong>{signal.title}</strong>&quot;
+            </p>
+          }
+          cancelButton={"Cancel"}
+          confirmButton={"Publish"}
+        />
+      )}
     </div>
   );
 }

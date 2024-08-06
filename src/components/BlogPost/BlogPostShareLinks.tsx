@@ -19,7 +19,7 @@ export default function BlogPostShareLinks({
     <div className={"flex gap-6 items-center " + appendClassName} {...props}>
       <Link
         href={`https://twitter.com/intent/tweet?url=${
-          "https://pustack-blog.vercel.app/" + post?.id
+          "https://pustack-blog.vercel.app/posts/" + post?.id
         }&text=${post?.snippetData?.title}`}
         target="_blank"
       >
@@ -42,7 +42,7 @@ export default function BlogPostShareLinks({
       </Link>
       <Link
         href={`mailto:?subject=${post?.snippetData?.title}&body=${
-          "https://pustack-blog.vercel.app/" + post?.id
+          "https://pustack-blog.vercel.app/posts/" + post?.id
         }`}
         target="_blank"
       >
@@ -72,7 +72,7 @@ export default function BlogPostShareLinks({
       </Link>
       <Link
         href={`https://wa.me/?text=${post?.snippetData?.title} ${
-          "https://pustack-blog.vercel.app/" + post?.id
+          "https://pustack-blog.vercel.app/posts/" + post?.id
         }`}
         target="_blank"
       >

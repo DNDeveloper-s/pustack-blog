@@ -171,8 +171,10 @@ function DashboardDesktop({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] relative">
-      <div className="pr-0 md:pr-7 md:sticky md:top-[150px] md:h-[calc(100vh-150px)] py-2 md:overflow-auto">
-        <Flagship title={(signals[0] as Signal).title} />
+      <div className="pr-0 md:pr-7 md:sticky md:top-[150px] md:h-[calc(100vh-150px)] py-2 md:pt-0 pt-2 md:overflow-auto">
+        <div className="md:sticky md:top-0 md:pt-2 bg-primary">
+          <Flagship title={(signals[0] as Signal).title} />
+        </div>
         <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {signals.map((signal: Signal) => (
             <div

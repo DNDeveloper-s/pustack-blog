@@ -414,6 +414,8 @@ export class Signal {
       }
     }
 
+    console.log("query - ", _query);
+
     // if (_direction === "forward") {
     //   if (_startAfter) {
     //     _query = query(

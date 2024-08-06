@@ -64,7 +64,7 @@ export default function BlueCircleBlog({
     </div>
   );
 
-  return noLink ? content : <Link href={`/${post.id}`}>{content}</Link>;
+  return noLink ? content : <Link href={`/posts/${post.id}`}>{content}</Link>;
 }
 
 export function BlueSignalBlog({ signal }: { signal: Signal }) {

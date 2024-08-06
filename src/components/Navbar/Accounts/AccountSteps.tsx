@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Switch } from "antd";
 import { MdAlternateEmail } from "react-icons/md";
 import { IoBookmarkSharp, IoChevronBack } from "react-icons/io5";
+import { GiOpenBook } from "react-icons/gi";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import dayjs from "dayjs";
 import {
@@ -28,9 +29,13 @@ import { greenTickLottie } from "@/assets";
 import { Spinner } from "@nextui-org/spinner";
 import { useUpdateUser } from "@/api/user";
 import { useUser } from "@/context/UserContext";
-import PhoneInput from "react-phone-input-2";
+import PhoneInput, { CountryData } from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { extractCountryCodeAndNumber } from "@/lib/phonenumber";
+import {
+  extractCountryCodeAndNumber,
+  getCountryCodeFromDialingCode,
+  validatePhoneNumber,
+} from "@/lib/phonenumber";
 import { handleUpload } from "@/lib/firebase/upload";
 import { signOut } from "@/lib/firebase/auth";
 import useScreenSize from "@/hooks/useScreenSize";
@@ -39,6 +44,8 @@ import { Progress } from "@nextui-org/progress";
 import Link from "next/link";
 import DeleteAccountModal from "./DeleteAccountModal";
 import { useDisclosure } from "@nextui-org/modal";
+import { CountryCallingCode, CountryCode } from "libphonenumber-js";
+import { isValidEmail } from "@/components/shared/SignUpForNewsLettersButton";
 
 const userImageUrl = "https://www.w3schools.com/howto/img_avatar2.png";
 
@@ -232,6 +239,17 @@ export function AccountStepOne({
         </div>
         <div className="divide-y">
           <Link
+            href={"/me/publications"}
+            className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
+          >
+            <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
+              <GiOpenBook />
+            </div>
+            <div>
+              <span>My Publications</span>
+            </div>
+          </Link>
+          <Link
             href={"/saved"}
             className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
           >
@@ -252,7 +270,11 @@ export function AccountStepOne({
               </div>
             </div>
             <div>
-              <Switch onChange={onSubscriptionChange} checked={_isSubscribed} />
+              <Switch
+                className="toggle_email_subscribe"
+                onChange={onSubscriptionChange}
+                checked={_isSubscribed}
+              />
             </div>
           </div>
           <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
@@ -276,13 +298,13 @@ export function AccountStepOne({
       </div>
       <div className="flex-1"></div>
       <div className="border-t border-dashed border-[#1f1f1d1a] w-full py-2 text-xs mt-7 flex items-center justify-center gap-4">
-        <div>
+        <Link href="https://pustack.com/terms_of_service" target="_blank">
           <span>Terms of Service</span>
-        </div>
+        </Link>
         <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-        <div>
+        <Link href="https://pustack.com/privacy_policy" target="_blank">
           <span>Privacy Policy</span>
-        </div>
+        </Link>
       </div>
     </div>
   );
@@ -302,10 +324,12 @@ interface FormInputProps {
   onUpdate: (val: string) => void;
   isPending?: boolean;
   isSuccess?: boolean;
+  isValid?: boolean;
   onCompleteAnimation?: () => void;
   noBottomBorder?: boolean;
 }
 function FormInputRef(props: FormInputProps, ref: any) {
+  const { isValid = true } = props;
   const [isChanged, setIsChanged] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(props.value);
@@ -371,7 +395,7 @@ function FormInputRef(props: FormInputProps, ref: any) {
       );
     }
 
-    if (isChanged) {
+    if (isChanged && isValid) {
       return (
         <span className="cursor-pointer" onClick={handleUpdate}>
           Update
@@ -543,6 +567,9 @@ function AccountStepTwoRef(
   const companyInputRef = useRef<any>(null);
   const { isMobileScreen } = useScreenSize();
 
+  const [isValidPhone, setIsValidPhone] = useState(false);
+  const [_isValidEmail, setIsValidEmail] = useState(false);
+
   const [activeField, setActiveField] = useState<
     "name" | "email" | "phone" | "company"
   >();
@@ -566,6 +593,16 @@ function AccountStepTwoRef(
       companyInputRef.current?.reset();
     },
   }));
+
+  useEffect(() => {
+    const _isValidPhone = validatePhoneNumber(
+      (user?.phone_country_code ?? "") + user?.phone,
+      // @ts-ignore
+      getCountryCodeFromDialingCode(user?.phone_country_code as any)
+    );
+    setIsValidPhone(_isValidPhone);
+    setIsValidEmail(isValidEmail(user?.email as string));
+  }, [user?.phone, user?.phone_country_code, user?.email]);
 
   const handleCompleteAnimation = () => {
     setActiveField(undefined);
@@ -663,6 +700,7 @@ function AccountStepTwoRef(
                     userId: user?.uid,
                   });
                 }}
+                isValid={isValidPhone}
                 input={(value, onChange, _, inputRef) => (
                   <PhoneInput
                     inputProps={{
@@ -673,7 +711,20 @@ function AccountStepTwoRef(
                     inputClass="!border-none !w-full !bg-transparent py-2 pt-3 text-sm font-featureBold !outline-none pr-[45px] !pl-[34px]"
                     buttonClass="!bg-transparent !border-none minerva-account-modal-phone-input"
                     value={value}
-                    onChange={(phone) => onChange({ target: { value: phone } })}
+                    onChange={(phone, countryData: CountryData) => {
+                      onChange({ target: { value: phone } });
+                      const isValid = validatePhoneNumber(
+                        "+" + phone,
+                        countryData.countryCode.toUpperCase() as CountryCode
+                      );
+                      console.log(
+                        "isValid - ",
+                        isValid,
+                        "+" + phone,
+                        countryData.countryCode
+                      );
+                      setIsValidPhone(isValid);
+                    }}
                   />
                 )}
                 onCompleteAnimation={handleCompleteAnimation}
@@ -718,6 +769,10 @@ function AccountStepTwoRef(
                 placeholder="Enter here"
                 value={user?.email}
                 ref={emailInputRef}
+                isValid={_isValidEmail}
+                onChange={(e) => {
+                  setIsValidEmail(isValidEmail(e.target.value));
+                }}
               />
               {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">

@@ -1,21 +1,18 @@
 "use client";
 
-import { useQueryDraftPosts, useQueryPosts } from "@/api/post";
-import Navbar from "@/components/Navbar/Navbar";
-import Footer from "@/components/shared/Footer";
-import { Post } from "@/firebase/post-v2";
-import PostDraftItem, { PostItemHeader } from "./PostItem";
-import { Select } from "antd";
 import { SVGAttributes, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useInView from "@/hooks/useInView";
 import { Spinner } from "@nextui-org/spinner";
-import SortByModal, { SortBy } from "./SortByModal";
-import FilterModal from "./FilterModal";
 import { useUser } from "@/context/UserContext";
 import { Dayjs } from "dayjs";
 import useScreenSize from "@/hooks/useScreenSize";
-import PostDraftItemDesktop, { PostItemDesktopHeader } from "./PostItemDesktop";
+import SignalItem, { SignalItemHeader } from "./SignalItem";
+import SignalItemDesktop, {
+  SignalItemDesktopHeader,
+} from "./SignalItemDesktop";
+import { useQuerySignals } from "@/api/signal";
+import { Signal } from "@/firebase/signal";
 
 const options = [
   { value: "draft", label: "Drafts" },
@@ -52,7 +49,11 @@ export interface PostFilters {
   topics: string[];
 }
 
-export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
+export default function SignalsEntry({
+  _serverSignals,
+}: {
+  _serverSignals?: any;
+}) {
   const [filters, setFilters] = useState<PostFilters>({
     status: [],
     sort: [{ field: "timestamp", order: "desc" }],
@@ -64,42 +65,22 @@ export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
   const searchParams = useSearchParams();
   const { user } = useUser();
   const {
-    posts: _clientPosts,
+    signals: _clientSignals,
     fetchNextPage,
     isFetching,
     isFetchingNextPage,
     isLoading,
     hasNextPage,
-  } = useQueryPosts({
-    // initialData: _serverPosts.map((data: any) => {
-    //   return new Post(
-    //     data.title,
-    //     data.author,
-    //     data.topic,
-    //     data.sections,
-    //     data.status ?? "published",
-    //     data.id,
-    //     data.timestamp,
-    //     data.position,
-    //     data.design,
-    //     data.displayTitle,
-    //     data.displayContent,
-    //     data.scheduledTime,
-    //     data.is_v2
-    //   );
-    // }),
-    status: filters.status,
-    dateRange: filters.dateRange,
-    topics: filters.topics,
-    sort: filters.sort,
+    error,
+  } = useQuerySignals({
     enabled: !!user?.uid,
     userId: user?.uid,
   });
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { isMobileScreen } = useScreenSize();
 
-  const posts = _clientPosts || _serverPosts || [];
-  const hasSignals = posts?.length > 0;
+  const signals = _clientSignals || _serverSignals || [];
+  const hasSignals = signals?.length > 0;
 
   const { ref: lastItemRef, isInView } = useInView();
 
@@ -116,15 +97,6 @@ export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
     }
   }, [searchParams]);
 
-  const handleChange = (value: string[]) => {
-    // setFilters({ status: value });
-    const params = new URLSearchParams(searchParams.toString());
-    value.join(",")
-      ? params.set("status", value.join(","))
-      : params.delete("status");
-    router.push(pathname + "?" + params.toString());
-  };
-
   const handleSelectChange = (id: string, selected: boolean) => {
     if (selected) {
       setSelectedKeys([...selectedKeys, id]);
@@ -133,27 +105,11 @@ export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
     }
   };
 
-  const handleSortApply = (sortBy: SortBy) => {
-    setFilters((c) => ({
-      ...c,
-      sort: Object.keys(sortBy).reduce((acc, key) => {
-        // @ts-ignore
-        if (sortBy[key]) {
-          // @ts-ignore
-          acc.push({ field: key, order: sortBy[key] });
-        }
-        return acc;
-      }, [] as { field: string; order: "asc" | "desc" }[]),
-    }));
-  };
-
-  const handleFiltersApply = (_filters: PostFilters) => {
-    setFilters(_filters);
-  };
+  console.log("_clientSignals, error", _clientSignals, error);
 
   return (
     <div className="overflow-x-auto bg-lightPrimary">
-      {isMobileScreen ? <PostItemHeader /> : <PostItemDesktopHeader />}
+      {isMobileScreen ? <SignalItemHeader /> : <SignalItemDesktopHeader />}
       {/* <button
             onClick={() => {
               setFilters((c) => ({
@@ -182,30 +138,30 @@ export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
           </button> */}
       {isLoading ? (
         <div className="w-full flex justify-center items-center py-2 text-tertiary text-xs">
-          <p>Loading posts...</p>
+          <p>Loading signals...</p>
         </div>
-      ) : posts?.length > 0 ? (
-        posts?.map((post: Post) =>
+      ) : signals?.length > 0 ? (
+        signals?.map((signal: Signal) =>
           isMobileScreen ? (
-            <PostDraftItem
+            <SignalItem
               handleSelectChange={handleSelectChange}
-              isSelected={selectedKeys.includes(post.id as string)}
-              key={post.id}
-              post={post}
+              isSelected={selectedKeys.includes(signal.id as string)}
+              key={signal.id}
+              signal={signal}
             />
           ) : (
-            <PostDraftItemDesktop
+            <SignalItemDesktop
               handleSelectChange={handleSelectChange}
-              isSelected={selectedKeys.includes(post.id as string)}
-              key={post.id}
-              post={post}
+              isSelected={selectedKeys.includes(signal.id as string)}
+              key={signal.id}
+              signal={signal}
             />
           )
         )
       ) : (
         <div className="flex flex-col gap-1 py-5 items-center justify-center">
           <NoPostIcon className="w-16" />
-          <p className="text-tertiary">No Posts</p>
+          <p className="text-tertiary">No Signals</p>
         </div>
       )}
       {(hasNextPage || isFetching || isLoading) && (

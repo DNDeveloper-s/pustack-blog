@@ -6,7 +6,10 @@ import {
 import JoditPreview from "@/components/AdminEditor/JoditPreview";
 
 import { Checkbox } from "@/components/SignUpForNewsLetters/SignUpForNewsLetters";
-import { getSections } from "@/components/SlateEditor/utils/helpers";
+import {
+  getFirstImage,
+  getSections,
+} from "@/components/SlateEditor/utils/helpers";
 import { Post } from "@/firebase/post-v2";
 import { useDisclosure } from "@nextui-org/modal";
 import dayjs from "dayjs";
@@ -15,9 +18,12 @@ import { useMemo } from "react";
 import { FaEye } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdPublish, MdUnpublished } from "react-icons/md";
 import { CustomElement } from "../../../../types/slate";
-import { noImageUrl } from "./PostItem";
 import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { Tooltip } from "antd";
+import { Signal } from "@/firebase/signal";
+import { usePublishSignal, useUnPublishSignal } from "@/api/signal";
+import AppImage from "@/components/shared/AppImage";
+import { noImageUrl } from "./SignalItem";
 
 export const colorScheme = {
   draft: {
@@ -38,7 +44,7 @@ export const colorScheme = {
   },
 };
 
-export function PostItemDesktopHeader() {
+export function SignalItemDesktopHeader() {
   return (
     <div
       className={
@@ -46,10 +52,10 @@ export function PostItemDesktopHeader() {
       }
     >
       {/* <div className="self-center">
-        <Checkbox id={"item.key"} />
-      </div> */}
-      <div className="pl-1">Post Title</div>
-      <div className="text-center">Topic</div>
+          <Checkbox id={"item.key"} />
+        </div> */}
+      <div className="pl-1">Signal Title</div>
+      <div className="text-center">Source</div>
       <div className="text-center">Status</div>
       <div className="text-center">Timestamp</div>
       <div className="text-center">Actions</div>
@@ -57,12 +63,12 @@ export function PostItemDesktopHeader() {
   );
 }
 
-export default function PostItemDesktop({
-  post,
+export default function SignalItemDesktop({
+  signal,
   handleSelectChange,
   isSelected,
 }: {
-  post: Post;
+  signal: Signal;
   handleSelectChange: (id: string, selected: boolean) => void;
   isSelected: boolean;
 }) {
@@ -72,34 +78,26 @@ export default function PostItemDesktop({
   const disclosureOptionsUnPublish = useDisclosure();
   const disclosureOptionsPublish = useDisclosure();
   const {
-    mutate: postUnpublishPost,
+    mutate: postUnpublishSignal,
     isPending,
     error: unpublishError,
-  } = useUnPublishPost({
+  } = useUnPublishSignal({
     onSuccess: () => {
       disclosureOptionsUnPublish.onClose();
     },
   });
   const {
-    mutate: postPublishPost,
+    mutate: postPublishSignal,
     isPending: isPublishPending,
     error: publishError,
-  } = usePublishPost({
+  } = usePublishSignal({
     onSuccess: () => {
       disclosureOptionsPublish.onClose();
     },
   });
 
-  const sections = useMemo(() => {
-    if (!post) return [];
-    if (post.nodes) {
-      return getSections(post.nodes as CustomElement[]);
-    }
-    return post.sections;
-  }, [post?.sections, post?.nodes]);
-
   const isReadyToPublish =
-    post.status === "draft" || post.status === "unpublished";
+    signal.status === "draft" || signal.status === "unpublished";
 
   return (
     <div
@@ -109,57 +107,58 @@ export default function PostItemDesktop({
       }
     >
       {/* <div className="self-center">
-        <Checkbox
-          id={"item.key"}
-          onChange={(checked) => handleSelectChange(post.id as string, checked)}
-        />
-      </div> */}
+          <Checkbox
+            id={"item.key"}
+            onChange={(checked) => handleSelectChange(post.id as string, checked)}
+          />
+        </div> */}
       <div className="flex items-start gap-3 overflow-hidden">
         <div className="mt-1 w-16 h-16 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
-          <img
-            className="w-full h-full object-cover"
-            src={post.snippetData?.image ?? noImageUrl}
-          />
+          {getFirstImage(signal.nodes ?? []) && (
+            <AppImage
+              alt="sd"
+              src={getFirstImage(signal.nodes ?? []) ?? noImageUrl}
+              width={200}
+              height={200}
+              className="w-full h-full object-cover rounded-[4px] bg-gray-400"
+            />
+          )}
         </div>
         <div className="overflow-hidden">
-          <div className="flex items-center justify-start overflow-hidden gap-2">
+          <div className="flex items-center justify-center overflow-hidden gap-2">
             <h2 className="text-[22px] font-featureHeadline font-medium mt-0 text-ellipsis whitespace-nowrap overflow-hidden">
-              {post.displayTitle ?? post.title}
+              {signal.title}
             </h2>
           </div>
-          <p className="leading-[120%] text-sm line-clamp-3">
-            <span className="text-tertiary">Sections:</span>{" "}
-            <strong>{sections.length ?? 0}</strong>
-          </p>
         </div>
       </div>
       <div className="flex items-center justify-center">
         <span className="ml-4 text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-          {post.topic}
+          {signal.source}
         </span>
       </div>
       <div className="flex items-center justify-center">
         <span
           className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
           style={{
-            backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
+            backgroundColor: colorScheme[signal.status]?.bg ?? "#FFA500",
             fontVariationSettings: `'wght' 700`,
           }}
         >
-          {post.status}
+          {signal.status}
         </span>
       </div>
       <div>
         <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs">
-          {post?.scheduledTime && post?.status === "scheduled" ? (
+          {signal?.scheduledTime && signal?.status === "scheduled" ? (
             <>
               Scheduled for{" "}
-              {dayjs(post?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
+              {dayjs(signal?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
             </>
           ) : (
             <>
-              {post?.status === "published" ? "Published" : "Saved"} at{" "}
-              {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a")}
+              {signal?.status === "published" ? "Published" : "Saved"} at{" "}
+              {dayjs(signal?.timestamp).format("MMM DD, YYYY, H:mm a")}
             </>
           )}
         </p>
@@ -168,7 +167,7 @@ export default function PostItemDesktop({
         <div
           className="flex items-center gap-1 cursor-pointer hover:text-appBlue"
           onClick={() => {
-            router.push("/posts/create?post_id=" + post.id);
+            router.push("/signals/create?signal_id=" + signal.id);
           }}
         >
           <MdModeEdit />
@@ -197,18 +196,20 @@ export default function PostItemDesktop({
           </div>
         </Tooltip>
       </div>
-      <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
+      <JoditPreview
+        disclosureOptions={disclosureOptions}
+        nodes={signal.nodes}
+      />
       <PostActionModalBase
         disclosureOptions={disclosureOptionsUnPublish}
         isLoading={isPending}
-        onConfirm={() => postUnpublishPost(post.id as string)}
+        onConfirm={() => postUnpublishSignal(signal.id as string)}
         error={unpublishError}
-        post={post}
         title={"Unpublish Post"}
         content={
           <p>
             Are you sure you want to unpublish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
+            <strong>{signal?.title}</strong>&quot;
           </p>
         }
         cancelButton={"Cancel"}
@@ -217,14 +218,13 @@ export default function PostItemDesktop({
       <PostActionModalBase
         disclosureOptions={disclosureOptionsPublish}
         isLoading={isPublishPending}
-        onConfirm={() => postPublishPost(post.id as string)}
+        onConfirm={() => postPublishSignal(signal.id as string)}
         error={publishError}
-        post={post}
         title={"Publish Post"}
         content={
           <p>
             Are you sure you want to publish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
+            <strong>{signal?.title}</strong>&quot;
           </p>
         }
         cancelButton={"Cancel"}

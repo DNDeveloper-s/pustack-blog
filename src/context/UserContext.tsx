@@ -31,6 +31,7 @@ export interface UserDocumentData {
   phone_country_code?: string;
   company?: string;
   subscriber?: boolean;
+  is_author?: boolean;
 }
 
 export function transformUserData(user?: any): UserDocumentData {

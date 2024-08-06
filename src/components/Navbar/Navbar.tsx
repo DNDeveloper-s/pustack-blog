@@ -45,8 +45,8 @@ import { useDisclosure } from "@nextui-org/modal";
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
   { key: "create-signal", label: "CREATE SIGNAL", href: "/signals/create" },
-  { key: "view-posts", label: "VIEW MY POSTS", href: "/me/posts" },
-  { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
+  // { key: "view-posts", label: "VIEW MY POSTS", href: "/me/posts" },
+  // { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
 ];
 
 const navLinks = [
@@ -231,7 +231,7 @@ function NavbarDesktop({
                           fontVariationSettings: '"wght" 700,"opsz" 10',
                         }}
                       >
-                        MANAGE
+                        CREATE
                       </p>
                       <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                     </div>
@@ -357,7 +357,7 @@ function NavbarDesktop({
               >
                 Events
               </Link>
-              <Link
+              {/* <Link
                 className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
                 href="#"
                 style={{
@@ -366,16 +366,16 @@ function NavbarDesktop({
                 }}
               >
                 Newsletters
-              </Link>
+              </Link> */}
             </div>
             <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px]">
               <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
               <div className="w-1 h-1 rounded-full bg-appBlack" />
-              <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
+              <span className="text-appBlack leading-[120%]">EFFICIENT</span>
               <div className="w-1 h-1 rounded-full bg-appBlack" />
-              <span className="text-appBlack leading-[120%]">GLOBAL</span>
+              <span className="text-appBlack leading-[120%]">RESPONSIBLE</span>
             </div>
-            <div
+            {/* <div
               className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px] cursor-pointer"
               onClick={() => setIsNavOpen((c) => !c)}
             >
@@ -383,7 +383,7 @@ function NavbarDesktop({
                 src={isNavOpen ? navClose : navOpen}
                 alt="Open Navigation"
               />
-            </div>
+            </div> */}
           </div>
           <hr className="border-appBlack" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" />
@@ -666,7 +666,7 @@ function NavbarTablet({
                           fontVariationSettings: '"wght" 700,"opsz" 10',
                         }}
                       >
-                        MANAGE
+                        CREATE
                       </p>
                       <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                     </div>
@@ -793,7 +793,7 @@ function NavbarTablet({
               >
                 Events
               </Link>
-              <Link
+              {/* <Link
                 className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
                 href="#"
                 style={{
@@ -802,7 +802,7 @@ function NavbarTablet({
                 }}
               >
                 Newsletters
-              </Link>
+              </Link> */}
             </div>
             <div
               className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px] cursor-pointer"
@@ -906,10 +906,12 @@ function NavbarTablet({
                   </span>
                   <div className="w-1 h-1 rounded-full bg-appBlack" />
                   <span className="text-appBlack leading-[120%]">
-                    TRANSPARENT
+                    EFFICIENT
                   </span>
                   <div className="w-1 h-1 rounded-full bg-appBlack" />
-                  <span className="text-appBlack leading-[120%]">GLOBAL</span>
+                  <span className="text-appBlack leading-[120%]">
+                    RESPONSIBLE
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -1160,7 +1162,7 @@ function NavbarMobile() {
                       fontVariationSettings: '"wght" 700,"opsz" 10',
                     }}
                   >
-                    MANAGE
+                    CREATE
                   </p>
                   <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
                 </div>
@@ -1274,7 +1276,7 @@ function NavbarMobile() {
           >
             Events
           </Link>
-          <Link
+          {/* <Link
             className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
             href="#"
             style={{
@@ -1283,7 +1285,7 @@ function NavbarMobile() {
             }}
           >
             Newsletters
-          </Link>
+          </Link> */}
         </div>
         <div
           className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px]"
@@ -1399,9 +1401,9 @@ function NavbarMobile() {
       <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-3">
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
-        <span className="text-appBlack leading-[120%]">TRANSPARENT</span>
+        <span className="text-appBlack leading-[120%]">EFFICIENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
-        <span className="text-appBlack leading-[120%]">GLOBAL</span>
+        <span className="text-appBlack leading-[120%]">RESPONSIBLE</span>
       </div>
       {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 

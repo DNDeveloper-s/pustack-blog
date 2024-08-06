@@ -2843,3 +2843,7 @@ li[data-placeholder]::before {
 .ant-radio-button-wrapper {
   background: transparent !important;
 }
+
+.toggle_email_subscribe:where(.css-zg0ahe).ant-switch.ant-switch-checked {
+  background: #04b533 !important;
+}

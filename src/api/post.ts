@@ -411,7 +411,7 @@ export const useUpdatePostDraft = (
   });
 };
 
-export const useQuerySavedPosts = (): UseQueryResult<any, Error> => {
+export const useQuerySavedPosts = (): UseQueryResult<Post[], Error> => {
   const { user } = useUser();
   const querySavedPosts = async ({ queryKey }: QueryFunctionContext) => {
     const [, userId] = queryKey;
@@ -426,5 +426,42 @@ export const useQuerySavedPosts = (): UseQueryResult<any, Error> => {
   return useQuery({
     queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
     queryFn: querySavedPosts,
+  });
+};
+
+export const usePostBookmark = (
+  options?: UseMutationOptions<any, Error, { post: Post; bookmarked: boolean }>
+) => {
+  const qc = useQueryClient();
+  const { user } = useUser();
+
+  const postBookmark = async ({
+    post,
+    bookmarked,
+  }: {
+    post: Post;
+    bookmarked: boolean;
+  }) => {
+    if (!post?.id || !user?.uid) {
+      throw new Error("Post ID and User ID is required");
+    }
+
+    if (bookmarked) {
+      await post.saveToBookmark(user?.uid);
+    } else {
+      await post.removeFromBookmark(user?.uid);
+    }
+
+    return { post, bookmarked };
+  };
+
+  return useMutation({
+    mutationFn: postBookmark,
+    onSettled: () => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
+      });
+    },
+    ...(options ?? {}),
   });
 };
