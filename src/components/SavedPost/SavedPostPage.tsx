@@ -95,8 +95,8 @@ export default function SavedPostPage() {
   return (
     <div className="max-w-[1440px] w-screen h-screen flex flex-col overflow-auto px-3 mx-auto">
       <Navbar />
-      <div className="w-full overflow-auto py-10 flex-1">
-        <div className="w-full">
+      <div className="w-full overflow-auto py-10 flex-1 flex flex-col">
+        <div className="w-full flex-1">
           <div className="mb-6 w-full flex justify-between items-center">
             <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
               Saved Posts

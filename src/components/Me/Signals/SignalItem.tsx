@@ -174,6 +174,7 @@ export function SignalItemHeader() {
       className={
         "grid grid-cols-[1fr_90px_80px_30px] items-center py-3 pt-4 px-3 bg-lightPrimary mb-2 text-[11px]"
       }
+      style={{ zoom: 0.85 }}
     >
       {/* <div className="self-center">
           <Checkbox id={"item.key"} />
@@ -225,6 +226,7 @@ export default function SignalItem({
         "grid grid-cols-[1fr_90px_80px_30px] items-center py-2 px-3 " +
         (isSelected ? "bg-primaryVariant1" : "bg-transparent")
       }
+      style={{ zoom: 0.85 }}
     >
       {/* <div className="self-center">
           <Checkbox
@@ -263,7 +265,7 @@ export default function SignalItem({
             style={{ backgroundColor: colorScheme[signal.status]?.bg }}
           ></span>
         </Tooltip>
-        <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+        <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] text-center">
           {signal.source}
         </span>
       </div>

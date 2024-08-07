@@ -3,7 +3,7 @@
 
 // We can not useState or useRef in a server component, which is why we are
 // extracting this part out into it's own file with 'use client' on top
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/context/UserContext";
 import { User } from "firebase/auth";
@@ -96,6 +96,43 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       ...props,
     });
   };
+
+  useEffect(() => {
+    // @ts-ignore
+    !(function () {
+      // @ts-ignore
+      var reb2b = (window.reb2b = window.reb2b || []);
+      if (reb2b.invoked) return;
+      reb2b.invoked = true;
+      reb2b.methods = ["identify", "collect"];
+      reb2b.factory = function (method: any) {
+        return function () {
+          var args = Array.prototype.slice.call(arguments);
+          args.unshift(method);
+          reb2b.push(args);
+          return reb2b;
+        };
+      };
+      for (var i = 0; i < reb2b.methods.length; i++) {
+        var key = reb2b.methods[i];
+        reb2b[key] = reb2b.factory(key);
+      }
+      reb2b.load = function (key: any) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.async = true;
+        script.src =
+          "https://s3-us-west-2.amazonaws.com/b2bjsstore/b/" +
+          key +
+          "/reb2b.js.gz";
+        var first = document.getElementsByTagName("script")[0];
+        // @ts-ignore
+        first.parentNode.insertBefore(script, first);
+      };
+      reb2b.SNIPPET_VERSION = "1.0.1";
+      reb2b.load("46DJ4HMG9V61");
+    })();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -9,7 +9,7 @@ import Link from "next/link";
 import { WorldClockWithLabel } from "../shared/WorldClock2";
 import { useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
-import { url } from "@/constants";
+import { topics, url } from "@/constants";
 import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
 import {
@@ -41,6 +41,7 @@ const DeleteAccountModal = dynamic(
 );
 // import DeleteAccountModal from "./Accounts/DeleteAccountModal";
 import { useDisclosure } from "@nextui-org/modal";
+import { toDashCase } from "@/firebase/signal";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -49,21 +50,26 @@ const managePaths = [
   // { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
 ];
 
-const navLinks = [
-  { key: "home", label: "Home", href: "/" },
-  { key: "politics", label: "Politics", href: "/politics" },
-  { key: "business", label: "Business", href: "/business" },
-  { key: "technology", label: "Technology", href: "/technology" },
-  { key: "netzero", label: "NetZero", href: "/netzero" },
-  { key: "africa", label: "Africa", href: "/africa" },
-  { key: "security", label: "Security", href: "/security" },
-  { key: "media", label: "Media", href: "/media" },
-  {
-    key: "global-elections",
-    label: "Global Elections",
-    href: "/global-elections",
-  },
-];
+// const navLinks = [
+//   { key: "home", label: "Home", href: "/" },
+//   { key: "politics", label: "Politics", href: "/politics" },
+//   { key: "business", label: "Business", href: "/business" },
+//   { key: "technology", label: "Technology", href: "/technology" },
+//   { key: "netzero", label: "NetZero", href: "/netzero" },
+//   { key: "africa", label: "Africa", href: "/africa" },
+//   { key: "security", label: "Security", href: "/security" },
+//   { key: "media", label: "Media", href: "/media" },
+//   {
+//     key: "global-elections",
+//     label: "Global Elections",
+//     href: "/global-elections",
+//   },
+// ];
+const navLinks = topics.map((topic) => ({
+  key: toDashCase(topic),
+  label: topic,
+  href: toDashCase(topic) === "home" ? "/" : `/${toDashCase(topic)}`,
+}));
 
 interface CurrentTime {
   time: string;

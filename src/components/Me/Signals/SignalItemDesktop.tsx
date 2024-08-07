@@ -24,6 +24,7 @@ import { Signal } from "@/firebase/signal";
 import { usePublishSignal, useUnPublishSignal } from "@/api/signal";
 import AppImage from "@/components/shared/AppImage";
 import { noImageUrl } from "./SignalItem";
+import { useMediaQuery } from "react-responsive";
 
 export const colorScheme = {
   draft: {
@@ -45,11 +46,15 @@ export const colorScheme = {
 };
 
 export function SignalItemDesktopHeader() {
+  const isSmallDesktop = useMediaQuery({ maxWidth: 1025 });
   return (
     <div
       className={
-        "grid grid-cols-[1fr_100px_150px_200px_200px] items-center py-3 px-6 bg-lightPrimary mb-2"
+        "grid grid-cols-[1fr_200px_120px_200px_150px] items-center py-3 px-6 bg-lightPrimary mb-2"
       }
+      style={{
+        zoom: isSmallDesktop ? 0.8 : 1,
+      }}
     >
       {/* <div className="self-center">
           <Checkbox id={"item.key"} />
@@ -74,6 +79,8 @@ export default function SignalItemDesktop({
 }) {
   const disclosureOptions = useDisclosure();
   const router = useRouter();
+
+  const isSmallDesktop = useMediaQuery({ maxWidth: 1025 });
 
   const disclosureOptionsUnPublish = useDisclosure();
   const disclosureOptionsPublish = useDisclosure();
@@ -102,9 +109,12 @@ export default function SignalItemDesktop({
   return (
     <div
       className={
-        "grid grid-cols-[1fr_100px_150px_200px_200px] items-center py-3 px-6 " +
+        "grid grid-cols-[1fr_200px_120px_200px_150px] items-center py-3 px-6 " +
         (isSelected ? "bg-primaryVariant1" : "bg-lightPrimary")
       }
+      style={{
+        zoom: isSmallDesktop ? 0.8 : 1,
+      }}
     >
       {/* <div className="self-center">
           <Checkbox
@@ -126,14 +136,14 @@ export default function SignalItemDesktop({
         </div>
         <div className="overflow-hidden">
           <div className="flex items-center justify-center overflow-hidden gap-2">
-            <h2 className="text-[22px] font-featureHeadline font-medium mt-0 text-ellipsis whitespace-nowrap overflow-hidden">
+            <h2 className="text-[22px] font-featureHeadline font-medium mt-0 line-clamp-2">
               {signal.title}
             </h2>
           </div>
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <span className="ml-4 text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+        <span className="ml-4 text-[13px] text-[#53524c] font-helvetica uppercase leading-[16px] text-center">
           {signal.source}
         </span>
       </div>
