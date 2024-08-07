@@ -46,6 +46,7 @@ import { toDashCase } from "@/firebase/signal";
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
   { key: "create-signal", label: "CREATE SIGNAL", href: "/signals/create" },
+  { key: "create-event", label: "CREATE EVENT", href: "/events/create" },
   // { key: "view-posts", label: "VIEW MY POSTS", href: "/me/posts" },
   // { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
 ];

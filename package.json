@@ -70,7 +70,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
-    "react-hook-form": "^7.51.5",
+    "react-hook-form": "^7.52.2",
     "react-icons": "^5.2.1",
     "react-joyride": "^2.8.2",
     "react-mathquill": "^1.0.3",
@@ -91,7 +91,8 @@
     "slate-react": "^0.107.1",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.11",
-    "tls": "^0.0.1"
+    "tls": "^0.0.1",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",

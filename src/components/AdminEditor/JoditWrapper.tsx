@@ -31,6 +31,8 @@ import { SectionEditorRef } from "./Sections/SectionEditor";
 import SlateEditor, { SlateEditorRef } from "../SlateEditor/SlateEditor";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { CustomElement } from "../../../types/slate";
+import { topics } from "@/constants";
+import { toDashCase } from "@/firebase/signal";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -39,48 +41,18 @@ const dummyAuthor = {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwMtTVob9_kP89ahzHe8zbQLNio88s0UDBDqlDjbkpBQ&s",
 };
 
+const availableTopics = topics
+  .filter((c) => c !== "Home")
+  .map((topic) => ({
+    key: toDashCase(topic),
+    value: topic,
+    disabled: false,
+  }));
+
 const TOPICS = [
   { key: "", value: "Select Topic", disabled: true },
-  { key: "politics", value: "Politics" },
-  { key: "business", value: "Business" },
-  { key: "technology", value: "Technology" },
-  { key: "africa", value: "Africa" },
-  { key: "net-zero", value: "Net Zero" },
-  { key: "security", value: "Security" },
-  { key: "media", value: "Media" },
-  { key: "others", value: "Others" },
+  ...availableTopics,
 ];
-
-function MathsFormulaIframe() {
-  const [iframeLoaded, setIframeLoaded] = useState(false);
-  return (
-    <>
-      {!iframeLoaded && (
-        <div className="flex items-center justify-center py-5">
-          <Spinner size="sm" label="Loading Maths Editor" />
-        </div>
-      )}
-      {iframeLoaded && (
-        <p className="mb-3 text-appBlue">
-          Copy <strong>Math ML</strong> code and paste it in the editor using
-          the <strong>Keep</strong> option.
-        </p>
-      )}
-      <iframe
-        src="https://www.imatheq.com/imatheq/com/imatheq/math-equation-editor-latex-mathml.html"
-        style={{
-          width: "100%",
-          height: "80vh",
-          maxHeight: "800px",
-          opacity: iframeLoaded ? 1 : 0,
-        }}
-        onLoad={(e: any) => {
-          setIframeLoaded(true);
-        }}
-      ></iframe>
-    </>
-  );
-}
 
 function JoditWrapper(
   {

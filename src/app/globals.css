@@ -2847,3 +2847,64 @@ li[data-placeholder]::before {
 .toggle_email_subscribe:where(.css-zg0ahe).ant-switch.ant-switch-checked {
   background: #04b533 !important;
 }
+
+:where(.css-dev-only-do-not-override-1uq9j6g).ant-picker-dropdown
+  .ant-picker-panel-container {
+  background: #fcfae4;
+}
+
+.ant-picker-minerva-date {
+  width: 100%;
+  border-radius: 0px;
+  background: #fcfae4 !important;
+  height: 34px;
+  border-color: #e5e7eb !important;
+  box-shadow: none !important;
+}
+
+.ant-picker-minerva-date .ant-picker-input input {
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+  line-height: 1.4;
+}
+
+.minerva-venue-radio .ant-radio-inner {
+  background: transparent;
+}
+
+.minerva-event-image-uploader {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+.minerva-event-image-uploader .ant-upload-select {
+  width: 100% !important;
+  overflow: hidden;
+  height: 218px !important;
+  border-radius: 0 !important;
+  background: #fcfae4 !important;
+}
+
+.minerva-organizer-image-uploader .ant-upload-select {
+  width: 100% !important;
+  overflow: hidden;
+  height: 178px !important;
+  border-radius: 0 !important;
+  background: #fcfae4 !important;
+}
+
+.minerva-venue-image-uploader .ant-upload-select {
+  width: 100% !important;
+  overflow: hidden;
+  height: 100px !important;
+  border-radius: 0 !important;
+  background: #fcfae4 !important;
+}
+
+.minerva-create-form > input::placeholder {
+  letter-spacing: 0.02em;
+  font-weight: 300;
+  font-variation-settings: "wght" 400, "opsz" 10;
+  color: #1f1d1a5c;
+}
