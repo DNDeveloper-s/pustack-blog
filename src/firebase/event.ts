@@ -100,6 +100,7 @@ interface EventParams {
   displayImage: string;
   isAllDay: boolean;
   background: string;
+  timestamp?: string;
 }
 
 interface QueryParams {
@@ -139,7 +140,7 @@ export type EventVenueType = EventOnlineType | EventOfflineType;
 export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 
 export class Event {
-  _id: string | undefined = undefined;
+  _id: string | undefined | null = undefined;
   title: string;
   description: string;
   _status: PostStatus;
@@ -156,6 +157,7 @@ export class Event {
   displayImage: string;
   isAllDay: boolean;
   background: string;
+  timestamp?: string | undefined;
 
   get id(): string | undefined {
     if (this._id) return this._id;
@@ -172,6 +174,7 @@ export class Event {
   }
 
   constructor(params: EventParams) {
+    this._id = params.id;
     this.title = params.title;
     this.description = params.description;
     this._status = params.status ?? "draft";
@@ -182,6 +185,7 @@ export class Event {
     this.displayImage = params.displayImage;
     this.isAllDay = params.isAllDay;
     this.background = params.background;
+    this.timestamp = params.timestamp;
   }
 
   static collectionRef() {
@@ -569,6 +573,7 @@ export const eventConverter = {
       displayImage: event.displayImage,
       isAllDay: event.isAllDay,
       background: event.background,
+      timestamp: serverTimestamp(),
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -586,6 +591,7 @@ export const eventConverter = {
       displayImage: data.displayImage,
       isAllDay: data.isAllDay,
       background: data.background,
+      timestamp: data.timestamp.toDate().toISOString(),
     });
   },
 };

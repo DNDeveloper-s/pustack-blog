@@ -23,8 +23,10 @@
 import { API_QUERY } from "@/config/api-query";
 import { Event } from "@/firebase/event";
 import {
+  QueryFunctionContext,
   UseMutationOptions,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 
@@ -40,13 +42,34 @@ export const useCreateEvent = (
 
   return useMutation({
     mutationFn: createEvent,
-    onSettled: () => {
+    onSettled: (data, error, variables) => {
       qc.invalidateQueries({
         predicate: (query) => {
           return query.queryKey[0] === API_QUERY.QUERY_EVENTS()[0];
         },
       });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_EVENT_BY_ID(data?.id),
+      });
     },
     ...(options ?? {}),
+  });
+};
+
+export const useGetEventById = (eventId?: string | null) => {
+  const getEventById = async ({ queryKey }: QueryFunctionContext) => {
+    const [, eventId] = queryKey;
+    if (!eventId || typeof eventId !== "string") {
+      throw new Error("Event ID is required");
+    }
+    const event = await Event.get(eventId, true);
+    return event;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_EVENT_BY_ID(eventId),
+    queryFn: getEventById,
+    enabled: !!eventId,
   });
 };

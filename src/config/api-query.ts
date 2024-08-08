@@ -37,6 +37,7 @@ export const API_QUERY = {
     "get-signal-by-id",
     signalId,
   ],
+  GET_EVENT_BY_ID: (eventId?: string | null) => ["get-event-by-id", eventId],
   GET_RECENT_POSTS: ["get-recent-posts"],
   GET_FLAGSHIP_SIGNAL: ["get-flagship-signal"],
   NOUN_PROJECT_ICONS: (query?: string | null) => ["noun-project-icons", query],
