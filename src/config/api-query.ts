@@ -8,6 +8,7 @@ export const API_QUERY = {
     dateRange?: [Dayjs | null, Dayjs | null],
     topics?: string[]
   ) => ["query-posts", userId, status?.join(","), sort, dateRange, topics],
+  GET_CLOSEST_EVENT: ["get-closest-event"],
   QUERY_EVENTS: () => ["query-events"],
   QUERY_SAVED_POSTS: (userId?: string | null | undefined) => [
     "query-saved-posts",
@@ -37,6 +38,7 @@ export const API_QUERY = {
     "get-signal-by-id",
     signalId,
   ],
+  GET_EVENTS_FOR_DATE_RANGE: ["get-events-for-date-range"],
   GET_EVENT_BY_ID: (eventId?: string | null) => ["get-event-by-id", eventId],
   GET_RECENT_POSTS: ["get-recent-posts"],
   GET_FLAGSHIP_SIGNAL: ["get-flagship-signal"],

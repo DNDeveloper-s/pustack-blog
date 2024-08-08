@@ -17,7 +17,8 @@ import * as Yup from "yup";
 
 export interface CreateEventFormValues {
   title: string;
-  date: string;
+  startTime: string;
+  endTime: string;
   description: string;
   event_image: string;
   organizer_name: string;
@@ -26,15 +27,17 @@ export interface CreateEventFormValues {
   contact_email: string;
   contact_phone: string;
   venue: "online" | "offline";
-  link?: string;
-  location?: string;
+  meetingLink?: string;
+  venue_name?: string;
+  venue_maps_link?: string;
   venue_image?: string;
+  isAllDay: boolean;
 }
 
 const createEventSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
-  date: Yup.string()
-    .required("Date is required")
+  startTime: Yup.string()
+    .required("StartTime is required")
     .matches(
       /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       "Date must be in ISO format"
@@ -47,18 +50,29 @@ const createEventSchema = Yup.object().shape({
   contact_email: Yup.string()
     .email("Invalid email")
     .required("Contact email is required"),
+  isAllDay: Yup.boolean().required("Is All Day required"),
+  endTime: Yup.string().when("isAllDay", (isAllDay, schema) =>
+    isAllDay && isAllDay.includes(false)
+      ? schema.required("EndTime is required")
+      : schema.notRequired()
+  ),
   contact_phone: Yup.string().required("Contact phone is required"),
   venue: Yup.string()
     .required("Venue type is required")
     .oneOf(["online", "offline"]),
-  link: Yup.string().when("venue", (venue, schema) =>
+  meetingLink: Yup.string().when("venue", (venue, schema) =>
     venue && venue.includes("online")
       ? schema.required("Link is required for online events")
       : schema.notRequired()
   ),
-  location: Yup.string().when("venue", (venue, schema) =>
+  venue_name: Yup.string().when("venue", (venue, schema) =>
     venue && venue.includes("offline")
-      ? schema.required("Location is required for offline events")
+      ? schema.required("Venue name is required for offline events")
+      : schema.notRequired()
+  ),
+  venue_maps_link: Yup.string().when("venue", (venue, schema) =>
+    venue && venue.includes("offline")
+      ? schema.required("Venue Maps Link is required for offline events")
       : schema.notRequired()
   ),
   venue_image: Yup.string().when("venue", (venue, schema) =>
@@ -73,6 +87,7 @@ export default function CreateEventEntry() {
     resolver: useYupValidationResolver(createEventSchema),
     defaultValues: {
       venue: "online",
+      isAllDay: true,
     },
   });
   return (

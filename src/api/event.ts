@@ -25,10 +25,13 @@ import { Event } from "@/firebase/event";
 import {
   QueryFunctionContext,
   UseMutationOptions,
+  UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import dayjs, { Dayjs } from "dayjs";
+import { useMemo } from "react";
 
 export const useCreateEvent = (
   options?: UseMutationOptions<Event, Error, Event>
@@ -52,6 +55,10 @@ export const useCreateEvent = (
       qc.invalidateQueries({
         queryKey: API_QUERY.GET_EVENT_BY_ID(data?.id),
       });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_EVENTS_FOR_DATE_RANGE,
+      });
     },
     ...(options ?? {}),
   });
@@ -72,4 +79,83 @@ export const useGetEventById = (eventId?: string | null) => {
     queryFn: getEventById,
     enabled: !!eventId,
   });
+};
+
+export const useGetClosestEvent = (
+  options?: Omit<
+    UseQueryOptions<Event | null | undefined>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const getClosestEvent = async () => {
+    const event = await Event.getClosestEvent();
+    return event;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.GET_CLOSEST_EVENT,
+    queryFn: getClosestEvent,
+    ...options,
+  });
+};
+
+export interface TransformedEvent {
+  id: string;
+  month_name: string;
+  events: Event[];
+}
+
+const transformEventsToMonthlyStructure = (
+  events: (Event | undefined)[],
+  currentDate: Dayjs
+): TransformedEvent[] => {
+  const months: TransformedEvent[] = [];
+
+  // Generate the list of months
+  for (let i = -2; i <= 2; i++) {
+    const monthDate = currentDate.add(i, "month");
+    months.push({
+      id: monthDate.format("MMMM").toLowerCase(),
+      month_name: monthDate.format("MMMM"),
+      events: [],
+    });
+  }
+
+  // Assign events to the correct month
+  events.forEach((event) => {
+    if (!event) return;
+    const eventMonth = dayjs(event.startTime.toDate()).format("MMMM");
+    const month = months.find((m) => m.month_name === eventMonth);
+    if (month) {
+      month.events.push(event);
+    }
+  });
+
+  return months;
+};
+
+export const useGetEventsForDateRange = (
+  options?: Omit<
+    UseQueryOptions<(Event | undefined)[] | null | undefined>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const getEventsForDateRange = async () => {
+    const events = await Event.fetchEventsForDateRange();
+    console.log("Testing Date Range | events - ", events);
+    return events;
+  };
+
+  const queryData = useQuery({
+    queryKey: API_QUERY.GET_EVENTS_FOR_DATE_RANGE,
+    queryFn: getEventsForDateRange,
+    ...options,
+  });
+
+  const transformedEvents = useMemo(() => {
+    if (!queryData.data) return null;
+    return transformEventsToMonthlyStructure(queryData.data, dayjs());
+  }, [queryData.data]);
+
+  return { ...queryData, transformedEvents };
 };

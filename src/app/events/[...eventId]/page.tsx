@@ -14,7 +14,13 @@ export default async function EventId(props: {
   // console.log("post - ", post.title);
   let event = null;
   try {
-    const docRef = doc(db, "events", props.params.eventId[0]);
+    const docRef = doc(
+      db,
+      "events",
+      "collections",
+      "all_events",
+      props.params.eventId[0]
+    );
     const data = await getDoc(docRef);
 
     if (data.exists() === false) {
@@ -34,6 +40,8 @@ export default async function EventId(props: {
             ...event,
             id: event.id,
             timestamp: new Date(event.timestamp.seconds * 1000).toISOString(),
+            startTime: new Date(event.startTime.seconds * 1000).toISOString(),
+            endTime: new Date(event.endTime.seconds * 1000).toISOString(),
           }}
         />
       </ErrorBoundary>

@@ -2908,3 +2908,46 @@ li[data-placeholder]::before {
   font-variation-settings: "wght" 400, "opsz" 10;
   color: #1f1d1a5c;
 }
+
+.bg-january {
+  background-image: url("/assets/images/month/January.webp");
+}
+.bg-february {
+  background-image: url("/assets/images/month/February.webp");
+}
+.bg-march {
+  background-image: url("/assets/images/month/March.webp");
+}
+.bg-april {
+  background-image: url("/assets/images/month/April.webp");
+}
+.bg-may {
+  background-image: url("/assets/images/month/May.webp");
+}
+.bg-june {
+  background-image: url("/assets/images/month/June.webp");
+}
+.bg-july {
+  background-image: url("/assets/images/month/July.webp");
+}
+.bg-august {
+  background-image: url("/assets/images/month/August.webp");
+}
+.bg-september {
+  background-image: url("/assets/images/month/September.webp");
+}
+.bg-october {
+  background-image: url("/assets/images/month/October.webp");
+}
+.bg-november {
+  background-image: url("/assets/images/month/November.webp");
+}
+.bg-december {
+  background-image: url("/assets/images/month/December.webp");
+}
+
+@layer components {
+  .overlay-black {
+    @apply before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:opacity-65;
+  }
+}

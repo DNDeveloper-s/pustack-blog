@@ -1,5 +1,7 @@
 import {
+  Checkbox,
   DatePicker,
+  DatePickerProps,
   GetProp,
   Radio,
   RadioChangeEvent,
@@ -21,6 +23,7 @@ import { SnackbarContent } from "../AdminEditor/AdminPage";
 import { getRandomDarkHexColor } from "@/lib/colors";
 import { Event, EventVenueType } from "@/firebase/event";
 import { useCreateEvent } from "@/api/event";
+import { Timestamp } from "firebase/firestore";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -38,7 +41,7 @@ interface CreateEventAttachments {
 
 export default function CreateEventForm() {
   // Third Party Hooks
-  const { getValues, watch, setValue, unregister, handleSubmit } =
+  const { formState, getValues, watch, setValue, unregister, handleSubmit } =
     useFormContext<CreateEventFormValues>();
 
   // Context
@@ -89,16 +92,25 @@ export default function CreateEventForm() {
 
   // Watchers
   const venueValue = watch("venue");
+  const isAllDayValue = watch("isAllDay");
+  // const startTimeValue = watch("startTime");
+  // const endTimeValue = watch("endTime");
 
   // UseEffects
   useEffect(() => {
     if (venueValue === "online") {
-      unregister("location");
+      unregister("venue_name");
+      unregister("venue_maps_link");
       unregister("venue_image");
     } else if (venueValue === "offline") {
-      unregister("link");
+      unregister("meetingLink");
     }
   }, [venueValue]);
+  useEffect(() => {
+    if (isAllDayValue) {
+      unregister("endTime");
+    }
+  }, [isAllDayValue]);
 
   // Validators
   const validateAttachments = (key: keyof CreateEventAttachments) => {
@@ -150,6 +162,7 @@ export default function CreateEventForm() {
 
   // Handlers
   const createEventHandler = async (data: CreateEventFormValues) => {
+    console.log("data - ", data);
     try {
       if (isUploading || isPending) return;
       setIsUploading(true);
@@ -172,28 +185,30 @@ export default function CreateEventForm() {
 
       let venueObject: EventVenueType = {
         type: "offline",
-        name: values.location as string,
+        name: values.venue_name as string,
         image: venue_image_url as string,
+        mapsLink: values.venue_maps_link as string,
       };
 
       if (venueValue === "offline") {
         venueObject = {
           type: "offline",
-          name: values.location as string,
+          name: values.venue_name as string,
           image: venue_image_url as string,
+          mapsLink: values.venue_maps_link as string,
         };
       } else {
         venueObject = {
           type: "online",
-          link: values.link as string,
+          meetingLink: values.meetingLink as string,
         };
       }
 
       const event = new Event({
         title: values.title,
         description: values.description,
-        startTime: dayjs(values.date).valueOf(),
-        endTime: dayjs(values.date).add(1, "hour").valueOf(),
+        startTime: Timestamp.fromDate(dayjs(values.startTime).toDate()),
+        endTime: Timestamp.fromDate(dayjs(values.endTime).toDate()),
         organizer: {
           name: values.organizer_name,
           photoURL: organizer_image_url as string,
@@ -249,6 +264,9 @@ export default function CreateEventForm() {
   const getImageUrl = (key: keyof CreateEventAttachments) => {
     return attachments[key];
   };
+  // const disabledDate: DatePickerProps["disabledDate"] = (current) => {
+  //   return current && current < dayjs(startTimeValue);
+  // };
   const uploadButton = (label?: string) => (
     <button
       style={{ border: 0, background: "none" }}
@@ -265,6 +283,8 @@ export default function CreateEventForm() {
       </div>
     </button>
   );
+
+  console.log("formState - ", formState, getValues());
 
   return (
     <form
@@ -299,35 +319,67 @@ export default function CreateEventForm() {
               </div>
             )}
           />
-          <Controller
-            name="date"
-            render={({ field, fieldState, formState }) => (
-              <div>
-                <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-                  Event Date
-                </h4>
-                {/* <input
-                    // disabled={isPending}
-                    className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                    placeholder="Enter the Post Title"
-                    type="text"
-                    style={{
-                      fontVariationSettings: '"wght" 400,"opsz" 10',
+          <div>
+            <div className="flex justify-between items-center">
+              <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+                Event Date
+              </h4>
+              <Controller
+                name="isAllDay"
+                render={({ field, fieldState, formState }) => (
+                  <Checkbox
+                    onChange={(e: any) => {
+                      field.onChange(e.target.checked);
                     }}
-                  /> */}
-                <DatePicker
-                  showTime
-                  onOk={(date: any) => {
-                    field.onChange(dayjs(date).toISOString());
-                  }}
-                  ref={field.ref}
-                  name={field.name}
-                  disabled={field.disabled}
-                  className="ant-picker-minerva-date"
+                    value={field.value}
+                    checked={field.value}
+                    ref={field.ref}
+                    name={field.name}
+                    disabled={field.disabled}
+                  >
+                    Is All Day
+                  </Checkbox>
+                )}
+              />
+            </div>
+            <div className="flex items-stretch gap-2">
+              <Controller
+                name="startTime"
+                render={({ field, fieldState, formState }) => (
+                  <DatePicker
+                    showTime
+                    onOk={(date: any) => {
+                      field.onChange(dayjs(date).toISOString());
+                    }}
+                    placeholder="Start Time"
+                    ref={field.ref}
+                    name={field.name}
+                    disabled={field.disabled}
+                    className="ant-picker-minerva-date"
+                  />
+                )}
+              />
+              {!isAllDayValue && (
+                <Controller
+                  name="endTime"
+                  render={({ field, fieldState, formState }) => (
+                    <DatePicker
+                      showTime
+                      onOk={(date: any) => {
+                        field.onChange(dayjs(date).toISOString());
+                      }}
+                      placeholder="End Time"
+                      ref={field.ref}
+                      name={field.name}
+                      disabled={field.disabled}
+                      className="ant-picker-minerva-date"
+                    />
+                  )}
                 />
-              </div>
-            )}
-          />
+              )}
+            </div>
+          </div>
+
           <Controller
             name="description"
             render={({ field, fieldState, formState }) => (
@@ -401,7 +453,7 @@ export default function CreateEventForm() {
             <div className="w-full mt-3">
               {venueValue === "online" && (
                 <Controller
-                  name="link"
+                  name="meetingLink"
                   render={({ field, fieldState, formState }) => (
                     <input
                       // disabled={isPending}
@@ -419,12 +471,27 @@ export default function CreateEventForm() {
               {venueValue === "offline" && (
                 <>
                   <Controller
-                    name="location"
+                    name="venue_name"
                     render={({ field, fieldState, formState }) => (
                       <input
                         // disabled={isPending}
                         className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                        placeholder="Event Venue Details"
+                        placeholder="Event Venue Name"
+                        type="text"
+                        style={{
+                          fontVariationSettings: '"wght" 400,"opsz" 10',
+                        }}
+                        {...field}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="venue_maps_link"
+                    render={({ field, fieldState, formState }) => (
+                      <input
+                        // disabled={isPending}
+                        className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                        placeholder="Event Venue Maps Link"
                         type="text"
                         style={{
                           fontVariationSettings: '"wght" 400,"opsz" 10',

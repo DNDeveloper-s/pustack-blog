@@ -1,5 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import classes from "./Events.module.css";
+import useScreenSize from "@/hooks/useScreenSize";
+import { useGetClosestEvent } from "@/api/event";
+import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
 function EventCard({ isUpcoming }: { isUpcoming?: boolean }) {
   return (
@@ -30,9 +36,9 @@ function EventCard({ isUpcoming }: { isUpcoming?: boolean }) {
           threats, vulnerabilities, and attack techniques emerging regularly.
           Yet even in a technologically advanced environment, humans remain at
           the core of cybersecurity as both defenders and perpetrators of cyber
-          threats. Join Minerva senior editors for a consequential discussion
-          on how policymakers and business leaders can work together to
-          establish a more proactive and innovative cybersecurity ecosystem.
+          threats. Join Minerva senior editors for a consequential discussion on
+          how policymakers and business leaders can work together to establish a
+          more proactive and innovative cybersecurity ecosystem.
         </span>
       </p>
       <div>
@@ -46,33 +52,18 @@ function EventCard({ isUpcoming }: { isUpcoming?: boolean }) {
 }
 
 export default function Events() {
-  return (
-    <div className="min-h-screen">
-      <div>
-        <h1 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
-          Events
-        </h1>
-      </div>
-      <div className="grid grid-cols-3 mt-8 pb-[100px] gap-[45px]">
-        <EventCard isUpcoming />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-        <EventCard />
-      </div>
-    </div>
-  );
+  const { isMobileScreen } = useScreenSize();
+
+  const { data: event, error } = useGetClosestEvent({ enabled: true });
+
+  useEffect(() => {
+    if (!event?.id) return;
+    if (!isMobileScreen) {
+      redirect("/events/" + event.id);
+    } else {
+      redirect("/events/list");
+    }
+  }, [isMobileScreen, event]);
+
+  return <div></div>;
 }

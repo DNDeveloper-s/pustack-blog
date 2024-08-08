@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 import {
   DocumentSnapshot,
   QuerySnapshot,
+  Timestamp,
   collection,
   deleteDoc,
   doc,
@@ -24,7 +25,6 @@ import {
   where,
 } from "firebase/firestore";
 import { compact } from "lodash";
-import { Descendant } from "slate";
 
 export interface Author {
   name: string;
@@ -87,8 +87,8 @@ interface EventParams {
   title: string;
   description: string;
   status?: PostStatus;
-  startTime: number;
-  endTime: number;
+  startTime: Timestamp;
+  endTime: Timestamp;
   organizer: {
     name: string;
     photoURL: string;
@@ -126,13 +126,14 @@ export type EventVenue = "online" | "offline";
 
 export type EventOnlineType = {
   type: "online";
-  link: string;
+  meetingLink: string;
 };
 
 export type EventOfflineType = {
   type: "offline";
   name: string;
   image: string;
+  mapsLink: string;
 };
 
 export type EventVenueType = EventOnlineType | EventOfflineType;
@@ -144,8 +145,8 @@ export class Event {
   title: string;
   description: string;
   _status: PostStatus;
-  startTime: number;
-  endTime: number;
+  startTime: Timestamp;
+  endTime: Timestamp;
   organizer: {
     name: string;
     photoURL: string;
@@ -189,7 +190,7 @@ export class Event {
   }
 
   static collectionRef() {
-    return collection(db, "events");
+    return collection(db, "events", "collections", "all_events");
   }
 
   private async generateUniqueId() {
@@ -204,7 +205,7 @@ export class Event {
   }
 
   private async idExistsinFirestore(id: string) {
-    const docRef = doc(db, "events", id);
+    const docRef = doc(db, "events", "collections", "all_events", id);
     const snapshot = await getDoc(docRef);
     return snapshot.exists();
   }
@@ -212,7 +213,13 @@ export class Event {
   async saveToFirestore() {
     const eventId = this.id ?? (await this.generateUniqueId());
 
-    const eventRef = doc(db, "events", eventId).withConverter(eventConverter);
+    const eventRef = doc(
+      db,
+      "events",
+      "collections",
+      "all_events",
+      eventId
+    ).withConverter(eventConverter);
 
     await setDoc(eventRef, this, { merge: true });
 
@@ -224,7 +231,13 @@ export class Event {
       throw new Error("Event ID is required to update the document");
     }
 
-    const eventRef = doc(db, "events", this.id).withConverter(eventConverter);
+    const eventRef = doc(
+      db,
+      "events",
+      "collections",
+      "all_events",
+      this.id
+    ).withConverter(eventConverter);
 
     await setDoc(eventRef, this, { merge: true });
 
@@ -236,7 +249,13 @@ export class Event {
       throw new Error("Event id is missing");
     }
 
-    const eventRef = doc(db, "events", id).withConverter(eventConverter);
+    const eventRef = doc(
+      db,
+      "events",
+      "collections",
+      "all_events",
+      id
+    ).withConverter(eventConverter);
 
     await deleteDoc(eventRef);
 
@@ -280,26 +299,70 @@ export class Event {
   //     this._flagshipDate = date ? date.format("DD-MM-YYYY") : null;
   //   }
 
-  static async getTodayFlagship(): Promise<Event | undefined> {
-    const eventRef = collection(db, "events").withConverter(eventConverter);
-    const _query = query(
-      eventRef,
-      where("flagshipDate", "==", dayjs().format("DD-MM-YYYY")),
-      limit(1),
-      orderBy("timestamp", "desc")
+  static async getClosestEvent() {
+    const now = Timestamp.fromDate(dayjs().toDate());
+
+    const eventsRef = collection(
+      db,
+      "events",
+      "collections",
+      "all_events"
+    ).withConverter(eventConverter);
+
+    // Query for upcoming events
+    const upcomingQuery = query(
+      eventsRef,
+      where("startTime", ">=", now),
+      orderBy("startTime", "asc"),
+      limit(1)
     );
+    const upcomingSnapshot = await getDocs(upcomingQuery);
 
-    const docs = await getDocs(_query);
+    if (!upcomingSnapshot.empty) {
+      const closestUpcomingEvent = flattenQueryData(upcomingSnapshot)[0];
+      return closestUpcomingEvent;
+    } else {
+      // If no upcoming events, query for past events
+      const pastQuery = query(
+        eventsRef,
+        where("startTime", "<", now),
+        orderBy("startTime", "desc"),
+        limit(1)
+      );
+      const pastSnapshot = await getDocs(pastQuery);
 
-    const events = flattenQueryData(docs);
-
-    const flagship = events[0];
-
-    if (!flagship) {
-      return (await Event.getAll({ _limit: 1, _flatten: true })).data[0];
+      if (!pastSnapshot.empty) {
+        const closestPastEvent = flattenQueryData(pastSnapshot)[0];
+        return closestPastEvent;
+      }
     }
 
-    return events[0];
+    return null;
+  }
+
+  static async fetchEventsForDateRange() {
+    const now = dayjs();
+    const startDate = Timestamp.fromDate(now.subtract(2, "month").toDate());
+    const endDate = Timestamp.fromDate(now.add(2, "month").toDate());
+
+    const eventsRef = collection(
+      db,
+      "events",
+      "collections",
+      "all_events"
+    ).withConverter(eventConverter);
+    const eventsQuery = query(
+      eventsRef,
+      where("startTime", ">=", startDate),
+      where("startTime", "<=", endDate),
+      orderBy("startTime", "asc")
+    );
+
+    console.log("Testing Date Range | startDate - ", startDate);
+    console.log("Testing Date Range | endDate - ", endDate);
+
+    const querySnapshot = await getDocs(eventsQuery);
+    return flattenQueryData(querySnapshot);
   }
 
   static async updatePublishStatusInFirestore(
@@ -310,7 +373,7 @@ export class Event {
       throw new Error("Event id is missing");
     }
 
-    const eventRef = doc(db, "events", id);
+    const eventRef = doc(db, "events", "collections", "all_events", id);
 
     await setDoc(
       eventRef,
@@ -352,7 +415,13 @@ export class Event {
   static async get(id: string, flatten: false): Promise<EventDocumentSnapshot>;
   static async get(id: string, flatten: true): Promise<Event>;
   static async get(id: string, flatten: boolean = false) {
-    const docRef = doc(db, "events", id).withConverter(eventConverter);
+    const docRef = doc(
+      db,
+      "events",
+      "collections",
+      "all_events",
+      id
+    ).withConverter(eventConverter);
     const data = await getDoc(docRef);
     return flatten ? flattenDocumentData(data) : data;
   }
@@ -409,7 +478,12 @@ export class Event {
       _userId,
       _status,
     } = queryParams ?? {};
-    const eventsRef = collection(db, "events").withConverter(eventConverter);
+    const eventsRef = collection(
+      db,
+      "events",
+      "collections",
+      "all_events"
+    ).withConverter(eventConverter);
     let _query = query(eventsRef, orderBy("timestamp", "desc"), limit(_limit));
 
     if (_userId) {
@@ -438,44 +512,6 @@ export class Event {
       }
     }
 
-    console.log("query - ", _query);
-
-    // if (_direction === "forward") {
-    //   if (_startAfter) {
-    //     _query = query(
-    //       eventsRef,
-    //       orderBy("timestamp", "desc"),
-    //       startAfter(_startAfter),
-    //       limit(_limit)
-    //     );
-    //   } else if (_startAt) {
-    //     const _doc = await getDoc(doc(eventsRef, _startAt as string));
-    //     _query = query(
-    //       eventsRef,
-    //       orderBy("timestamp", "desc"),
-    //       startAt(_doc),
-    //       limit(_limit)
-    //     );
-    //   }
-    // } else if (_direction === "backward") {
-    //   if (_startAfter) {
-    //     _query = query(
-    //       eventsRef,
-    //       orderBy("timestamp", "desc"),
-    //       endBefore(_startAfter),
-    //       limitToLast(_limit)
-    //     );
-    //   } else if (_startAt) {
-    //     const _doc = await getDoc(doc(eventsRef, _startAt as string));
-    //     _query = query(
-    //       eventsRef,
-    //       orderBy("timestamp", "desc"),
-    //       endAt(_doc),
-    //       limit(_limit)
-    //     );
-    //   }
-    // }
-
     const docs = await getDocs(_query);
 
     return {
@@ -490,7 +526,7 @@ export class Event {
   }
 
   static async markAsFlagship(id: string, date: Dayjs) {
-    const eventRef = doc(db, "events", id);
+    const eventRef = doc(db, "events", "collections", "all_events", id);
     const metadataRef = doc(db, "metadata", "flagshipDates");
 
     // Use a transaction to ensure consistency
@@ -531,28 +567,6 @@ export class Event {
   //   }
   // }
 }
-
-const sampleJSON = {
-  id: "123",
-  title: "Sample Event",
-  description: "This is a description of the event.",
-  startTime: 1672531199000,
-  endTime: 1672617599000,
-  organizer: {
-    name: "John Doe",
-    photoURL: "https://example.com/photo.jpg",
-    description: "Organizer of the event.",
-    email: "john.doe@example.com",
-    contact: "+1234567890",
-  },
-  venue: {
-    name: "Conference Hall",
-    image: "https://example.com/venue.jpg",
-  },
-  displayImage: "https://example.com/display.jpg",
-  isAllDay: false,
-  background: 4294901760,
-};
 
 export const eventConverter = {
   toFirestore: (event: Event) => {
