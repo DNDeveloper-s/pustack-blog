@@ -69,7 +69,9 @@ export const ErrorMasterComponent = (props: ErrorComponentProps) => {
         </div> */}
         <div className="flex flex-col gap-2 items-center justify-center">
           <h1 className="font-extrabold text-[50px]">Oops!</h1>
-          <p className="font-medium text-[40px]">Something went wrong</p>
+          <p className="font-medium text-[40px] text-center">
+            Something went wrong
+          </p>
           <div className="w-[90vw] max-w-[750px] rounded overflow-hidden">
             <div
               className="text-danger text-base font-bold cursor-pointer flex items-center bg-[#ddd8ad] py-3 px-5 justify-between"

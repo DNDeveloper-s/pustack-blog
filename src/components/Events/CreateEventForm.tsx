@@ -24,6 +24,7 @@ import { getRandomDarkHexColor } from "@/lib/colors";
 import { Event, EventVenueType } from "@/firebase/event";
 import { useCreateEvent } from "@/api/event";
 import { Timestamp } from "firebase/firestore";
+import DescriptionEditor from "./DescriptionEditor";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -284,8 +285,6 @@ export default function CreateEventForm() {
     </button>
   );
 
-  console.log("formState - ", formState, getValues());
-
   return (
     <form
       className="minerva-create-form"
@@ -309,13 +308,18 @@ export default function CreateEventForm() {
                 <input
                   // disabled={isPending}
                   className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the Post Title"
+                  placeholder="Enter the Event Title"
                   type="text"
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
                   }}
                   {...field}
                 />
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -327,18 +331,25 @@ export default function CreateEventForm() {
               <Controller
                 name="isAllDay"
                 render={({ field, fieldState, formState }) => (
-                  <Checkbox
-                    onChange={(e: any) => {
-                      field.onChange(e.target.checked);
-                    }}
-                    value={field.value}
-                    checked={field.value}
-                    ref={field.ref}
-                    name={field.name}
-                    disabled={field.disabled}
-                  >
-                    Is All Day
-                  </Checkbox>
+                  <>
+                    <Checkbox
+                      onChange={(e: any) => {
+                        field.onChange(e.target.checked);
+                      }}
+                      value={field.value}
+                      checked={field.value}
+                      ref={field.ref}
+                      name={field.name}
+                      disabled={field.disabled}
+                    >
+                      Is All Day
+                    </Checkbox>
+                    {fieldState.error?.message && (
+                      <p className="text-xs mt-1 text-danger-500">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </>
                 )}
               />
             </div>
@@ -363,17 +374,24 @@ export default function CreateEventForm() {
                 <Controller
                   name="endTime"
                   render={({ field, fieldState, formState }) => (
-                    <DatePicker
-                      showTime
-                      onOk={(date: any) => {
-                        field.onChange(dayjs(date).toISOString());
-                      }}
-                      placeholder="End Time"
-                      ref={field.ref}
-                      name={field.name}
-                      disabled={field.disabled}
-                      className="ant-picker-minerva-date"
-                    />
+                    <>
+                      <DatePicker
+                        showTime
+                        onOk={(date: any) => {
+                          field.onChange(dayjs(date).toISOString());
+                        }}
+                        placeholder="End Time"
+                        ref={field.ref}
+                        name={field.name}
+                        disabled={field.disabled}
+                        className="ant-picker-minerva-date"
+                      />
+                      {fieldState.error?.message && (
+                        <p className="text-xs mt-1 text-danger-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </>
                   )}
                 />
               )}
@@ -390,13 +408,21 @@ export default function CreateEventForm() {
                 <textarea
                   // disabled={isPending}
                   className="border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the Post Title"
+                  placeholder="Enter the Event Description, links are supported"
                   rows={4}
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
                   }}
                   {...field}
                 />
+                {/* <div className="w-full h-[108px] border bg-lightPrimary py-1 px-2 description-editor">
+                  <DescriptionEditor />
+                </div> */}
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -455,16 +481,24 @@ export default function CreateEventForm() {
                 <Controller
                   name="meetingLink"
                   render={({ field, fieldState, formState }) => (
-                    <input
-                      // disabled={isPending}
-                      className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                      placeholder="Link to the meeting"
-                      type="text"
-                      style={{
-                        fontVariationSettings: '"wght" 400,"opsz" 10',
-                      }}
-                      {...field}
-                    />
+                    <>
+                      <input
+                        // disabled={isPending}
+                        className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                        placeholder="Link to the meeting"
+                        type="text"
+                        style={{
+                          fontVariationSettings: '"wght" 400,"opsz" 10',
+                        }}
+                        {...field}
+                      />
+
+                      {fieldState.error?.message && (
+                        <p className="text-xs mt-1 text-danger-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </>
                   )}
                 />
               )}
@@ -473,31 +507,45 @@ export default function CreateEventForm() {
                   <Controller
                     name="venue_name"
                     render={({ field, fieldState, formState }) => (
-                      <input
-                        // disabled={isPending}
-                        className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                        placeholder="Event Venue Name"
-                        type="text"
-                        style={{
-                          fontVariationSettings: '"wght" 400,"opsz" 10',
-                        }}
-                        {...field}
-                      />
+                      <>
+                        <input
+                          // disabled={isPending}
+                          className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                          placeholder="Event Venue Name"
+                          type="text"
+                          style={{
+                            fontVariationSettings: '"wght" 400,"opsz" 10',
+                          }}
+                          {...field}
+                        />
+                        {fieldState.error?.message && (
+                          <p className="text-xs mt-1 text-danger-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </>
                     )}
                   />
                   <Controller
                     name="venue_maps_link"
                     render={({ field, fieldState, formState }) => (
-                      <input
-                        // disabled={isPending}
-                        className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                        placeholder="Event Venue Maps Link"
-                        type="text"
-                        style={{
-                          fontVariationSettings: '"wght" 400,"opsz" 10',
-                        }}
-                        {...field}
-                      />
+                      <>
+                        <input
+                          // disabled={isPending}
+                          className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                          placeholder="Event Venue Maps Link"
+                          type="text"
+                          style={{
+                            fontVariationSettings: '"wght" 400,"opsz" 10',
+                          }}
+                          {...field}
+                        />
+                        {fieldState.error?.message && (
+                          <p className="text-xs mt-1 text-danger-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </>
                     )}
                   />
                   <Upload
@@ -550,6 +598,11 @@ export default function CreateEventForm() {
                   }}
                   {...field}
                 />
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -570,6 +623,11 @@ export default function CreateEventForm() {
                   }}
                   {...field}
                 />
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -631,6 +689,11 @@ export default function CreateEventForm() {
                   }}
                   {...field}
                 />
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -651,6 +714,11 @@ export default function CreateEventForm() {
                   }}
                   {...field}
                 />
+                {fieldState.error?.message && (
+                  <p className="text-xs mt-1 text-danger-500">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </div>
             )}
           />

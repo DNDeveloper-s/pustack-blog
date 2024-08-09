@@ -30,8 +30,10 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "@/lib/dayjsConfig";
 import { useMemo } from "react";
+import { Dayjs } from "dayjs";
+import { Timestamp } from "firebase/firestore";
 
 export const useCreateEvent = (
   options?: UseMutationOptions<Event, Error, Event>
@@ -102,8 +104,153 @@ export const useGetClosestEvent = (
 export interface TransformedEvent {
   id: string;
   month_name: string;
+  full_year: string;
+  isCurrent: boolean;
   events: Event[];
 }
+
+/**
+ * id: "no-events-today",
+          title: "No events",
+          startTime: Timestamp.fromDate(today.toDate()),
+          description: "",
+ */
+
+type ActualEvent = {
+  exists: true;
+  data: Event;
+};
+
+type NoEventToday = {
+  exists: false;
+  data: {
+    id: string;
+    title: string;
+    startTime: Timestamp;
+    description: string;
+  };
+};
+
+type StructureEventType = ActualEvent | NoEventToday;
+
+export interface TransformedEventWeekStructure {
+  id: string;
+  month_name: string;
+  full_year: string;
+  isCurrent: boolean;
+  weeks: {
+    id: string;
+    start: string;
+    end: string;
+    isCurrentWeek: boolean;
+    events: StructureEventType[];
+  }[];
+}
+
+const transformEventsToWeekStructure = (
+  events: (Event | undefined)[],
+  currentDate: Dayjs
+): TransformedEventWeekStructure[] => {
+  const months: TransformedEventWeekStructure[] = [];
+
+  // Generate the list of months
+  for (let i = -2; i <= 2; i++) {
+    const monthDate = currentDate.add(i, "month");
+    const month = {
+      id: monthDate.format("MMMM").toLowerCase(),
+      month_name: monthDate.format("MMMM"),
+      full_year: monthDate.format("YYYY"),
+      isCurrent: i === 0,
+      weeks: [],
+    };
+
+    // Get all weeks within the month
+    const startOfMonth = monthDate.startOf("month");
+    const endOfMonth = monthDate.endOf("month");
+
+    let currentWeekStart = startOfMonth.startOf("week");
+    let currentWeekEnd = currentWeekStart.endOf("week");
+
+    while (currentWeekStart.isBefore(endOfMonth)) {
+      const isCurrentWeek =
+        currentDate.isSameOrAfter(currentWeekStart) &&
+        currentDate.isSameOrBefore(currentWeekEnd);
+      const week = {
+        id: `${currentWeekStart.format("MMM D")} - ${currentWeekEnd.format(
+          "MMM D"
+        )}`,
+        start: currentWeekStart.toISOString(),
+        end: currentWeekEnd.toISOString(),
+        events: [],
+        isCurrentWeek,
+      };
+
+      // @ts-ignore
+      month.weeks.push(week);
+
+      currentWeekStart = currentWeekStart.add(1, "week");
+      currentWeekEnd = currentWeekStart.endOf("week");
+    }
+
+    months.push(month);
+  }
+
+  // Assign events to the correct week
+  events.forEach((event) => {
+    if (!event) return;
+    const eventDate = dayjs(event.startTime.toDate());
+    const eventMonth = eventDate.format("MMMM");
+    const month = months.find((m: any) => m.month_name === eventMonth);
+
+    if (month) {
+      const week = month.weeks.find(
+        (w: any) =>
+          eventDate.isSameOrAfter(dayjs(w.start)) &&
+          eventDate.isSameOrBefore(dayjs(w.end))
+      );
+
+      if (week) {
+        week.events.push({
+          exists: true,
+          data: event,
+        });
+      }
+    }
+  });
+
+  // Ensure today's date is always included
+  const today = currentDate.startOf("day");
+  const todayMonth = today.format("MMMM");
+  const month = months.find((m) => m.month_name === todayMonth);
+
+  if (month) {
+    const todayWeek = month.weeks.find(
+      (w) =>
+        today.isSameOrAfter(dayjs(w.start)) &&
+        today.isSameOrBefore(dayjs(w.end))
+    );
+
+    if (todayWeek) {
+      const isTodayIncluded = todayWeek.events.some((event) =>
+        dayjs(event.data.startTime.toDate()).isSame(today, "day")
+      );
+
+      if (!isTodayIncluded) {
+        todayWeek.events.push({
+          exists: false,
+          data: {
+            id: "no-events-today",
+            title: "No events",
+            startTime: Timestamp.fromDate(today.toDate()),
+            description: "",
+          },
+        });
+      }
+    }
+  }
+
+  return months;
+};
 
 const transformEventsToMonthlyStructure = (
   events: (Event | undefined)[],
@@ -117,7 +264,9 @@ const transformEventsToMonthlyStructure = (
     months.push({
       id: monthDate.format("MMMM").toLowerCase(),
       month_name: monthDate.format("MMMM"),
+      full_year: monthDate.format("YYYY"),
       events: [],
+      isCurrent: i === 0,
     });
   }
 
@@ -154,7 +303,11 @@ export const useGetEventsForDateRange = (
 
   const transformedEvents = useMemo(() => {
     if (!queryData.data) return null;
-    return transformEventsToMonthlyStructure(queryData.data, dayjs());
+    console.log(
+      "transformEventsToWeekStructure - ",
+      transformEventsToWeekStructure(queryData.data, dayjs())
+    );
+    return transformEventsToWeekStructure(queryData.data, dayjs());
   }, [queryData.data]);
 
   return { ...queryData, transformedEvents };

@@ -14,16 +14,20 @@ export default function EventDetailPage({ _event }: { _event?: DocumentData }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  // max-w-[1440px]
+
   return (
     <main
-      className="max-w-[1440px] min-h-screen mx-auto px-3"
+      className="min-h-screen w-full"
       style={{
         overflow: isMobileScreen ? "unset" : "hidden",
       }}
     >
-      <Navbar scrollRef={scrollerRef} />
+      <div className="max-w-[1440px] mx-auto px-3">
+        <Navbar scrollRef={scrollerRef} />
+      </div>
       {isMobileScreen && (
-        <div className="py-2 mb-0 sticky top-0 bg-primary border-b border-dashed border-[#1f1d1a6f] z-40">
+        <div className="px-3 py-2 mb-0 sticky top-0 bg-primary border-b border-dashed border-[#1f1d1a6f] z-40">
           <h3
             className="text-[25px] flex items-center gap-1 cursor-pointer"
             onClick={() => {
@@ -48,9 +52,24 @@ export default function EventDetailPage({ _event }: { _event?: DocumentData }) {
         }}
         ref={scrollerRef}
       >
-        <div className="w-full h-full grid grid-cols-[1fr] md:grid-cols-[320px_1fr] lg:grid-cols-[350px_1fr] gap-4">
-          {!isMobileScreen && <EventSidebar />}
-          <EventDetails _event={_event} />
+        <div className="max-w-[1440px] w-full mx-auto px-3">
+          <div className="w-full h-full grid grid-cols-[1fr] md:grid-cols-[300px_1fr] lg:grid-cols-[315px_1fr] gap-4">
+            {!isMobileScreen && (
+              <div
+                className={
+                  "w-full sticky top-0 " +
+                  (isTabletScreen
+                    ? "h-[calc(100vh-220px)]"
+                    : isMobileScreen
+                    ? ""
+                    : "h-[calc(100vh-150px)]")
+                }
+              >
+                <EventSidebar />
+              </div>
+            )}
+            <EventDetails _event={_event} />
+          </div>
         </div>
       </div>
     </main>

@@ -14,6 +14,7 @@ import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
 import {
   attachUIDToAllThePosts,
+  signInWithApple,
   signInWithGoogle,
   signInWithLinkedin,
   signOut,
@@ -308,6 +309,20 @@ function NavbarDesktop({
                         }}
                       >
                         <span>GOOGLE</span>
+                      </div>
+                    </DropdownItem>
+                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
+                      <div
+                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
+                        style={{
+                          fontWeight: 600,
+                          fontVariationSettings: '"wght" 700,"opsz" 10',
+                        }}
+                        onClick={() => {
+                          signInWithApple();
+                        }}
+                      >
+                        <span>Apple</span>
                       </div>
                     </DropdownItem>
                     <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">

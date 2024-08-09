@@ -39,6 +39,18 @@ export async function signInWithGoogle() {
   }
 }
 
+export async function signInWithApple() {
+  const provider = new OAuthProvider("apple.com");
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    // Handle the signed-in user info here.
+    console.log("Apple Sign-In successful!", result);
+  } catch (error) {
+    console.error("Error signing in with Apple - ", error);
+  }
+}
+
 export async function signOut() {
   try {
     await auth.signOut();

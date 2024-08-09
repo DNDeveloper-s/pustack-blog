@@ -11,7 +11,6 @@ export function NavigationEvents() {
 
   useEffect(() => {
     const url = `${pathname}?${searchParams}`;
-    console.log("prevUrl.current - ", prevUrl.current);
     // console.log(url, document.referrer);
     // if (prevUrl.current === "/admin?") {
     //   const shouldProceed = window.confirm(

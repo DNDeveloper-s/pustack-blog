@@ -2902,7 +2902,8 @@ li[data-placeholder]::before {
   background: #fcfae4 !important;
 }
 
-.minerva-create-form > input::placeholder {
+.minerva-create-form input::placeholder,
+.minerva-create-form textarea::placeholder {
   letter-spacing: 0.02em;
   font-weight: 300;
   font-variation-settings: "wght" 400, "opsz" 10;
@@ -2950,4 +2951,13 @@ li[data-placeholder]::before {
   .overlay-black {
     @apply before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:opacity-65;
   }
+}
+
+.description-editor:focus-within {
+  outline: 2px solid #000;
+  border-radius: 4px;
+}
+
+.description-editor [data-slate-editor="true"] {
+  outline: none !important;
 }

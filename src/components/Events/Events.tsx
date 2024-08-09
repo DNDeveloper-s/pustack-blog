@@ -51,7 +51,7 @@ function EventCard({ isUpcoming }: { isUpcoming?: boolean }) {
   );
 }
 
-export default function Events() {
+export default function Events({ eventId }: { eventId?: string | null }) {
   const { isMobileScreen } = useScreenSize();
 
   const { data: event, error } = useGetClosestEvent({ enabled: true });
@@ -59,7 +59,7 @@ export default function Events() {
   useEffect(() => {
     if (!event?.id) return;
     if (!isMobileScreen) {
-      redirect("/events/" + event.id);
+      redirect("/events?event_id=" + event.id);
     } else {
       redirect("/events/list");
     }

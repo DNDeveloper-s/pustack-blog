@@ -1,8 +1,15 @@
-import { TransformedEvent, useGetEventsForDateRange } from "@/api/event";
+import {
+  TransformedEvent,
+  TransformedEventWeekStructure,
+  useGetEventsForDateRange,
+} from "@/api/event";
 import { getRandomDarkHexColor } from "@/lib/colors";
 import { Spinner } from "@nextui-org/spinner";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import AppImage from "../shared/AppImage";
+import { getMeetLinkDetails } from "./EventDetails";
 
 const NoEventIcon = (props: any) => (
   <svg
@@ -37,37 +44,98 @@ export default function EventSidebar(props: EventSidebarProps) {
     enabled: true,
   });
 
-  console.log("error - ", error, transformedEvents);
+  const currentMonthSectionRef = useCallback((node: HTMLDivElement) => {
+    node?.scrollIntoView();
+  }, []);
 
-  const renderEventList = (transformedEvent: TransformedEvent) => {
-    return transformedEvent.events.map((event) => (
-      <div
-        key={event.id}
-        className="grid grid-cols-[55px_1fr] md:grid-cols-[65px_1fr] lg:grid-cols-[70px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
-      >
-        <div className="flex flex-col py-1 items-center font-helvetica justify-start">
-          <p className="text-xs uppercase">
-            {dayjs(event.startTime.toDate()).format("ddd")}
-          </p>
-          <p className="text-xl font-medium">
-            {dayjs(event.startTime.toDate()).format("d")}
-          </p>
+  const renderEventList = (transformedEvent: TransformedEventWeekStructure) => {
+    return transformedEvent.weeks.map((week) => (
+      <div key={week.id}>
+        <div className="grid grid-cols-[50px_1fr] md:grid-cols-[70px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2">
+          <div></div>
+          <span className="text-sm font-helvetica">{week.id}</span>
         </div>
-        <div className="flex-1">
-          <Link href={`/events/${event.id}`}>
-            <div
-              className="w-full py-2 px-4 text-white rounded-xl text-sm font-helvetica"
-              style={{
-                backgroundColor: event.background ?? getRandomDarkHexColor(),
-              }}
-            >
-              <p className="font-bold">{event.title}</p>
-              <p className="text-xs mt-1">
-                {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
-                {dayjs(event.endTime.toDate()).format("h:mm A")}
-              </p>
-            </div>
-          </Link>
+        <div>
+          {week.events.map(({ data: event, exists }) => {
+            if (exists)
+              return (
+                <div
+                  key={event.id}
+                  className="grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
+                >
+                  <div className="flex flex-col py-1 items-center font-helvetica justify-start">
+                    <p className="text-xs uppercase">
+                      {dayjs(event.startTime.toDate()).format("ddd")}
+                    </p>
+                    <p className="text-lg font-medium">
+                      {dayjs(event.startTime.toDate()).format("D")}
+                    </p>
+                  </div>
+                  <div className="flex-1">
+                    <Link href={`/events?event_id=${event.id}`}>
+                      <div
+                        className="w-full flex gap-2 items-stretch py-2 px-4 text-white rounded-xl"
+                        style={{
+                          backgroundColor:
+                            event.background ?? getRandomDarkHexColor(),
+                        }}
+                      >
+                        <div className="text-sm font-helvetica flex-1">
+                          <p
+                            className="font-semibold line-clamp-2"
+                            title={event.title}
+                          >
+                            {event.title}
+                          </p>
+                          <p className="text-xs mt-0.5 text-white text-opacity-70">
+                            {event.venue.type === "online"
+                              ? `Online via ${
+                                  getMeetLinkDetails(event.venue.meetingLink)
+                                    .label
+                                }`
+                              : event.venue.name}
+                          </p>
+                          <p className="text-[11px] text-white text-opacity-60 mt-2">
+                            {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
+                            {dayjs(event.endTime.toDate()).format("h:mm A")}
+                          </p>
+                        </div>
+                        <div className="flex items-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full">
+                            <AppImage
+                              className="w-full h-full rounded-full object-cover"
+                              width={140}
+                              height={140}
+                              src={event.organizer.photoURL}
+                              alt=""
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              );
+
+            return (
+              <div
+                key={event.id}
+                className="grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
+              >
+                <div className="flex flex-col py-0 items-center font-helvetica justify-start">
+                  <p className="text-xs text-danger-800">
+                    {dayjs().format("ddd")}
+                  </p>
+                  <p className="text-lg font-medium w-8 h-8 rounded-full bg-danger-800 text-white flex items-center justify-center">
+                    {dayjs().format("D")}
+                  </p>
+                </div>
+                <div className="flex-1 h-full text-sm flex items-center">
+                  <p>No Events</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     ));
@@ -98,17 +166,22 @@ export default function EventSidebar(props: EventSidebarProps) {
       {!isLoading &&
         transformedEvents?.map((transformedEvent) => {
           const className =
-            "w-full h-[100px] bg-cover overlay-black text-white flex items-center justify-center bg-" +
+            "w-full h-[70px] bg-cover overlay-black bg-fixed text-white flex items-center justify-center bg-" +
             transformedEvent.id;
           return (
-            <section key={transformedEvent.id}>
+            <section
+              key={transformedEvent.id}
+              ref={transformedEvent.isCurrent ? currentMonthSectionRef : null}
+            >
               <div className={className}>
-                <span className="block relative text-3xl font-[600] font-helvetica">
-                  {transformedEvent.month_name}
+                <span className="block relative text-2xl font-[600] font-helvetica">
+                  {transformedEvent.month_name +
+                    " " +
+                    transformedEvent.full_year}
                 </span>
               </div>
               <div className="py-2">
-                {transformedEvent.events.length > 0
+                {transformedEvent.weeks.length > 0
                   ? renderEventList(transformedEvent)
                   : renderNoEventItem()}
               </div>
