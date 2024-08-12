@@ -277,14 +277,17 @@ export function AccountStepOne({
               />
             </div>
           </div>
-          <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
+          <Link
+            href={"/rsvp"}
+            className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
+          >
             <div className="bg-appBlack rounded p-2 text-primary w-full h-full flex items-center justify-center">
               <RSVPIcon style={{ width: "100%", height: "100%" }} />
             </div>
             <div>
               <span>RSVP&apos;ed Events</span>
             </div>
-          </div>
+          </Link>
           <div className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3">
             <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
               <BsFillInfoCircleFill className="text-sm" />

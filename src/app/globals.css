@@ -2949,7 +2949,7 @@ li[data-placeholder]::before {
 
 @layer components {
   .overlay-black {
-    @apply before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:opacity-65;
+    @apply before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:opacity-30;
   }
 }
 
@@ -2961,3 +2961,9 @@ li[data-placeholder]::before {
 .description-editor [data-slate-editor="true"] {
   outline: none !important;
 }
+
+/* .ant-segmented-item-selected,
+.ant-segmented-thumb {
+  background-color: #243bb5 !important;
+  color: #ffffff !important;
+} */

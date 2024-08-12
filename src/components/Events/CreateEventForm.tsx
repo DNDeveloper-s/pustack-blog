@@ -25,6 +25,7 @@ import { Event, EventVenueType } from "@/firebase/event";
 import { useCreateEvent } from "@/api/event";
 import { Timestamp } from "firebase/firestore";
 import DescriptionEditor from "./DescriptionEditor";
+import { useUser } from "@/context/UserContext";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -47,6 +48,7 @@ export default function CreateEventForm() {
 
   // Context
   const { openNotification } = useNotification();
+  const { user } = useUser();
 
   // Local State
   const [loading, setLoading] = useState(false);
@@ -165,7 +167,7 @@ export default function CreateEventForm() {
   const createEventHandler = async (data: CreateEventFormValues) => {
     console.log("data - ", data);
     try {
-      if (isUploading || isPending) return;
+      if (isUploading || isPending || !user) return;
       setIsUploading(true);
       validateAttachments("event_image");
       validateAttachments("organizer_image");
@@ -216,6 +218,12 @@ export default function CreateEventForm() {
           description: values.organizer_info,
           email: values.contact_email,
           contact: values.contact_phone,
+        },
+        author: {
+          name: user.name,
+          email: user.email,
+          uid: user.uid,
+          photoURL: user.image_url,
         },
         status: "published",
         venue: venueObject,

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth, db, getDoc, linkedinProvider } from "../firebase";
+import { appleProvider, auth, db, getDoc, linkedinProvider } from "../firebase";
 import {
   GoogleAuthProvider,
   NextOrObserver,
@@ -39,11 +39,13 @@ export async function signInWithGoogle() {
   }
 }
 
-export async function signInWithApple() {
-  const provider = new OAuthProvider("apple.com");
+export async function signInWithAppleAsync() {
+  return signInWithPopup(auth, appleProvider);
+}
 
+export async function signInWithApple() {
   try {
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, appleProvider);
     // Handle the signed-in user info here.
     console.log("Apple Sign-In successful!", result);
   } catch (error) {

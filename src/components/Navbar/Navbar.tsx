@@ -43,6 +43,7 @@ const DeleteAccountModal = dynamic(
 // import DeleteAccountModal from "./Accounts/DeleteAccountModal";
 import { useDisclosure } from "@nextui-org/modal";
 import { toDashCase } from "@/firebase/signal";
+import { useJoinModal } from "@/context/JoinModalContext";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -128,6 +129,7 @@ function NavbarDesktop({
   };
   const disclosureOptions = useDisclosure();
   const [isOnTop, setIsOnTop] = useState(true);
+  const { setOpen: openJoinModal } = useJoinModal();
 
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
@@ -271,76 +273,20 @@ function NavbarDesktop({
                 </Dropdown>
               )}
               {!user ? (
-                <Dropdown
-                  classNames={{
-                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
-                    base: "!p-[0_10px]",
-                  }}
+                <div
+                  className="flex items-center gap-1 cursor-pointer"
+                  onClick={() => openJoinModal(true)}
                 >
-                  <DropdownTrigger className="!scale-100 !opacity-100">
-                    <div className="flex items-center gap-1 cursor-pointer">
-                      <p
-                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                      >
-                        SIGN IN
-                      </p>
-                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
-                    </div>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    classNames={{
-                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
-                      base: "!p-[0_10px]",
+                  <p
+                    className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
                     }}
                   >
-                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
-                      <div
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                        onClick={() => {
-                          signInWithGoogle();
-                        }}
-                      >
-                        <span>GOOGLE</span>
-                      </div>
-                    </DropdownItem>
-                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
-                      <div
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                        onClick={() => {
-                          signInWithApple();
-                        }}
-                      >
-                        <span>Apple</span>
-                      </div>
-                    </DropdownItem>
-                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
-                      <div
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                        onClick={() => {
-                          signInWithLinkedin();
-                        }}
-                      >
-                        <span>LINKEDIN</span>
-                      </div>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                    SIGN IN
+                  </p>
+                </div>
               ) : (
                 // <div
                 //   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
@@ -373,7 +319,7 @@ function NavbarDesktop({
                 className={
                   "leading-[120%] text-[1rem] font-featureHeadline " +
                   (pathname.startsWith("/events")
-                    ? "text-appBlue"
+                    ? "text-appBlue uppercase"
                     : "text-appBlack")
                 }
                 href="/events"
@@ -421,7 +367,9 @@ function NavbarDesktop({
                 href={link.href}
                 className={
                   "font-featureBold " +
-                  (pathname === link.href ? "text-appBlue" : "text-appBlack")
+                  (pathname === link.href
+                    ? "text-appBlue uppercase"
+                    : "text-appBlack")
                 }
               >
                 {link.label}
@@ -594,6 +542,7 @@ function NavbarTablet({
   };
   const [isOnTop, setIsOnTop] = useState(true);
   const disclosureOptions = useDisclosure();
+  const { setOpen: openJoinModal } = useJoinModal();
 
   const pathname = usePathname();
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
@@ -723,62 +672,20 @@ function NavbarTablet({
                 </Dropdown>
               )}
               {!user ? (
-                <Dropdown
-                  classNames={{
-                    content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
-                    base: "!p-[0_10px]",
-                  }}
+                <div
+                  className="flex items-center gap-1 cursor-pointer"
+                  onClick={() => openJoinModal(true)}
                 >
-                  <DropdownTrigger className="!scale-100 !opacity-100">
-                    <div className="flex items-center gap-1 cursor-pointer">
-                      <p
-                        className="text-[10px] flex justify-end font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                      >
-                        SIGN IN
-                      </p>
-                      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
-                    </div>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    classNames={{
-                      list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
-                      base: "!p-[0_10px]",
+                  <p
+                    className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                    style={{
+                      fontWeight: 600,
+                      fontVariationSettings: '"wght" 700,"opsz" 10',
                     }}
                   >
-                    <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
-                      <div
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                        onClick={() => {
-                          signInWithGoogle();
-                        }}
-                      >
-                        <span>GOOGLE</span>
-                      </div>
-                    </DropdownItem>
-                    <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
-                      <div
-                        className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                        style={{
-                          fontWeight: 600,
-                          fontVariationSettings: '"wght" 700,"opsz" 10',
-                        }}
-                        onClick={() => {
-                          signInWithLinkedin();
-                        }}
-                      >
-                        <span>LINKEDIN</span>
-                      </div>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                    SIGN IN
+                  </p>
+                </div>
               ) : (
                 // <div
                 //   className="text-[10px] flex justify-end font-helvetica cursor-pointer text-primaryText"
@@ -809,7 +716,12 @@ function NavbarTablet({
           <div className="flex justify-center items-center relative w-full mt-9">
             <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
               <Link
-                className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
+                className={
+                  "leading-[120%] text-[1rem] font-featureHeadline " +
+                  (pathname.startsWith("events")
+                    ? "text-appBlue uppercase"
+                    : "text-appBlack")
+                }
                 href="#"
                 style={{
                   fontWeight: 395,
@@ -851,7 +763,12 @@ function NavbarTablet({
                   <Link
                     key={link.key}
                     href={link.href}
-                    className="text-appBlack font-featureBold flex items-center gap-2"
+                    className={
+                      "font-featureBold flex items-center gap-2 " +
+                      (pathname === link.href
+                        ? "text-appBlue uppercase"
+                        : "text-appBlack")
+                    }
                   >
                     <span
                       className="font-featureHeadline text-[1.5rem] text-appBlack"
@@ -1123,6 +1040,7 @@ function NavbarMobile() {
   const pathname = usePathname();
   const accountsDrawerRef = useRef<any>(null);
   const disclosureOptions = useDisclosure();
+  const { setOpen: openJoinModal } = useJoinModal();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1219,62 +1137,20 @@ function NavbarMobile() {
             </Dropdown>
           )}
           {!user ? (
-            <Dropdown
-              classNames={{
-                content: "!bg-primary !rounded-[4px] p-0 !min-w-[unset]",
-                base: "!p-[0_10px]",
-              }}
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onClick={() => openJoinModal(true)}
             >
-              <DropdownTrigger className="!scale-100 !opacity-100">
-                <div className="flex items-center gap-1 cursor-pointer">
-                  <p
-                    className="text-[10px] flex justify-end font-helvetica text-primaryText"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                  >
-                    SIGN IN
-                  </p>
-                  <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
-                </div>
-              </DropdownTrigger>
-              <DropdownMenu
-                classNames={{
-                  list: "p-0 m-0 divide-y divide-dashed divide-[#1f1d1a4d] !gap-0",
-                  base: "!p-[0_10px]",
+              <p
+                className="text-[10px] flex justify-end font-helvetica text-primaryText"
+                style={{
+                  fontWeight: 600,
+                  fontVariationSettings: '"wght" 700,"opsz" 10',
                 }}
               >
-                <DropdownItem className="!p-[4px_0_2px] !rounded-none !bg-transparent">
-                  <div
-                    className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                    onClick={() => {
-                      signInWithGoogle();
-                    }}
-                  >
-                    <span>GOOGLE</span>
-                  </div>
-                </DropdownItem>
-                <DropdownItem className="!p-[2px_0_4px] !rounded-none !bg-transparent">
-                  <div
-                    className="text-[10px] flex justify-start font-helvetica text-primaryText"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                    onClick={() => {
-                      signInWithLinkedin();
-                    }}
-                  >
-                    <span>LINKEDIN</span>
-                  </div>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                SIGN IN
+              </p>
+            </div>
           ) : (
             <div
               onClick={() => {
@@ -1289,7 +1165,7 @@ function NavbarMobile() {
           </div> */}
         </div>
       </div>
-      <div className="flex justify-center items-center relative w-full mt-9">
+      {/* <div className="flex justify-center items-center relative w-full mt-9">
         <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
           <Link
             className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
@@ -1301,16 +1177,6 @@ function NavbarMobile() {
           >
             Events
           </Link>
-          {/* <Link
-            className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
-            href="#"
-            style={{
-              fontWeight: 395,
-              fontVariationSettings: '"wght" 495,"opsz" 10',
-            }}
-          >
-            Newsletters
-          </Link> */}
         </div>
         <div
           className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px]"
@@ -1318,9 +1184,9 @@ function NavbarMobile() {
         >
           <Image src={isNavOpen ? navClose : navOpen} alt="Open Navigation" />
         </div>
-      </div>
+      </div> */}
       <div
-        className="overflow-hidden transition-all"
+        className="overflow-hidden transition-all mt-6"
         style={{
           maxHeight: isNavOpen ? "450px" : 0,
         }}

@@ -9,7 +9,6 @@ export const API_QUERY = {
     topics?: string[]
   ) => ["query-posts", userId, status?.join(","), sort, dateRange, topics],
   GET_CLOSEST_EVENT: ["get-closest-event"],
-  QUERY_EVENTS: () => ["query-events"],
   QUERY_SAVED_POSTS: (userId?: string | null | undefined) => [
     "query-saved-posts",
     userId,
@@ -34,6 +33,17 @@ export const API_QUERY = {
     startAt?: string | string[],
     status?: string
   ) => ["query-signals", userId, limit, startAt, status],
+  QUERY_EVENTS: (
+    userId?: string,
+    limit?: number,
+    startAt?: string | string[],
+    occur_in?: string | null
+  ) => ["query-events", userId, limit, startAt, occur_in],
+  QUERY_RSVP_EVENTS: (userId?: string, occur_in?: string | null) => [
+    "query-rsvp-events",
+    userId,
+    occur_in,
+  ],
   GET_SIGNAL_BY_ID: (signalId?: string | null) => [
     "get-signal-by-id",
     signalId,

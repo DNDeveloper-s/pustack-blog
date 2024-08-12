@@ -101,6 +101,7 @@ interface EventParams {
   isAllDay: boolean;
   background: string;
   timestamp?: string;
+  author: Author;
 }
 
 interface QueryParams {
@@ -110,7 +111,7 @@ interface QueryParams {
   _startAt?: string | string[];
   _direction?: "forward" | "backward";
   _userId?: string;
-  _status?: string;
+  _occur_in?: "upcoming" | "past";
 }
 
 const headings = {
@@ -159,6 +160,7 @@ export class Event {
   isAllDay: boolean;
   background: string;
   timestamp?: string | undefined;
+  readonly author: Author;
 
   get id(): string | undefined {
     if (this._id) return this._id;
@@ -187,6 +189,7 @@ export class Event {
     this.isAllDay = params.isAllDay;
     this.background = params.background;
     this.timestamp = params.timestamp;
+    this.author = params.author;
   }
 
   static collectionRef() {
@@ -342,8 +345,8 @@ export class Event {
 
   static async fetchEventsForDateRange() {
     const now = dayjs();
-    const startDate = Timestamp.fromDate(now.subtract(2, "month").toDate());
-    const endDate = Timestamp.fromDate(now.add(2, "month").toDate());
+    const startDate = Timestamp.fromDate(now.toDate());
+    const endDate = Timestamp.fromDate(now.add(1, "month").toDate());
 
     const eventsRef = collection(
       db,
@@ -357,9 +360,6 @@ export class Event {
       where("startTime", "<=", endDate),
       orderBy("startTime", "asc")
     );
-
-    console.log("Testing Date Range | startDate - ", startDate);
-    console.log("Testing Date Range | endDate - ", endDate);
 
     const querySnapshot = await getDocs(eventsQuery);
     return flattenQueryData(querySnapshot);
@@ -464,10 +464,8 @@ export class Event {
     _startAt,
     _direction,
     _userId,
-    _status,
-  }: QueryParams & { _flatten: true }): Promise<
-    GetAllReturnType<EventQuerySnapshot>
-  >;
+    _occur_in,
+  }: QueryParams & { _flatten: true }): Promise<GetAllReturnType<Event[]>>;
   static async getAll(queryParams?: QueryParams) {
     const {
       _startAfter,
@@ -475,9 +473,12 @@ export class Event {
       _flatten,
       _startAt,
       _direction = "forward",
+      _occur_in,
       _userId,
-      _status,
     } = queryParams ?? {};
+
+    console.log("queryParams - ", queryParams);
+
     const eventsRef = collection(
       db,
       "events",
@@ -490,8 +491,12 @@ export class Event {
       _query = query(_query, where("author.uid", "==", _userId));
     }
 
-    if (_status) {
-      _query = query(_query, where("status", "==", _status));
+    const currentDate = Timestamp.fromDate(dayjs().toDate());
+    // occur_in = past | upcoming
+    if (_occur_in === "past") {
+      _query = query(_query, where("startTime", "<", currentDate));
+    } else if (_occur_in === "upcoming") {
+      _query = query(_query, where("startTime", ">=", currentDate));
     }
 
     if (_direction === "forward") {
@@ -551,6 +556,53 @@ export class Event {
     });
   }
 
+  static async getRsvpedEventsForUser(
+    userId: string,
+    occurIn?: "upcoming" | "past"
+  ) {
+    // Step 1: Query the RSVP collection for events the user has RSVP'ed to
+    const rsvpRef = collection(db, "events", "collections", "rsvp");
+    const rsvpQuery = query(rsvpRef, where("uid", "==", userId));
+    const rsvpDocs = await getDocs(rsvpQuery);
+
+    // Step 2: Extract the event IDs from the RSVP documents
+    const eventIds = rsvpDocs.docs.map((doc) => doc.data().eventId);
+
+    if (eventIds.length === 0) {
+      return []; // No RSVP'ed events found for this user
+    }
+
+    // Step 3: Fetch the event details for each eventId
+    const eventsRef = collection(
+      db,
+      "events",
+      "collections",
+      "all_events"
+    ).withConverter(eventConverter);
+    const currentTimestamp = dayjs().toDate(); // Use dayjs to get the current timestamp
+
+    let eventPromises = eventIds.map((eventId) =>
+      getDoc(doc(eventsRef, eventId))
+    );
+
+    const eventDocs = await Promise.all(eventPromises);
+
+    // Step 4: Filter events based on the occur_in parameter
+    const filteredEvents = eventDocs
+      .map((eventDoc) => eventDoc.data())
+      .filter((event) => {
+        if (!event) return false;
+        if (occurIn === "upcoming") {
+          return event.startTime.toDate() >= currentTimestamp;
+        } else if (occurIn === "past") {
+          return event.startTime.toDate() < currentTimestamp;
+        }
+        return true; // If no filtering is needed
+      });
+
+    return filteredEvents;
+  }
+
   // static async getTodaysFlagship(): Promise<Event> {
   //   const metadataRef = doc(db, "metadata", "flagshipDates");
 
@@ -588,6 +640,7 @@ export const eventConverter = {
       isAllDay: event.isAllDay,
       background: event.background,
       timestamp: serverTimestamp(),
+      author: event.author,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -606,6 +659,7 @@ export const eventConverter = {
       isAllDay: data.isAllDay,
       background: data.background,
       timestamp: data.timestamp.toDate().toISOString(),
+      author: data.author,
     });
   },
 };

@@ -57,7 +57,7 @@ function EventCard({ event }: EventCardProps) {
           transform: `scale(${isActive ? 1 : 0.9})`,
           opacity: isActive ? 1 : 0.75,
           boxShadow: isActive
-            ? "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"
+            ? "0 6px 12px rgba(0, 0, 0, 0.15),  0 3px 6px rgba(0, 0, 0, 0.1), 0 0 15px rgba(255, 140, 0, 0.7)"
             : "none",
         }}
       >
@@ -136,9 +136,11 @@ export default function EventSidebar(props: EventSidebarProps) {
   const renderEventList = (transformedEvent: TransformedEventWeekStructure) => {
     return transformedEvent.weeks.map((week) => (
       <div key={week.id}>
-        <div className="grid grid-cols-[50px_1fr] md:grid-cols-[70px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2">
+        <div className="grid grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2">
           <div></div>
-          <span className="text-sm font-helvetica">{week.id}</span>
+          <span className="text-xs font-helvetica text-[#a0a4aa]">
+            {week.id}
+          </span>
         </div>
         <div>
           {week.events.map(({ data: event, exists }) => {
@@ -148,15 +150,11 @@ export default function EventSidebar(props: EventSidebarProps) {
             return (
               <div
                 key={event.id}
-                className="grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
+                className="grid grid-cols-[45px_1fr] gap-2 items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
               >
                 <div className="flex flex-col py-0 items-center font-helvetica justify-start">
-                  <p className="text-xs text-danger-800">
-                    {dayjs().format("ddd")}
-                  </p>
-                  <p className="text-lg font-medium w-8 h-8 rounded-full bg-danger-800 text-white flex items-center justify-center">
-                    {dayjs().format("D")}
-                  </p>
+                  <p className="text-xs uppercase">{dayjs().format("ddd")}</p>
+                  <p className="text-lg font-medium">{dayjs().format("D")}</p>
                 </div>
                 <div className="flex-1 h-full text-sm flex items-center">
                   <p>No Events</p>

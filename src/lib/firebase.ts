@@ -63,6 +63,17 @@ linkedinProvider.setCustomParameters({
   client_secret: "kAo7iKUzPcwcHNEj",
 });
 
+const appleProvider = new OAuthProvider("apple.com");
+appleProvider.addScope("email");
+appleProvider.addScope("name");
+
 export default app;
 
-export { doc, getDoc, setDoc, serverTimestamp, linkedinProvider };
+export {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  appleProvider,
+  linkedinProvider,
+};

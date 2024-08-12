@@ -379,6 +379,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
           isAllDay: _event.isAllDay,
           background: _event.background,
           timestamp: _event.timestamp,
+          author: _event.author,
         })
       );
     } else {

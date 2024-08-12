@@ -24,8 +24,12 @@ import { API_QUERY } from "@/config/api-query";
 import { Event } from "@/firebase/event";
 import {
   QueryFunctionContext,
+  QueryKey,
+  UseInfiniteQueryResult,
   UseMutationOptions,
   UseQueryOptions,
+  UseQueryResult,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
@@ -154,7 +158,7 @@ const transformEventsToWeekStructure = (
   const months: TransformedEventWeekStructure[] = [];
 
   // Generate the list of months
-  for (let i = -2; i <= 2; i++) {
+  for (let i = 0; i <= 1; i++) {
     const monthDate = currentDate.add(i, "month");
     const month = {
       id: monthDate.format("MMMM").toLowerCase(),
@@ -291,7 +295,6 @@ export const useGetEventsForDateRange = (
 ) => {
   const getEventsForDateRange = async () => {
     const events = await Event.fetchEventsForDateRange();
-    console.log("Testing Date Range | events - ", events);
     return events;
   };
 
@@ -303,12 +306,108 @@ export const useGetEventsForDateRange = (
 
   const transformedEvents = useMemo(() => {
     if (!queryData.data) return null;
-    console.log(
-      "transformEventsToWeekStructure - ",
-      transformEventsToWeekStructure(queryData.data, dayjs())
-    );
     return transformEventsToWeekStructure(queryData.data, dayjs());
   }, [queryData.data]);
 
   return { ...queryData, transformedEvents };
+};
+
+export const useQueryEvents = ({
+  // initialData,
+  initialPageParam,
+  startAt,
+  limit = 10,
+  userId,
+  enabled = true,
+  occur_in,
+}: {
+  // initialData: Signal[];
+  initialPageParam?: string;
+  startAt?: string | string[];
+  limit?: number;
+  userId?: string;
+  occur_in?: "past" | "upcoming";
+  enabled?: boolean;
+}): UseInfiniteQueryResult & { events: Event[] | undefined } => {
+  const queryEvents = async (
+    pageParam: any,
+    queryKey: QueryKey,
+    direction: "forward" | "backward"
+  ) => {
+    const [, userId, limit, startAt, occur_in] = queryKey;
+    const events = await Event.getAll({
+      _flatten: true,
+      _startAfter: pageParam,
+      _limit: limit as number,
+      _startAt: startAt as string | string[],
+      _direction: direction,
+      _userId: userId as string,
+      _occur_in: occur_in as any,
+    });
+    console.log("events | 346 - ", events);
+    return events;
+  };
+
+  const query = useInfiniteQuery({
+    queryKey: API_QUERY.QUERY_EVENTS(userId, limit, startAt, occur_in),
+    queryFn: ({ pageParam, queryKey, direction }: any) =>
+      queryEvents(pageParam, queryKey, direction),
+    // initialData: {
+    //   pages: [{ data: initialData, lastDoc: undefined as any }],
+    //   pageParams: [],
+    // },
+    initialPageParam,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.lastDoc || lastPage?.data?.length < limit) return undefined;
+      return lastPage.lastDoc as any;
+    },
+    getPreviousPageParam: (firstPage, allPages) => {
+      if (!firstPage.firstDoc || firstPage?.data?.length < limit)
+        return undefined;
+      return firstPage.firstDoc as any;
+    },
+    enabled,
+  });
+
+  const events = useMemo(() => {
+    return query.data?.pages.map((page) => page.data).flat();
+  }, [query.data]);
+
+  return {
+    ...query,
+    events,
+  };
+};
+
+export const useQueryRsvpEvents = ({
+  userId,
+  enabled = true,
+  occur_in,
+}: {
+  userId?: string;
+  occur_in?: "past" | "upcoming";
+  enabled?: boolean;
+}) => {
+  const queryEvents = async ({ queryKey }: QueryFunctionContext) => {
+    const [, userId, occur_in] = queryKey;
+    if (!userId) {
+      throw new Error("User not logged in");
+    }
+    const events = await Event.getRsvpedEventsForUser(
+      userId as string,
+      occur_in as any
+    );
+    console.log("events | 346 - ", events);
+    return events;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.QUERY_RSVP_EVENTS(userId, occur_in),
+    queryFn: queryEvents,
+    // initialData: {
+    //   pages: [{ data: initialData, lastDoc: undefined as any }],
+    //   pageParams: [],
+    // },
+    enabled,
+  });
 };
