@@ -849,7 +849,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 //     </Link>
                 //   </div>
                 // </div>
-                <Link href={event.venue.meetingLink ?? "#"}>
+                <Link target="_blank" href={event.venue.meetingLink ?? "#"}>
                   <div className="flex-1 flex items-center gap-3 cursor-pointer">
                     <div>
                       {getMeetLinkDetails(event.venue.meetingLink).icon}

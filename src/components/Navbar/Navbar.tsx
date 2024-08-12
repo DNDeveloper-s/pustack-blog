@@ -370,7 +370,12 @@ function NavbarDesktop({
           <div className="flex justify-center items-center relative w-full my-3">
             <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
               <Link
-                className="text-appBlack leading-[120%] text-[1rem] font-featureHeadline"
+                className={
+                  "leading-[120%] text-[1rem] font-featureHeadline " +
+                  (pathname.startsWith("/events")
+                    ? "text-appBlue"
+                    : "text-appBlack")
+                }
                 href="/events"
                 style={{
                   fontWeight: 395,
@@ -416,9 +421,7 @@ function NavbarDesktop({
                 href={link.href}
                 className={
                   "font-featureBold " +
-                  (pathname === link.href
-                    ? "text-primaryText"
-                    : "text-appBlack")
+                  (pathname === link.href ? "text-appBlue" : "text-appBlack")
                 }
               >
                 {link.label}

@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import AppImage from "../shared/AppImage";
 import { getMeetLinkDetails } from "./EventDetails";
+import { Event } from "@/firebase/event";
+import { useSearchParams } from "next/navigation";
 
 const NoEventIcon = (props: any) => (
   <svg
@@ -38,6 +40,89 @@ const NoEventIcon = (props: any) => (
   </svg>
 );
 
+interface EventCardProps {
+  event: Event;
+}
+function EventCard({ event }: EventCardProps) {
+  const searchParams = useSearchParams();
+
+  const isActive = searchParams.get("event_id") === event.id;
+
+  return (
+    <Link href={`/events?event_id=${event.id}`}>
+      <div
+        className="w-full flex gap-2 items-stretch py-2 px-4 text-white rounded-xl transition-all"
+        style={{
+          backgroundColor: event.background ?? getRandomDarkHexColor(),
+          transform: `scale(${isActive ? 1 : 0.9})`,
+          opacity: isActive ? 1 : 0.75,
+          boxShadow: isActive
+            ? "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"
+            : "none",
+        }}
+      >
+        <div className="text-sm font-helvetica flex-1">
+          <p className="font-semibold line-clamp-2" title={event.title}>
+            {event.title}
+          </p>
+          <p className="text-xs mt-0.5 text-white text-opacity-70">
+            {event.venue.type === "online"
+              ? `Online via ${
+                  getMeetLinkDetails(event.venue.meetingLink).label
+                }`
+              : event.venue.name}
+          </p>
+          <p className="text-[11px] text-white text-opacity-60 mt-2">
+            {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
+            {dayjs(event.endTime.toDate()).format("h:mm A")}
+          </p>
+        </div>
+        <div className="flex items-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full">
+            <AppImage
+              className="w-full h-full rounded-full object-cover"
+              width={140}
+              height={140}
+              src={event.organizer.photoURL}
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+interface EventSidebarItemProps {
+  event: Event;
+}
+function EventSidebarItem({ event }: EventSidebarItemProps) {
+  const searchParams = useSearchParams();
+
+  const isActive = searchParams.get("event_id") === event.id;
+
+  return (
+    <div
+      className={
+        "grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2 transition-all " +
+        (isActive ? "bg-primary" : "transparent")
+      }
+    >
+      <div className="flex flex-col py-1 items-center font-helvetica justify-start">
+        <p className="text-xs uppercase">
+          {dayjs(event.startTime.toDate()).format("ddd")}
+        </p>
+        <p className="text-lg font-medium">
+          {dayjs(event.startTime.toDate()).format("D")}
+        </p>
+      </div>
+      <div className="flex-1">
+        <EventCard event={event} />
+      </div>
+    </div>
+  );
+}
+
 interface EventSidebarProps {}
 export default function EventSidebar(props: EventSidebarProps) {
   const { transformedEvents, isLoading, error } = useGetEventsForDateRange({
@@ -58,64 +143,7 @@ export default function EventSidebar(props: EventSidebarProps) {
         <div>
           {week.events.map(({ data: event, exists }) => {
             if (exists)
-              return (
-                <div
-                  key={event.id}
-                  className="grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
-                >
-                  <div className="flex flex-col py-1 items-center font-helvetica justify-start">
-                    <p className="text-xs uppercase">
-                      {dayjs(event.startTime.toDate()).format("ddd")}
-                    </p>
-                    <p className="text-lg font-medium">
-                      {dayjs(event.startTime.toDate()).format("D")}
-                    </p>
-                  </div>
-                  <div className="flex-1">
-                    <Link href={`/events?event_id=${event.id}`}>
-                      <div
-                        className="w-full flex gap-2 items-stretch py-2 px-4 text-white rounded-xl"
-                        style={{
-                          backgroundColor:
-                            event.background ?? getRandomDarkHexColor(),
-                        }}
-                      >
-                        <div className="text-sm font-helvetica flex-1">
-                          <p
-                            className="font-semibold line-clamp-2"
-                            title={event.title}
-                          >
-                            {event.title}
-                          </p>
-                          <p className="text-xs mt-0.5 text-white text-opacity-70">
-                            {event.venue.type === "online"
-                              ? `Online via ${
-                                  getMeetLinkDetails(event.venue.meetingLink)
-                                    .label
-                                }`
-                              : event.venue.name}
-                          </p>
-                          <p className="text-[11px] text-white text-opacity-60 mt-2">
-                            {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
-                            {dayjs(event.endTime.toDate()).format("h:mm A")}
-                          </p>
-                        </div>
-                        <div className="flex items-center flex-shrink-0">
-                          <div className="w-8 h-8 rounded-full">
-                            <AppImage
-                              className="w-full h-full rounded-full object-cover"
-                              width={140}
-                              height={140}
-                              src={event.organizer.photoURL}
-                              alt=""
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              );
+              return <EventSidebarItem key={event.id} event={event} />;
 
             return (
               <div
