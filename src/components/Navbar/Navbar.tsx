@@ -44,6 +44,7 @@ const DeleteAccountModal = dynamic(
 import { useDisclosure } from "@nextui-org/modal";
 import { toDashCase } from "@/firebase/signal";
 import { useJoinModal } from "@/context/JoinModalContext";
+import useScreenSize from "@/hooks/useScreenSize";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -1186,7 +1187,7 @@ function NavbarMobile() {
         </div>
       </div> */}
       <div
-        className="overflow-hidden transition-all mt-6"
+        className="overflow-hidden transition-all mt-1"
         style={{
           maxHeight: isNavOpen ? "450px" : 0,
         }}
@@ -1313,14 +1314,18 @@ export default function Navbar({
 }: {
   scrollRef?: React.RefObject<HTMLDivElement>;
 }) {
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const isTabletScreen = useMediaQuery({ maxWidth: 1024, minWidth: 769 });
   const isDesktopScreen = useMediaQuery({ minWidth: 1025 });
   const isMobileScreen = useMediaQuery({ maxWidth: 768 });
+  const { isSmallScreen } = useScreenSize();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (isMobileScreen && pathname === "/events/list") return null;
 
   return mounted ? (
     <>

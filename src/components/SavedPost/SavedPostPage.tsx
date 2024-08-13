@@ -22,9 +22,11 @@ import { db } from "@/lib/firebase";
 import { API_QUERY } from "@/config/api-query";
 import { NotificationPlacements } from "antd/es/notification/interface";
 import { SnackbarContent } from "../AdminEditor/AdminPage";
+import { NoPostIcon } from "../Me/Posts/PostsEntry";
+import { Spinner } from "@nextui-org/spinner";
 
 export default function SavedPostPage() {
-  const { data: posts, error } = useQuerySavedPosts();
+  const { data: posts, error, isLoading } = useQuerySavedPosts();
 
   const { user } = useUser();
   const qc = useQueryClient();
@@ -41,6 +43,9 @@ export default function SavedPostPage() {
     if (smallDesktop) return 3;
     return 4;
   }, [smallDesktop, miniTab]);
+
+  const noPost = !isLoading && (!posts || posts.length === 0);
+  const hasPost = posts && posts.length > 0;
 
   const chunkedPosts = useMemo(() => {
     return chunk(posts ?? [], itemInRowCount);
@@ -106,54 +111,66 @@ export default function SavedPostPage() {
             <FilterModal filters={filters} handleApply={handleFiltersApply} />
           </div> */}
           </div>
-          {isMobileScreen ? (
-            <div className="grid grid-cols-1 gap-3">
-              {posts?.map((post: Post) => (
-                <SavedPostItem
-                  key={post.id}
-                  post={post}
-                  isPending={isPending === post?.id}
-                  handleBookMark={(bookmarked: boolean) =>
-                    handleBookMark(post, bookmarked)
-                  }
-                />
-              ))}
+          {isLoading && (
+            <div className="w-full flex flex-col gap-2 justify-center items-center py-2 text-tertiary text-xs">
+              <Spinner label="Loading Posts" size="lg" />
             </div>
-          ) : (
-            <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-              {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
-                <div
-                  key={i}
-                  className={
-                    "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
-                    gridClassName
-                  }
-                >
-                  {postChunkOf2.map((post, j) => (
-                    <div
-                      key={post.id}
-                      className={
-                        j % itemInRowCount === itemInRowCount - 1
-                          ? "pl-3"
-                          : j % itemInRowCount === 0
-                          ? "pr-3"
-                          : "px-3"
-                      }
-                    >
-                      <BlogWithAuthor
-                        linkClassName={"h-full block"}
-                        size="sm"
-                        post={post}
-                        showUnBookmarkButton
-                        handleBookMark={(bookmarked) =>
-                          handleBookMark(post, bookmarked)
+          )}
+          {hasPost &&
+            (isMobileScreen ? (
+              <div className="grid grid-cols-1 gap-3">
+                {posts?.map((post: Post) => (
+                  <SavedPostItem
+                    key={post.id}
+                    post={post}
+                    isPending={isPending === post?.id}
+                    handleBookMark={(bookmarked: boolean) =>
+                      handleBookMark(post, bookmarked)
+                    }
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+                {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
+                  <div
+                    key={i}
+                    className={
+                      "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                      gridClassName
+                    }
+                  >
+                    {postChunkOf2.map((post, j) => (
+                      <div
+                        key={post.id}
+                        className={
+                          j % itemInRowCount === itemInRowCount - 1
+                            ? "pl-3"
+                            : j % itemInRowCount === 0
+                            ? "pr-3"
+                            : "px-3"
                         }
-                        isPending={isPending === post?.id}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ))}
+                      >
+                        <BlogWithAuthor
+                          linkClassName={"h-full block"}
+                          size="sm"
+                          post={post}
+                          showUnBookmarkButton
+                          handleBookMark={(bookmarked) =>
+                            handleBookMark(post, bookmarked)
+                          }
+                          isPending={isPending === post?.id}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          {noPost && (
+            <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
+              <NoPostIcon className="w-16" />
+              <p className="text-tertiary">No Saved Posts</p>
             </div>
           )}
         </div>

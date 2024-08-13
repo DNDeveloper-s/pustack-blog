@@ -411,3 +411,84 @@ export const useQueryRsvpEvents = ({
     enabled,
   });
 };
+
+export const useMutateRSVPNow = (
+  options?: UseMutationOptions<
+    any,
+    Error,
+    {
+      eventId: string;
+      userEmail: string;
+      userId?: string;
+      enableRSVP: boolean;
+    }
+  >
+) => {
+  const qc = useQueryClient();
+
+  const mutateRSVPNow = async ({
+    eventId,
+    userId,
+    userEmail,
+    enableRSVP,
+  }: {
+    eventId: string;
+    userEmail: string;
+    userId?: string;
+    enableRSVP: boolean;
+  }) => {
+    console.log(
+      "RSVP Mutation Options - ",
+      eventId,
+      userId,
+      userEmail,
+      enableRSVP
+    );
+    if (enableRSVP === true) await Event.rsvpEvent(eventId, userEmail, userId);
+    else await Event.unRsvpEvent(eventId, userEmail, userId);
+  };
+
+  return useMutation({
+    mutationFn: mutateRSVPNow,
+    onSettled: (data, error, variables) => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_RSVP_EVENTS()[0];
+        },
+      });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_EVENT_BY_ID(variables.eventId),
+      });
+
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.CHECK_USER_RSVP()[0];
+        },
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
+export const useCheckUserRSVP = (
+  eventId?: string,
+  userEmail?: string | null | undefined,
+  userId?: string | null | undefined
+) => {
+  const checkUserRSVP = async ({ queryKey }: QueryFunctionContext) => {
+    const [, eventId, userEmail, userId] = queryKey;
+    if (!userEmail && !userId) return false;
+    const rsvp = await Event.checkUserRSVP(
+      eventId as string,
+      userEmail as string,
+      userId as string
+    );
+    return rsvp;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.CHECK_USER_RSVP(eventId, userEmail, userId),
+    queryFn: checkUserRSVP,
+  });
+};

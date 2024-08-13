@@ -340,7 +340,11 @@ const MapEmbed = ({ mapLink }: { mapLink: string }) => {
   );
 };
 
-export default function EventDetails({ _event }: { _event?: DocumentData }) {
+export default function EventDetailsDesktop({
+  _event,
+}: {
+  _event?: DocumentData;
+}) {
   const params = useParams();
   const [event, setEvent] = useState<Event | null | undefined>(null);
   const { user } = useUser();
@@ -432,53 +436,39 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
   };
 
   return (
-    <>
+    <div className="w-full h-full pb-10 overflow-auto">
       <div
-        className="h-[220px] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-50 relative"
-        style={{
-          backgroundImage: `url(${event.displayImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        ref={ref}
+        className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_20rem] my-6 gap-4 lg:gap-0"
       >
-        {/* <Image
-            width={500}
-            className="w-full h-full object-cover"
-            height={600}
-            src={imageUrl}
-            alt="event"
-          /> */}
-        <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-6 px-3">
-          <p className="font-featureBold text-[25px] text-white line-clamp-3">
-            {event.title}
-          </p>
-        </div>
-      </div>
-      <div className="w-full h-screen bg-primary mt-[-20px] relative rounded-t-[18px]">
-        <div className="w-full h-full pb-10 overflow-auto">
-          <div
-            ref={ref}
-            className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_18.3125rem] my-6 gap-4 lg:gap-0"
-          >
-            <div className="pb-5 lg:pb-0 lg:pr-5">
-              <div className="flex items-end justify-between">
-                <div className="mr-2">
-                  <img
-                    className="w-[38px] h-[38px]"
-                    src={
-                      event?.organizer?.photoURL
-                        ? event?.organizer?.photoURL
-                        : avatar.src
-                    }
-                    alt="avatar"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
-                    {event?.organizer?.name}
-                  </h3>
-                </div>
-                {/* <div className="flex items-center gap-3">
+        <div className="pb-5 lg:pb-0 lg:pr-5">
+          <div className="flex items-end justify-between">
+            <div className="mr-2">
+              <img
+                className="w-[38px] h-[38px]"
+                src={
+                  event?.organizer?.photoURL
+                    ? event?.organizer?.photoURL
+                    : avatar.src
+                }
+                alt="avatar"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
+                {event?.organizer?.name}
+              </h3>
+              {/* <p
+                  className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
+                  style={{
+                    fontWeight: "300",
+                    fontVariationSettings: '"wght" 400,"opsz" 10',
+                  }}
+                >
+                  POLITICS
+                </p> */}
+            </div>
+            {/* <div className="flex items-center gap-3">
                   {post?.sections && (
                     <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
                       {
@@ -518,410 +508,401 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                     />
                   )}
                 </div> */}
-              </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-5 items-center justify-between">
-                <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
-                  <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                    Updated{" "}
-                    {dayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                      " " +
-                      " GMT " +
-                      dayjs(event?.timestamp).format("Z")}
-                  </p>
-                  {/* <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
+          </div>
+          <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+          <div className="flex gap-5 items-center justify-between">
+            <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
+              <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
+                Updated{" "}
+                {dayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
+                  " " +
+                  " GMT " +
+                  dayjs(event?.timestamp).format("Z")}
+              </p>
+              {/* <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
                     {post?.topic}
                   </p> */}
-                </div>
-                {/* <NavigatorShare handleShare={handleShare} /> */}
-              </div>
-              <div className="mt-4">
-                <h2
-                  className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-                  style={{
-                    fontSize: "32px",
-                    fontWeight: "395",
-                    fontVariationSettings: '"wght" 495,"opsz" 10',
-                  }}
-                >
-                  {event?.title}
-                </h2>
-                {event?.displayImage && (
-                  <BlogImage
-                    className="mt-4 w-[77%] cover-figure"
-                    src={
-                      event?.displayImage
-                      // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
-                      // encodeURIComponent(post?.snippetData?.image)
-                    }
-                    style={{
-                      aspectRatio: "auto 700 / 453",
-                    }}
-                  />
-                )}
-                {/* {post && (
+            </div>
+            {/* <NavigatorShare handleShare={handleShare} /> */}
+          </div>
+          <div className="mt-4">
+            <h2
+              className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+              style={{
+                fontSize: "32px",
+                fontWeight: "395",
+                fontVariationSettings: '"wght" 495,"opsz" 10',
+              }}
+            >
+              {event?.title}
+            </h2>
+            {event?.displayImage && (
+              <BlogImage
+                className="mt-4 w-[77%] cover-figure"
+                src={
+                  event?.displayImage
+                  // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                  // encodeURIComponent(post?.snippetData?.image)
+                }
+                style={{
+                  aspectRatio: "auto 700 / 453",
+                }}
+              />
+            )}
+            {/* {post && (
                   <BlogPostShareLinks post={post} appendClassName="mt-4" />
                 )} */}
-                {event.id && (
-                  <ShareLinks
-                    title={event.title}
-                    id={event.id}
-                    url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
-                    appendClassName="mt-4"
-                  />
-                )}
+            {event.id && (
+              <ShareLinks
+                title={event.title}
+                id={event.id}
+                url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
+                appendClassName="mt-4"
+              />
+            )}
+          </div>
+        </div>
+        <div className="pt-5 lg:pt-0 lg:pl-5 flex flex-col gap-6 justify-between">
+          {event?.id && (
+            <div>
+              <div className="py-1">
+                <RSVPNowButton
+                  eventId={event.id}
+                  containerClassName="mt-1 flex"
+                />
               </div>
             </div>
-            <div className="pt-5 lg:pt-0 lg:pl-5 flex flex-col gap-6 justify-between">
-              {event?.id && (
-                <div>
-                  <div className="py-1">
-                    <RSVPNowButton
-                      eventId={event.id}
-                      containerClassName="mt-1 flex"
-                    />
-                  </div>
-                </div>
-              )}
-              {sections?.length > 0 && (
-                <div className="flex flex-col gap-1">
-                  <h3
-                    className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                    style={{
-                      fontWeight: 400,
-                      fontVariationSettings: '"wght" 500,"opsz" 10',
+          )}
+          {sections?.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <h3
+                className="text-[#1f1d1a] text-[16px] font-featureHeadline"
+                style={{
+                  fontWeight: 400,
+                  fontVariationSettings: '"wght" 500,"opsz" 10',
+                }}
+              >
+                About this event:
+              </h3>
+              {sections?.map((section, index) => (
+                <>
+                  <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+                  <div
+                    className="flex gap-2 items-center cursor-pointer"
+                    onClick={() => {
+                      router.push("#" + section.id);
                     }}
                   >
-                    About this event:
-                  </h3>
-                  {sections?.map((section, index) => (
-                    <>
-                      <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-                      <div
-                        className="flex gap-2 items-center cursor-pointer"
-                        onClick={() => {
-                          router.push("#" + section.id);
-                        }}
-                      >
-                        <h3
-                          className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
-                          style={{
-                            fontWeight: 400,
-                            fontVariationSettings: '"wght" 500,"opsz" 10',
-                            alignItems: "center",
-                            gap: "10px",
-                            display: "grid",
-                            gridTemplateColumns: "16px 1fr",
-                          }}
-                        >
-                          <span className="inline-flex">
-                            {/* <img
+                    <h3
+                      className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
+                      style={{
+                        fontWeight: 400,
+                        fontVariationSettings: '"wght" 500,"opsz" 10',
+                        alignItems: "center",
+                        gap: "10px",
+                        display: "grid",
+                        gridTemplateColumns: "16px 1fr",
+                      }}
+                    >
+                      <span className="inline-flex">
+                        {/* <img
                               src={section.icon}
                               alt="icon"
                               className="h-auto w-auto inline"
                             /> */}
-                            {section.icon}
-                          </span>
-                          {section.title}
-                        </h3>
-                      </div>
-                    </>
-                  ))}
+                        {section.icon}
+                      </span>
+                      {section.title}
+                    </h3>
+                  </div>
+                </>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+
+      <div className="mt-8" id={"description"}>
+        <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
+          <div>
+            <div className="styles_title">
+              <p>
+                <span className="inline-flex mr-2">
+                  <FaCalendarCheck />
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <div className="font-featureBold text-[20px] leading-[27px]">
+              <p>Description</p>
+            </div>
+            <div className="mt-2">
+              <p className="leading-[120%]">
+                <Linkify
+                  options={{
+                    render: (opts) => {
+                      return (
+                        <Link
+                          href={opts.attributes.href}
+                          target="_blank"
+                          className="text-appBlue underline"
+                        >
+                          {opts.content}
+                        </Link>
+                      );
+                    },
+                  }}
+                >
+                  {event.description}
+                </Linkify>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="styles_divider !my-6"></div>
+
+      <div id={"organizer"}>
+        <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
+          <div>
+            <div className="styles_title">
+              <p>
+                <span className="inline-flex mr-2">
+                  <FaUser />
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <div className="font-featureBold text-[20px] leading-[27px]">
+              <p>Organizer</p>
+            </div>
+            <div className="mt-1">
+              <div className="flex flex-col w-full items-center gap-2 p-4">
+                <div>
+                  <AppImage
+                    className="w-10 md:w-14 h-10 md:h-14 rounded-full"
+                    width={30}
+                    height={30}
+                    src={event.organizer?.photoURL}
+                    alt="Nothing"
+                  />
                 </div>
+                <div>
+                  <span className="text-lg md:text-2xl font-featureHeadline">
+                    {event.organizer.name}
+                  </span>
+                </div>
+              </div>
+              <p className="leading-[120%]">
+                <Linkify
+                  options={{
+                    render: (opts) => {
+                      return (
+                        <Link
+                          href={opts.attributes.href}
+                          target="_blank"
+                          className="text-appBlue underline"
+                        >
+                          {opts.content}
+                        </Link>
+                      );
+                    },
+                  }}
+                >
+                  {event.organizer.description}
+                </Linkify>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="styles_divider !my-6"></div>
+
+      <div id="date_and_time">
+        <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
+          <div>
+            <div className="styles_title">
+              <p>
+                <span className="inline-flex mr-2">
+                  <DateTimeIcon />
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <div className="font-featureBold text-[20px] leading-[27px]">
+              <p>Date & Time</p>
+            </div>
+            <div className="mt-2">
+              <div className="flex items-center divide-x divide-dashed divide-[#1f1d1a19]">
+                <div className="flex-1">
+                  <p className="text-sm mb-1 text-appBlack text-opacity-60">
+                    Starts On:
+                  </p>
+                  <p>
+                    <b>
+                      {dayjs(event.startTime.toDate()).format("MMMM DD, YYYY")}
+                    </b>
+                  </p>
+                  <p>
+                    <b>{dayjs(event.startTime.toDate()).format("hh:mm A")}</b>
+                  </p>
+                </div>
+                <div className="flex-1 pl-4">
+                  <p className="text-sm mb-1 text-appBlack text-opacity-60">
+                    Ends On:
+                  </p>
+                  <p>
+                    <b>
+                      {dayjs(event.endTime.toDate()).format("MMMM DD, YYYY")}
+                    </b>
+                  </p>
+                  <p>
+                    <b>{dayjs(event.endTime.toDate()).format("hh:mm A")}</b>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="styles_divider !my-6"></div>
+
+      <div id="venue">
+        <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
+          <div>
+            <div className="styles_title">
+              <p>
+                <span className="inline-flex mr-2">
+                  <PinIcon />
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <div className="font-featureBold text-[20px] leading-[27px]">
+              <p>Venue</p>
+            </div>
+            <div className="mt-2">
+              {event.venue.type === "offline" ? (
+                <Link href={event.venue.mapsLink ?? "#"} target="_blank">
+                  {event.venue.image && (
+                    <div className="flex items-center before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-60 overflow-hidden before:z-[2] border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
+                      <AppImage
+                        className="w-full aspect-video rounded-2xl"
+                        width={1000}
+                        height={1000}
+                        src={event.venue.image}
+                        alt="Nothing"
+                      />
+                      <div className="absolute bottom-3 md:bottom-5 w-full z-10 px-3 md:px-8 flex items-center justify-between">
+                        <div className="text-white">
+                          <h3 className="font-featureHeadline text-[18px] md:text-[25px]">
+                            {event.venue.name}
+                          </h3>
+                          <p className="text-white text-[12px] md:text-[16px] text-opacity-40">
+                            Open in maps
+                          </p>
+                        </div>
+                        <div className="w-10 h-10 text-xl text-gray-400 border border-gray-500 rounded-full bg-gray-700 flex items-center justify-center">
+                          <IoMdMap />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {event.venue.mapsLink && (
+                    <>
+                      <div className="w-full max-w-[500px] h-auto aspect-video overflow-hidden mt-3">
+                        <EventMap mapLink={event.venue.mapsLink} />
+                      </div>
+                      <h3 className="font-featureHeadline text-[14px] md:text-[18px] mt-2 text-appBlue">
+                        {event.venue.name}
+                      </h3>
+                    </>
+                  )}
+                </Link>
+              ) : (
+                // <div className="p-4 border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
+                //   <div className="flex-1">
+                //     <p className="text-sm text-appBlack text-opacity-60">
+                //       Meet link:
+                //     </p>
+                //     <Link
+                //       href={event.venue.meetingLink ?? "#"}
+                //       target="_blank"
+                //       className="text-appBlue"
+                //     >
+                //       <b>
+                //         <u>{event.venue.meetingLink}</u>
+                //       </b>
+                //     </Link>
+                //   </div>
+                // </div>
+                <Link target="_blank" href={event.venue.meetingLink ?? "#"}>
+                  <div className="flex-1 flex items-center gap-3 cursor-pointer">
+                    <div>
+                      {getMeetLinkDetails(event.venue.meetingLink).icon}
+                    </div>
+                    <div>
+                      <p className="text-lg font-featureHeadline">
+                        Online Meeting
+                      </p>
+                      <p className="text-xs">
+                        Join {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
+                        Link
+                      </p>
+                    </div>
+                  </div>
+                </Link>
               )}
             </div>
           </div>
-
-          <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
-          <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-
-          <div className="mt-8" id={"description"}>
-            <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
-              <div>
-                <div className="styles_title">
-                  <p>
-                    <span className="inline-flex mr-2">
-                      <FaCalendarCheck />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
-                  <p>Description</p>
-                </div>
-                <div className="mt-2">
-                  <p className="leading-[120%]">
-                    <Linkify
-                      options={{
-                        render: (opts) => {
-                          return (
-                            <Link
-                              href={opts.attributes.href}
-                              target="_blank"
-                              className="text-appBlue underline"
-                            >
-                              {opts.content}
-                            </Link>
-                          );
-                        },
-                      }}
-                    >
-                      {event.description}
-                    </Linkify>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="styles_divider !my-6"></div>
-
-          <div id={"organizer"}>
-            <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
-              <div>
-                <div className="styles_title">
-                  <p>
-                    <span className="inline-flex mr-2">
-                      <FaUser />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
-                  <p>Organizer</p>
-                </div>
-                <div className="mt-1">
-                  <div className="flex flex-col w-full items-center gap-2 p-4">
-                    <div>
-                      <AppImage
-                        className="w-10 md:w-14 h-10 md:h-14 rounded-full"
-                        width={30}
-                        height={30}
-                        src={event.organizer?.photoURL}
-                        alt="Nothing"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-lg md:text-2xl font-featureHeadline">
-                        {event.organizer.name}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="leading-[120%]">
-                    <Linkify
-                      options={{
-                        render: (opts) => {
-                          return (
-                            <Link
-                              href={opts.attributes.href}
-                              target="_blank"
-                              className="text-appBlue underline"
-                            >
-                              {opts.content}
-                            </Link>
-                          );
-                        },
-                      }}
-                    >
-                      {event.organizer.description}
-                    </Linkify>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="styles_divider !my-6"></div>
-
-          <div id="date_and_time">
-            <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
-              <div>
-                <div className="styles_title">
-                  <p>
-                    <span className="inline-flex mr-2">
-                      <DateTimeIcon />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
-                  <p>Date & Time</p>
-                </div>
-                <div className="mt-2">
-                  <div className="flex items-center divide-x divide-dashed divide-[#1f1d1a19]">
-                    <div className="flex-1">
-                      <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                        Starts On:
-                      </p>
-                      <p>
-                        <b>
-                          {dayjs(event.startTime.toDate()).format(
-                            "MMMM DD, YYYY"
-                          )}
-                        </b>
-                      </p>
-                      <p>
-                        <b>
-                          {dayjs(event.startTime.toDate()).format("hh:mm A")}
-                        </b>
-                      </p>
-                    </div>
-                    <div className="flex-1 pl-4">
-                      <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                        Ends On:
-                      </p>
-                      <p>
-                        <b>
-                          {dayjs(event.endTime.toDate()).format(
-                            "MMMM DD, YYYY"
-                          )}
-                        </b>
-                      </p>
-                      <p>
-                        <b>{dayjs(event.endTime.toDate()).format("hh:mm A")}</b>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="styles_divider !my-6"></div>
-
-          <div id="venue">
-            <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
-              <div>
-                <div className="styles_title">
-                  <p>
-                    <span className="inline-flex mr-2">
-                      <PinIcon />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
-                  <p>Venue</p>
-                </div>
-                <div className="mt-2">
-                  {event.venue.type === "offline" ? (
-                    <Link href={event.venue.mapsLink ?? "#"} target="_blank">
-                      {event.venue.image && (
-                        <div className="flex items-center before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-60 overflow-hidden before:z-[2] border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
-                          <AppImage
-                            className="w-full aspect-video rounded-2xl"
-                            width={1000}
-                            height={1000}
-                            src={event.venue.image}
-                            alt="Nothing"
-                          />
-                          <div className="absolute bottom-3 md:bottom-5 w-full z-10 px-3 md:px-8 flex items-center justify-between">
-                            <div className="text-white">
-                              <h3 className="font-featureHeadline text-[18px] md:text-[25px]">
-                                {event.venue.name}
-                              </h3>
-                              <p className="text-white text-[12px] md:text-[16px] text-opacity-40">
-                                Open in maps
-                              </p>
-                            </div>
-                            <div className="w-10 h-10 text-xl text-gray-400 border border-gray-500 rounded-full bg-gray-700 flex items-center justify-center">
-                              <IoMdMap />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      {event.venue.mapsLink && (
-                        <>
-                          <div className="w-full max-w-[500px] h-auto aspect-video overflow-hidden mt-3">
-                            <EventMap mapLink={event.venue.mapsLink} />
-                          </div>
-                          <h3 className="font-featureHeadline text-[14px] md:text-[18px] mt-2 text-appBlue">
-                            {event.venue.name}
-                          </h3>
-                        </>
-                      )}
-                    </Link>
-                  ) : (
-                    // <div className="p-4 border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
-                    //   <div className="flex-1">
-                    //     <p className="text-sm text-appBlack text-opacity-60">
-                    //       Meet link:
-                    //     </p>
-                    //     <Link
-                    //       href={event.venue.meetingLink ?? "#"}
-                    //       target="_blank"
-                    //       className="text-appBlue"
-                    //     >
-                    //       <b>
-                    //         <u>{event.venue.meetingLink}</u>
-                    //       </b>
-                    //     </Link>
-                    //   </div>
-                    // </div>
-                    <Link target="_blank" href={event.venue.meetingLink ?? "#"}>
-                      <div className="flex-1 flex items-center gap-3 cursor-pointer">
-                        <div>
-                          {getMeetLinkDetails(event.venue.meetingLink).icon}
-                        </div>
-                        <div>
-                          <p className="text-lg font-featureHeadline">
-                            Online Meeting
-                          </p>
-                          <p className="text-xs">
-                            Join{" "}
-                            {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
-                            Link
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="styles_divider !my-6"></div>
-
-          <div id="contact">
-            <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
-              <div>
-                <div className="styles_title">
-                  <p>
-                    <span className="inline-flex mr-2">
-                      <ContactIcon />
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
-                  <p>Contact</p>
-                </div>
-                <div className="mt-2">
-                  <p className="leading-[120%]">
-                    <b>{event.organizer.email}</b>
-                  </p>
-                  <p className="leading-[120%] mt-2">
-                    <b>{event.organizer.contact}</b>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10">
-            <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-          </div>
-          <MoreFromMinerva />
         </div>
       </div>
-    </>
+
+      <div className="styles_divider !my-6"></div>
+
+      <div id="contact">
+        <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
+          <div>
+            <div className="styles_title">
+              <p>
+                <span className="inline-flex mr-2">
+                  <ContactIcon />
+                </span>
+              </p>
+            </div>
+          </div>
+          <div>
+            <div className="font-featureBold text-[20px] leading-[27px]">
+              <p>Contact</p>
+            </div>
+            <div className="mt-2">
+              <p className="leading-[120%]">
+                <b>{event.organizer.email}</b>
+              </p>
+              <p className="leading-[120%] mt-2">
+                <b>{event.organizer.contact}</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+      </div>
+      <MoreFromMinerva />
+    </div>
   );
 }

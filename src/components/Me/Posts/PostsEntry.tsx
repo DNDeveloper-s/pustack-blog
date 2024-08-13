@@ -23,7 +23,7 @@ const options = [
   { value: "scheduled", label: "Scheduled" },
 ];
 
-const NoPostIcon = (props: SVGAttributes<SVGSVGElement>) => (
+export const NoPostIcon = (props: SVGAttributes<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"

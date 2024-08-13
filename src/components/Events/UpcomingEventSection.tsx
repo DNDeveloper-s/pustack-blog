@@ -26,7 +26,7 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
       <div>
         <div
           className={
-            "grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 px-0 pr-2 transition-all "
+            "grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 px-0 transition-all "
           }
         >
           <div className="flex flex-col py-1 items-start font-helvetica justify-start">

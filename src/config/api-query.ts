@@ -13,6 +13,11 @@ export const API_QUERY = {
     "query-saved-posts",
     userId,
   ],
+  CHECK_USER_RSVP: (
+    eventId?: string | null,
+    userEmail?: string | null,
+    userId?: string | null | undefined
+  ) => ["check-user-rsvp", eventId, userEmail, userId],
   QUERY_DRAFT_POSTS: (...status: string[]) => [
     "query-draft-posts",
     status.join(","),

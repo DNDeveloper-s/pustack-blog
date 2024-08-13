@@ -8,6 +8,11 @@ import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 import { Suspense } from "react";
 import { NavigationEvents } from "@/components/NavigationEvents";
+import dynamic from "next/dynamic";
+// import BottomNavBar from "@/components/Navbar/BottomNavBar/BottomNavBar";
+const BottomNavBar = dynamic(
+  () => import("@/components/Navbar/BottomNavBar/BottomNavBar")
+);
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +33,10 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <ErrorBoundary errorComponent={ErrorMasterComponent}>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            <BottomNavBar />
+          </Providers>
         </ErrorBoundary>
 
         <Suspense fallback={null}>

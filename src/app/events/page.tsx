@@ -28,9 +28,12 @@ export default async function EventsPage({
 
       event = flattenDocumentData(data);
     } catch (e) {
+      console.log("e - ", e);
       return redirect("/");
     }
   }
+
+  console.log('event - ', event)
 
   if (event) {
     return (

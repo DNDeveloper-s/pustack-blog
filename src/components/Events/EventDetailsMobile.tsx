@@ -340,11 +340,14 @@ const MapEmbed = ({ mapLink }: { mapLink: string }) => {
   );
 };
 
-export default function EventDetails({ _event }: { _event?: DocumentData }) {
+export default function EventDetailsMobile({
+  _event,
+}: {
+  _event?: DocumentData;
+}) {
   const params = useParams();
   const [event, setEvent] = useState<Event | null | undefined>(null);
   const { user } = useUser();
-  const { ref, isInView } = useInView();
   const deleteModalRef = useRef<any>();
   const router = useRouter();
   const { isTabletScreen, isDesktopScreen, isMobileScreen } = useScreenSize();
@@ -400,37 +403,6 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
     return null;
   }
 
-  const getRSVPButtonLabel = () => {
-    if (!user) return "Sign In Now.";
-    if (!rsvped) return "I'll be there.";
-    return "I can't make it.";
-  };
-
-  const getRSVPMessage = () => {
-    if (rsvped && user)
-      return (
-        <>
-          Awesome! You&apos;ll start receiving all updates at
-          <b className="style_bold">{" " + user.email}</b>
-        </>
-      );
-
-    return (
-      <>
-        <b className="style_bold">RSVP for this event, </b>
-        and get notified at the earliest.
-      </>
-    );
-  };
-
-  const handleRSVPButtonClick = () => {
-    if (!user) {
-      setOpen(true);
-      return;
-    }
-    setRsvped(!rsvped);
-  };
-
   return (
     <>
       <div
@@ -442,137 +414,52 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
         }}
       >
         {/* <Image
-            width={500}
-            className="w-full h-full object-cover"
-            height={600}
-            src={imageUrl}
-            alt="event"
-          /> */}
+          width={500}
+          className="w-full h-full object-cover"
+          height={600}
+          src={imageUrl}
+          alt="event"
+        /> */}
         <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-6 px-3">
           <p className="font-featureBold text-[25px] text-white line-clamp-3">
             {event.title}
           </p>
         </div>
       </div>
-      <div className="w-full h-screen bg-primary mt-[-20px] relative rounded-t-[18px]">
-        <div className="w-full h-full pb-10 overflow-auto">
-          <div
-            ref={ref}
-            className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_18.3125rem] my-6 gap-4 lg:gap-0"
-          >
-            <div className="pb-5 lg:pb-0 lg:pr-5">
-              <div className="flex items-end justify-between">
-                <div className="mr-2">
-                  <img
-                    className="w-[38px] h-[38px]"
-                    src={
-                      event?.organizer?.photoURL
-                        ? event?.organizer?.photoURL
-                        : avatar.src
-                    }
-                    alt="avatar"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
-                    {event?.organizer?.name}
-                  </h3>
-                </div>
-                {/* <div className="flex items-center gap-3">
-                  {post?.sections && (
-                    <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                      {
-                        readingTime(
-                          post.nodes
-                            ? extractTextFromEditor(post.nodes)
-                            : Section.mergedContent(post.sections)
-                        ).text
-                      }
-                    </span>
-                  )}
-                  {!isBookMarked ? (
-                    <FaRegStar
-                      className="cursor-pointer"
-                      onClick={() => handleBookMark(true)}
-                    />
-                  ) : (
-                    <FaStar
-                      className="text-[#d9c503] cursor-pointer"
-                      onClick={() => handleBookMark(false)}
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdModeEdit
-                      className="cursor-pointer"
-                      onClick={() =>
-                        router.push("/posts/create?post_id=" + post?.id)
-                      }
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdDelete
-                      className="cursor-pointer"
-                      onClick={() => {
-                        deleteModalRef.current?.handleChangeOpen(true);
-                      }}
-                    />
-                  )}
-                </div> */}
+      <div className="w-full bg-primary mt-[-30px] relative rounded-t-[18px]">
+        <div className="w-full h-auto pb-10 pt-2 px-3">
+          <div className="grid grid-cols-1 mb-3 gap-1 lg:gap-0">
+            <div className="flex justify-between items-center gap-2">
+              <div>
+                <p className="text-lg mb-0.5 font-featureHeadline line-clamp-2">
+                  Jane Doe
+                </p>
+                <p className="text-gray-400 text-sm font-helvetica font-light">
+                  August 22, 2024, 9:00 AM
+                </p>
               </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-5 items-center justify-between">
-                <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
-                  <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                    Updated{" "}
-                    {dayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                      " " +
-                      " GMT " +
-                      dayjs(event?.timestamp).format("Z")}
-                  </p>
-                  {/* <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                    {post?.topic}
-                  </p> */}
-                </div>
-                {/* <NavigatorShare handleShare={handleShare} /> */}
-              </div>
-              <div className="mt-4">
-                <h2
-                  className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-                  style={{
-                    fontSize: "32px",
-                    fontWeight: "395",
-                    fontVariationSettings: '"wght" 495,"opsz" 10',
-                  }}
-                >
-                  {event?.title}
-                </h2>
-                {event?.displayImage && (
-                  <BlogImage
-                    className="mt-4 w-[77%] cover-figure"
-                    src={
-                      event?.displayImage
-                      // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
-                      // encodeURIComponent(post?.snippetData?.image)
-                    }
-                    style={{
-                      aspectRatio: "auto 700 / 453",
-                    }}
-                  />
-                )}
-                {/* {post && (
-                  <BlogPostShareLinks post={post} appendClassName="mt-4" />
-                )} */}
-                {event.id && (
-                  <ShareLinks
-                    title={event.title}
-                    id={event.id}
-                    url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
-                    appendClassName="mt-4"
-                  />
-                )}
+              <div className="rounded-full overflow-hidden w-10 h-10 border border-appBlack flex-shrink-0">
+                <AppImage
+                  src={event.organizer.photoURL}
+                  alt="Image Url"
+                  className="w-full h-full object-cover"
+                  width={100}
+                  height={100}
+                />
               </div>
             </div>
-            <div className="pt-5 lg:pt-0 lg:pl-5 flex flex-col gap-6 justify-between">
+            {event.id && (
+              <ShareLinks
+                title={event.title}
+                id={event.id}
+                url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
+                appendClassName="mt-3"
+              />
+            )}
+
+            <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+
+            <div>
               {event?.id && (
                 <div>
                   <div className="py-1">
@@ -583,57 +470,14 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                   </div>
                 </div>
               )}
-              {sections?.length > 0 && (
-                <div className="flex flex-col gap-1">
-                  <h3
-                    className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                    style={{
-                      fontWeight: 400,
-                      fontVariationSettings: '"wght" 500,"opsz" 10',
-                    }}
-                  >
-                    About this event:
-                  </h3>
-                  {sections?.map((section, index) => (
-                    <>
-                      <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-                      <div
-                        className="flex gap-2 items-center cursor-pointer"
-                        onClick={() => {
-                          router.push("#" + section.id);
-                        }}
-                      >
-                        <h3
-                          className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
-                          style={{
-                            fontWeight: 400,
-                            fontVariationSettings: '"wght" 500,"opsz" 10',
-                            alignItems: "center",
-                            gap: "10px",
-                            display: "grid",
-                            gridTemplateColumns: "16px 1fr",
-                          }}
-                        >
-                          <span className="inline-flex">
-                            {/* <img
-                              src={section.icon}
-                              alt="icon"
-                              className="h-auto w-auto inline"
-                            /> */}
-                            {section.icon}
-                          </span>
-                          {section.title}
-                        </h3>
-                      </div>
-                    </>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
           <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
-          <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+
+          <div className="mb-3 mt-4">
+            <h2 className="text-xl font-featureBold">About this event:</h2>
+          </div>
 
           <div className="mt-8" id={"description"}>
             <div className="grid grid-cols-[16px_1fr] gap-4 md:gap-5">
@@ -647,11 +491,11 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 </div>
               </div>
               <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
+                <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Description</p>
                 </div>
                 <div className="mt-2">
-                  <p className="leading-[120%]">
+                  <p className="leading-[120%] text-black text-opacity-60">
                     <Linkify
                       options={{
                         render: (opts) => {
@@ -689,7 +533,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 </div>
               </div>
               <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
+                <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Organizer</p>
                 </div>
                 <div className="mt-1">
@@ -709,7 +553,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                       </span>
                     </div>
                   </div>
-                  <p className="leading-[120%]">
+                  <p className="leading-[120%] text-black text-opacity-60">
                     <Linkify
                       options={{
                         render: (opts) => {
@@ -747,7 +591,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 </div>
               </div>
               <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
+                <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Date & Time</p>
                 </div>
                 <div className="mt-2">
@@ -804,7 +648,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 </div>
               </div>
               <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
+                <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Venue</p>
                 </div>
                 <div className="mt-2">
@@ -899,7 +743,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 </div>
               </div>
               <div>
-                <div className="font-featureBold text-[20px] leading-[27px]">
+                <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Contact</p>
                 </div>
                 <div className="mt-2">
@@ -914,12 +758,18 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
             </div>
           </div>
 
-          <div className="mt-10">
-            <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-          </div>
-          <MoreFromMinerva />
+          <div className="styles_divider !my-6"></div>
+
+          {event?.id && (
+            <div>
+              <div className="py-1">
+                <RSVPNowButton
+                  eventId={event.id}
+                  containerClassName="mt-1 flex"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

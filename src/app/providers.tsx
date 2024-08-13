@@ -19,6 +19,8 @@ import { NotificationContextProvider } from "@/context/NotificationContext";
 import { JoinModalContextProvider } from "@/context/JoinModalContext";
 import JoinModal from "@/components/shared/JoinModal";
 import { SlateContextProvider } from "@/context/SlateContext";
+import { NavbarContextProvider } from "@/context/NavbarContext";
+import useScreenSize from "@/hooks/useScreenSize";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -137,24 +139,26 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <>
-        <BlogImageContextProvider>
-          <SlateContextProvider>
-            <NotificationContextProvider
-              openNotification={openNotification}
-              destroy={api.destroy}
-            >
-              <>
-                {contextHolder}
-                <UserProvider>
-                  <JoinModalContextProvider>
-                    {children}
-                    <JoinModal />
-                  </JoinModalContextProvider>
-                </UserProvider>
-              </>
-            </NotificationContextProvider>
-          </SlateContextProvider>
-        </BlogImageContextProvider>
+        <NavbarContextProvider>
+          <BlogImageContextProvider>
+            <SlateContextProvider>
+              <NotificationContextProvider
+                openNotification={openNotification}
+                destroy={api.destroy}
+              >
+                <>
+                  {contextHolder}
+                  <UserProvider>
+                    <JoinModalContextProvider>
+                      {children}
+                      <JoinModal />
+                    </JoinModalContextProvider>
+                  </UserProvider>
+                </>
+              </NotificationContextProvider>
+            </SlateContextProvider>
+          </BlogImageContextProvider>
+        </NavbarContextProvider>
       </>
     </QueryClientProvider>
   );

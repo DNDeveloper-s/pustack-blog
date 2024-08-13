@@ -123,8 +123,10 @@ function EventSidebarItem({ event }: EventSidebarItemProps) {
   );
 }
 
-interface EventSidebarProps {}
-export default function EventSidebar(props: EventSidebarProps) {
+interface EventSidebarProps {
+  className?: string;
+}
+export default function EventSidebar({ className }: EventSidebarProps) {
   const { transformedEvents, isLoading, error } = useGetEventsForDateRange({
     enabled: true,
   });
@@ -187,7 +189,11 @@ export default function EventSidebar(props: EventSidebarProps) {
   };
 
   return (
-    <div className="w-full bg-lightPrimary h-full overflow-auto">
+    <div
+      className={
+        "w-full bg-lightPrimary h-full overflow-auto " + (className ?? "")
+      }
+    >
       {isLoading && renderSpinner()}
       {!isLoading &&
         transformedEvents?.map((transformedEvent) => {

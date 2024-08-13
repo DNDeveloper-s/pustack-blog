@@ -11,7 +11,7 @@ export default function EventListPage() {
 
   return (
     <main
-      className="max-w-[1440px] min-h-screen mx-auto px-3"
+      className="max-w-[1440px] mx-auto px-3"
       style={{
         overflow: isMobileScreen ? "auto" : "hidden",
       }}
@@ -30,8 +30,14 @@ export default function EventListPage() {
         }}
         ref={scrollerRef}
       >
+        <div className="mb-2 pt-3 flex justify-between items-center">
+          <h2 className="text-appBlack text-[26px] md:text-[30px] font-larkenExtraBold">
+            Events
+          </h2>
+          <div></div>
+        </div>
         <div className="w-full h-full">
-          <EventSidebar />
+          <EventSidebar className="!bg-transparent" />
         </div>
       </div>
     </main>

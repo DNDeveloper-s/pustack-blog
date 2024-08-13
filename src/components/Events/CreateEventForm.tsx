@@ -268,6 +268,22 @@ export default function CreateEventForm() {
         });
       }
     };
+  const createEventErrorHandler = async (errors: any) => {
+    console.log("errors - ", errors);
+    openNotification(
+      NotificationPlacements[5],
+      {
+        message: (
+          <SnackbarContent label={"Please fill in all the required fields."} />
+        ),
+        closable: true,
+        duration: 5,
+        key: "drafts-notification",
+        className: "drafts-notification",
+      },
+      "error"
+    );
+  };
 
   // Getters/Renderers
   const getImageUrl = (key: keyof CreateEventAttachments) => {
@@ -296,7 +312,7 @@ export default function CreateEventForm() {
   return (
     <form
       className="minerva-create-form"
-      onSubmit={handleSubmit(createEventHandler)}
+      onSubmit={handleSubmit(createEventHandler, createEventErrorHandler)}
     >
       <div className="mt-7">
         <div>

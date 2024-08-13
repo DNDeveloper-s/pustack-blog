@@ -23,6 +23,7 @@ import {
   startAfter,
   startAt,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { compact } from "lodash";
 
@@ -601,6 +602,61 @@ export class Event {
       });
 
     return filteredEvents;
+  }
+
+  static async rsvpEvent(eventId: string, userEmail: string, userId?: string) {
+    const rsvpRef = collection(db, "events", "collections", "rsvp");
+    await setDoc(doc(rsvpRef), {
+      eventId,
+      uid: userId ?? null,
+      email: userEmail,
+      timestamp: serverTimestamp(),
+    });
+  }
+
+  static async unRsvpEvent(
+    eventId: string,
+    userEmail: string,
+    userId?: string
+  ) {
+    const rsvpRef = collection(db, "events", "collections", "rsvp");
+    const rsvpQuery = query(rsvpRef, where("eventId", "==", eventId));
+    const rsvpDocs = await getDocs(rsvpQuery);
+
+    let rsvpDocList = rsvpDocs.docs.filter(
+      (doc) => doc.data().email === userEmail
+    );
+    if (userId) {
+      rsvpDocList = rsvpDocs.docs.filter((doc) => doc.data().uid === userId);
+    }
+    const batch = writeBatch(db);
+    if (rsvpDocList) {
+      for (const doc of rsvpDocList) {
+        batch.delete(doc.ref);
+      }
+      await batch.commit();
+    }
+  }
+
+  static async checkUserRSVP(
+    eventId: string,
+    userEmail?: string,
+    userId?: string
+  ) {
+    console.log("checUserRSVP - ", eventId, userEmail, userId);
+    const rsvpRef = collection(db, "events", "collections", "rsvp");
+    const rsvpQuery = query(rsvpRef, where("eventId", "==", eventId));
+    const rsvpDocs = await getDocs(rsvpQuery);
+
+    if (userId) {
+      return rsvpDocs.docs.some((doc) => doc.data().uid === userId);
+    }
+
+    if (userEmail) {
+      return rsvpDocs.docs.some((doc) => doc.data().email === userEmail);
+    }
+
+    return false;
   }
 
   // static async getTodaysFlagship(): Promise<Event> {
