@@ -75,11 +75,7 @@ const createEventSchema = Yup.object().shape({
       ? schema.required("Venue Maps Link is required for offline events")
       : schema.notRequired()
   ),
-  venue_image: Yup.string().when("venue", (venue, schema) =>
-    venue && venue.includes("offline")
-      ? schema.required("Venue image is required for offline events")
-      : schema.notRequired()
-  ),
+  venue_image: Yup.string(),
 });
 
 export default function CreateEventEntry() {

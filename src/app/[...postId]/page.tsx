@@ -4,9 +4,6 @@ import { Post, flattenDocumentData, srcReducer } from "@/firebase/post";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Metadata, ResolvingMetadata } from "next";
-import { JSDOM } from "jsdom";
-import useUserSession from "@/hooks/useUserSession";
-import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 import { redirect } from "next/navigation";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
@@ -30,17 +27,9 @@ export async function generateMetadata(
 
     const post = flattenDocumentData(data);
 
-    const dom = new JSDOM(post.content, {
-      contentType: "text/html",
-    });
+    const _imageUrl = post.meta.image;
 
-    const _images = Array.from(
-      dom.window.document.getElementsByTagName("img")
-    ).reduce(srcReducer, []);
-
-    const _imageUrl = _images[0];
-
-    const imageUrl = encodeURIComponent(_imageUrl);
+    const imageUrl = encodeURIComponent(_imageUrl ?? "");
 
     const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
     const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
@@ -52,10 +41,10 @@ export async function generateMetadata(
 
     return {
       title: post.title,
-      description: post.content,
+      description: post.meta.description,
       openGraph: {
         title: post.title,
-        description: post.content,
+        description: post.meta.description,
         url: "https://pustack-blog.vercel.app/",
         siteName: "Minerva",
         images: [

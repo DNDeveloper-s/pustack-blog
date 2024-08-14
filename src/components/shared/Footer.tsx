@@ -1,3 +1,6 @@
+"use client";
+
+import useScreenSize from "@/hooks/useScreenSize";
 /**
  * @file Footer.tsx
  *
@@ -35,7 +38,40 @@ const footerData = [
   { key: "consentPreferences", label: "Consent Preferences" },
 ];
 
+function MobileFooter() {
+  return (
+    <div className="border-t border-dashed border-[#1f141d75]] pb-2 py-3">
+      <div className="flex flex-col justify-center items-center">
+        <div className="w-auto">
+          <Logo
+            linkStyle={{
+              height: "25px",
+              display: "block",
+            }}
+            linkClassName="md:my-0 my-2"
+            withMini
+          />
+        </div>
+        <div className="pl-4 font-helvetica text-[12px]">
+          <span>
+            Powered by{" "}
+            <strong className="font-helvetica font-bold">
+              PuStack Education 1.0.0
+            </strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Footer() {
+  const { isSmallScreen } = useScreenSize();
+
+  if (isSmallScreen) {
+    return <MobileFooter />;
+  }
+
   return (
     <div className="border-t border-appBlack md:mx-0 pb-8 py-4 md:pb-8">
       <div className="flex gap-x-4 gap-y-2 md:justify-between flex-wrap items-center">

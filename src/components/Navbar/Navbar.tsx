@@ -12,14 +12,6 @@ import dayjs from "dayjs";
 import { topics, url } from "@/constants";
 import { navYouAreHere } from "@/assets";
 import { usePathname } from "next/navigation";
-import {
-  attachUIDToAllThePosts,
-  signInWithApple,
-  signInWithGoogle,
-  signInWithLinkedin,
-  signOut,
-} from "@/lib/firebase/auth";
-import useUserSession from "@/hooks/useUserSession";
 import { useUser } from "@/context/UserContext";
 import { useMediaQuery } from "react-responsive";
 import Drawer from "react-modern-drawer";
@@ -45,6 +37,7 @@ import { useDisclosure } from "@nextui-org/modal";
 import { toDashCase } from "@/firebase/signal";
 import { useJoinModal } from "@/context/JoinModalContext";
 import useScreenSize from "@/hooks/useScreenSize";
+import { motion, useScroll, useTransform, frame } from "framer-motion";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -80,11 +73,11 @@ interface CurrentTime {
   date: string;
 }
 
-function SignOutButton() {
+function SignOutButton({ noCaret }: { noCaret?: boolean }) {
   const { user } = useUser();
 
   return (
-    <div className="flex items-center gap-2 cursor-pointer">
+    <div className="flex items-center gap-1 cursor-pointer">
       <div>
         <AppImage
           height={13}
@@ -112,7 +105,9 @@ function SignOutButton() {
           {user?.name?.split(" ")[0] ?? "My Account"}
         </span>
       </div>
-      <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+      {!noCaret && (
+        <FaCaretDown className="text-[10px] flex justify-end font-helvetica text-primaryText" />
+      )}
     </div>
   );
 }
@@ -207,9 +202,9 @@ function NavbarDesktop({
             </div>
             <div className="flex-1 flex items-center gap-3 justify-center mt-[10px] ">
               {/* <Logo className="w-[310px] h-[auto]" /> */}
-              <WorldClockWithLabel timezone={-4} label="D.C." />
-              <WorldClockWithLabel timezone={2} label="BXL" />
-              <WorldClockWithLabel timezone={1} label="LAGOS" />
+              <WorldClockWithLabel timezone={-7} label="SF" />
+              <WorldClockWithLabel timezone={-4} label="NYC" />
+              <WorldClockWithLabel timezone={1} label="LONDON" />
               <Logo
                 style={{
                   fontSize: "65px",
@@ -221,9 +216,9 @@ function NavbarDesktop({
                   width: "300px",
                 }}
               />
-              <WorldClockWithLabel timezone={4} label="DUBAI" />
-              <WorldClockWithLabel timezone={8} label="BEIJING" />
-              <WorldClockWithLabel timezone={8} label="SG" />
+              <WorldClockWithLabel timezone={5.5} label="DELHI" />
+              <WorldClockWithLabel timezone={9} label="TOKYO" />
+              <WorldClockWithLabel timezone={10} label="SYDNEY" />
             </div>
             <div className="flex-1 flex items-start gap-5 justify-end">
               {showCreatePostButton && (
@@ -826,9 +821,9 @@ function NavbarTablet({
             <div className="flex-1 flex items-center gap-3 justify-between mt-0 ">
               {/* <Logo className="w-[310px] h-[auto]" /> */}
               <div className="flex items-center gap-3">
-                <WorldClockWithLabel timezone={-4} label="D.C." />
-                <WorldClockWithLabel timezone={2} label="BXL" />
-                <WorldClockWithLabel timezone={1} label="LAGOS" />
+                <WorldClockWithLabel timezone={-7} label="SF" />
+                <WorldClockWithLabel timezone={-4} label="NYC" />
+                <WorldClockWithLabel timezone={1} label="LONDON" />
               </div>
               <div>
                 <Logo
@@ -858,9 +853,9 @@ function NavbarTablet({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <WorldClockWithLabel timezone={4} label="DUBAI" />
-                <WorldClockWithLabel timezone={8} label="BEIJING" />
-                <WorldClockWithLabel timezone={8} label="SG" />
+                <WorldClockWithLabel timezone={5.5} label="DELHI" />
+                <WorldClockWithLabel timezone={9} label="TOKYO" />
+                <WorldClockWithLabel timezone={10} label="SYDNEY" />
               </div>
             </div>
           </div>
@@ -1034,7 +1029,7 @@ function NavbarTablet({
 function NavbarMobile() {
   const [currentTime, setCurrentTime] = useState<CurrentTime>({
     time: dayjs().format("h:mm A"),
-    date: dayjs().format("dddd MMMM DD, YYYY"),
+    date: dayjs().format("ddd  MMM DD, YYYY"),
   });
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { user } = useUser();
@@ -1043,11 +1038,23 @@ function NavbarMobile() {
   const disclosureOptions = useDisclosure();
   const { setOpen: openJoinModal } = useJoinModal();
 
+  /** Framer Motion */
+  const { scrollY } = useScroll();
+  const yTransform = useTransform(scrollY, [0, 100], [0, -100]);
+  const opacity = useTransform(scrollY, [0, 100], [1, 0]);
+  const scale = useTransform(scrollY, [70, 100], [1, 0.75]);
+  const height = useTransform(scrollY, [70, 100], ["12px", "0px"]);
+  const marginTop = useTransform(scrollY, [70, 100], [0.75, 0]);
+  const borderWidth = useTransform(scrollY, [70, 100], [0, 1]);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const sloganRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime({
         time: dayjs().format("h:mm A"),
-        date: dayjs().format("dddd MMMM DD, YYYY"),
+        date: dayjs().format("ddd  MMM DD, YYYY"),
       });
     }, 60 * 1000);
 
@@ -1061,8 +1068,61 @@ function NavbarMobile() {
     return managePaths.filter((path) => path.href !== pathname);
   }, [pathname]);
 
+  useEffect(() => {
+    const headerElement = headerRef.current;
+    if (!headerElement) return;
+    const unsubscribe = yTransform.on("change", (latest) => {
+      headerElement.style.transform = `translateY(${latest}px)`;
+    });
+
+    return () => unsubscribe();
+  }, [yTransform]);
+
+  useEffect(() => {
+    const logoElement = logoRef.current;
+    if (!logoElement) return;
+    const unsubscribe = scale.on("change", (latest) => {
+      logoElement.style.transform = `scale(${latest})`;
+    });
+
+    return () => unsubscribe();
+  }, [scale]);
+
+  useEffect(() => {
+    const headerElement = headerRef.current;
+    const sloganElement = sloganRef.current;
+    if (!sloganElement || !headerElement) return;
+    const unsubscribe = height.on("change", (latest) => {
+      sloganElement.style.height = latest;
+      sloganElement.style.opacity = `${opacity.get()}`;
+    });
+    const unsubscribe2 = marginTop.on("change", (latest) => {
+      sloganElement.style.marginTop = `${latest}rem`;
+    });
+    const unsubscribe3 = opacity.on("change", (latest) => {
+      sloganElement.style.opacity = `${latest}`;
+    });
+    const unsubscribe4 = borderWidth.on("change", (latest) => {
+      headerElement.style.borderBottomWidth = `${latest}px`;
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribe2();
+      unsubscribe3();
+      unsubscribe4();
+    };
+  }, [height, marginTop, opacity, borderWidth]);
+
   return (
-    <header className="w-full max-w-[1100px] mx-auto py-2">
+    <motion.div
+      className="sticky top-0 w-full bg-primary max-w-[1100px] mx-auto py-2"
+      ref={headerRef}
+      style={{
+        borderBottomStyle: "dashed",
+        borderColor: "#1f1d1a4d",
+      }}
+    >
       <div className="flex">
         <div className="flex-1 ">
           <div className="flex items-center uppercase whitespace-nowrap font-helvetica gap-2 text-[10px]">
@@ -1158,7 +1218,7 @@ function NavbarMobile() {
                 accountsDrawerRef.current?.showDrawer();
               }}
             >
-              <SignOutButton />
+              <SignOutButton noCaret />
             </div>
           )}
           {/* <div className="text-[10px] flex justify-end font-helvetica">
@@ -1251,14 +1311,14 @@ function NavbarMobile() {
         </div>
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] mt-3 mb-1" />
-      <div className="flex-1 flex items-center gap-3 justify-between py-2 ">
+      <div className="items-center gap-4 grid grid-cols-6 py-2 ">
         {/* <Logo className="w-[310px] h-[auto]" /> */}
-        <WorldClockWithLabel timezone={-4} label="D.C." />
-        <WorldClockWithLabel timezone={2} label="BXL" />
-        <WorldClockWithLabel timezone={1} label="LAGOS" />
-        <WorldClockWithLabel timezone={4} label="DUBAI" />
-        <WorldClockWithLabel timezone={8} label="BEIJING" />
-        <WorldClockWithLabel timezone={8} label="SG" />
+        <WorldClockWithLabel timezone={-7} label="SF" />
+        <WorldClockWithLabel timezone={-4} label="NEW YORK" />
+        <WorldClockWithLabel timezone={1} label="LONDON" />
+        <WorldClockWithLabel timezone={5.5} label="DELHI" />
+        <WorldClockWithLabel timezone={9} label="TOKYO" />
+        <WorldClockWithLabel timezone={10} label="SYDNEY" />
       </div>
       {/* <div className="text-center">
         <Link href="/">
@@ -1277,20 +1337,25 @@ function NavbarMobile() {
           </span>
         </Link>
       </div> */}
-      <Logo
-        style={{
-          fontSize: "65px",
-          lineHeight: 0,
-          marginTop: "5px",
-        }}
-        linkStyle={{
-          marginTop: "-10px",
-          margin: "0 5px",
-          display: "block",
-        }}
-        className="!w-full !h-auto"
-      />
-      <div className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-3">
+      <div ref={logoRef}>
+        <Logo
+          style={{
+            fontSize: "65px",
+            lineHeight: 0,
+            marginTop: "5px",
+          }}
+          linkStyle={{
+            marginTop: "-10px",
+            margin: "0 5px",
+            display: "block",
+          }}
+          className="!w-full !h-auto"
+        />
+      </div>
+      <div
+        ref={sloganRef}
+        className="flex-1 flex font-helvetica justify-center items-center gap-3 text-[10px] mt-3 overflow-hidden"
+      >
         <span className="text-appBlack leading-[120%]">INTELLIGENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">EFFICIENT</span>
@@ -1305,7 +1370,7 @@ function NavbarMobile() {
         deleteAccountDisclosure={disclosureOptions}
       />
       {user && <DeleteAccountModal disclosureOptions={disclosureOptions} />}
-    </header>
+    </motion.div>
   );
 }
 

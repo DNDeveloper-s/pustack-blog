@@ -26,6 +26,7 @@ import { useCreateEvent } from "@/api/event";
 import { Timestamp } from "firebase/firestore";
 import DescriptionEditor from "./DescriptionEditor";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -45,6 +46,7 @@ export default function CreateEventForm() {
   // Third Party Hooks
   const { formState, getValues, watch, setValue, unregister, handleSubmit } =
     useFormContext<CreateEventFormValues>();
+  const router = useRouter();
 
   // Context
   const { openNotification } = useNotification();
@@ -57,11 +59,13 @@ export default function CreateEventForm() {
   const [attachments, setAttachments] = useState<CreateEventAttachments>({
     event_image: "",
     organizer_image: "",
+    venue_image: "",
   });
 
   // React Queries
   const { mutate: postCreateEvent, isPending } = useCreateEvent({
-    onSuccess: () => {
+    onSuccess: (event: Event) => {
+      router.push("/events?event_id=" + event.id);
       openNotification(
         NotificationPlacements[5],
         {
@@ -104,7 +108,6 @@ export default function CreateEventForm() {
     if (venueValue === "online") {
       unregister("venue_name");
       unregister("venue_maps_link");
-      unregister("venue_image");
     } else if (venueValue === "offline") {
       unregister("meetingLink");
     }

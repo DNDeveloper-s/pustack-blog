@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "./contact.css";
 import Providers from "./providers";
 import { getAuthenticatedAppForUser } from "@/lib/firebase/serverApp";
 import { Metadata } from "next";

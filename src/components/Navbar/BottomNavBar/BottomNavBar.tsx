@@ -19,17 +19,30 @@ export default function BottomNavBar() {
 
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const lastTime = useRef(Date.now());
+
+  const speedThreshold = 0.55; // Adjust this value to set the speed threshold (pixels per millisecond)
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
-    if (currentScrollY > lastScrollY.current) {
-      // Scrolling down
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastTime.current;
+
+    // Calculate scroll speed in pixels per millisecond
+    const scrollSpeed =
+      Math.abs(currentScrollY - lastScrollY.current) / timeDiff;
+
+    if (scrollSpeed > speedThreshold && currentScrollY > lastScrollY.current) {
+      // If scroll speed exceeds the threshold and user is scrolling down, hide the navbar
       setIsVisible(false);
-    } else {
-      // Scrolling up
+    } else if (currentScrollY < lastScrollY.current) {
+      // If user scrolls up, show the navbar
       setIsVisible(true);
     }
+
+    // Update the last scroll position and time
     lastScrollY.current = currentScrollY;
+    lastTime.current = currentTime;
   };
 
   useEffect(() => {
@@ -47,9 +60,15 @@ export default function BottomNavBar() {
   const isEventActive = pathname.startsWith("/events");
   const isNewsActive = pathname === "/";
 
+  const isContactScreen = pathname.startsWith("/contact");
+
   if (!isSmallScreen) return null;
   return (
-    <div className="h-[100px] w-screen">
+    <div
+      className={
+        "w-screen " + (isContactScreen || !isVisible ? "" : "h-[100px]")
+      }
+    >
       <div
         className="fixed bottom-[-1px] z-[999] left-0 w-full h-[60px] transition-all duration-300 ease-in-out"
         style={{
@@ -59,11 +78,19 @@ export default function BottomNavBar() {
         }}
       >
         <div className="w-full flex justify-between relative h-full">
-          <div className="left__menu flex-1 flex items-stretch justify-start">
+          <div
+            className={
+              "left__menu flex-1 flex items-stretch justify-start " +
+              (isContactScreen ? " !bg-transparent" : "")
+            }
+          >
             <Link
               href="/"
               onClick={(e) => {}}
-              style={{ textDecoration: "inherit" }}
+              style={{
+                textDecoration: "inherit",
+                border: isContactScreen ? "none" : "",
+              }}
               id="homeIntro"
               className={
                 "w-[92%] flex items-center justify-center mobile-border " +
@@ -95,6 +122,9 @@ export default function BottomNavBar() {
               height={76}
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              style={{
+                opacity: isContactScreen ? 0 : 1,
+              }}
             >
               <g filter="url(#a)">
                 <path
@@ -131,7 +161,7 @@ export default function BottomNavBar() {
               </defs>
             </svg>
             <Link
-              href="/"
+              href="/contact"
               onClick={(e) => {}}
               style={{
                 textDecoration: "inherit",
@@ -150,10 +180,18 @@ export default function BottomNavBar() {
               </div>
             </Link>
           </div>
-          <div className="right__menu flex-1 flex items-stretch justify-end">
+          <div
+            className={
+              "right__menu flex-1 flex items-stretch justify-end " +
+              (isContactScreen ? " !bg-transparent" : "")
+            }
+          >
             <Link
               href="/events"
-              style={{ textDecoration: "inherit" }}
+              style={{
+                textDecoration: "inherit",
+                border: isContactScreen ? "none" : "",
+              }}
               onClick={(e) => {}}
               id="classesIntro"
               className={

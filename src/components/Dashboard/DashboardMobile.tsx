@@ -98,32 +98,11 @@ export default function DashboardMobile({
       (post: any) => !!post.snippetData?.image || !!post.meta?.image
     );
 
-    const midContentPosts = compact(
-      difference(posts, [titlePost])?.filter(
-        (post) => !!post.snippetData?.image || !!post.meta?.image
-      )
-    ).slice(0, 12);
-
-    const rightPosts = compact(
-      difference(posts, [titlePost, ...midContentPosts])
-    ).slice(0, 3);
-
-    const listPosts = compact(
-      difference(posts, [
-        ...[titlePost],
-        ...rightPosts,
-        ...midContentPosts,
-      ])?.filter((post) => post?.snippetPosition === SnippetPosition.LEFT)
-    );
+    const rightPosts = compact(difference(posts, [titlePost])).slice(0, 4);
 
     return {
       titlePost,
       rightPosts: sortBy(rightPosts ?? [], "post.timestamp"),
-      midContentPosts: chunk(
-        sortBy(midContentPosts ?? [], "post.timestamp"),
-        2
-      ),
-      listPosts: sortBy(listPosts ?? [], "post.timestamp"),
     };
   }, [posts]);
 
@@ -162,30 +141,6 @@ export default function DashboardMobile({
             post={post}
           />
         ))}
-      </div>
-      <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-        {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
-          <div
-            key={i}
-            className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
-          >
-            {postChunkOf2.map((post, j) => (
-              <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
-                <DesignedBlog
-                  linkClassName={"h-full block"}
-                  size="sm"
-                  post={post}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-        {/* <div className="pr-3">
-            <BlogWithAuthorV2 size="sm" />
-          </div>
-          <div className="pl-3">
-            <BlogWithAuthor size="sm" />
-          </div> */}
       </div>
     </div>
   );

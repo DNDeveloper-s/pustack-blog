@@ -1,0 +1,1496 @@
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-1,
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-2,
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-3,
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-4 {
+  position: absolute;
+  display: block;
+  top: 2em;
+  color: white;
+  text-align: center;
+  width: 100%;
+  font-size: 2rem;
+  font-weight: 600;
+  animation-duration: 10s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  filter: brightness(0.85);
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow h4 {
+  color: #bebebe;
+  position: absolute;
+  top: 16%;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+  font-size: 15px;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-1 {
+  animation-name: slide-1;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-1 span {
+  animation: flowingText 8s linear both infinite;
+  background: linear-gradient(
+    to left,
+    #4c72fa 5%,
+    #0ccff8 30%,
+    #4c72fa 50%,
+    #0ccff8 70%,
+    #4c72fa 95%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-2 {
+  animation-name: slide-2;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-2 span {
+  background: linear-gradient(
+    to left,
+    #e9275b 5%,
+    #e6707d 30%,
+    #e9275b 50%,
+    #e6707d 70%,
+    #e9275b 95%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: flowingText 8s linear both infinite;
+  background-size: 200% auto;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-3 {
+  animation-name: slide-3;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-3 span {
+  background: linear-gradient(
+    to left,
+    #85c445 5%,
+    #9fc06e 30%,
+    #85c445 50%,
+    #9fc06e 70%,
+    #85c445 95%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: flowingText 8s linear both infinite;
+  background-size: 200% auto;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-4 {
+  animation-name: slide-4;
+}
+.blaze__sidebar__nosessions__wrapper .text-slideshow .item-4 span {
+  background: linear-gradient(
+    to left,
+    #de85ff 5%,
+    #f3c2ff 30%,
+    #de85ff 50%,
+    #f3c2ff 70%,
+    #de85ff 95%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: flowingText 8s linear both infinite;
+  background-size: 200% auto;
+}
+.blaze__sidebar__nosessions__wrapper .bottom-section {
+  display: flex;
+  position: absolute;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  top: 79%;
+}
+.blaze__sidebar__nosessions__wrapper .bottom-section .book,
+.blaze__sidebar__nosessions__wrapper .bottom-section .meet,
+.blaze__sidebar__nosessions__wrapper .bottom-section .learn {
+  width: 18%;
+  text-align: center;
+}
+.blaze__sidebar__nosessions__wrapper .bottom-section .book img,
+.blaze__sidebar__nosessions__wrapper .bottom-section .meet img,
+.blaze__sidebar__nosessions__wrapper .bottom-section .learn img {
+  width: 70%;
+}
+.blaze__sidebar__nosessions__wrapper .bottom-section .book p,
+.blaze__sidebar__nosessions__wrapper .bottom-section .meet p,
+.blaze__sidebar__nosessions__wrapper .bottom-section .learn p {
+  padding-top: 0.2rem;
+  color: #e4e4e4;
+  font-size: 12px;
+}
+.blaze__sidebar__nosessions__wrapper .bottom-section .arrow-right svg {
+  color: white;
+  transform: rotate(45deg);
+  font-size: 20px;
+}
+.blaze__sidebar__nosessions__wrapper .blaze__circle {
+  position: absolute;
+  left: 50%;
+  top: 40.5%;
+  transform: translate(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper .orbit__1 {
+  width: 180px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper {
+  position: relative;
+  animation: rotate ease-in-out 24s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .orbit__img {
+  max-width: 100% !important;
+  width: 100%;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2 {
+  position: absolute;
+  top: 32.5rem;
+  left: 7.5rem;
+  transform: scale(1);
+  transition: all ease-in-out 250ms;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2.t5 {
+  top: 7rem !important;
+  left: 8rem !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2.t2 {
+  top: 6rem !important;
+  left: 0rem !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2.t2
+  .teacher__content {
+  animation: counterRotate3 ease-in-out 24s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content {
+  animation: counterRotate ease-in-out 24s infinite;
+  position: relative;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__img {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0px 0px 0px rgba(124, 113, 113, 0);
+  border-radius: 50%;
+  transition: all ease-in-out 250ms;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  padding: 0.5rem 1rem;
+  padding-left: 2.25rem;
+  height: 54px;
+  left: 0;
+  opacity: 0;
+  width: max-content;
+  transition: all ease-in-out 250ms;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: #606093;
+  background: linear-gradient(45deg, #606093 -50%, #0d2151 100%);
+  color: white;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .name {
+  font-size: 0.9rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .subject {
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating {
+  color: yellow;
+  font-size: 0.8rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  svg {
+  width: 16px;
+  height: 16px;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  i {
+  margin-right: 2px;
+  font-size: 0.75rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2:hover {
+  top: 32.5rem;
+  left: 7.5rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__img {
+  animation-play-state: paused;
+  width: 58px;
+  transition: all ease-in-out 250ms;
+  height: 58px;
+  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__tooltip {
+  left: 28px;
+  opacity: 1;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1:hover
+  .orbit__wrapper {
+  cursor: pointer;
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__1:hover
+  .orbit__wrapper
+  .teacher__wrapper {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper .orbit__3 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  width: 400px;
+  max-width: 100vw;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper {
+  position: relative;
+  animation: rotate ease-in-out 18s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .orbit__img {
+  max-width: 100% !important;
+  width: 100%;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1 {
+  position: absolute;
+  top: 0.75rem !important;
+  left: 14rem !important;
+  transform: scale(1);
+  transition: all ease-in-out 250ms;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content {
+  animation: counterRotate ease-in-out 18s infinite;
+  position: relative;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__img {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0px 0px 0px rgba(124, 113, 113, 0);
+  border-radius: 50%;
+  transition: all ease-in-out 250ms;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  padding: 0.5rem 1rem;
+  padding-left: 2.25rem;
+  height: 54px;
+  left: 0;
+  opacity: 0;
+  width: max-content;
+  transition: all ease-in-out 250ms;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: #606093;
+  background: linear-gradient(45deg, #606093 -50%, #0d2151 100%);
+  color: white;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .name {
+  font-size: 0.9rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .subject {
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating {
+  color: yellow;
+  font-size: 0.8rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  svg {
+  width: 16px;
+  height: 16px;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  i {
+  margin-right: 2px;
+  font-size: 0.75rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1:hover
+  .teacher__content {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1:hover
+  .teacher__content
+  .teacher__img {
+  animation-play-state: paused;
+  width: 58px;
+  transition: all ease-in-out 250ms;
+  height: 58px;
+  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__1:hover
+  .teacher__content
+  .teacher__tooltip {
+  left: 28px;
+  opacity: 1;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2 {
+  position: absolute;
+  top: 12.5rem;
+  left: 0.75rem;
+  transform: scale(1);
+  transition: all ease-in-out 250ms;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2.t3 {
+  top: 10.5rem !important;
+  left: 21.2rem !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2.t3
+  .teacher__content {
+  animation: counterRotate3 ease-in-out 18s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content {
+  animation: counterRotate ease-in-out 18s infinite;
+  position: relative;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__img {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0px 0px 0px rgba(124, 113, 113, 0);
+  border-radius: 50%;
+  transition: all ease-in-out 250ms;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  padding: 0.5rem 1rem;
+  padding-left: 2.25rem;
+  height: 54px;
+  left: 0;
+  opacity: 0;
+  width: max-content;
+  transition: all ease-in-out 250ms;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: #606093;
+  background: linear-gradient(45deg, #606093 -50%, #0d2151 100%);
+  color: white;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .name {
+  font-size: 0.9rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .subject {
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating {
+  color: yellow;
+  font-size: 0.8rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  svg {
+  width: 16px;
+  height: 16px;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  i {
+  margin-right: 2px;
+  font-size: 0.75rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2:hover {
+  top: 32.5rem;
+  left: 7.5rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__img {
+  animation-play-state: paused;
+  width: 58px;
+  transition: all ease-in-out 250ms;
+  height: 58px;
+  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__tooltip {
+  left: 28px;
+  opacity: 1;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3:hover
+  .orbit__wrapper {
+  cursor: pointer;
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3:hover
+  .orbit__wrapper
+  .teacher__wrapper {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__3:hover
+  .orbit__wrapper
+  .teacher__wrapper
+  .teacher__content {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper .orbit__2 {
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper {
+  position: relative;
+  animation: rotate ease-in-out 12s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .orbit__img {
+  max-width: 100% !important;
+  width: 100%;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .saturn {
+  transform: rotate(-120deg);
+  position: absolute;
+  width: 38px;
+  top: 2rem;
+  left: 3rem;
+  animation: counterRotate3 ease-in-out 12s infinite;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .saturn
+  img {
+  max-width: 100% !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2 {
+  position: absolute;
+  top: 32.5rem;
+  left: 7.5rem;
+  transform: scale(1);
+  transition: all ease-in-out 250ms;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2.t4 {
+  top: 12rem !important;
+  left: 1.1rem !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2.t4
+  .teacher__content {
+  animation: counterRotate2 ease-in-out 12s infinite !important;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content {
+  animation: counterRotate ease-in-out 18s infinite;
+  position: relative;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__img {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0px 0px 0px rgba(124, 113, 113, 0);
+  border-radius: 50%;
+  transition: all ease-in-out 250ms;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  padding: 0.5rem 1rem;
+  padding-left: 2.25rem;
+  height: 54px;
+  left: 0;
+  opacity: 0;
+  width: max-content;
+  transition: all ease-in-out 250ms;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: #606093;
+  background: linear-gradient(45deg, #606093 -50%, #0d2151 100%);
+  color: white;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .name {
+  font-size: 0.9rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .subject {
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating {
+  color: yellow;
+  font-size: 0.8rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  svg {
+  width: 16px;
+  height: 16px;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2
+  .teacher__content
+  .teacher__tooltip
+  .teacher__details
+  .rating
+  i {
+  margin-right: 2px;
+  font-size: 0.75rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2:hover {
+  top: 32.5rem;
+  left: 7.5rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content {
+  animation-play-state: paused;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__img {
+  animation-play-state: paused;
+  width: 58px;
+  transition: all ease-in-out 250ms;
+  height: 58px;
+  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  object-fit: cover;
+  object-position: top;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .orbit__2
+  .orbit__wrapper
+  .teacher__wrapper__2:hover
+  .teacher__content
+  .teacher__tooltip {
+  left: 28px;
+  opacity: 1;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__circle
+  .orbits__wrapper
+  .user__img__blaze {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  object-position: center center;
+  filter: brightness(1);
+  transition: all ease-in-out 250ms;
+  background: #c99617;
+  box-shadow: 0px 0px 0px 4px rgba(228, 172, 28, 0.65),
+    0px 0px 0px 8px rgba(228, 172, 28, 0.45),
+    0px 0px 0px 12px rgba(228, 172, 28, 0.25);
+  animation: glowy 4s infinite ease-out;
+}
+@keyframes glowy {
+  0% {
+    box-shadow: 0px 0px 0px 3px rgba(228, 172, 28, 0.25),
+      0px 0px 0px 6px rgba(228, 172, 28, 0),
+      0px 0px 0px 9px rgba(228, 172, 28, 0);
+  }
+  25% {
+    box-shadow: 0px 0px 0px 3px rgba(228, 172, 28, 0.5),
+      0px 0px 0px 6px rgba(228, 172, 28, 0.25),
+      0px 0px 0px 9px rgba(228, 172, 28, 0);
+  }
+  50% {
+    box-shadow: 0px 0px 0px 3px rgba(228, 172, 28, 0.65),
+      0px 0px 0px 6px rgba(228, 172, 28, 0.45),
+      0px 0px 0px 9px rgba(228, 172, 28, 0.25);
+  }
+  75% {
+    box-shadow: 0px 0px 0px 3px rgba(228, 172, 28, 0.5),
+      0px 0px 0px 6px rgba(228, 172, 28, 0.25),
+      0px 0px 0px 9px rgba(228, 172, 28, 0);
+  }
+  100% {
+    box-shadow: 0px 0px 0px 3px rgba(228, 172, 28, 0.25),
+      0px 0px 0px 6px rgba(228, 172, 28, 0),
+      0px 0px 0px 9px rgba(228, 172, 28, 0);
+  }
+}
+@media screen and (max-height: 667px) {
+  .blaze__sidebar__nosessions__wrapper .blaze__circle {
+    transform: translate(-50%) scale(0.8);
+  }
+  .blaze__sidebar__nosessions__wrapper .bottom-section {
+    transform: scale(0.85);
+  }
+  .blaze__sidebar__nosessions__wrapper .text-slideshow h4 {
+    top: 19%;
+  }
+}
+.blaze__sidebar__nosessions__wrapper .blaze__landing__content {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 4rem;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header {
+  margin-top: 1rem;
+  font-size: 3.75vw;
+  font-weight: 500;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  > span {
+  font-family: "Jost";
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text {
+  display: inline;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .maths {
+  background: linear-gradient(315deg, #e899dc 0%, #d387ab 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .physics {
+  background: linear-gradient(315deg, #f39f86 0%, #f9d976 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .chemistry {
+  background: linear-gradient(315deg, #d5adc8 0%, #ff8489 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .biology {
+  background: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .english {
+  background: linear-gradient(315deg, #f8ceec 0%, #a88beb 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .history {
+  background: linear-gradient(315deg, #f907fc 0%, #05d6d9 74%);
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .maths,
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .physics,
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .chemistry,
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .english,
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .history,
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__header
+  .typing__text
+  .biology {
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .landing__additional {
+  margin-top: 1.1rem;
+  display: none;
+  font-size: 1.75vw;
+  font-family: "Jost";
+  font-weight: 300;
+  color: white;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .landing__additional
+  > span {
+  font-family: "Jost";
+  font-weight: 500;
+  color: var(--color-highlight);
+}
+.blaze__sidebar__nosessions__wrapper .blaze__landing__content .landing__action {
+  background: white;
+  border: 1px solid var(--color-highlight);
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0.75rem 2rem;
+  pointer-events: all;
+  color: #070f28;
+  font-family: "Jost";
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-top: 1.5rem;
+  min-width: 25%;
+  transition: all ease-in-out 250ms;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .landing__action:hover {
+  background: none;
+  color: white;
+  border: 1px solid white;
+  transform: scale(1.1);
+}
+@media only screen and (max-width: 1200px) {
+  .blaze__sidebar__nosessions__wrapper
+    .blaze__landing__content
+    .landing__action {
+    display: block;
+  }
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__stats {
+  display: flex;
+  min-width: 25%;
+  width: min-content;
+  justify-content: space-between;
+  color: white;
+  overflow: hidden;
+  position: absolute;
+  bottom: 5rem;
+  left: 4.25rem;
+  height: 54px;
+  z-index: 100;
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__stats
+  .vertical__rotator {
+  display: inline-block;
+  color: white;
+  position: relative;
+  white-space: nowrap;
+  top: 0;
+  z-index: 101;
+  left: 0;
+  font-size: 1.8rem;
+  animation: move 8s;
+  animation-iteration-count: infinite;
+  animation-delay: 1.5s;
+  font-weight: 500;
+}
+@media only screen and (max-width: 980px) {
+  .blaze__sidebar__nosessions__wrapper
+    .blaze__landing__content
+    .blaze__landing__stats
+    .vertical__rotator {
+    display: none;
+  }
+}
+.blaze__sidebar__nosessions__wrapper
+  .blaze__landing__content
+  .blaze__landing__stats
+  .vertical__rotator
+  > div {
+  height: 54px;
+}
+@keyframes move {
+  0% {
+    top: 0px;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  20% {
+    opacity: 1;
+    top: -54px;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 1;
+    top: -108px;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  60% {
+    opacity: 1;
+    top: -162px;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 1;
+    top: -216px;
+  }
+}
+
+@keyframes counterRotate {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+
+  50%,
+  60% {
+    opacity: 0;
+  }
+  65% {
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(-360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes counterRotate2 {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+  }
+  30%,
+  40% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes counterRotate3 {
+  0% {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  65% {
+    opacity: 1;
+  }
+  72%,
+  82% {
+    opacity: 0;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-360deg);
+    opacity: 1;
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 0px 0px rgba(255, 165, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 2px 6px rgba(255, 165, 0, 0.3);
+  }
+}
+
+.contact-heading-btn {
+  animation: flowingText 8s linear infinite both;
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(270deg, #ffc371 5%, #ff5f6d 50%, #ffc371 95%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.schedule-meeting-btn {
+  background: linear-gradient(135deg, #6d1616, #cd0909);
+  border-radius: 100px;
+  padding: 13px 20px;
+  margin-top: 10px;
+  color: #fff;
+  font-size: 0.85em;
+}
+
+@keyframes flowingText {
+  100% {
+    background-position: -200%;
+  }
+}
