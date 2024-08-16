@@ -25,8 +25,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal?: React.ReactNode;
 }>) {
   // const doc = await getAuthenticatedAppForUser();
 
@@ -36,6 +38,7 @@ export default async function RootLayout({
         <ErrorBoundary errorComponent={ErrorMasterComponent}>
           <Providers>
             {children}
+            {modal}
             <BottomNavBar />
           </Providers>
         </ErrorBoundary>

@@ -313,6 +313,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
   }, []);
 
   useEffect(() => {
+    if (_post instanceof Post) return setPost(_post);
     if (_post) {
       setPost(
         new Post(
@@ -450,6 +451,8 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
     }
   }
 
+  console.log("post - ", post, _post);
+
   if (post === null) {
     return null;
   }
@@ -482,7 +485,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
           alt="event"
         /> */}
         <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-8 px-3">
-          <p className="font-featureBold text-[25px] text-white line-clamp-3">
+          <p className="font-featureBold text-[25px] text-white line-clamp-3 leading-[28px]">
             {post.title}
           </p>
         </div>

@@ -20,9 +20,9 @@ export default function Publications() {
   }, [mode]);
 
   return (
-    <div className="max-w-[1440px] w-screen overflow-auto px-3 mx-auto">
+    <div className="max-w-[1440px] w-screen px-3 mx-auto">
       <Navbar />
-      <div className="py-10 min-h-[calc(100vh-150px)]">
+      <div className="py-10">
         <div className="mb-6 flex justify-between items-center">
           <h2 className="text-appBlack text-[22px] md:text-[30px] font-larkenExtraBold">
             My Publications
@@ -63,7 +63,6 @@ export default function Publications() {
         {mode?.toLowerCase() === "posts" && <PostsEntry />}
         {mode?.toLowerCase() === "events" && <EventsEntry />}
       </div>
-      <Footer />
     </div>
   );
 }

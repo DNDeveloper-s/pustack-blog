@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { TbFileUpload } from "react-icons/tb";
 import { CreateEventFormValues } from "./CreateEventEntry";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Spinner } from "@nextui-org/spinner";
 import { useNotification } from "@/context/NotificationContext";
 import { handleUploadAsync } from "@/lib/firebase/upload";
@@ -22,7 +22,7 @@ import { NotificationPlacements } from "antd/es/notification/interface";
 import { SnackbarContent } from "../AdminEditor/AdminPage";
 import { getRandomDarkHexColor } from "@/lib/colors";
 import { Event, EventVenueType } from "@/firebase/event";
-import { useCreateEvent } from "@/api/event";
+import { useCreateEvent, useUpdateEvent } from "@/api/event";
 import { Timestamp } from "firebase/firestore";
 import DescriptionEditor from "./DescriptionEditor";
 import { useUser } from "@/context/UserContext";
@@ -42,111 +42,156 @@ interface CreateEventAttachments {
   venue_image?: string;
 }
 
-export default function CreateEventForm() {
+export default function CreateEventForm({ event }: { event?: Event }) {
   // Third Party Hooks
-  const { formState, getValues, watch, setValue, unregister, handleSubmit } =
-    useFormContext<CreateEventFormValues>();
   const router = useRouter();
 
   // Context
+  const {
+    formState,
+    getValues,
+    watch,
+    setValue,
+    unregister,
+    handleSubmit,
+    setError,
+  } = useFormContext<CreateEventFormValues>();
   const { openNotification } = useNotification();
   const { user } = useUser();
 
   // Local State
   const [loading, setLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
-  const [attachments, setAttachments] = useState<CreateEventAttachments>({
-    event_image: "",
-    organizer_image: "",
-    venue_image: "",
-  });
 
   // React Queries
-  const { mutate: postCreateEvent, isPending } = useCreateEvent({
-    onSuccess: (event: Event) => {
-      router.push("/events?event_id=" + event.id);
-      openNotification(
-        NotificationPlacements[5],
-        {
-          message: <SnackbarContent label={"Event created successfully."} />,
-          closable: true,
-          duration: 5,
-          key: "drafts-notification",
-          className: "drafts-notification",
-        },
-        "success"
-      );
-    },
-    onError: () => {
-      openNotification(
-        NotificationPlacements[5],
-        {
-          message: (
-            <SnackbarContent
-              label={"Something went wrong, Please try again."}
-            />
-          ),
-          closable: true,
-          duration: 5,
-          key: "drafts-notification",
-          className: "drafts-notification",
-        },
-        "error"
-      );
-    },
-  });
+  const { mutate: postCreateEvent, isPending: isCreatePending } =
+    useCreateEvent({
+      onSuccess: (event: Event) => {
+        router.push("/events?event_id=" + event.id);
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: <SnackbarContent label={"Event created successfully."} />,
+            closable: true,
+            duration: 5,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+      },
+      onError: (error) => {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: (
+              <SnackbarContent
+                label={
+                  error.message ?? "Something went wrong, Please try again."
+                }
+              />
+            ),
+            closable: true,
+            duration: 5,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "error"
+        );
+      },
+    });
+  const { mutate: postUpdateEvent, isPending: isUpdatePending } =
+    useUpdateEvent({
+      onSuccess: (event: Event) => {
+        router.push("/events?event_id=" + event.id);
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: <SnackbarContent label={"Event updated successfully."} />,
+            closable: true,
+            duration: 5,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "success"
+        );
+      },
+      onError: (error) => {
+        openNotification(
+          NotificationPlacements[5],
+          {
+            message: (
+              <SnackbarContent
+                label={
+                  error?.message ?? "Something went wrong, Please try again."
+                }
+              />
+            ),
+            closable: true,
+            duration: 5,
+            key: "drafts-notification",
+            className: "drafts-notification",
+          },
+          "error"
+        );
+      },
+    });
+  const isPending = isCreatePending || isUpdatePending;
 
   // Watchers
   const venueValue = watch("venue");
   const isAllDayValue = watch("isAllDay");
-  // const startTimeValue = watch("startTime");
-  // const endTimeValue = watch("endTime");
+  const startTimeValue = watch("startTime");
+  const endTimeValue = watch("endTime");
 
   // UseEffects
   useEffect(() => {
     if (venueValue === "online") {
       unregister("venue_name");
       unregister("venue_maps_link");
+      unregister("venue_address");
+
+      // Set the meeting link
+      if (event?.venue.type === "online") {
+        setValue("meetingLink", event.venue.meetingLink);
+      }
     } else if (venueValue === "offline") {
       unregister("meetingLink");
+
+      // Set the offline venue details
+      if (event?.venue.type === "offline") {
+        setValue("venue_name", event.venue.name);
+        setValue("venue_maps_link", event.venue.mapsLink);
+        setValue("venue_address", event.venue.address ?? null);
+      }
     }
-  }, [venueValue]);
+  }, [venueValue, event]);
   useEffect(() => {
     if (isAllDayValue) {
       unregister("endTime");
     }
   }, [isAllDayValue]);
 
+  const getAttachment = (key: keyof CreateEventAttachments) => {
+    return getValues()[key];
+  };
+
   // Validators
   const validateAttachments = (key: keyof CreateEventAttachments) => {
-    if (!attachments[key]) {
-      openNotification(
-        NotificationPlacements[5],
-        {
-          message: (
-            <SnackbarContent
-              label={key.split("_").join(" ").toUpperCase() + " is required."}
-            />
-          ),
-          closable: true,
-          duration: 5,
-          key: "drafts-notification",
-          className: "drafts-notification",
-        },
-        "error"
-      );
-      return "Image is required";
+    if (!getAttachment(key)) {
+      setError(key, {
+        message: key.split("_").join(" ").toUpperCase() + " is required.",
+      });
+      throw new Error(key.split("_").join(" ").toUpperCase() + " is required.");
     }
     return true;
   };
 
   // Uploaders
   const uploadAttachment = async (key: keyof CreateEventAttachments) => {
-    if (!attachments[key]) return;
-    const blobFile = await fetch(attachments[key] as string).then((res) =>
-      res.blob()
-    );
+    const localUrl = getAttachment(key);
+    if (!localUrl || localUrl.startsWith("http")) return;
+    const blobFile = await fetch(localUrl as string).then((res) => res.blob());
 
     const url = await handleUploadAsync(
       new File(
@@ -178,13 +223,20 @@ export default function CreateEventForm() {
         validateAttachments("venue_image");
       }
 
-      // Upload the attachments
-      const event_image_url = await uploadAttachment("event_image");
-      const organizer_image_url = await uploadAttachment("organizer_image");
+      // Check for the start time and end time. If the end time is before the start time, throw an error
+      if (dayjs(data.startTime).isAfter(dayjs(data.endTime))) {
+        setError("endTime", {
+          message: "End Time cannot be before the Start Time.",
+        });
+        throw new Error("End Time cannot be before the Start Time.");
+      }
 
-      let venue_image_url: string | null | undefined = null;
+      // Upload the attachments
+      await uploadAttachment("event_image");
+      await uploadAttachment("organizer_image");
+
       if (venueValue === "offline") {
-        venue_image_url = await uploadAttachment("venue_image");
+        await uploadAttachment("venue_image");
       }
 
       const values = getValues();
@@ -192,16 +244,18 @@ export default function CreateEventForm() {
       let venueObject: EventVenueType = {
         type: "offline",
         name: values.venue_name as string,
-        image: venue_image_url as string,
+        image: values.venue_image as string,
         mapsLink: values.venue_maps_link as string,
+        address: (values.venue_address as string) ?? null,
       };
 
       if (venueValue === "offline") {
         venueObject = {
           type: "offline",
           name: values.venue_name as string,
-          image: venue_image_url as string,
+          image: values.venue_image as string,
           mapsLink: values.venue_maps_link as string,
+          address: (values.venue_address as string) ?? null,
         };
       } else {
         venueObject = {
@@ -210,14 +264,15 @@ export default function CreateEventForm() {
         };
       }
 
-      const event = new Event({
+      const eventObj = {
+        id: event?.id ?? undefined,
         title: values.title,
         description: values.description,
         startTime: Timestamp.fromDate(dayjs(values.startTime).toDate()),
         endTime: Timestamp.fromDate(dayjs(values.endTime).toDate()),
         organizer: {
           name: values.organizer_name,
-          photoURL: organizer_image_url as string,
+          photoURL: values.organizer_image as string,
           description: values.organizer_info,
           email: values.contact_email,
           contact: values.contact_phone,
@@ -230,21 +285,27 @@ export default function CreateEventForm() {
         },
         status: "published",
         venue: venueObject,
-        displayImage: event_image_url as string,
-        isAllDay: false,
-        background: getRandomDarkHexColor(),
-      });
+        displayImage: values.event_image as string,
+        isAllDay: event?.isAllDay ?? values.isAllDay ?? false,
+        background: event?.background ?? getRandomDarkHexColor(),
+      };
 
-      postCreateEvent(event);
+      console.log("eventObj - ", eventObj);
+
+      // @ts-ignore
+      const _event = new Event(eventObj);
+
+      event ? postUpdateEvent(_event) : postCreateEvent(_event);
 
       setIsUploading(false);
-    } catch (e) {
+    } catch (e: any) {
+      setIsUploading(false);
       openNotification(
         NotificationPlacements[5],
         {
           message: (
             <SnackbarContent
-              label={"Something went wrong, Please try again."}
+              label={e.message ?? "Something went wrong, Please try again."}
             />
           ),
           closable: true,
@@ -267,7 +328,8 @@ export default function CreateEventForm() {
         // Get this url from response in real world.
         getBase64(info.file.originFileObj as FileType, (url) => {
           setLoading(false);
-          setAttachments((prev) => ({ ...prev, [key]: url }));
+          // setAttachments((prev) => ({ ...prev, [key]: url }));
+          setValue(key, url);
         });
       }
     };
@@ -290,7 +352,7 @@ export default function CreateEventForm() {
 
   // Getters/Renderers
   const getImageUrl = (key: keyof CreateEventAttachments) => {
-    return attachments[key];
+    return getValues()[key];
   };
   // const disabledDate: DatePickerProps["disabledDate"] = (current) => {
   //   return current && current < dayjs(startTimeValue);
@@ -311,6 +373,33 @@ export default function CreateEventForm() {
       </div>
     </button>
   );
+
+  const disabledDate = (current: any) => {
+    return current && current < dayjs(startTimeValue).startOf("day");
+  };
+
+  const disabledTime = (current: any) => {
+    if (dayjs(startTimeValue).isSame(current, "day")) {
+      return {
+        disabledHours: () =>
+          Array.from({ length: 24 }, (_, i) => i).splice(
+            0,
+            dayjs(startTimeValue).hour()
+          ),
+        disabledMinutes: () =>
+          Array.from({ length: 60 }, (_, i) => i).splice(
+            0,
+            dayjs(startTimeValue).minute()
+          ),
+        disabledSeconds: () =>
+          Array.from({ length: 60 }, (_, i) => i).splice(
+            0,
+            dayjs(startTimeValue).second()
+          ),
+      };
+    }
+    return {};
+  };
 
   return (
     <form
@@ -394,6 +483,7 @@ export default function CreateEventForm() {
                     name={field.name}
                     disabled={field.disabled}
                     className="ant-picker-minerva-date"
+                    value={field.value ? dayjs(field.value) : undefined}
                   />
                 )}
               />
@@ -408,10 +498,13 @@ export default function CreateEventForm() {
                           field.onChange(dayjs(date).toISOString());
                         }}
                         placeholder="End Time"
+                        disabledDate={disabledDate}
+                        disabledTime={disabledTime}
                         ref={field.ref}
                         name={field.name}
                         disabled={field.disabled}
                         className="ant-picker-minerva-date"
+                        value={field.value ? dayjs(field.value) : undefined}
                       />
                       {fieldState.error?.message && (
                         <p className="text-xs mt-1 text-danger-500">
@@ -482,6 +575,11 @@ export default function CreateEventForm() {
                 uploadButton()
               )}
             </Upload>
+            {formState.errors.event_image && (
+              <p className="text-xs mt-1 text-danger-500">
+                {formState.errors.event_image.message}
+              </p>
+            )}
           </div>
           <div>
             <Controller
@@ -508,7 +606,7 @@ export default function CreateEventForm() {
                 <Controller
                   name="meetingLink"
                   render={({ field, fieldState, formState }) => (
-                    <>
+                    <div className="w-full flex-1 mb-2">
                       <input
                         // disabled={isPending}
                         className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
@@ -525,7 +623,7 @@ export default function CreateEventForm() {
                           {fieldState.error.message}
                         </p>
                       )}
-                    </>
+                    </div>
                   )}
                 />
               )}
@@ -534,10 +632,10 @@ export default function CreateEventForm() {
                   <Controller
                     name="venue_name"
                     render={({ field, fieldState, formState }) => (
-                      <>
+                      <div className="w-full flex-1 mb-2">
                         <input
                           // disabled={isPending}
-                          className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                          className="border text-[16px] w-full flex-1 flex-shrink-0 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
                           placeholder="Event Venue Name"
                           type="text"
                           style={{
@@ -550,16 +648,38 @@ export default function CreateEventForm() {
                             {fieldState.error.message}
                           </p>
                         )}
-                      </>
+                      </div>
+                    )}
+                  />
+                  <Controller
+                    name="venue_address"
+                    render={({ field, fieldState, formState }) => (
+                      <div className="w-full flex-1 mb-2">
+                        <input
+                          // disabled={isPending}
+                          className="border text-[16px] w-full flex-1 flex-shrink-0 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                          placeholder="Event Venue Address"
+                          type="text"
+                          style={{
+                            fontVariationSettings: '"wght" 400,"opsz" 10',
+                          }}
+                          {...field}
+                        />
+                        {fieldState.error?.message && (
+                          <p className="text-xs mt-1 text-danger-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
                     )}
                   />
                   <Controller
                     name="venue_maps_link"
                     render={({ field, fieldState, formState }) => (
-                      <>
+                      <div className="w-full flex-1 mb-2">
                         <input
                           // disabled={isPending}
-                          className="border text-[16px] w-full flex-1 flex-shrink mb-2 py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
                           placeholder="Event Venue Maps Link"
                           type="text"
                           style={{
@@ -572,7 +692,7 @@ export default function CreateEventForm() {
                             {fieldState.error.message}
                           </p>
                         )}
-                      </>
+                      </div>
                     )}
                   />
                   <Upload
@@ -594,6 +714,11 @@ export default function CreateEventForm() {
                       uploadButton("Upload Venue Image")
                     )}
                   </Upload>
+                  {formState.errors.venue_image && (
+                    <p className="text-xs mt-1 text-danger-500">
+                      {formState.errors.venue_image.message}
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -688,6 +813,11 @@ export default function CreateEventForm() {
                 uploadButton("Upload Organizer Image")
               )}
             </Upload>
+            {formState.errors.organizer_image && (
+              <p className="text-xs mt-1 text-danger-500">
+                {formState.errors.organizer_image.message}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -762,7 +892,7 @@ export default function CreateEventForm() {
           isLoading={isPending || isUploading}
         >
           <IoIosCreate />
-          <span>Create Event</span>
+          <span>{event ? "Update" : "Create"} Event</span>
         </Button>
       </div>
     </form>

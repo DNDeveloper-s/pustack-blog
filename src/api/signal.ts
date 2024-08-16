@@ -105,7 +105,7 @@ export const useQuerySignals = ({
   userId?: string;
   enabled?: boolean;
   status?: string;
-}): UseInfiniteQueryResult & { signals: any } => {
+}) => {
   const querySignals = async (
     pageParam: any,
     queryKey: QueryKey,
@@ -134,12 +134,11 @@ export const useQuerySignals = ({
     // },
     initialPageParam,
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.lastDoc || lastPage?.data?.docs?.length < limit)
-        return undefined;
+      if (!lastPage.lastDoc || lastPage?.data?.length < limit) return undefined;
       return lastPage.lastDoc as any;
     },
     getPreviousPageParam: (firstPage, allPages) => {
-      if (!firstPage.firstDoc || firstPage?.data?.docs?.length < limit)
+      if (!firstPage.firstDoc || firstPage?.data?.length < limit)
         return undefined;
       return firstPage.firstDoc as any;
     },

@@ -35,7 +35,7 @@ export default function EventDetailDesktopPage({
           <h3
             className="text-[25px] flex items-center gap-1 cursor-pointer"
             onClick={() => {
-              router.push("/events/list");
+              router.push("/events");
             }}
           >
             <MdArrowBackIos />

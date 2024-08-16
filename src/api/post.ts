@@ -26,7 +26,7 @@ export const useQueryPosts = ({
   topics,
   limit = 10,
 }: {
-  initialData?: any;
+  initialData?: Post[];
   enabled?: boolean;
   limit?: number;
   userId?: string;

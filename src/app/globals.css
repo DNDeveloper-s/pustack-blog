@@ -2968,6 +2968,12 @@ li[data-placeholder]::before {
   color: #ffffff !important;
 } */
 
+@media screen and (max-width: 500px) {
+  .ant-segmented-item {
+    width: 50% !important;
+  }
+}
+
 .mobile-border {
   border-top: 3px solid #eeeeee8d;
 }

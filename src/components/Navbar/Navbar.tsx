@@ -1121,6 +1121,7 @@ function NavbarMobile() {
       style={{
         borderBottomStyle: "dashed",
         borderColor: "#1f1d1a4d",
+        zIndex: 999,
       }}
     >
       <div className="flex">
@@ -1390,7 +1391,7 @@ export default function Navbar({
     setMounted(true);
   }, []);
 
-  if (isMobileScreen && pathname === "/events/list") return null;
+  if (isMobileScreen && pathname === "/events") return null;
 
   return mounted ? (
     <>

@@ -145,7 +145,7 @@ export default function RSVPedPage() {
       <Navbar />
       <div className="w-full overflow-auto py-10 flex-1 flex flex-col">
         <div className="w-full flex-1">
-          <div className="mb-6 flex justify-between items-center">
+          <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 md:items-center">
             <h2 className="text-appBlack text-[22px] md:text-[30px] font-larkenExtraBold">
               RSVP&nbsp;ed Events
             </h2>
@@ -153,7 +153,7 @@ export default function RSVPedPage() {
               <SortByModal handleApply={handleSortApply} />
               <FilterModal filters={filters} handleApply={handleFiltersApply} />
             </div> */}
-            <div>
+            <div className="w-full">
               <ConfigProvider
                 theme={{
                   components: {
@@ -170,11 +170,14 @@ export default function RSVPedPage() {
                 }}
               >
                 <Segmented<string>
-                  size={isMobileScreen ? "small" : "large"}
+                  size={"large"}
                   options={["Upcoming Events", "Past Events"]}
                   onChange={(value) => {
                     console.log(value); // string
                     setMode(value.split(" ")[0].toLowerCase() as any);
+                  }}
+                  style={{
+                    width: "100%",
                   }}
                   // className="!bg-lightPrimary"
                 />

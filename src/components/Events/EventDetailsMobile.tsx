@@ -420,8 +420,8 @@ export default function EventDetailsMobile({
           src={imageUrl}
           alt="event"
         /> */}
-        <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-6 px-3">
-          <p className="font-featureBold text-[25px] text-white line-clamp-3">
+        <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-8 px-3">
+          <p className="font-featureBold text-[25px] text-white line-clamp-3 leading-[28px]">
             {event.title}
           </p>
         </div>

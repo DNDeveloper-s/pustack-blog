@@ -372,9 +372,7 @@ export class Signal {
     _direction,
     _userId,
     _status,
-  }: QueryParams & { _flatten: true }): Promise<
-    GetAllReturnType<SignalQuerySnapshot>
-  >;
+  }: QueryParams & { _flatten: true }): Promise<GetAllReturnType<Signal[]>>;
   static async getAll(queryParams?: QueryParams) {
     const {
       _startAfter,

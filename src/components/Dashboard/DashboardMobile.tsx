@@ -7,12 +7,15 @@ import { Post as PostV1 } from "@/firebase/post";
 import { chunk, compact, difference, sortBy } from "lodash";
 import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
-import { useQueryPosts } from "@/api/post";
+import { useGetPostById, useQueryPosts } from "@/api/post";
 import { useQuerySignals } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import { Spinner } from "@nextui-org/spinner";
 import useInView from "@/hooks/useInView";
+import BlogPostDrawer from "../BlogPost/v2/BlogPostDrawer";
+import { useSearchParams } from "next/navigation";
+import SignalDrawer from "../Signals/SignalsDrawer";
 
 export default function DashboardMobile({
   posts: _serverPosts,
@@ -121,7 +124,10 @@ export default function DashboardMobile({
               key={signal.id}
               className="md:px-0 px-3 min-w-[170px] my-2 md:my-0"
             >
-              <BlueSignalBlog signal={signal} />
+              <BlueSignalBlog
+                href={`?signal_drawer_id=${signal.id}`}
+                signal={signal}
+              />
             </div>
           ))}
         </div>
@@ -130,6 +136,7 @@ export default function DashboardMobile({
         <DesignedBlog
           linkClassName="block"
           post={postsByPosition.titlePost as Post}
+          href={`?post_drawer_id=${postsByPosition.titlePost?.id}`}
         />
       </div>
       <div className="grid grid-cols-1 gap-4">
@@ -139,9 +146,12 @@ export default function DashboardMobile({
             linkClassName="block"
             key={post.id}
             post={post}
+            href={`?post_drawer_id=${post.id}`}
           />
         ))}
       </div>
+      <BlogPostDrawer _posts={posts} />
+      <SignalDrawer _signals={signals} />
     </div>
   );
 }

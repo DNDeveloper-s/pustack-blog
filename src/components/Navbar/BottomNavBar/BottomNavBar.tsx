@@ -61,12 +61,14 @@ export default function BottomNavBar() {
   const isNewsActive = pathname === "/";
 
   const isContactScreen = pathname.startsWith("/contact");
+  const eventsScreen = pathname.startsWith("/events");
 
   if (!isSmallScreen) return null;
   return (
     <div
       className={
-        "w-screen " + (isContactScreen || !isVisible ? "" : "h-[100px]")
+        "w-screen transition-height " +
+        (!eventsScreen && (isContactScreen || !isVisible) ? "h-0" : "h-[100px]")
       }
     >
       <div

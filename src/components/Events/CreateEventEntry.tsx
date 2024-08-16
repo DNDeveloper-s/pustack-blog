@@ -7,6 +7,9 @@ const CreateEventForm = dynamic(() => import("./CreateEventForm"), {
 });
 import { useYupValidationResolver } from "@/hooks/useYupValidationResolver";
 import * as Yup from "yup";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useGetEventById } from "@/api/event";
 
 /**
  *
@@ -30,6 +33,7 @@ export interface CreateEventFormValues {
   meetingLink?: string;
   venue_name?: string;
   venue_maps_link?: string;
+  venue_address?: string | null;
   venue_image?: string;
   isAllDay: boolean;
 }
@@ -76,16 +80,51 @@ const createEventSchema = Yup.object().shape({
       : schema.notRequired()
   ),
   venue_image: Yup.string(),
+  venue_address: Yup.string().nullable(),
 });
 
 export default function CreateEventEntry() {
+  const searchParams = useSearchParams();
+
   const methods = useForm<CreateEventFormValues>({
     resolver: useYupValidationResolver(createEventSchema),
     defaultValues: {
       venue: "online",
-      isAllDay: true,
+      isAllDay: false,
     },
   });
+  const eventId = searchParams.get("event_id");
+  const { data: event } = useGetEventById(eventId);
+
+  useEffect(() => {
+    if (event) {
+      // Fetch the event details
+      methods.setValue("title", event.title);
+      methods.setValue("startTime", event.startTime.toDate().toISOString());
+      methods.setValue("endTime", event.endTime?.toDate().toISOString());
+      methods.setValue("description", event.description);
+      methods.setValue("event_image", event.displayImage);
+      methods.setValue("organizer_name", event.organizer.name);
+      methods.setValue("organizer_image", event.organizer.photoURL);
+      methods.setValue("organizer_info", event.organizer.description);
+      methods.setValue("contact_email", event.organizer.email);
+      methods.setValue("contact_phone", event.organizer.contact);
+      methods.setValue("venue", event.venue.type);
+      if (event.venue.type === "online") {
+        methods.setValue("meetingLink", event.venue.meetingLink);
+      } else {
+        // Offline venue
+        methods.setValue("venue_name", event.venue.name);
+        methods.setValue("venue_maps_link", event.venue.mapsLink);
+        methods.setValue("venue_image", event.venue.image);
+        methods.setValue("venue_address", event.venue.address);
+      }
+      methods.setValue("isAllDay", event.isAllDay);
+
+      console.log("event - ", event);
+    }
+  }, [event, methods.setValue]);
+
   return (
     <div className="w-full pb-20 max-w-[900px] mx-auto">
       <div>
@@ -94,7 +133,7 @@ export default function CreateEventEntry() {
         </h2>
       </div>
       <FormProvider {...methods}>
-        <CreateEventForm />
+        <CreateEventForm event={event} />
       </FormProvider>
     </div>
   );

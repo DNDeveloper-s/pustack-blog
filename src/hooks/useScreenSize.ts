@@ -6,5 +6,10 @@ export default function useScreenSize() {
   const isMobileScreen = useMediaQuery({ maxWidth: 768 });
   const isSmallScreen = useMediaQuery({ maxWidth: 500 });
 
-  return { isTabletScreen, isSmallScreen, isDesktopScreen, isMobileScreen };
+  return {
+    isTabletScreen,
+    isSmallScreen,
+    isDesktopScreen,
+    isMobileScreen,
+  };
 }

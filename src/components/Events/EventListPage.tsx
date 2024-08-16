@@ -1,22 +1,37 @@
 "use client";
 
 import useScreenSize from "@/hooks/useScreenSize";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import Navbar from "../Navbar/Navbar";
 import EventSidebar from "./EventSidebar";
+import PageDrawer from "../shared/PageDrawer";
+import EventDetailMobilePage from "./EventDetailMobilePage";
+import { useSearchParams, useRouter } from "next/navigation";
 
-export default function EventListPage() {
+export default function EventListPage({ _event }: { _event: any }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const { isMobileScreen, isTabletScreen } = useScreenSize();
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const eventId = searchParams.get("event_id");
+
+  const open = useMemo(() => {
+    return !!eventId;
+  }, [eventId]);
+
+  // max-w-[1440px]
   return (
     <main
-      className="max-w-[1440px] mx-auto px-3"
+      className="max-w-[1440px] mx-auto"
       style={{
         overflow: isMobileScreen ? "auto" : "hidden",
       }}
     >
-      <Navbar scrollRef={scrollerRef} />
+      <div className="px-3">
+        <Navbar scrollRef={scrollerRef} />
+      </div>
       <div
         className={
           isTabletScreen
@@ -30,7 +45,7 @@ export default function EventListPage() {
         }}
         ref={scrollerRef}
       >
-        <div className="mb-2 pt-3 flex justify-between items-center">
+        <div className="mb-2 pt-3 flex justify-between items-center px-3">
           <h2 className="text-appBlack text-[26px] md:text-[30px] font-larkenExtraBold">
             Events
           </h2>
@@ -40,6 +55,9 @@ export default function EventListPage() {
           <EventSidebar className="!bg-transparent" />
         </div>
       </div>
+      <PageDrawer open={open} onClose={() => router.push("/events")}>
+        {_event && <EventDetailMobilePage _event={_event} />}
+      </PageDrawer>
     </main>
   );
 }

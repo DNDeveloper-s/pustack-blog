@@ -136,6 +136,7 @@ export type EventOfflineType = {
   name: string;
   image: string;
   mapsLink: string;
+  address: string | null;
 };
 
 export type EventVenueType = EventOnlineType | EventOfflineType;

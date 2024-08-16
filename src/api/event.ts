@@ -70,6 +70,37 @@ export const useCreateEvent = (
   });
 };
 
+export const useUpdateEvent = (
+  options?: UseMutationOptions<Event, Error, Event>
+) => {
+  const qc = useQueryClient();
+
+  const updateEvent = async (event: Event) => {
+    const updatedEvent = await event.updateInFirestore();
+    return updatedEvent;
+  };
+
+  return useMutation({
+    mutationFn: updateEvent,
+    onSettled: (data, error, variables) => {
+      qc.invalidateQueries({
+        predicate: (query) => {
+          return query.queryKey[0] === API_QUERY.QUERY_EVENTS()[0];
+        },
+      });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_EVENT_BY_ID(data?.id),
+      });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_EVENTS_FOR_DATE_RANGE,
+      });
+    },
+    ...(options ?? {}),
+  });
+};
+
 export const useGetEventById = (eventId?: string | null) => {
   const getEventById = async ({ queryKey }: QueryFunctionContext) => {
     const [, eventId] = queryKey;

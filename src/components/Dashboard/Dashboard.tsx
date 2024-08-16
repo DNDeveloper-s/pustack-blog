@@ -139,7 +139,8 @@ function DashboardDesktop({
 
     const midContentPosts = compact(
       difference(posts, [titlePost])?.filter(
-        (post) => !!post.snippetData?.image || !!post.meta?.image
+        // @ts-ignore
+        (post) => !!post?.snippetData?.image || !!post?.meta?.image
       )
     ).slice(0, 12);
 

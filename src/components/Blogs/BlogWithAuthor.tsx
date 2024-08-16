@@ -13,6 +13,7 @@ export interface BlogBaseProps {
   noLink?: boolean;
   post?: Post;
   linkClassName?: string;
+  href?: string;
 }
 
 const defaultBlogWithAuthor = (size = "lg") => (
@@ -81,12 +82,14 @@ export default function BlogWithAuthor({
   linkClassName,
   showUnBookmarkButton,
   handleBookMark,
+  href,
   isPending,
 }: BlogBaseProps & {
   post?: Post;
   showUnBookmarkButton?: boolean;
   handleBookMark?: (isBookmarked: boolean) => void;
   isPending?: boolean;
+  href?: string;
 }) {
   if (!post) return defaultBlogWithAuthor(size);
 
@@ -213,7 +216,7 @@ export default function BlogWithAuthor({
   return noLink ? (
     content
   ) : (
-    <Link className={linkClassName} href={`/posts/${post.id}`}>
+    <Link className={linkClassName} href={href ?? `/posts/${post.id}`}>
       {content}
     </Link>
   );

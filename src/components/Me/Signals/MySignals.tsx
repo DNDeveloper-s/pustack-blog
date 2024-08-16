@@ -388,7 +388,7 @@ function MySignals(props: any, ref: any) {
 
   console.log("error - ", error);
 
-  const hasSignals = signals?.length > 0;
+  const hasSignals = signals?.length ?? 0 > 0;
 
   const { ref: lastItemRef, isInView } = useInView();
   const { isMobileScreen, isTabletScreen } = useScreenSize();
@@ -443,7 +443,7 @@ function MySignals(props: any, ref: any) {
                 </Button>
               </div>
             )} */}
-            {signals.map((signal: Signal) => (
+            {signals?.map((signal: Signal) => (
               <div key={signal._id}>
                 <SavedPostItemV2 signal={signal} />
               </div>

@@ -67,7 +67,13 @@ export default function BlueCircleBlog({
   return noLink ? content : <Link href={`/posts/${post.id}`}>{content}</Link>;
 }
 
-export function BlueSignalBlog({ signal }: { signal: Signal }) {
+export function BlueSignalBlog({
+  href,
+  signal,
+}: {
+  href?: string;
+  signal: Signal;
+}) {
   const content = (
     <div className="py-0 md:py-3 group">
       {/* <div className="flex group-hover:text-appBlue uppercase items-center gap-3 text-[12px] font-featureHeadline mb-1">
@@ -92,5 +98,5 @@ export function BlueSignalBlog({ signal }: { signal: Signal }) {
     </div>
   );
 
-  return <Link href={"/signals?id=" + signal.id}>{content}</Link>;
+  return <Link href={href ?? "/signals?id=" + signal.id}>{content}</Link>;
 }
