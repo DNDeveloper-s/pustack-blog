@@ -8,6 +8,7 @@
   --background-end-rgb: 255, 255, 255;
   scroll-behavior: smooth;
   background: #f8f5d7;
+  height: 100%;
 }
 
 * {
@@ -70,6 +71,7 @@ body {
   background-color: #f8f5d7;
   overflow-x: hidden;
   overflow-y: auto;
+  height: 100%;
 }
 
 .widget {

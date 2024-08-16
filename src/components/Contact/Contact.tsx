@@ -33,7 +33,7 @@ export default function Contact() {
   }, []);
 
   return (
-    <div className="w-screen overflow-hidden bg-[#0e1525] h-screen relative">
+    <div className="w-screen overflow-hidden bg-[#0e1525] h-full relative">
       <div className="absolute top-2">
         <h2 className="contact-heading-btn px-4 font-helvetica">Contact</h2>
       </div>

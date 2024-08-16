@@ -39,9 +39,9 @@ export default function PageDrawer({
         </div>
         <div
           onClick={onClose}
-          className="py-1.5 w-full flex-shrink-0 flex items-center justify-center bg-black"
+          className="py-3 w-full flex-shrink-0 flex items-center justify-center bg-black"
         >
-          <IoCloseSharp className="text-white text-lg" />
+          <IoCloseSharp className="text-white text-2xl" />
         </div>
       </div>
     </Drawer>
