@@ -178,7 +178,10 @@ export interface TransformedEventWeekStructure {
     start: string;
     end: string;
     isCurrentWeek: boolean;
-    events: StructureEventType[];
+    events: {
+      date: string;
+      events: StructureEventType[];
+    }[];
   }[];
 }
 
@@ -230,22 +233,34 @@ const transformEventsToWeekStructure = (
     months.push(month);
   }
 
-  // Assign events to the correct week
+  // Assign events to the correct week and group by day
   events.forEach((event) => {
     if (!event) return;
     const eventDate = dayjs(event.startTime.toDate());
     const eventMonth = eventDate.format("MMMM");
-    const month = months.find((m: any) => m.month_name === eventMonth);
+    const eventDay = eventDate.startOf("day").toISOString();
+
+    const month = months.find((m) => m.month_name === eventMonth);
 
     if (month) {
       const week = month.weeks.find(
-        (w: any) =>
+        (w) =>
           eventDate.isSameOrAfter(dayjs(w.start)) &&
           eventDate.isSameOrBefore(dayjs(w.end))
       );
 
       if (week) {
-        week.events.push({
+        let dayGroup = week.events.find((group) => group.date === eventDay);
+
+        if (!dayGroup) {
+          dayGroup = {
+            date: eventDay,
+            events: [],
+          };
+          week.events.push(dayGroup);
+        }
+
+        dayGroup.events.push({
           exists: true,
           data: event,
         });
@@ -266,12 +281,24 @@ const transformEventsToWeekStructure = (
     );
 
     if (todayWeek) {
-      const isTodayIncluded = todayWeek.events.some((event) =>
+      let todayGroup = todayWeek.events.find((group) =>
+        dayjs(group.date).isSame(today, "day")
+      );
+
+      if (!todayGroup) {
+        todayGroup = {
+          date: today.toISOString(),
+          events: [],
+        };
+        todayWeek.events.push(todayGroup);
+      }
+
+      const isTodayIncluded = todayGroup.events.some((event) =>
         dayjs(event.data.startTime.toDate()).isSame(today, "day")
       );
 
       if (!isTodayIncluded) {
-        todayWeek.events.push({
+        todayGroup.events.push({
           exists: false,
           data: {
             id: "no-events-today",

@@ -32,6 +32,17 @@ export default function BottomNavBar() {
     const scrollSpeed =
       Math.abs(currentScrollY - lastScrollY.current) / timeDiff;
 
+    // If the user is scrolled all the way down
+    if (
+      window.innerHeight + window.scrollY >=
+      document.body.scrollHeight - 50
+    ) {
+      lastScrollY.current = currentScrollY;
+      lastTime.current = currentTime;
+      setIsVisible(true);
+      return;
+    }
+
     if (scrollSpeed > speedThreshold && currentScrollY > lastScrollY.current) {
       // If scroll speed exceeds the threshold and user is scrolling down, hide the navbar
       setIsVisible(false);

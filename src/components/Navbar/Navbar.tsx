@@ -38,6 +38,7 @@ import { toDashCase } from "@/firebase/signal";
 import { useJoinModal } from "@/context/JoinModalContext";
 import useScreenSize from "@/hooks/useScreenSize";
 import { motion, useScroll, useTransform, frame } from "framer-motion";
+import { useGetClosestEvent } from "@/api/event";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -118,6 +119,12 @@ function NavbarDesktop({
   scrollRef?: React.RefObject<HTMLDivElement>;
 }) {
   const { user } = useUser();
+
+  const {
+    data: event,
+    error,
+    isFetched,
+  } = useGetClosestEvent({ enabled: true });
 
   const [isNavOpen, setIsNavOpen] = useState(false);
   const toggleDrawer = () => {
@@ -333,7 +340,11 @@ function NavbarDesktop({
                     ? "text-appBlue uppercase"
                     : "text-appBlack")
                 }
-                href="/events"
+                href={
+                  event?.[0]?.id
+                    ? "/events?event_id=" + event?.[0]?.id
+                    : "/events"
+                }
                 style={{
                   fontWeight: 395,
                   fontVariationSettings: '"wght" 495,"opsz" 10',
@@ -767,7 +778,7 @@ function NavbarTablet({
                 Newsletters
               </Link> */}
             </div>
-            <div
+            {/* <div
               className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px] cursor-pointer"
               onClick={() => setIsNavOpen((c) => !c)}
             >
@@ -775,7 +786,7 @@ function NavbarTablet({
                 src={isNavOpen ? navClose : navOpen}
                 alt="Open Navigation"
               />
-            </div>
+            </div> */}
           </div>
           <div
             className="overflow-hidden transition-all"

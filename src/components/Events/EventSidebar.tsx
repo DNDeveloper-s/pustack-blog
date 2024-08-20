@@ -145,24 +145,61 @@ export default function EventSidebar({ className }: EventSidebarProps) {
           </span>
         </div>
         <div>
-          {week.events.map(({ data: event, exists }) => {
-            if (exists)
-              return <EventSidebarItem key={event.id} event={event} />;
-
+          {week.events.map(({ date, events }) => {
             return (
               <div
-                key={event.id}
-                className="grid grid-cols-[45px_1fr] gap-2 items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
+                key={date}
+                className={
+                  "grid grid-cols-[45px_1fr] gap-2 md:grid-cols-[45px_1fr] lg:grid-cols-[45px_1fr] items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2 transition-all "
+                  // (isActive ? "bg-primary" : "transparent")
+                }
               >
-                <div className="flex flex-col py-0 items-center font-helvetica justify-start">
-                  <p className="text-xs uppercase">{dayjs().format("ddd")}</p>
-                  <p className="text-lg font-medium">{dayjs().format("D")}</p>
+                <div className="flex flex-col py-1 items-center font-helvetica justify-start">
+                  <p className="text-xs uppercase">
+                    {dayjs(date).format("ddd")}
+                  </p>
+                  <p className="text-lg font-medium">
+                    {dayjs(date).format("D")}
+                  </p>
                 </div>
-                <div className="flex-1 h-full text-sm flex items-center">
-                  <p>No Events</p>
+                <div className="flex-1 flex flex-col gap-3">
+                  {/* {events.length > 0 && <EventCard event={events[0].data} />} */}
+                  {events.every((c) => c.exists) ? (
+                    events.map(
+                      (event) =>
+                        event.exists && (
+                          <EventCard key={event.data.id} event={event.data} />
+                        )
+                    )
+                  ) : (
+                    <div>
+                      <p className="text-sm flex items-center justify-center gap-3 py-3 text-appBlack font-helvetica text-opacity-65">
+                        <NoEventIcon fill="#1f1d1a" />
+                        <span className="-mb-0.5">No Events</span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             );
+
+            // if (exists)
+            //   return <EventSidebarItem key={event.id} event={event} />;
+
+            // return (
+            //   <div
+            //     key={event.id}
+            //     className="grid grid-cols-[45px_1fr] gap-2 items-stretch w-full py-2 pl-0 md:pl-2 md:px-2 pr-2"
+            //   >
+            //     <div className="flex flex-col py-0 items-center font-helvetica justify-start">
+            //       <p className="text-xs uppercase">{dayjs().format("ddd")}</p>
+            //       <p className="text-lg font-medium">{dayjs().format("D")}</p>
+            //     </div>
+            //     <div className="flex-1 h-full text-sm flex items-center">
+            //       <p>No Events</p>
+            //     </div>
+            //   </div>
+            // );
           })}
         </div>
       </div>

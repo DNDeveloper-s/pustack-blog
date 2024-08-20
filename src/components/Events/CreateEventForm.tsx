@@ -413,7 +413,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
           </span>
           <hr />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <Controller
             name="title"
             render={({ field, fieldState, formState }) => (
@@ -546,13 +546,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
               </div>
             )}
           />
-          <div
-            className="flex flex-col"
-            style={{
-              gridRow: "2 / 4",
-              gridColumn: "2",
-            }}
-          >
+          <div className="flex flex-col md:row-span-2">
             <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
               Image
             </h4>
@@ -732,7 +726,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
           </span>
           <hr />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <Controller
             name="organizer_name"
             render={({ field, fieldState, formState }) => (
@@ -784,13 +778,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
             )}
           />
 
-          <div
-            className="flex flex-col"
-            style={{
-              gridRow: "1 / 3",
-              gridColumn: "2",
-            }}
-          >
+          <div className="flex flex-col md:row-span-2">
             <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
               Organizer Image
             </h4>
@@ -828,7 +816,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
           </span>
           <hr />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <Controller
             name="contact_email"
             render={({ field, fieldState, formState }) => (

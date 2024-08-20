@@ -10,7 +10,7 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
   const { events, error } = useQueryEvents({
     enabled: true,
     occur_in: "upcoming",
-    limit: 1,
+    limit: 5,
   });
 
   if (!events) return null;

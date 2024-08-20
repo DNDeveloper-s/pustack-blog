@@ -1,42 +1,13 @@
 "use client";
 
-import { useMediaQuery } from "react-responsive";
 import Navbar from "../Navbar/Navbar";
-import { MathJaxContext } from "better-react-mathjax";
 import JoditWrapper from "./JoditWrapper";
-import SnippetForm from "../SnippetForm/SnippetForm";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import { Button } from "@nextui-org/button";
-import {
-  useCreateDraftPost,
-  useCreatePost,
-  useGetDraftPostById,
-  useGetPostById,
-  useUpdatePost,
-  useUpdatePostDraft,
-} from "@/api/post";
+import { useCreatePost, useGetPostById, useUpdatePost } from "@/api/post";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { useUser } from "@/context/UserContext";
-import { Tour, TourProps, notification } from "antd";
-import {
-  codeTutorial,
-  colorPicker,
-  createMathsFormula,
-  iconImage,
-  insertImage,
-  insertSection,
-  insertYoutubeVideo,
-  textFormatting,
-} from "@/assets";
-import BlogImage from "../shared/BlogImage";
 import {
   Dropdown,
   DropdownMenu,
@@ -99,9 +70,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   const ref = useRef(null);
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [currentTourStep, setCurrentTourStep] = useState<number>(0);
-
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
   const { isMobileScreen, isTabletScreen } = useScreenSize();
 
@@ -146,6 +114,12 @@ export default function AdminPage({ postId }: { postId?: string }) {
       setCurrentPost(requestedPost);
     }
   }, [requestedPost, user?.uid, postId]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user.is_author) return;
+    router.push("/");
+  }, [user]);
 
   const {
     mutate: postCreatePost,

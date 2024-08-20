@@ -11,8 +11,8 @@ import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { redirect } from "next/navigation";
 
 type Props = {
-  params: { eventId: [string] };
-  searchParams: { eventId: string };
+  params: { event_id: [string] };
+  searchParams: { event_id: string };
 };
 
 export const revalidate = 0;
@@ -24,7 +24,7 @@ export async function generateMetadata(
   //fetch data
   // const post = await Post.get(params.postId[0], true);
   try {
-    if (!searchParams.eventId)
+    if (!searchParams.event_id)
       return {
         title: "Minerva",
         description: "Minerva",
@@ -47,11 +47,11 @@ export async function generateMetadata(
       "events",
       "collections",
       "all_events",
-      searchParams.eventId
+      searchParams.event_id
     );
     const data = await getDoc(docRef);
 
-    const event = flattenDocumentData(data);
+  const event = flattenDocumentData(data);
 
     const _imageUrl = event.displayImage;
 

@@ -14,6 +14,8 @@ export interface BlogBaseProps {
   post?: Post;
   linkClassName?: string;
   href?: string;
+  noImage?: boolean;
+  classNames?: { content?: string; h2?: string; h3?: string; img?: string };
 }
 
 const defaultBlogWithAuthor = (size = "lg") => (
@@ -84,6 +86,8 @@ export default function BlogWithAuthor({
   handleBookMark,
   href,
   isPending,
+  classNames,
+  noImage,
 }: BlogBaseProps & {
   post?: Post;
   showUnBookmarkButton?: boolean;
@@ -108,7 +112,9 @@ export default function BlogWithAuthor({
             {post.author.name}
           </h3>
           <p
-            className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
+            className={
+              "leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
+            }
             style={{
               fontWeight: "300",
               fontVariationSettings: '"wght" 400,"opsz" 10',
@@ -161,7 +167,10 @@ export default function BlogWithAuthor({
         )}
         {post.snippetData?.content && (
           <TrimmedPara
-            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
+            className={
+              "leading-[120%] line-clamp-3 group-hover:text-appBlue " +
+              (classNames?.content ?? "")
+            }
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
@@ -181,7 +190,7 @@ export default function BlogWithAuthor({
           ></iframe>
         )}
       </div>
-      {post.snippetData?.image && (
+      {!noImage && post.snippetData?.image && (
         // <Zoom>
         //   <img
         //     onClick={(e: any) => {
@@ -319,6 +328,7 @@ export function BlogWithAuthorV2({
   noImage,
   noLink,
   linkClassName,
+  classNames,
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
   if (!post) return defaultBlogWithAuthorV2(size, noImage);
 
@@ -339,7 +349,9 @@ export function BlogWithAuthorV2({
             {post.author.name}
           </h3>
           <p
-            className="leading-[120%] text-[15px] group-hover:text-appBlue text-tertiary font-helvetica uppercase"
+            className={
+              "leading-[120%] text-[15px] group-hover:text-appBlue text-tertiary font-helvetica uppercase "
+            }
             style={{
               fontWeight: "300",
               fontVariationSettings: '"wght" 400,"opsz" 10',
@@ -370,7 +382,10 @@ export function BlogWithAuthorV2({
         )}
         {post.snippetData?.content && (
           <TrimmedPara
-            className="leading-[120%] line-clamp-3 group-hover:text-appBlue"
+            className={
+              "leading-[120%] line-clamp-3 group-hover:text-appBlue  " +
+              (classNames?.content ?? "")
+            }
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
