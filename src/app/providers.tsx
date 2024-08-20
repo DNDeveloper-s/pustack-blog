@@ -95,6 +95,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       showProgress: true,
       closable: false,
       pauseOnHover: true,
+      key: "drafts-notification",
+      className: "drafts-notification",
       ...props,
     });
   };

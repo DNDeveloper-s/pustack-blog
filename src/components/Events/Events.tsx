@@ -11,7 +11,6 @@ import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { ErrorMasterComponent } from "../shared/ErrorComponent";
 import EventDetailDesktopPage from "./EventDetailDesktopPage";
 
-
 export default function Events({
   eventId,
   _event,
@@ -27,7 +26,15 @@ export default function Events({
     isFetched,
   } = useGetClosestEvent({ enabled: true });
 
-  if ((isFetched && !_event?.id && !event?.id) || error) return redirect("/");
+  useEffect(() => {
+    if (_event) return;
+    if (event?.length === 0) {
+      console.log("Redirecting to home page | 32");
+      redirect(`/`);
+    } else if (event?.[0]?.id) {
+      redirect(`/events?event_id=${event?.[0]?.id}`);
+    }
+  }, [event, _event]);
 
   return isMobileScreen ? (
     <EventListPage _event={_event} />

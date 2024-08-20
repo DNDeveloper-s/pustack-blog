@@ -13,8 +13,6 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
     limit: 1,
   });
 
-  console.log("events | 15 - ", events, error);
-
   if (!events) return null;
   const event = events[0];
   if (!event) return null;

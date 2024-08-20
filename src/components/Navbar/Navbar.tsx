@@ -165,11 +165,26 @@ function NavbarDesktop({
     };
   }, []);
 
-  const showCreatePostButton = !!user;
-
   const manageList = useMemo(() => {
-    return managePaths.filter((path) => path.href !== pathname);
-  }, [pathname]);
+    if (!user) return [];
+    let filteredList = managePaths.filter((path) => path.href !== pathname);
+    if (!user.is_author) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/posts/create"
+      );
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/signals/create"
+      );
+    }
+    if (!user.is_event_creator) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/events/create"
+      );
+    }
+    return filteredList;
+  }, [pathname, user]);
+
+  const showCreatePostButton = !!user && manageList.length > 0;
 
   // <div className="h-[150px]">
   return (
@@ -578,11 +593,26 @@ function NavbarTablet({
     };
   }, []);
 
-  const showCreatePostButton = !!user;
-
   const manageList = useMemo(() => {
-    return managePaths.filter((path) => path.href !== pathname);
-  }, [pathname]);
+    if (!user) return [];
+    let filteredList = managePaths.filter((path) => path.href !== pathname);
+    if (!user.is_author) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/posts/create"
+      );
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/signals/create"
+      );
+    }
+    if (!user.is_event_creator) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/events/create"
+      );
+    }
+    return filteredList;
+  }, [pathname, user]);
+
+  const showCreatePostButton = !!user && manageList.length > 0;
 
   return (
     <div className="h-[220px]">
@@ -1062,11 +1092,27 @@ function NavbarMobile() {
       clearInterval(interval);
     };
   }, []);
-  const showCreatePostButton = !!user;
 
   const manageList = useMemo(() => {
-    return managePaths.filter((path) => path.href !== pathname);
-  }, [pathname]);
+    if (!user) return [];
+    let filteredList = managePaths.filter((path) => path.href !== pathname);
+    if (!user.is_author) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/posts/create"
+      );
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/signals/create"
+      );
+    }
+    if (!user.is_event_creator) {
+      filteredList = filteredList.filter(
+        (path) => path.href !== "/events/create"
+      );
+    }
+    return filteredList;
+  }, [pathname, user]);
+
+  const showCreatePostButton = !!user && manageList.length > 0;
 
   useEffect(() => {
     const headerElement = headerRef.current;

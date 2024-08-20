@@ -32,6 +32,7 @@ export interface UserDocumentData {
   company?: string;
   subscriber?: boolean;
   is_author?: boolean;
+  is_event_creator?: boolean;
 }
 
 export function transformUserData(user?: any): UserDocumentData {

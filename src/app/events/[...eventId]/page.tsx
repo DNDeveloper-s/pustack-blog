@@ -112,11 +112,13 @@ export default async function EventId(props: {
     const data = await getDoc(docRef);
 
     if (data.exists() === false) {
+      console.log("Redirecting to home page | 115");
       return redirect("/");
     }
 
     event = flattenDocumentData(data);
   } catch (e) {
+    console.log("Redirecting to home page | 121");
     return redirect("/");
   }
 

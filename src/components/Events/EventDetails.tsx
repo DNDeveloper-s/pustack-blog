@@ -396,6 +396,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
   }
 
   if (event === undefined) {
+    console.log("Redirecting to home page | 399");
     router.push("/");
     return null;
   }

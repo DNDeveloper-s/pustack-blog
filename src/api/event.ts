@@ -120,13 +120,13 @@ export const useGetEventById = (eventId?: string | null) => {
 
 export const useGetClosestEvent = (
   options?: Omit<
-    UseQueryOptions<Event | null | undefined>,
+    UseQueryOptions<(Event | null | undefined)[]>,
     "queryKey" | "queryFn"
   >
 ) => {
   const getClosestEvent = async () => {
     const event = await Event.getClosestEvent();
-    return event;
+    return [event];
   };
 
   return useQuery({

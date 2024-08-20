@@ -72,7 +72,7 @@ export default function EventDetailDesktopPage({
                 <EventSidebar />
               </div>
             )}
-            <EventDetailsDesktop _event={_event} />
+            {_event && <EventDetailsDesktop _event={_event} />}
           </div>
         </div>
       </div>

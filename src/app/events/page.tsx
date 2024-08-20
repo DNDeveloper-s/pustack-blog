@@ -135,6 +135,7 @@ export default async function EventsPage({
       event = flattenDocumentData(data);
     } catch (e) {
       console.log("e - ", e);
+      console.log("Redirecting to home page | 138");
       return redirect("/");
     }
   }
@@ -144,7 +145,7 @@ export default async function EventsPage({
       <Events
         eventId={eventId}
         _event={
-          event
+          eventId && event
             ? {
                 ...event,
                 id: event?.id,

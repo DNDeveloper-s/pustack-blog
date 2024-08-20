@@ -24,6 +24,7 @@ import AppImage from "../shared/AppImage";
 import Linkify from "linkify-react";
 import EventMap from "./EventMap";
 import RSVPNowButton from "../shared/RSVPNowButton";
+import { MdModeEdit } from "react-icons/md";
 
 const DateTimeIcon = (props: any) => (
   <svg
@@ -400,40 +401,10 @@ export default function EventDetailsDesktop({
   }
 
   if (event === undefined) {
+    console.log("Redirecting to home page | 403");
     router.push("/");
     return null;
   }
-
-  const getRSVPButtonLabel = () => {
-    if (!user) return "Sign In Now.";
-    if (!rsvped) return "I'll be there.";
-    return "I can't make it.";
-  };
-
-  const getRSVPMessage = () => {
-    if (rsvped && user)
-      return (
-        <>
-          Awesome! You&apos;ll start receiving all updates at
-          <b className="style_bold">{" " + user.email}</b>
-        </>
-      );
-
-    return (
-      <>
-        <b className="style_bold">RSVP for this event, </b>
-        and get notified at the earliest.
-      </>
-    );
-  };
-
-  const handleRSVPButtonClick = () => {
-    if (!user) {
-      setOpen(true);
-      return;
-    }
-    setRsvped(!rsvped);
-  };
 
   return (
     <div className="w-full h-full pb-10 overflow-auto">
@@ -468,46 +439,16 @@ export default function EventDetailsDesktop({
                   POLITICS
                 </p> */}
             </div>
-            {/* <div className="flex items-center gap-3">
-                  {post?.sections && (
-                    <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                      {
-                        readingTime(
-                          post.nodes
-                            ? extractTextFromEditor(post.nodes)
-                            : Section.mergedContent(post.sections)
-                        ).text
-                      }
-                    </span>
-                  )}
-                  {!isBookMarked ? (
-                    <FaRegStar
-                      className="cursor-pointer"
-                      onClick={() => handleBookMark(true)}
-                    />
-                  ) : (
-                    <FaStar
-                      className="text-[#d9c503] cursor-pointer"
-                      onClick={() => handleBookMark(false)}
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdModeEdit
-                      className="cursor-pointer"
-                      onClick={() =>
-                        router.push("/posts/create?post_id=" + post?.id)
-                      }
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdDelete
-                      className="cursor-pointer"
-                      onClick={() => {
-                        deleteModalRef.current?.handleChangeOpen(true);
-                      }}
-                    />
-                  )}
-                </div> */}
+            <div className="flex items-center gap-3">
+              {user?.uid === event?.author.uid && (
+                <MdModeEdit
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push("/events/create?event_id=" + event?.id)
+                  }
+                />
+            )}
+            </div>
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] my-2" />
           <div className="flex gap-5 items-center justify-between">

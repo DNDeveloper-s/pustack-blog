@@ -7,9 +7,12 @@ const CreateEventForm = dynamic(() => import("./CreateEventForm"), {
 });
 import { useYupValidationResolver } from "@/hooks/useYupValidationResolver";
 import * as Yup from "yup";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useGetEventById } from "@/api/event";
+import { useUser } from "@/context/UserContext";
+import { useNotification } from "@/context/NotificationContext";
+import { SnackbarContent } from "../AdminEditor/AdminPage";
 
 /**
  *
@@ -85,6 +88,7 @@ const createEventSchema = Yup.object().shape({
 
 export default function CreateEventEntry() {
   const searchParams = useSearchParams();
+  const { openNotification } = useNotification();
 
   const methods = useForm<CreateEventFormValues>({
     resolver: useYupValidationResolver(createEventSchema),
@@ -95,6 +99,42 @@ export default function CreateEventEntry() {
   });
   const eventId = searchParams.get("event_id");
   const { data: event } = useGetEventById(eventId);
+  const { user } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      // Redirect to login
+      event
+        ? router.push("/events?event_id=" + event.id)
+        : router.push("/events");
+      return;
+    }
+    if (event && event.author.uid !== user.uid) {
+      // Redirect to login
+      router.push("/events?event_id=" + event.id);
+      return;
+    }
+  }, [event, user, router]);
+
+  useEffect(() => {
+    if (user && !user.is_event_creator) {
+      // openDefaultNotification(
+      //   "You are not authorized to create events",
+      //   "error"
+      // );
+      // openNotification(
+      //   "topRight",
+      //   {
+      //     message: (
+      //       <SnackbarContent label="You are not authorized to create events" />
+      //     ),
+      //   },
+      //   "error"
+      // );
+      router.push("/events");
+    }
+  }, [user]);
 
   useEffect(() => {
     if (event) {
@@ -129,7 +169,7 @@ export default function CreateEventEntry() {
     <div className="w-full pb-20 max-w-[900px] mx-auto">
       <div>
         <h2 className="text-appBlack text-[30px] mt-8 font-larkenExtraBold">
-          Create Event
+          {event ? "Edit Event" : "Create Event"}
         </h2>
       </div>
       <FormProvider {...methods}>

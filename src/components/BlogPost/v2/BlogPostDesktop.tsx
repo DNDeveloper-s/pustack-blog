@@ -535,7 +535,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                       onClick={() => handleBookMark(false)}
                     />
                   )}
-                  {user?.email === post?.author.email && (
+                  {user?.uid === post?.author.uid && (
                     <MdModeEdit
                       className="cursor-pointer"
                       onClick={() =>
@@ -543,7 +543,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                       }
                     />
                   )}
-                  {user?.email === post?.author.email && (
+                  {user?.uid === post?.author.uid && (
                     <MdDelete
                       className="cursor-pointer"
                       onClick={() => {
