@@ -39,6 +39,7 @@ import { useJoinModal } from "@/context/JoinModalContext";
 import useScreenSize from "@/hooks/useScreenSize";
 import { motion, useScroll, useTransform, frame } from "framer-motion";
 import { useGetClosestEvent } from "@/api/event";
+import UpcomingEventSection from "../Events/UpcomingEventSection";
 
 const managePaths = [
   { key: "create-post", label: "CREATE POST", href: "/posts/create" },
@@ -48,21 +49,6 @@ const managePaths = [
   // { key: "view-signals", label: "VIEW MY SIGNALS", href: "/me/signals" },
 ];
 
-// const navLinks = [
-//   { key: "home", label: "Home", href: "/" },
-//   { key: "politics", label: "Politics", href: "/politics" },
-//   { key: "business", label: "Business", href: "/business" },
-//   { key: "technology", label: "Technology", href: "/technology" },
-//   { key: "netzero", label: "NetZero", href: "/netzero" },
-//   { key: "africa", label: "Africa", href: "/africa" },
-//   { key: "security", label: "Security", href: "/security" },
-//   { key: "media", label: "Media", href: "/media" },
-//   {
-//     key: "global-elections",
-//     label: "Global Elections",
-//     href: "/global-elections",
-//   },
-// ];
 const navLinks = topics.map((topic) => ({
   key: toDashCase(topic),
   label: topic,
@@ -202,7 +188,7 @@ function NavbarDesktop({
           boxShadow: isOnTop ? "none" : "0 0 2px rgba(0,0,0,0.25)",
         }}
       >
-        <header className="w-full max-w-[1440px] mx-auto py-2 px-3">
+        <header className="w-full max-w-[1440px] mx-auto py-2 px-5">
           <div className="flex">
             <div className="flex-1 ">
               <div className="flex items-center uppercase font-helvetica gap-2 text-[10px]">
@@ -370,15 +356,20 @@ function NavbarDesktop({
               <div className="w-1 h-1 rounded-full bg-appBlack" />
               <span className="text-appBlack leading-[120%]">RESPONSIBLE</span>
             </div>
-            {/* <div
-              className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px] cursor-pointer"
-              onClick={() => setIsNavOpen((c) => !c)}
+            <div
+              className="flex items-center gap-2 absolute -right-2 -bottom-[4px] text-[10px] cursor-pointer"
+              // onClick={() => setIsNavOpen((c) => !c)}
             >
-              <Image
+              {/* <Image
                 src={isNavOpen ? navClose : navOpen}
                 alt="Open Navigation"
-              />
-            </div> */}
+              /> */}
+              {/* <div className="mt-5"> */}
+              <div className="max-w-[300px] w-[20vw]">
+                <UpcomingEventSection />
+              </div>
+              {/* </div> */}
+            </div>
           </div>
           <hr className="border-appBlack" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" />
@@ -778,15 +769,18 @@ function NavbarTablet({
                 Newsletters
               </Link> */}
             </div>
-            {/* <div
-              className="flex items-center gap-2 absolute -right-2 -bottom-[8px] text-[10px] cursor-pointer"
+            <div
+              className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2 -bottom-[4px] text-[10px] cursor-pointer"
               onClick={() => setIsNavOpen((c) => !c)}
             >
-              <Image
+              <div className="max-w-[300px] w-[50vw]">
+                <UpcomingEventSection />
+              </div>
+              {/* <Image
                 src={isNavOpen ? navClose : navOpen}
                 alt="Open Navigation"
-              />
-            </div> */}
+              /> */}
+            </div>
           </div>
           <div
             className="overflow-hidden transition-all"

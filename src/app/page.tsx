@@ -73,13 +73,10 @@ export default async function Home() {
 
   return (
     <ErrorBoundary errorComponent={ErrorMasterComponent}>
-      <main className="w-full max-w-[1440px] mx-auto px-3">
-        <Navbar />
-        <div className="">
-          <Dashboard posts={posts} signals={signals} />
-          <LandingPageSections />
-        </div>
-      </main>
+      <div className="">
+        <Dashboard posts={posts} signals={signals} />
+        <LandingPageSections />
+      </div>
     </ErrorBoundary>
   );
 }

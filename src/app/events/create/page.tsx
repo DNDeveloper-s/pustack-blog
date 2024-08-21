@@ -4,10 +4,8 @@ import { Suspense } from "react";
 
 export default function CreateEventsPage() {
   return (
-    <Layout>
-      <Suspense fallback={<p>Loading</p>}>
-        <CreateEventEntry />
-      </Suspense>
-    </Layout>
+    <Suspense fallback={<p>Loading</p>}>
+      <CreateEventEntry />
+    </Suspense>
   );
 }

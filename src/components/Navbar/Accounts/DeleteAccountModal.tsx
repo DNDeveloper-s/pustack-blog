@@ -47,6 +47,7 @@ export default function DeleteAccountModal({
     },
   });
   const onClose = () => {
+    disclosureOptions.onClose();
     setValue("");
   };
 
@@ -113,7 +114,7 @@ export default function DeleteAccountModal({
               //   isDisabled={isPending}
               className="h-9 px-5 rounded flex items-center justify-center gap-2 bg-transparent border-none font-featureBold text-appBlue text-xs uppercase"
               variant="flat"
-              //   onClick={handleLeave}
+              onClick={onClose}
             >
               {/* <IoIosCreate /> */}
               <span>Cancel</span>

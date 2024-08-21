@@ -361,7 +361,7 @@ export default function Toolbar(props: ToolbarProps) {
               <Button
                 key={tool.id}
                 className={
-                  "w-10 flex flex-shrink-0 p-0 min-w-[unset] justify-center items-center h-8 hover:bg-[#f6f1c1] rounded-none " +
+                  "!w-10 flex flex-shrink-0 p-0 min-w-[unset] justify-center items-center h-8 hover:bg-[#f6f1c1] rounded-none " +
                   (activeTools.includes(tool.id) &&
                   (isMarkActiveAcrossSelection(editor, tool.id) ||
                     isBlockActive(editor, tool.id))

@@ -459,50 +459,25 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
   }
 
   return (
-    <main
-      className="max-w-[1440px] min-h-screen mx-auto px-3"
-      style={{
-        overflow: isMobileScreen ? "auto" : "hidden",
-      }}
-    >
-      <Navbar scrollRef={scrollerRef} />
-      {/* {!isInView && post && !isMobileScreen && (
-        <BlogPostStickyNavbar post={post} />
-      )} */}
+    <div className="max-w-[900px] mx-auto pb-10">
       <div
-        className={
-          isTabletScreen
-            ? "h-[calc(100vh-220px)]"
-            : isMobileScreen
-            ? ""
-            : "h-[calc(100vh-150px)]"
-        }
-        style={{
-          overflow: isMobileScreen ? "unset" : "auto",
-        }}
-        ref={scrollerRef}
+        ref={ref}
+        className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem] my-6"
       >
-        <div className="max-w-[900px] mx-auto pb-10">
-          <div
-            ref={ref}
-            className="grid divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 md:grid-cols-[auto_18.3125rem] my-6"
-          >
-            <div className="pb-5 md:pb-0 md:pr-5">
-              <div className="flex items-end justify-between">
-                <div className="mr-2">
-                  <img
-                    className="w-[38px] h-[38px]"
-                    src={
-                      post?.author?.photoURL ? post.author.photoURL : avatar.src
-                    }
-                    alt="avatar"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
-                    {post?.author?.name}
-                  </h3>
-                  {/* <p
+        <div className="pb-5 md:pb-0 md:pr-5">
+          <div className="flex items-end justify-between">
+            <div className="mr-2">
+              <img
+                className="w-[38px] h-[38px]"
+                src={post?.author?.photoURL ? post.author.photoURL : avatar.src}
+                alt="avatar"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
+                {post?.author?.name}
+              </h3>
+              {/* <p
                   className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
                   style={{
                     fontWeight: "300",
@@ -511,193 +486,186 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                 >
                   POLITICS
                 </p> */}
-                </div>
-                <div className="flex items-center gap-3">
-                  {post?.sections && (
-                    <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                      {
-                        readingTime(
-                          post.nodes
-                            ? extractTextFromEditor(post.nodes)
-                            : Section.mergedContent(post.sections)
-                        ).text
-                      }
-                    </span>
-                  )}
-                  {!isBookMarked ? (
-                    <FaRegStar
-                      className="cursor-pointer"
-                      onClick={() => handleBookMark(true)}
-                    />
-                  ) : (
-                    <FaStar
-                      className="text-[#d9c503] cursor-pointer"
-                      onClick={() => handleBookMark(false)}
-                    />
-                  )}
-                  {user?.uid === post?.author.uid && (
-                    <MdModeEdit
-                      className="cursor-pointer"
-                      onClick={() =>
-                        router.push("/posts/create?post_id=" + post?.id)
-                      }
-                    />
-                  )}
-                  {user?.uid === post?.author.uid && (
-                    <MdDelete
-                      className="cursor-pointer"
-                      onClick={() => {
-                        deleteModalRef.current?.handleChangeOpen(true);
-                      }}
-                    />
-                  )}
-                </div>
-              </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-              <div className="flex gap-5 items-center justify-between">
-                <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
-                  <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                    Updated{" "}
-                    {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                      " " +
-                      " GMT " +
-                      dayjs(post?.timestamp).format("Z")}
-                  </p>
-                  <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                    {post?.topic}
-                  </p>
-                </div>
-                <NavigatorShare handleShare={handleShare} />
-              </div>
-              <div className="mt-4">
-                <h2
-                  className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-                  style={{
-                    fontSize: "32px",
-                    fontWeight: "395",
-                    fontVariationSettings: '"wght" 495,"opsz" 10',
-                  }}
-                >
-                  {post?.snippetData?.title}
-                </h2>
-                {post?.snippetData?.image && (
-                  <BlogImage
-                    className="mt-4 w-[77%] cover-figure"
-                    src={
-                      post?.snippetData?.image
-                      // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
-                      // encodeURIComponent(post?.snippetData?.image)
-                    }
-                    style={{
-                      aspectRatio: "auto 700 / 453",
-                    }}
-                  />
-                )}
-                {post && (
-                  <BlogPostShareLinks post={post} appendClassName="mt-4" />
-                )}
-              </div>
             </div>
-            <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-6 justify-between">
-              {!user && (
-                <div>
-                  <div className="py-1">
-                    <p className="font-featureHeadline style_intro leading-[120%]">
-                      <b className="style_bold">
-                        Sign up for Minerva Principals:
-                      </b>
-                      {" What the White House is reading. "}
-                      <Link href="#" className="underline whitespace-nowrap">
-                        Read it now.
-                      </Link>
-                    </p>
-                  </div>
-                  <SignUpForNewsLettersButton
-                    containerClassName="flex mt-1"
-                    checkedLetters={newsLettersList}
-                  />
-                </div>
+            <div className="flex items-center gap-3">
+              {post?.sections && (
+                <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
+                  {
+                    readingTime(
+                      post.nodes
+                        ? extractTextFromEditor(post.nodes)
+                        : Section.mergedContent(post.sections)
+                    ).text
+                  }
+                </span>
               )}
-              {sections?.length > 0 && (
-                <div className="flex flex-col gap-1">
-                  <h3
-                    className="text-[#1f1d1a] text-[16px] font-featureHeadline"
-                    style={{
-                      fontWeight: 400,
-                      fontVariationSettings: '"wght" 500,"opsz" 10',
+              {!isBookMarked ? (
+                <FaRegStar
+                  className="cursor-pointer"
+                  onClick={() => handleBookMark(true)}
+                />
+              ) : (
+                <FaStar
+                  className="text-[#d9c503] cursor-pointer"
+                  onClick={() => handleBookMark(false)}
+                />
+              )}
+              {user?.uid === post?.author.uid && (
+                <MdModeEdit
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push("/posts/create?post_id=" + post?.id)
+                  }
+                />
+              )}
+              {user?.uid === post?.author.uid && (
+                <MdDelete
+                  className="cursor-pointer"
+                  onClick={() => {
+                    deleteModalRef.current?.handleChangeOpen(true);
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+          <div className="flex gap-5 items-center justify-between">
+            <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
+              <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
+                Updated{" "}
+                {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
+                  " " +
+                  " GMT " +
+                  dayjs(post?.timestamp).format("Z")}
+              </p>
+              <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
+                {post?.topic}
+              </p>
+            </div>
+            <NavigatorShare handleShare={handleShare} />
+          </div>
+          <div className="mt-4">
+            <h2
+              className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+              style={{
+                fontSize: "32px",
+                fontWeight: "395",
+                fontVariationSettings: '"wght" 495,"opsz" 10',
+              }}
+            >
+              {post?.snippetData?.title}
+            </h2>
+            {post?.snippetData?.image && (
+              <BlogImage
+                className="mt-4 w-[77%] cover-figure"
+                src={
+                  post?.snippetData?.image
+                  // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                  // encodeURIComponent(post?.snippetData?.image)
+                }
+                style={{
+                  aspectRatio: "auto 700 / 453",
+                }}
+              />
+            )}
+            {post && <BlogPostShareLinks post={post} appendClassName="mt-4" />}
+          </div>
+        </div>
+        <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-6 justify-between">
+          {!user && (
+            <div>
+              <div className="py-1">
+                <p className="font-featureHeadline style_intro leading-[120%]">
+                  <b className="style_bold">Sign up for Minerva Principals:</b>
+                  {" What the White House is reading. "}
+                  <Link href="#" className="underline whitespace-nowrap">
+                    Read it now.
+                  </Link>
+                </p>
+              </div>
+              <SignUpForNewsLettersButton
+                containerClassName="flex mt-1"
+                checkedLetters={newsLettersList}
+              />
+            </div>
+          )}
+          {sections?.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <h3
+                className="text-[#1f1d1a] text-[16px] font-featureHeadline"
+                style={{
+                  fontWeight: 400,
+                  fontVariationSettings: '"wght" 500,"opsz" 10',
+                }}
+              >
+                In this article:
+              </h3>
+              {sections?.map((section, index) => (
+                <>
+                  <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+                  <div
+                    className="flex gap-2 items-center cursor-pointer"
+                    onClick={() => {
+                      router.push("#" + section.id);
                     }}
                   >
-                    In this article:
-                  </h3>
-                  {sections?.map((section, index) => (
-                    <>
-                      <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-                      <div
-                        className="flex gap-2 items-center cursor-pointer"
-                        onClick={() => {
-                          router.push("#" + section.id);
-                        }}
-                      >
-                        <h3
-                          className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
-                          style={{
-                            fontWeight: 400,
-                            fontVariationSettings: '"wght" 500,"opsz" 10',
-                            alignItems: "center",
-                            gap: "10px",
-                            display: "grid",
-                            gridTemplateColumns: "16px 1fr",
-                          }}
-                        >
-                          <span className="inline-flex">
-                            <img
-                              src={section.icon}
-                              alt="icon"
-                              className="h-auto w-auto inline"
-                            />
-                          </span>
-                          {section.title}
-                        </h3>
-                      </div>
-                    </>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
-          <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-          {post.nodes ? (
-            <div className="my-8">
-              <SlateEditor readonly value={post.nodes as CustomElement[]} />
-            </div>
-          ) : (
-            <MathJaxContext>
-              <div className="w-full py-2 mt-5 no-preflight blog-post-container jodit-table">
-                {post?.sections?.map((section, index) => (
-                  <BlogPostSection key={section.id} section={section} />
-                ))}
-                {hasNoPost && (
-                  <div className="my-10 text-xl text-center text-red-500 uppercase">
-                    Post not found,{" "}
-                    <span className="underline text-appBlue">
-                      <Link href="/">Go back</Link>
-                    </span>
+                    <h3
+                      className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
+                      style={{
+                        fontWeight: 400,
+                        fontVariationSettings: '"wght" 500,"opsz" 10',
+                        alignItems: "center",
+                        gap: "10px",
+                        display: "grid",
+                        gridTemplateColumns: "16px 1fr",
+                      }}
+                    >
+                      <span className="inline-flex">
+                        <img
+                          src={section.icon}
+                          alt="icon"
+                          className="h-auto w-auto inline"
+                        />
+                      </span>
+                      {section.title}
+                    </h3>
                   </div>
-                )}
-              </div>
-            </MathJaxContext>
+                </>
+              ))}
+            </div>
           )}
-          <div>
-            <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
-            <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
-          </div>
-          <MoreFromMinerva />
-          <DeletePostModalRef post={post as Post} ref={deleteModalRef} />
         </div>
-        <Footer />
       </div>
-    </main>
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+      {post.nodes ? (
+        <div className="my-8">
+          <SlateEditor readonly value={post.nodes as CustomElement[]} />
+        </div>
+      ) : (
+        <MathJaxContext>
+          <div className="w-full py-2 mt-5 no-preflight blog-post-container jodit-table">
+            {post?.sections?.map((section, index) => (
+              <BlogPostSection key={section.id} section={section} />
+            ))}
+            {hasNoPost && (
+              <div className="my-10 text-xl text-center text-red-500 uppercase">
+                Post not found,{" "}
+                <span className="underline text-appBlue">
+                  <Link href="/">Go back</Link>
+                </span>
+              </div>
+            )}
+          </div>
+        </MathJaxContext>
+      )}
+      <div>
+        <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+        <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+      </div>
+      <MoreFromMinerva />
+      <DeletePostModalRef post={post as Post} ref={deleteModalRef} />
+    </div>
   );
 }

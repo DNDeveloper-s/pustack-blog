@@ -1,13 +1,20 @@
 "use client";
 
 import Navbar from "@/components/Navbar/Navbar";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { DocumentData } from "firebase/firestore";
 import useScreenSize from "@/hooks/useScreenSize";
-import EventSidebar from "./EventSidebar";
+import EventSidebar, { EventFetchState } from "./EventSidebar";
 import { MdArrowBackIos } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import EventDetailsDesktop from "./EventDetailsDesktop";
+import EventDetailsDesktop, {
+  EventDetailDesktopShimmer,
+} from "./EventDetailsDesktop";
+import noEventSVG from "@/assets/svgs/no-events.svg";
+import Image from "next/image";
+import { minervaMiniImage } from "@/assets";
+import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
+import _ from "lodash";
 
 export default function EventDetailDesktopPage({
   _event,
@@ -17,19 +24,27 @@ export default function EventDetailDesktopPage({
   const { isTabletScreen, isDesktopScreen, isMobileScreen } = useScreenSize();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [eventFetchStatus, setEventFetchStatus] =
+    useState<EventFetchState>("loading");
 
   // max-w-[1440px]
 
+  const onStateChange = (state: EventFetchState) => {
+    console.log("state - ", state);
+    setEventFetchStatus(state);
+  };
+
   return (
-    <main
-      className="min-h-screen w-full"
-      style={{
-        overflow: isMobileScreen ? "unset" : "hidden",
-      }}
-    >
-      <div className="max-w-[1440px] mx-auto px-3">
-        <Navbar scrollRef={scrollerRef} />
-      </div>
+    // <main
+    //   className="min-h-screen w-full"
+    //   style={{
+    //     overflow: isMobileScreen ? "unset" : "hidden",
+    //   }}
+    // >
+    //   <div className="max-w-[1440px] mx-auto px-3">
+    //     <Navbar scrollRef={scrollerRef} />
+    //   </div>
+    <>
       {isMobileScreen && (
         <div className="px-3 py-2 mb-0 sticky top-0 bg-primary border-b border-dashed border-[#1f1d1a6f] z-40">
           <h3
@@ -69,13 +84,77 @@ export default function EventDetailDesktopPage({
                     : "h-[calc(100vh-150px)]")
                 }
               >
-                <EventSidebar />
+                <EventSidebar onStateChange={onStateChange} />
               </div>
             )}
-            {_event && <EventDetailsDesktop _event={_event} />}
+            {eventFetchStatus === "loading" ? (
+              <EventDetailDesktopShimmer />
+            ) : eventFetchStatus === "error" ? (
+              <div className="pt-10">
+                <h2 className="font-featureBold text-[24px] text-center text-[#666666]">
+                  No Upcoming Events
+                </h2>
+                <Image
+                  src={noEventSVG}
+                  className="w-[400px] mx-auto mt-10"
+                  alt=""
+                />
+                <div className="mt-5">
+                  <p className="text-[18px] text-[#888888] text-center">
+                    You&apos;re all caught up!
+                  </p>
+                  <p className="text-[14px] text-[#aaaaaa] text-center">
+                    Check back later for more exciting events or explore some of
+                    our past highlights.
+                  </p>
+                </div>
+                <div className="mt-10">
+                  <Image
+                    alt="Minerva"
+                    src={minervaMiniImage}
+                    className="w-[16px]"
+                  />
+                  <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+                  <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+                </div>
+                <MoreFromMinerva />
+              </div>
+            ) : _event ? (
+              <EventDetailsDesktop _event={_event} />
+            ) : (
+              <div className="pt-10">
+                <h2 className="font-featureBold text-[24px] text-center text-[#666666]">
+                  No Upcoming Events
+                </h2>
+                <Image
+                  src={noEventSVG}
+                  className="w-[400px] mx-auto mt-10"
+                  alt=""
+                />
+                <div className="mt-5">
+                  <p className="text-[18px] text-[#888888] text-center">
+                    You&apos;re all caught up!
+                  </p>
+                  <p className="text-[14px] text-[#aaaaaa] text-center">
+                    Check back later for more exciting events or explore some of
+                    our past highlights.
+                  </p>
+                </div>
+                <div className="mt-10">
+                  <Image
+                    alt="Minerva"
+                    src={minervaMiniImage}
+                    className="w-[16px]"
+                  />
+                  <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+                  <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+                </div>
+                <MoreFromMinerva />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </main>
+    </>
   );
 }

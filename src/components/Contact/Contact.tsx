@@ -33,7 +33,7 @@ export default function Contact() {
   }, []);
 
   return (
-    <div className="w-screen overflow-hidden bg-[#0e1525] h-full relative">
+    <div className="w-screen overflow-hidden bg-[#0e1525] h-full flex-1 relative">
       <div className="absolute top-2">
         <h2 className="contact-heading-btn px-4 font-helvetica">Contact</h2>
       </div>
@@ -170,7 +170,7 @@ export default function Contact() {
               </div>
 
               <div
-                className="w-10 h-10 p-2 rounded-full bg-black border border-gray-500"
+                className="!w-10 !h-10 p-2 rounded-full bg-black border border-gray-500"
                 style={{
                   animation: "glow 3s infinite both",
                 }}

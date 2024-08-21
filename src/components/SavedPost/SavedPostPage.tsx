@@ -98,84 +98,84 @@ export default function SavedPostPage() {
   }
 
   return (
-    <div className="max-w-[1440px] w-screen h-screen flex flex-col overflow-auto px-3 mx-auto">
-      <Navbar />
-      <div className="w-full overflow-auto py-10 flex-1 flex flex-col">
-        <div className="w-full flex-1">
-          <div className="mb-6 w-full flex justify-between items-center">
-            <h2 className="text-appBlack text-[30px] font-larkenExtraBold">
-              Saved Posts
-            </h2>
-            {/* <div className="flex items-center gap-4">
+    <div className="w-full flex-1 py-10">
+      <div className="mb-6 w-full flex justify-between items-center">
+        <h2
+          className="text-appBlack text-[30px] font-featureBold"
+          style={{
+            fontWeight: 700,
+            fontVariationSettings: '"wght" 700,"opsz" 10',
+          }}
+        >
+          Saved Posts
+        </h2>
+        {/* <div className="flex items-center gap-4">
             <SortByModal handleApply={handleSortApply} />
             <FilterModal filters={filters} handleApply={handleFiltersApply} />
           </div> */}
+      </div>
+      {isLoading && (
+        <div className="w-full flex flex-col gap-2 justify-center items-center py-2 text-tertiary text-xs">
+          <Spinner label="Loading Posts" size="lg" />
+        </div>
+      )}
+      {hasPost &&
+        (isMobileScreen ? (
+          <div className="grid grid-cols-1 gap-3">
+            {posts?.map((post: Post) => (
+              <SavedPostItem
+                key={post.id}
+                post={post}
+                isPending={isPending === post?.id}
+                handleBookMark={(bookmarked: boolean) =>
+                  handleBookMark(post, bookmarked)
+                }
+              />
+            ))}
           </div>
-          {isLoading && (
-            <div className="w-full flex flex-col gap-2 justify-center items-center py-2 text-tertiary text-xs">
-              <Spinner label="Loading Posts" size="lg" />
-            </div>
-          )}
-          {hasPost &&
-            (isMobileScreen ? (
-              <div className="grid grid-cols-1 gap-3">
-                {posts?.map((post: Post) => (
-                  <SavedPostItem
-                    key={post.id}
-                    post={post}
-                    isPending={isPending === post?.id}
-                    handleBookMark={(bookmarked: boolean) =>
-                      handleBookMark(post, bookmarked)
-                    }
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-                {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
+        ) : (
+          <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+            {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
+              <div
+                key={i}
+                className={
+                  "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                  gridClassName
+                }
+              >
+                {postChunkOf2.map((post, j) => (
                   <div
-                    key={i}
+                    key={post.id}
                     className={
-                      "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
-                      gridClassName
+                      j % itemInRowCount === itemInRowCount - 1
+                        ? "pl-3"
+                        : j % itemInRowCount === 0
+                        ? "pr-3"
+                        : "px-3"
                     }
                   >
-                    {postChunkOf2.map((post, j) => (
-                      <div
-                        key={post.id}
-                        className={
-                          j % itemInRowCount === itemInRowCount - 1
-                            ? "pl-3"
-                            : j % itemInRowCount === 0
-                            ? "pr-3"
-                            : "px-3"
-                        }
-                      >
-                        <BlogWithAuthor
-                          linkClassName={"h-full block"}
-                          size="sm"
-                          post={post}
-                          showUnBookmarkButton
-                          handleBookMark={(bookmarked) =>
-                            handleBookMark(post, bookmarked)
-                          }
-                          isPending={isPending === post?.id}
-                        />
-                      </div>
-                    ))}
+                    <BlogWithAuthor
+                      linkClassName={"h-full block"}
+                      size="sm"
+                      post={post}
+                      showUnBookmarkButton
+                      handleBookMark={(bookmarked) =>
+                        handleBookMark(post, bookmarked)
+                      }
+                      isPending={isPending === post?.id}
+                    />
                   </div>
                 ))}
               </div>
             ))}
-          {noPost && (
-            <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
-              <NoPostIcon className="w-16" />
-              <p className="text-tertiary">No Saved Posts</p>
-            </div>
-          )}
+          </div>
+        ))}
+      {noPost && (
+        <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
+          <NoPostIcon className="w-16" />
+          <p className="text-tertiary">No Saved Posts</p>
         </div>
-        <Footer />
-      </div>
+      )}
     </div>
   );
 }

@@ -24,7 +24,6 @@ export default function LandingPageSections() {
       <Security />
       <Media />
       {isTabletScreen && <SignUpForNewsLetters />}
-      <Footer />
     </div>
   );
 }

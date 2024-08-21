@@ -86,7 +86,6 @@ export const useDeleteAccount = (
   };
 
   const deleteUser = async () => {
-    console.log("auth.currentUser - ", auth.currentUser);
     if (!auth.currentUser) {
       throw new Error("User not found");
     }

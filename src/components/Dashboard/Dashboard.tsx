@@ -24,7 +24,7 @@ function DashboardDesktop({
   signals: any;
 }) {
   const { user } = useUser();
-  const isTabletScreen = useMediaQuery({ query: "(max-width: 1024px)" });
+  const { isTabletScreen, isMobileScreen } = useScreenSize();
   const {
     signals: _clientSignals,
     isFetching,
@@ -92,37 +92,6 @@ function DashboardDesktop({
     limit: 40,
   });
 
-  // const { ref: signalSpinnerRef, isInView: isSignalSpinnerInView } =
-  //   useInView();
-
-  // useEffect(() => {
-  //   if (!isFetching && !isFetchingNextPage && isSignalSpinnerInView)
-  //     fetchNextPage();
-  // }, [fetchNextPage, isFetching, isFetchingNextPage, isSignalSpinnerInView]);
-
-  // const serverPosts = useMemo(() => {
-  //   if (!_serverPosts) return [];
-
-  //   console.log("_serverPosts - ", _serverPosts);
-
-  //   return _serverPosts.map(
-  //     (data: any) =>
-  //       new Post(
-  //         data.title,
-  //         data.content,
-  //         data.author,
-  //         data.topic,
-  //         data.id,
-  //         data.timestamp,
-  //         data.position,
-  //         data.design,
-  //         data.isFlagship
-  //       )
-  //   );
-  // }, [_serverPosts]);
-
-  // const posts = _posts ?? serverPosts;
-
   const postsByPosition = useMemo(() => {
     if (!posts) {
       return {
@@ -142,7 +111,7 @@ function DashboardDesktop({
         // @ts-ignore
         (post) => !!post?.snippetData?.image || !!post?.meta?.image
       )
-    ).slice(0, 12);
+    ).slice(0, 6);
 
     const rightPosts = compact(
       difference(posts, [titlePost, ...midContentPosts])
@@ -175,12 +144,21 @@ function DashboardDesktop({
   // console.log("postsByPosition - ", postsByPosition);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] relative">
-      <div className="md:sticky md:top-[150px] md:h-[calc(100vh-150px)] py-2 md:pt-0 pt-2 md:overflow-auto">
+    <div className="grid grid-cols-1 md:grid-cols-[25%_46%_29%] relative">
+      <div
+        className={
+          "md:sticky py-2 md:pt-0 pt-2 md:overflow-auto " +
+          (isTabletScreen
+            ? "h-[calc(100vh-220px)] top-[220px]"
+            : isMobileScreen
+            ? ""
+            : "h-[calc(100vh-150px)] top-[150px]")
+        }
+      >
         <div className="w-[96%] md:sticky md:top-0 md:pt-2 bg-primary">
           <Flagship title={(signals[0] as Signal).title} />
         </div>
-        <div className="pr-0 md:pr-7 pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
+        <div className="pr-0 md:pr-4 lg:pr-7 pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {signals.map((signal: Signal) => (
             <div
               key={signal.id}
@@ -206,9 +184,10 @@ function DashboardDesktop({
           )} */}
         </div>
       </div>
-      <div className="mt-[15px] md:mt-0 md:border-x py-2 border-dashed border-[#1f1d1a4d] px-0 md:px-7">
+      <div className="mt-[15px] md:mt-0 md:border-x py-2 border-dashed border-[#1f1d1a4d] px-0 md:px-4 lg:px-10">
         <DesignedBlog
           linkClassName="block"
+          size="sm"
           post={postsByPosition.titlePost as Post}
         />
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
@@ -236,10 +215,10 @@ function DashboardDesktop({
           </div> */}
         </div>
       </div>
-      <div className="px-0 md:pl-7 md:pr-0 py-2">
-        <div className="mt-5">
+      <div className="px-0 md:pl-4 lg:pl-7 md:pr-0 py-2">
+        {/* <div className="mt-5">
           <UpcomingEventSection />
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 gap-4">
           {postsByPosition.rightPosts?.map((post) => (

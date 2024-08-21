@@ -141,77 +141,71 @@ export default function RSVPedPage() {
   console.log("error - ", error);
 
   return (
-    <div className="max-w-[1440px] w-screen h-screen flex flex-col overflow-auto px-3 mx-auto">
-      <Navbar />
-      <div className="w-full overflow-auto py-10 flex-1 flex flex-col">
-        <div className="w-full flex-1">
-          <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 md:items-center">
-            <h2 className="text-appBlack text-[22px] md:text-[30px] font-larkenExtraBold">
-              RSVP&nbsp;ed Events
-            </h2>
-            {/* <div className="flex items-center gap-4">
+    <div className="w-full flex-1 py-10">
+      <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 md:items-center">
+        <h2 className="text-appBlack text-[22px] md:text-[30px] font-larkenExtraBold">
+          RSVP&nbsp;ed Events
+        </h2>
+        {/* <div className="flex items-center gap-4">
               <SortByModal handleApply={handleSortApply} />
               <FilterModal filters={filters} handleApply={handleFiltersApply} />
             </div> */}
-            <div className="w-full">
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Segmented: {
-                      /* here is your component tokens */
-                      itemActiveBg: "#243bb5",
-                      itemColor: "#1f1d1a",
-                      itemHoverColor: "#1f1d1a",
-                      itemSelectedBg: "#243bb5",
-                      itemSelectedColor: "#fff",
-                      trackBg: "#fcfae4",
-                    },
-                  },
-                }}
-              >
-                <Segmented<string>
-                  size={"large"}
-                  options={["Upcoming Events", "Past Events"]}
-                  onChange={(value) => {
-                    console.log(value); // string
-                    setMode(value.split(" ")[0].toLowerCase() as any);
-                  }}
-                  style={{
-                    width: "100%",
-                  }}
-                  // className="!bg-lightPrimary"
-                />
-              </ConfigProvider>
-            </div>
-          </div>
-          {/* {isMobileScreen ? (
+        <div className="w-full md:w-auto">
+          <ConfigProvider
+            theme={{
+              components: {
+                Segmented: {
+                  /* here is your component tokens */
+                  itemActiveBg: "#243bb5",
+                  itemColor: "#1f1d1a",
+                  itemHoverColor: "#1f1d1a",
+                  itemSelectedBg: "#243bb5",
+                  itemSelectedColor: "#fff",
+                  trackBg: "#fcfae4",
+                },
+              },
+            }}
+          >
+            <Segmented<string>
+              size={"large"}
+              options={["Upcoming Events", "Past Events"]}
+              onChange={(value) => {
+                console.log(value); // string
+                setMode(value.split(" ")[0].toLowerCase() as any);
+              }}
+              style={{
+                width: "100%",
+              }}
+              // className="!bg-lightPrimary"
+            />
+          </ConfigProvider>
+        </div>
+      </div>
+      {/* {isMobileScreen ? (
             <div className="grid grid-cols-1 gap-3"></div>
           ) : (
             <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]"></div>
           )} */}
-          {isLoading && (
-            <div className="w-full py-5 px-2 flex items-center justify-center">
-              <Spinner size="lg" label="Loading Events" />
-            </div>
-          )}
-          {!isLoading && events && events.length > 0 && (
-            <div className="grid grid-cols-3 gap-4">
-              {compact(events)?.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          )}
-          {!isLoading && (!events || events.length === 0) && (
-            <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
-              <NoEventsIcon />
-              <p className="text-base text-appBlack text-opacity-65">
-                No RSVPed Events
-              </p>
-            </div>
-          )}
+      {isLoading && (
+        <div className="w-full py-5 px-2 flex items-center justify-center">
+          <Spinner size="lg" label="Loading Events" />
         </div>
-        <Footer />
-      </div>
+      )}
+      {!isLoading && events && events.length > 0 && (
+        <div className="grid grid-cols-3 gap-4">
+          {compact(events)?.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      )}
+      {!isLoading && (!events || events.length === 0) && (
+        <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
+          <NoEventsIcon />
+          <p className="text-base text-appBlack text-opacity-65">
+            No RSVPed Events
+          </p>
+        </div>
+      )}
     </div>
   );
 }

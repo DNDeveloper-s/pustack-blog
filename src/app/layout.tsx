@@ -10,6 +10,8 @@ import { ErrorMasterComponent } from "@/components/shared/ErrorComponent";
 import { Suspense } from "react";
 import { NavigationEvents } from "@/components/NavigationEvents";
 import dynamic from "next/dynamic";
+import Navbar from "@/components/Navbar/Navbar";
+import Layout from "@/layout/main";
 // import BottomNavBar from "@/components/Navbar/BottomNavBar/BottomNavBar";
 const BottomNavBar = dynamic(
   () => import("@/components/Navbar/BottomNavBar/BottomNavBar")
@@ -37,9 +39,10 @@ export default async function RootLayout({
       <body>
         <ErrorBoundary errorComponent={ErrorMasterComponent}>
           <Providers>
-            {children}
-            {modal}
-            <BottomNavBar />
+            <Layout>
+              {children}
+              {modal}
+            </Layout>
           </Providers>
         </ErrorBoundary>
 

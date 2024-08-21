@@ -269,47 +269,47 @@ const transformEventsToWeekStructure = (
   });
 
   // Ensure today's date is always included
-  const today = currentDate.startOf("day");
-  const todayMonth = today.format("MMMM");
-  const month = months.find((m) => m.month_name === todayMonth);
+  // const today = currentDate.startOf("day");
+  // const todayMonth = today.format("MMMM");
+  // const month = months.find((m) => m.month_name === todayMonth);
 
-  if (month) {
-    const todayWeek = month.weeks.find(
-      (w) =>
-        today.isSameOrAfter(dayjs(w.start)) &&
-        today.isSameOrBefore(dayjs(w.end))
-    );
+  // if (month) {
+  //   const todayWeek = month.weeks.find(
+  //     (w) =>
+  //       today.isSameOrAfter(dayjs(w.start)) &&
+  //       today.isSameOrBefore(dayjs(w.end))
+  //   );
 
-    if (todayWeek) {
-      let todayGroup = todayWeek.events.find((group) =>
-        dayjs(group.date).isSame(today, "day")
-      );
+  //   if (todayWeek) {
+  //     let todayGroup = todayWeek.events.find((group) =>
+  //       dayjs(group.date).isSame(today, "day")
+  //     );
 
-      if (!todayGroup) {
-        todayGroup = {
-          date: today.toISOString(),
-          events: [],
-        };
-        todayWeek.events.push(todayGroup);
-      }
+  //     if (!todayGroup) {
+  //       todayGroup = {
+  //         date: today.toISOString(),
+  //         events: [],
+  //       };
+  //       todayWeek.events.push(todayGroup);
+  //     }
 
-      const isTodayIncluded = todayGroup.events.some((event) =>
-        dayjs(event.data.startTime.toDate()).isSame(today, "day")
-      );
+  //     const isTodayIncluded = todayGroup.events.some((event) =>
+  //       dayjs(event.data.startTime.toDate()).isSame(today, "day")
+  //     );
 
-      if (!isTodayIncluded) {
-        todayGroup.events.push({
-          exists: false,
-          data: {
-            id: "no-events-today",
-            title: "No events",
-            startTime: Timestamp.fromDate(today.toDate()),
-            description: "",
-          },
-        });
-      }
-    }
-  }
+  //     if (!isTodayIncluded) {
+  //       todayGroup.events.push({
+  //         exists: false,
+  //         data: {
+  //           id: "no-events-today",
+  //           title: "No events",
+  //           startTime: Timestamp.fromDate(today.toDate()),
+  //           description: "",
+  //         },
+  //       });
+  //     }
+  //   }
+  // }
 
   return months;
 };

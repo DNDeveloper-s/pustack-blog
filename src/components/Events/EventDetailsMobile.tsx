@@ -540,7 +540,7 @@ export default function EventDetailsMobile({
                   <div className="flex flex-col w-full items-center gap-2 p-4">
                     <div>
                       <AppImage
-                        className="w-10 md:w-14 h-10 md:h-14 rounded-full"
+                        className="!w-10 md:!w-14 !h-10 md:!h-14 rounded-full"
                         width={30}
                         height={30}
                         src={event.organizer?.photoURL}
@@ -746,13 +746,19 @@ export default function EventDetailsMobile({
                 <div className="font-featureBold text-[18px] leading-[24px]">
                   <p>Contact</p>
                 </div>
-                <div className="mt-2">
-                  <p className="leading-[120%]">
+                <div className="mt-2 flex flex-col">
+                  <Link
+                    href={"mailto:" + event.organizer.email}
+                    className="leading-[120%] text-appBlue underline cursor-pointer block"
+                  >
                     <b>{event.organizer.email}</b>
-                  </p>
-                  <p className="leading-[120%] mt-2">
+                  </Link>
+                  <Link
+                    href={"tel:" + event.organizer.contact}
+                    className="leading-[120%] text-appBlue underline cursor-pointer mt-2 block"
+                  >
                     <b>{event.organizer.contact}</b>
-                  </p>
+                  </Link>
                 </div>
               </div>
             </div>

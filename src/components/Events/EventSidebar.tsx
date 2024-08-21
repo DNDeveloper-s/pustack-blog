@@ -13,6 +13,18 @@ import { getMeetLinkDetails } from "./EventDetails";
 import { Event } from "@/firebase/event";
 import { useSearchParams } from "next/navigation";
 
+import {
+  ShimmerButton,
+  ShimmerTitle,
+  ShimmerText,
+  ShimmerCircularImage,
+  ShimmerThumbnail,
+  ShimmerBadge,
+  ShimmerTableCol,
+  ShimmerTableRow,
+  // @ts-ignore
+} from "react-shimmer-effects";
+
 const NoEventIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -93,6 +105,197 @@ function EventCard({ event }: EventCardProps) {
   );
 }
 
+function EventSidebarShimmer() {
+  return (
+    <>
+      <ShimmerThumbnail
+        height={100}
+        width={"100%"}
+        className="m-0 !mb-4"
+        rounded
+      />
+      <div className="px-4">
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_1fr] gap-4">
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset]"
+          />
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_1fr] gap-4">
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset]"
+          />
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+      </div>
+      <ShimmerThumbnail
+        height={100}
+        width={"100%"}
+        className="m-0 !mb-4"
+        rounded
+      />
+      <div className="px-4">
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_120px_1fr] gap-4 mb-2">
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset] !opacity-0 !mb-0"
+          />
+          <ShimmerThumbnail
+            height={20}
+            variant="secondary"
+            rounded
+            className="!w-full !mb-0"
+          />
+        </div>
+        <div className="grid grid-cols-[70px_1fr] gap-4">
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full !min-w-[unset]"
+          />
+          <ShimmerThumbnail
+            height={70}
+            variant="secondary"
+            rounded
+            className="!w-full"
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
 interface EventSidebarItemProps {
   event: Event;
 }
@@ -123,13 +326,36 @@ function EventSidebarItem({ event }: EventSidebarItemProps) {
   );
 }
 
+export type EventFetchState = "loading" | "loaded" | "error";
 interface EventSidebarProps {
   className?: string;
+  onStateChange?: (state: EventFetchState) => void;
 }
-export default function EventSidebar({ className }: EventSidebarProps) {
-  const { transformedEvents, isLoading, error } = useGetEventsForDateRange({
+export default function EventSidebar({
+  className,
+  onStateChange,
+}: EventSidebarProps) {
+  const {
+    transformedEvents,
+    isLoading,
+    error,
+    isFetched,
+    data: events,
+  } = useGetEventsForDateRange({
     enabled: true,
   });
+
+  useEffect(() => {
+    onStateChange?.(
+      isLoading
+        ? "loading"
+        : isFetched
+        ? (events?.length ?? 0) > 0
+          ? "loaded"
+          : "error"
+        : "error"
+    );
+  }, [isLoading, isFetched, events]);
 
   const currentMonthSectionRef = useCallback((node: HTMLDivElement) => {
     node?.scrollIntoView();
@@ -218,17 +444,15 @@ export default function EventSidebar({ className }: EventSidebarProps) {
   };
 
   const renderSpinner = () => {
-    return (
-      <div className="w-full flex py-4 justify-center items-center">
-        <Spinner size="lg" label="Fetching events..." />
-      </div>
-    );
+    return <EventSidebarShimmer />;
   };
 
   return (
     <div
       className={
-        "w-full bg-lightPrimary h-full overflow-auto " + (className ?? "")
+        "w-full bg-lightPrimary h-full " +
+        (className ?? "") +
+        (isLoading ? " overflow-hidden" : " overflow-auto")
       }
     >
       {isLoading && renderSpinner()}

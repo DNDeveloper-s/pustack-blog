@@ -25,6 +25,17 @@ import Linkify from "linkify-react";
 import EventMap from "./EventMap";
 import RSVPNowButton from "../shared/RSVPNowButton";
 import { MdModeEdit } from "react-icons/md";
+import {
+  ShimmerButton,
+  ShimmerTitle,
+  ShimmerText,
+  ShimmerCircularImage,
+  ShimmerThumbnail,
+  ShimmerBadge,
+  ShimmerTableCol,
+  ShimmerTableRow,
+  // @ts-ignore
+} from "react-shimmer-effects";
 
 const DateTimeIcon = (props: any) => (
   <svg
@@ -242,7 +253,7 @@ export const getMeetLinkDetails = (url: string): MeetingLinkDetails => {
   if (typeof url !== "string") {
     return {
       icon: <GenericMeetIcon />,
-      label: "Other",
+      label: "",
     };
   }
 
@@ -340,6 +351,97 @@ const MapEmbed = ({ mapLink }: { mapLink: string }) => {
     </div>
   );
 };
+
+export function EventDetailDesktopShimmer() {
+  return (
+    <>
+      <div className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_20rem] my-6 gap-4 lg:gap-0">
+        <div className="pb-5 lg:pb-0 lg:pr-5">
+          <div className="flex items-end justify-between">
+            <div className="mr-2">
+              <ShimmerThumbnail
+                height={38}
+                width={38}
+                className="m-0 !min-w-[unset]"
+                rounded
+              />
+            </div>
+            <div className="flex-1">
+              <ShimmerThumbnail
+                height={18}
+                width={150}
+                className="m-0 rounded-full"
+              />
+            </div>
+            <div className="flex items-center gap-3"></div>
+          </div>
+          <hr className="border-dashed border-[#1f1d1a4d] my-2 mb-3" />
+          <div className="flex gap-5 items-center justify-between">
+            <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
+              <ShimmerThumbnail
+                height={18}
+                width={400}
+                className="m-0 rounded-full"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <ShimmerTitle />
+            <ShimmerThumbnail
+              className="m-0 mt-4 aspect-video !w-auto cover-figure"
+              rounded
+            />
+            <ShimmerThumbnail
+              height={18}
+              width={400}
+              className="m-0 !mt-2 rounded-full"
+            />
+          </div>
+        </div>
+        <div className="pt-5 lg:pt-0 lg:pl-5 flex flex-col gap-6 justify-between">
+          <ShimmerThumbnail
+            height={110}
+            className="m-0 !w-full !min-w-[unset]"
+            rounded
+          />
+          <div className="flex flex-col gap-3">
+            <ShimmerThumbnail
+              height={25}
+              className="m-0 !w-full !min-w-[unset] rounded-full"
+            />
+            <ShimmerThumbnail
+              height={25}
+              className="m-0 !w-full !min-w-[unset] rounded-full"
+            />
+            <ShimmerThumbnail
+              height={25}
+              className="m-0 !w-full !min-w-[unset] rounded-full"
+            />
+            <ShimmerThumbnail
+              height={25}
+              className="m-0 !w-full !min-w-[unset] rounded-full"
+            />
+            <ShimmerThumbnail
+              height={25}
+              className="m-0 !w-full !min-w-[unset] rounded-full"
+            />
+          </div>
+        </div>
+      </div>
+
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />
+      <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+
+      <div>
+        <ShimmerThumbnail
+          height={400}
+          className="m-0 !mt-5 !w-full !min-w-[unset]"
+          rounded
+        />
+      </div>
+    </>
+  );
+}
 
 export default function EventDetailsDesktop({
   _event,
@@ -447,7 +549,7 @@ export default function EventDetailsDesktop({
                     router.push("/events/create?event_id=" + event?.id)
                   }
                 />
-            )}
+              )}
             </div>
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] my-2" />
@@ -479,7 +581,7 @@ export default function EventDetailsDesktop({
             </h2>
             {event?.displayImage && (
               <BlogImage
-                className="mt-4 w-[77%] cover-figure"
+                className="mt-4 w-[77%] max-w-[315px] cover-figure"
                 src={
                   event?.displayImage
                   // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
@@ -627,7 +729,7 @@ export default function EventDetailsDesktop({
               <div className="flex flex-col w-full items-center gap-2 p-4">
                 <div>
                   <AppImage
-                    className="w-10 md:w-14 h-10 md:h-14 rounded-full"
+                    className="!w-10 md:!w-14 !h-10 md:!h-14 rounded-full"
                     width={30}
                     height={30}
                     src={event.organizer?.photoURL}
@@ -826,13 +928,19 @@ export default function EventDetailsDesktop({
             <div className="font-featureBold text-[20px] leading-[27px]">
               <p>Contact</p>
             </div>
-            <div className="mt-2">
-              <p className="leading-[120%]">
+            <div className="mt-2 flex flex-col">
+              <Link
+                href={"mailto:" + event.organizer.email}
+                className="leading-[120%] text-appBlue underline cursor-pointer block"
+              >
                 <b>{event.organizer.email}</b>
-              </p>
-              <p className="leading-[120%] mt-2">
+              </Link>
+              <Link
+                href={"tel:" + event.organizer.contact}
+                className="leading-[120%] text-appBlue underline cursor-pointer mt-2 block"
+              >
                 <b>{event.organizer.contact}</b>
-              </p>
+              </Link>
             </div>
           </div>
         </div>

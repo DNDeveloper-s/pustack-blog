@@ -78,7 +78,7 @@ export default function BottomNavBar() {
   return (
     <div
       className={
-        "w-screen transition-height " +
+        "w-full transition-height " +
         (!eventsScreen && (isContactScreen || !isVisible) ? "h-0" : "h-[100px]")
       }
     >

@@ -100,20 +100,20 @@ export default function BlogWithAuthor({
   const content = (
     <div className="py-3 group h-full flex flex-col">
       <div className="flex">
-        <div className="mr-2 flex-shrink-0">
+        <div className="mr-1 lg:mr-2 flex-shrink-0">
           <img
-            className="w-[38px] h-[38px]"
+            className="w-[30px] h-[30px] lg:w-[38px] lg:h-[38px]"
             src={post.author.photoURL ?? avatar.src}
             alt="avatar"
           />
         </div>
         <div className="flex-1 overflow-hidden">
-          <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
+          <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
             {post.author.name}
           </h3>
           <p
             className={
-              "leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
+              "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
             }
             style={{
               fontWeight: "300",
@@ -155,9 +155,13 @@ export default function BlogWithAuthor({
       <div className="flex-1">
         {post.snippetData?.title && (
           <h2
-            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+            className={
+              "font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
+              (size === "sm"
+                ? "text-[20px] lg:text-[24px]"
+                : "text-[28px] lg:text-[32px]")
+            }
             style={{
-              fontSize: size === "sm" ? "24px" : "32px",
               fontWeight: "395",
               fontVariationSettings: '"wght" 495,"opsz" 10',
             }}
@@ -169,10 +173,12 @@ export default function BlogWithAuthor({
           <TrimmedPara
             className={
               "leading-[120%] line-clamp-3 group-hover:text-appBlue " +
-              (classNames?.content ?? "")
+              (classNames?.content ?? "") +
+              (size === "sm"
+                ? "text-[14px] lg:text-[16px]"
+                : "text-[16px] lg:text-[18px]")
             }
             style={{
-              fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
             }}
           >

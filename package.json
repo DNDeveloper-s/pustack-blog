@@ -84,6 +84,7 @@
     "react-quill": "^2.0.0",
     "react-resizable": "^3.0.5",
     "react-responsive": "^10.0.0",
+    "react-shimmer-effects": "^1.0.3",
     "react-slick": "^0.30.2",
     "react-star-ratings": "^2.3.0",
     "react-swipeable-views": "^0.14.0",
