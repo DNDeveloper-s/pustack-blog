@@ -514,18 +514,19 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                 <MdModeEdit
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push("/posts/create?post_id=" + post?.id)
+                    // router.push("/posts/create?post_id=" + post?.id)
+                    router.push("/me/publications")
                   }
                 />
               )}
-              {user?.uid === post?.author.uid && (
+              {/* {user?.uid === post?.author.uid && (
                 <MdDelete
                   className="cursor-pointer"
                   onClick={() => {
                     deleteModalRef.current?.handleChangeOpen(true);
                   }}
                 />
-              )}
+              )} */}
             </div>
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] my-2" />

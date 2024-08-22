@@ -57,48 +57,44 @@ export const ErrorMasterComponent = (props: ErrorComponentProps) => {
   // }, [props.error, postCreateLog]);
 
   return (
-    <div className="w-screen h-screen flex flex-col max-w-[1440px] px-3 mx-auto">
-      <Navbar />
-      <div className="w-full py-20 mx-auto flex-1 max-w-[1440px] flex flex-col gap-4 justify-center items-center">
-        {/* <div>
+    <div className="w-full py-20 mx-auto flex-1 max-w-[1440px] flex flex-col gap-4 justify-center items-center">
+      {/* <div>
           <Lottie
             className={"w-48 h-48"}
             animationData={errorAnimJson}
             loop={true}
           />
         </div> */}
-        <div className="flex flex-col gap-2 items-center justify-center">
-          <h1 className="font-extrabold text-[50px]">Oops!</h1>
-          <p className="font-medium text-[40px] text-center">
-            Something went wrong
-          </p>
-          <div className="w-[90vw] max-w-[750px] rounded overflow-hidden">
-            <div
-              className="text-danger text-base font-bold cursor-pointer flex items-center bg-[#ddd8ad] py-3 px-5 justify-between"
-              onClick={() => setExpand((c) => !c)}
-            >
-              <span>{formatErrorMessage(props.error.message)}</span>
-              <TbCaretDown />
-            </div>
-            <div
-              className="overflow-hidden transition-all"
-              style={{ maxHeight: expand ? "500px" : "0" }}
-            >
-              <pre className="bg-[#d0cb9f] overflow-auto py-3 px-5 text-appBlack text-sm">
-                {props.error.stack}
-              </pre>
-            </div>
+      <div className="flex flex-col gap-2 items-center justify-center">
+        <h1 className="font-extrabold text-[50px]">Oops!</h1>
+        <p className="font-medium text-[40px] text-center">
+          Something went wrong
+        </p>
+        <div className="w-[90vw] max-w-[750px] rounded overflow-hidden">
+          <div
+            className="text-danger text-base font-bold cursor-pointer flex items-center bg-[#ddd8ad] py-3 px-5 justify-between"
+            onClick={() => setExpand((c) => !c)}
+          >
+            <span>{formatErrorMessage(props.error.message)}</span>
+            <TbCaretDown />
           </div>
-
-          <p className="text-[20px] mt-1">
-            Don&apos;t worry, our team is here to help
-          </p>
-          <Link className="text-appBlue cursor-pointer" href="/">
-            Go to Home Page
-          </Link>
+          <div
+            className="overflow-hidden transition-all"
+            style={{ maxHeight: expand ? "500px" : "0" }}
+          >
+            <pre className="bg-[#d0cb9f] overflow-auto py-3 px-5 text-appBlack text-sm">
+              {props.error.stack}
+            </pre>
+          </div>
         </div>
+
+        <p className="text-[20px] mt-1">
+          Don&apos;t worry, our team is here to help
+        </p>
+        <Link className="text-appBlue cursor-pointer" href="/">
+          Go to Home Page
+        </Link>
       </div>
-      <Footer />
     </div>
   );
 };

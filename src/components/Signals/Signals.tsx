@@ -213,11 +213,6 @@ function Signals(
           </>
         )}
       </div>
-      {!hasNextPage && !isFetching && !isLoading && (
-        <>
-          <Footer />
-        </>
-      )}
     </div>
   );
 }

@@ -117,7 +117,7 @@ export default function DashboardMobile({
   return (
     <div className="grid grid-cols-1 md:grid-cols-[21%_54%_25%] py-2">
       <div className="pr-0 md:pr-7">
-        <Flagship title={(signals[0] as Signal).title} />
+        <Flagship />
         <div className="pt-1 selection:md:pt-5 flex md:flex-col flex-row divide-x md:divide-x-0 md:divide-y divide-dashed divide-[#1f1d1a4d] overflow-x-auto md:overflow-x-hidden">
           {signals.map((signal: Signal) => (
             <div
@@ -133,11 +133,13 @@ export default function DashboardMobile({
         </div>
       </div>
       <div className="mt-[15px] md:mt-0 md:border-x border-dashed border-[#1f1d1a4d] px-0 md:px-7">
-        <DesignedBlog
-          linkClassName="block"
-          post={postsByPosition.titlePost as Post}
-          href={`?post_drawer_id=${postsByPosition.titlePost?.id}`}
-        />
+        {postsByPosition.titlePost && (
+          <DesignedBlog
+            linkClassName="block"
+            post={postsByPosition.titlePost as Post}
+            href={`?post_drawer_id=${postsByPosition.titlePost?.id}`}
+          />
+        )}
       </div>
       <div className="grid grid-cols-1 gap-4">
         {postsByPosition.rightPosts?.map((post) => (

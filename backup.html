@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: FeatureFlatHeadline;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatHeadline.woff2);
+      }
+
+      @font-face {
+        font-family: FeatureFlatBold;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatText-Bold.otf);
+      }
+
+      @font-face {
+        font-family: FeatureFlatRegular;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatText-Regular.otf);
+      }
+
+      @font-face {
+        font-family: LarkenExtraBold;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/LarkenDEMO-ExtraBold.otf);
+      }
+
+      @font-face {
+        font-family: CourierPrime;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/CourierPrime-Regular.ttf);
+      }
+
+      @font-face {
+        font-family: Helvetica;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/Helvetica.woff);
+      }
+
+      * {
+        font-family: "Domine", "serif";
+      }
+
+      p,
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+      }
+
+      body {
+        /* background-color: #f8f5d7; */
+      }
+
+      .py-3 {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .blog-post-wrapper:hover {
+      }
+      .flex {
+        display: flex;
+      }
+      .mr-2 {
+        margin-right: 8px;
+      }
+      .w-h-38 {
+        width: 38px;
+        height: 38px;
+      }
+      .leading-120 {
+        line-height: 120%;
+      }
+      .text-17 {
+        font-size: 17px;
+      }
+      .text-15 {
+        font-size: 15px;
+      }
+      .text-tertiary {
+        color: #66655d;
+      }
+      .font-helvetica {
+        font-family: "Helvetica", "sans-serif";
+      }
+      .font-featureHeadline {
+        font-family: "FeatureFlatHeadline", "sans-serif";
+      }
+      .font-featureRegular {
+        font-family: "FeatureFlatRegular", "Times New Roman", "Times", "serif";
+      }
+      .font-featureBold {
+        font-family: "FeatureFlatBold", "Times New Roman", "Times", "serif";
+      }
+      .font-larkenExtraBold {
+        font-family: "LarkenExtraBold", "Times New Roman", "Times", "serif";
+      }
+      .font-courierPrime {
+        font-family: "CourierPrime", "Times New Roman", "Times", "serif";
+      }
+      .uppercase {
+        text-transform: uppercase;
+      }
+      .border-dashed {
+        border-style: dashed;
+      }
+      .border-1f1d1a4d {
+        border-color: #1f1d1a4d;
+      }
+      .my-2 {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .bg-animation {
+        background-image: linear-gradient(
+          90deg,
+          #f3f3f3 0%,
+          #f0f0f0 50%,
+          #f3f3f3 100%
+        );
+        background-size: 200% 200%;
+        animation: bg-animation 1.5s linear infinite;
+      }
+      @keyframes bg-animation {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 100% 0%;
+        }
+      }
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      a {
+        text-decoration: none;
+      }
+      .text-appBlue {
+        color: #243bb5;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .object-cover {
+        object-fit: cover;
+      }
+      .mt-2 {
+        margin-top: 8px;
+      }
+      .justify-center {
+        justify-content: center;
+      }
+      .items-center {
+        align-items: center;
+      }
+      hr {
+        height: 0;
+        color: inherit;
+        border-top-width: 1px;
+        margin: 0;
+      }
+
+      .body-wrapper {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-right: 20px;
+        padding-left: 20px;
+        background-color: #f8f5d7;
+        /* background-image: url(http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/5016c035-8d68-41d6-9bbc-076522dca89e/1318x1218.png); */
+        /* background-size: cover; */
+      }
+
+      .read_time {
+        font-size: 13px;
+      }
+
+      .updated_info {
+        font-size: 13px;
+        margin-right: 10px;
+      }
+
+      .topic_info {
+        font-size: 13px;
+      }
+
+      .post_title {
+        font-size: 32px;
+      }
+
+      .post_image {
+        width: 70%;
+      }
+
+      .post_end_separator {
+        margin-top: 20px;
+      }
+
+      .read_more_container {
+        height: 250px;
+      }
+
+      .remove-desktop {
+        display: none;
+      }
+
+      .main-logo {
+        width: 300px;
+        margin: 10px auto;
+        display: block;
+        max-width: 70vw;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .remove-mobile {
+          display: none;
+        }
+
+        .body-wrapper {
+          padding-right: 5px;
+          padding-left: 5px;
+        }
+
+        .w-h-38 {
+          width: 25px;
+          height: 25px;
+        }
+        .main-logo-table {
+          width: 100%;
+        }
+
+        .main-logo {
+          width: 100%;
+          margin: 10px auto;
+          display: block;
+          max-width: unset;
+        }
+
+        .author_name {
+          font-size: 14px;
+        }
+        .read_time {
+          font-size: 10px;
+        }
+
+        .updated_info {
+          font-size: 10px;
+          margin-right: 7px;
+        }
+
+        .topic_info {
+          font-size: 10px;
+        }
+
+        .post_title {
+          font-size: 24px;
+        }
+
+        .post_image {
+          width: 100%;
+        }
+
+        .post_end_separator {
+          margin-top: -20px;
+        }
+
+        .read_more_container {
+          height: 100px;
+        }
+
+        .remove-desktop {
+          display: block;
+        }
+      }
+      .owl_image {
+        filter: none;
+      }
+      @media (prefers-color-scheme: dark) {
+        .text-appBlack {
+          color: #1f1d1a;
+        }
+
+        .text-appGrey {
+          color: #53524c;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .main-logo {
+          display: none;
+        }
+        .main-logo {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="body-wrapper">
+      <table width="100%">
+        <tr class="remove-desktop">
+          <td>
+            <img
+              style="width: 100%"
+              src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/43f8c72c-6b6e-4b2c-8454-a7edd6655c3a/723x112.png"
+              alt=""
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table
+              class="main-logo-table"
+              style="margin-left: auto; margin-right: auto"
+            >
+              <tr>
+                <td class="remove-mobile">
+                  <img
+                    src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Fclock-left.png%3Falt%3Dmedia%26token%3Dc7d6e171-d55e-477d-a748-a6dfc5dcb135&original=true"
+                    alt="clock"
+                    style="height: 43px; display: block; margin-right: 15px"
+                  />
+                </td>
+                <td>
+                  <img
+                    class="main-logo"
+                    src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/370f4fe9-b95c-480d-a62d-32a18fe162d5/437x71.png"
+                  />
+                </td>
+                <td class="remove-mobile">
+                  <img
+                    src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Fclock-right.png%3Falt%3Dmedia%26token%3D7a3a5871-9d1d-48b0-8b54-eec74cecd14b&original=true"
+                    alt="clock"
+                    style="height: 43px; display: block; margin-left: 15px"
+                  />
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="display: flex; font-size: 10px">
+            <table style="margin: 0 auto">
+              <tr>
+                <td>
+                  <span
+                    style="color: #1f1d1a"
+                    class="text-appBlack font-helvetica leading-[120%]"
+                  >
+                    INTELLIGENT
+                  </span>
+                </td>
+                <td>
+                  <div
+                    style="
+                      width: 4px;
+                      height: 4px;
+                      border-radius: 100%;
+                      background: #1f1d1a;
+                    "
+                    class="rounded-full bg-appBlack"
+                  ></div>
+                </td>
+                <td>
+                  <span
+                    style="color: #1f1d1a"
+                    class="text-appBlack font-helvetica leading-[120%]"
+                  >
+                    TRANSPARENT
+                  </span>
+                </td>
+                <td>
+                  <div
+                    style="
+                      width: 4px;
+                      height: 4px;
+                      border-radius: 100%;
+                      background: #1f1d1a;
+                    "
+                    class="rounded-full bg-appBlack"
+                  ></div>
+                </td>
+                <td>
+                  <span
+                    style="color: #1f1d1a"
+                    class="text-appBlack font-helvetica leading-[120%]"
+                    >GLOBAL</span
+                  >
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <hr
+        style="margin-top: 10px; border-top-color: #1f1d1a"
+        class="border-appBlack"
+      />
+      <hr
+        style="border: none; border-top: 1px dashed #1f1d1a4d; margin-top: 1px"
+      />
+      <table
+        style="margin-top: 20px; margin-bottom: 20px"
+        class="container"
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+      >
+        <tr>
+          <td
+            class="content"
+            style="
+              padding-bottom: 10px;
+              padding-left: 0;
+              padding-right: 20px;
+              padding-top: 0;
+            "
+          >
+            <div class="py-3" style="padding-top: 0">
+              <div>
+                <table>
+                  <tr>
+                    <td>
+                      <table>
+                        <tr>
+                          <td>
+                            <img
+                              src="{{author.image}}"
+                              alt="author"
+                              class="w-h-38"
+                            />
+                          </td>
+                          <td>
+                            <h3
+                              style="
+                                color: #1f1d1a;
+                                white-space: nowrap;
+                                max-width: 250px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                              "
+                              class="text-appBlack author_name leading-120 text-17"
+                            >
+                              {{author.name}}
+                            </h3>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td style="width: 100%"></td>
+                    <td>
+                      <span
+                        class="read_time text-appBlack"
+                        style="
+                          color: #1f1d1a;
+                          white-space: nowrap;
+                          font-family: Helvetica, sans-serif;
+                        "
+                        >{{post.read_time}}</span
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <hr
+                style="
+                  border: none;
+                  border-top: 1px dashed #1f1d1a4d;
+                  margin: 4px 0;
+                "
+              />
+              <div>
+                <span
+                  class="updated_info text-appGrey"
+                  style="
+                    color: #53524c;
+                    font-family: Helvetica;
+                    line-height: 14px;
+                  "
+                >
+                  {{post.last_updated_at}}
+                </span>
+                <span
+                  class="topic_info"
+                  style="
+                    color: #53524c;
+                    font-family: Helvetica;
+                    line-height: 14px;
+                    text-transform: uppercase;
+                  "
+                >
+                  {{post.topic}}
+                </span>
+              </div>
+              <div>
+                <h2
+                  class="leading-120 text-appBlack line-clamp-2 post_title"
+                  style="
+                    font-weight: 500;
+                    margin-top: 8px;
+                    margin-bottom: 1px;
+                    color: #1f1d1a;
+                  "
+                >
+                  {{post.title}}
+                </h2>
+              </div>
+              {{#if post.image}}
+              <img
+                class="post_image"
+                style="
+                  max-width: 100%;
+                  max-height: 100%;
+                  height: auto;
+                  object-fit: cover;
+                  margin-top: 8px;
+                "
+                src="{{post.image}}"
+              />
+              {{/if}}
+            </div>
+          </td>
+          <td
+            class="remove-mobile"
+            style="width: 1px; height: 100%; border-right: 1px dashed #1f1d1a4d"
+          ></td>
+          <td class="remove-mobile" style="width: 40%; vertical-align: bottom">
+            <table style="width: 100%; height: 100%">
+              <tr>
+                <div
+                  style="
+                    padding-bottom: 10px;
+                    padding-top: 10px;
+                    padding-left: 20px;
+                    padding-right: 0px;
+                  "
+                >
+                  <h3>In this article:</h3>
+                  {{#each post.sections}}
+                  <hr
+                    style="
+                      border: none;
+                      border-top: 1px dashed #1f1d1a4d;
+                      margin: 10px 0;
+                    "
+                  />
+                  <a
+                    href="https://pustack-blog.vercel.app/{{post.id}}#{{this.id}}"
+                  >
+                    <h3
+                      className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
+                      style="
+                        color: #1f1d1a;
+                        font-size: 16px;
+                        text-transform: capitalize;
+                        font-weight: 400;
+                      "
+                    >
+                      {{this.title}}
+                    </h3>
+                  </a>
+                  {{/each}}
+                </div>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <div>
+        <hr
+          class="post_end_separator"
+          style="border-top: 1px dashed #1f1d1a4d; border-bottom: none"
+          ;
+        />
+        <hr
+          className="border-dashed border-[#1f1d1a4d] mt-[1px]"
+          style="
+            border-top: 1px dashed #1f1d1a4d;
+            margin-top: 1px;
+            border-bottom: none;
+          "
+        />
+
+        <table width="100%" class="read_more_container">
+          <tr>
+            <td
+              style="
+                text-align: center;
+                width: 100%;
+                background-image: url(http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/7382f2f4-6d70-41db-9b42-5c06c23b5294/920x270.png);
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center center;
+              "
+            >
+              <a
+                href="https://pustack-blog.vercel.app/{{post.id}}"
+                target="_blank"
+                style="
+                  text-decoration: none;
+                  background-color: #243bb5;
+                  padding-top: 8px;
+                  padding-bottom: 8px;
+                  padding-left: 20px;
+                  padding-right: 20px;
+                  color: white;
+                  outline: none;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                "
+              >
+                Read More
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- <div
+        style="
+          border-top: 1px solid #1f1d1a;
+          padding: 15px 0;
+          /* display: flex; */
+          /* flex-wrap: wrap; */  
+          /* row-gap: 10px; */
+          /* column-gap: 10px; */
+          /* align-items: center; */
+          /* justify-content: flex-start; */
+        "
+      > -->
+      <hr
+        style="margin: 10px 0; border-top-color: #1f1d1a"
+        class="border-appBlack"
+      />
+      <table>
+        <tr>
+          <td style="vertical-align: center">
+            <span style="display: inline-flex; height: 25px">
+              <img
+                class="owl_image"
+                src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/d7446311-e007-4183-8551-6db915284f1a/95x166.png"
+                alt="Owl Image"
+                style="margin-right: 5px; color: #1f1d1a"
+              />
+              <div>
+                <img
+                  style="width: 150px; margin: 0px auto; display: block"
+                  src="http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/370f4fe9-b95c-480d-a62d-32a18fe162d5/437x71.png"
+                />
+              </div>
+            </span>
+          </td>
+          <td width="100%" class="remove-mobile"></td>
+          <td class="remove-mobile">
+            <span
+              class="text-appBlack"
+              style="
+                color: #1f1d1a;
+                font-family: Domine;
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+              "
+            >
+              © 2024 Minerva Inc.
+            </span>
+          </td>
+        </tr>
+        <tr class="remove-desktop">
+          <td style="padding: 10px; padding-left: 0; padding-right: 0">
+            <span
+              class="text-appBlack"
+              style="
+                color: #1f1d1a;
+                font-family: Domine;
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+              "
+            >
+              © 2024 Minerva Inc.
+            </span>
+          </td>
+        </tr>
+      </table>
+      <table width="100%">
+        <tr>
+          <td style="text-align: center">
+            <a
+              style="color: #66655d; font-size: 10px"
+              href="https://pustack-blog.vercel.app/unsubscribe?email={{user_email}}"
+              target="_blank"
+            >
+              Unsubscribe
+            </a>
+          </td>
+        </tr>
+      </table>
+      <!-- </div> -->
+    </div>
+  </body>
+</html>

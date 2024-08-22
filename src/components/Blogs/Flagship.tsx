@@ -2,9 +2,7 @@ import Link from "next/link";
 import TrimmedPara from "../shared/TrimmedPara";
 import { useGetFlagshipSignal } from "@/api/signal";
 
-interface FlagshipProps {
-  title: string;
-}
+interface FlagshipProps {}
 export default function Flagship(props: FlagshipProps) {
   const { data: flagshipSignal, error } = useGetFlagshipSignal();
 
