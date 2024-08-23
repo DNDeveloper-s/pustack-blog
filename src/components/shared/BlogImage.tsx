@@ -2,6 +2,7 @@ import { useBlogImage } from "@/context/BlogImageContext";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import AppImage from "./AppImage";
 
 export function ImageModalPreview() {
   const { state, closePreview } = useBlogImage();
@@ -55,7 +56,7 @@ export default function BlogImage({
   ...props
 }: BlogImageProps) {
   const imageContent = (
-    <img
+    <AppImage
       src={src}
       alt="Image Preview"
       {...imageProps}

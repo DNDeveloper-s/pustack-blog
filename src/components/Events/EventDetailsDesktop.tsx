@@ -590,6 +590,10 @@ export default function EventDetailsDesktop({
                 style={{
                   aspectRatio: "auto 700 / 453",
                 }}
+                imageProps={{
+                  width: 600,
+                  height: 600,
+                }}
               />
             )}
             {/* {post && (
@@ -730,8 +734,8 @@ export default function EventDetailsDesktop({
                 <div>
                   <AppImage
                     className="!w-10 md:!w-14 !h-10 md:!h-14 rounded-full"
-                    width={30}
-                    height={30}
+                    width={100}
+                    height={100}
                     src={event.organizer?.photoURL}
                     alt="Nothing"
                   />

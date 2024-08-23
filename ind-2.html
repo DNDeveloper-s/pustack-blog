@@ -13,6 +13,41 @@
         font-family: "Domine", "serif";
       }
 
+      a {
+        text-decoration: none;
+        color: #1f1d1a;
+      }
+
+      @font-face {
+        font-family: FeatureFlatHeadline;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatHeadline.woff2);
+      }
+
+      @font-face {
+        font-family: FeatureFlatBold;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatText-Bold.otf);
+      }
+
+      @font-face {
+        font-family: FeatureFlatRegular;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/FeatureFlatText-Regular.otf);
+      }
+
+      @font-face {
+        font-family: LarkenExtraBold;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/LarkenDEMO-ExtraBold.otf);
+      }
+
+      @font-face {
+        font-family: CourierPrime;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/CourierPrime-Regular.ttf);
+      }
+
+      @font-face {
+        font-family: Helvetica;
+        src: url(https://pustack-blog.vercel.app/assets/fonts/Helvetica.woff);
+      }
+
       p,
       h1,
       h2,
@@ -201,8 +236,11 @@
     </style>
   </head>
   <body>
-    <div style="width: 100%;">
-      <div class="body-wrapper" style="width: 100%; max-width: 600px; margin: 0 auto;">
+    <div style="width: 100%">
+      <div
+        class="body-wrapper"
+        style="width: 100%; max-width: 600px; margin: 0 auto"
+      >
         <!-- <table width="100%" style="border-spacing: 0; padding-bottom: 0px">
           <tr
             style="
@@ -345,17 +383,20 @@
                   </h2>
                 </div>
                 <!-- {{#if post.image}} -->
-                <img
-                  class="post_image"
-                  style="
-                    max-width: 100%;
-                    max-height: 100%;
-                    height: auto;
-                    object-fit: cover;
-                    margin-top: 8px;
-                  "
-                  src="https://img.semafor.com/0aa88e10aac0eddf6f4031d7e743ed07df65e114-4000x2667.jpg?w=750&q=75&auto=format"
-                />
+                <div style="aspect-ratio: 1/1; overflow: hidden">
+                  <img
+                    class="post_image"
+                    style="
+                      max-width: 100%;
+                      max-height: 100%;
+                      height: auto;
+                      object-fit: cover;
+                      margin-top: 8px;
+                    "
+                    src="https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2FDALL%C2%B7E%202024-08-23%2015.11.28%20-%20A%20collage%20representing%20the%20impact%20of%20technology%20on%20modern%20society.%20The%20image%20should%20include%20elements%20such%20as%20a%20smartphone%2C%20laptop%2C%20digital%20globe%2C%20robo.webp?alt=media&token=0e76f1fd-f997-4041-a941-74514912d97a"
+                  />
+                </div>
+
                 <!-- {{/if}} -->
               </div>
             </td>
@@ -417,7 +458,7 @@
             <td style="width: 100%; vertical-align: bottom">
               <table style="width: 100%; height: 100%">
                 <tr>
-                  <div style="padding-bottom: 10px; padding-top: 10px">
+                  <div style="padding-bottom: 0px; padding-top: 10px">
                     <h3 style="font-family: Dopamine">In this article:</h3>
                     <!-- {{#each post.sections}} -->
                     <hr
@@ -433,15 +474,29 @@
                       <h3
                         className="text-[#1f1d1a] text-[16px] font-featureHeadline capitalize"
                         style="
-                          color: #1f1d1a;
-                          font-size: 16px;
                           text-transform: capitalize;
+                          font-size: 16px;
                           font-weight: 400;
+                          font-variation-settings: 'wght' 500, 'opsz' 10;
+                          display: grid;
+                          grid-template-columns: 16px 1fr;
+                          align-items: center;
+                          gap: 10px;
                         "
                       >
-                        <ul style="padding-left: 20px">
-                          <li style="font-family: Domine">Code</li>
-                        </ul>
+                        <span className="inline-flex">
+                          <img
+                            src="https://static.thenounproject.com/png/6635039-200.png"
+                            alt="icon"
+                            style="
+                              height: auto;
+                              width: auto;
+                              max-width: 100%;
+                              display: inline;
+                            "
+                          />
+                        </span>
+                        Code
                       </h3>
                     </a>
                     <hr
@@ -515,11 +570,52 @@
             "
           />
 
-          <table width="100%" class="read_more_container" style="padding: 100px 0;">
+          <table
+            width="100%"
+            class="read_more_container"
+            style="padding: 10px 20px; line-height: 22px; font-size: 16px"
+          >
+            <tr>
+              <td
+                style="
+                  width: 100%;
+                  /* background-image: url(http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/7382f2f4-6d70-41db-9b42-5c06c23b5294/920x270.png); */
+                  background-size: contain;
+                  background-repeat: no-repeat;
+                  background-position: center center;
+                "
+              >
+                <p>
+                  Technology has become an integral part of our daily lives,
+                  influencing how we communicate, work, and even think. In this
+                  article, we will explore the profound impact of technology on
+                  modern society, from its benefits to the challenges it
+                  presents. The evolution of technology has been rapid and
+                  transformative. From the invention of the wheel to the digital
+                  age, technology has continuously reshaped our world. The
+                  Industrial Revolution marked a significant turning point,
+                  leading to mass production, urbanization, and the birth of
+                  modern economies. One of the most noticeable impacts of
+                  technology is on communication. The internet, social media,
+                  and mobile devices have revolutionized how we connect with
+                  others. Information is now available at our fingertips, and we
+                  can communicate with anyone, anywhere in the world, in
+                  real-time. This has led to the rise of a global community,
+                  where ideas and cultures can be shared instantly. Technology
+                  has also revolutionized the healthcare industry. From advanced
+                  diagnostic tools to telemedicine, technology has improved
+                  patient care, reduced errors, and made healthcare more
+                  accessible. Wearable devices and health apps allow individuals
+                  to monitor their health in real-time, leading to more
+                  personalized care...
+                </p>
+              </td>
+            </tr>
             <tr>
               <td
                 style="
                   text-align: center;
+                  padding-top: 20px;
                   width: 100%;
                   /* background-image: url(http://cdn.mcauto-images-production.sendgrid.net/6ab5e121f72ecea4/7382f2f4-6d70-41db-9b42-5c06c23b5294/920x270.png); */
                   background-size: contain;
@@ -567,18 +663,6 @@
             </td>
           </tr>
         </table>
-        <!-- <div
-          style="
-            border-top: 1px solid #1f1d1a;
-            padding: 15px 0;
-            /* display: flex; */
-            /* flex-wrap: wrap; */  
-            /* row-gap: 10px; */
-            /* column-gap: 10px; */
-            /* align-items: center; */
-            /* justify-content: flex-start; */
-          "
-        > -->
         <div
           style="
             background-image: url(https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Fminerva-bg-color.png%3Falt%3Dmedia%26token%3Dad0876e9-e12f-490a-9f52-3705d6169bfa&original=true);
@@ -593,13 +677,6 @@
               <td style="vertical-align: center">
                 <img
                   src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Ffooter-logo.png%3Falt%3Dmedia%26token%3D5c81d825-efb4-4fb4-8f5f-f3a717640fd1&original=true"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; padding-left: 0; padding-right: 0">
-                <img
-                  src="https://pustack-blog.vercel.app/api/fetch-image?imageUrl=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fminerva-0000.appspot.com%2Fo%2Fstatic%252Ffooter-right-content.png%3Falt%3Dmedia%26token%3D4a8e3bd9-9ae5-4c65-84e1-c5089c99c0a4&original=true"
                 />
               </td>
             </tr>

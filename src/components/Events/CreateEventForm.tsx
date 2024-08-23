@@ -470,28 +470,37 @@ export default function CreateEventForm({ event }: { event?: Event }) {
               />
             </div>
             <div className="flex items-stretch gap-2">
-              <Controller
-                name="startTime"
-                render={({ field, fieldState, formState }) => (
-                  <DatePicker
-                    showTime
-                    onOk={(date: any) => {
-                      field.onChange(dayjs(date).toISOString());
-                    }}
-                    placeholder="Start Time"
-                    ref={field.ref}
-                    name={field.name}
-                    disabled={field.disabled}
-                    className="ant-picker-minerva-date"
-                    value={field.value ? dayjs(field.value) : undefined}
-                  />
-                )}
-              />
+              <div className="flex-1">
+                <Controller
+                  name="startTime"
+                  render={({ field, fieldState, formState }) => (
+                    <>
+                      <DatePicker
+                        showTime={!isAllDayValue}
+                        onOk={(date: any) => {
+                          field.onChange(dayjs(date).toISOString());
+                        }}
+                        placeholder="Start Time"
+                        ref={field.ref}
+                        name={field.name}
+                        disabled={field.disabled}
+                        className="ant-picker-minerva-date"
+                        value={field.value ? dayjs(field.value) : undefined}
+                      />
+                      {fieldState.error?.message && (
+                        <p className="text-xs mt-1 text-danger-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
               {!isAllDayValue && (
                 <Controller
                   name="endTime"
                   render={({ field, fieldState, formState }) => (
-                    <>
+                    <div className="flex-1">
                       <DatePicker
                         showTime
                         onOk={(date: any) => {
@@ -511,7 +520,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                           {fieldState.error.message}
                         </p>
                       )}
-                    </>
+                    </div>
                   )}
                 />
               )}
@@ -527,7 +536,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 </h4>
                 <textarea
                   // disabled={isPending}
-                  className="border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                  className="block border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
                   placeholder="Enter the Event Description, links are supported"
                   rows={4}
                   style={{
@@ -761,7 +770,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 </h4>
                 <textarea
                   // disabled={isPending}
-                  className="border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+                  className="block border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
                   placeholder="Enter the Organizer Info"
                   rows={4}
                   style={{
@@ -778,7 +787,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
             )}
           />
 
-          <div className="flex flex-col md:row-span-2">
+          <div className="flex flex-col md:col-start-2 md:row-start-1 md:row-end-3">
             <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
               Organizer Image
             </h4>

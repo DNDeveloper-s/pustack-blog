@@ -99,22 +99,24 @@ export default function CreateEventEntry() {
   });
   const eventId = searchParams.get("event_id");
   const { data: event } = useGetEventById(eventId);
-  const { user } = useUser();
+  const { user, getUserAsync } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      // Redirect to login
-      event
-        ? router.push("/events?event_id=" + event.id)
-        : router.push("/events");
-      return;
-    }
-    if (event && event.author.uid !== user.uid) {
-      // Redirect to login
-      router.push("/events?event_id=" + event.id);
-      return;
-    }
+    getUserAsync().then((user) => {
+      if (!user) {
+        // Redirect to login
+        event
+          ? router.push("/events?event_id=" + event.id)
+          : router.push("/events");
+        return;
+      }
+      if (event && event.author.uid !== user.uid) {
+        // Redirect to login
+        router.push("/events?event_id=" + event.id);
+        return;
+      }
+    });
   }, [event, user, router]);
 
   useEffect(() => {

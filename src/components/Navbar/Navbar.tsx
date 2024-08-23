@@ -771,7 +771,7 @@ function NavbarTablet({
             </div>
             <div
               className="flex items-center gap-2 absolute left-1/2 transform -translate-x-1/2 -bottom-[4px] text-[10px] cursor-pointer"
-              onClick={() => setIsNavOpen((c) => !c)}
+              // onClick={() => setIsNavOpen((c) => !c)}
             >
               <div className="max-w-[300px] w-[50vw]">
                 <UpcomingEventSection />

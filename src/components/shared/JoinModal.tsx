@@ -12,6 +12,7 @@ import { linkedinAuth } from "./LinkedinAuth";
 import { Drawer } from "antd";
 import { IoIosCloseCircle } from "react-icons/io";
 import useScreenSize from "@/hooks/useScreenSize";
+import useAppleDevice from "@/hooks/useIsAppleDevice";
 
 const GoogleIcon = () => (
   <svg
@@ -116,6 +117,7 @@ interface JoinDrawerProps {
 
 function JoinDrawer(props: JoinDrawerProps) {
   const { open, setOpen } = useJoinModal();
+  const isAppleDevice = useAppleDevice();
 
   return (
     <Drawer
@@ -171,15 +173,17 @@ function JoinDrawer(props: JoinDrawerProps) {
           </button>
           <p className="text-black font-light">Linkedin</p>
         </div>
-        <div
-          className="flex justify-center py-4 flex-col gap-1 items-center cursor-pointer"
-          onClick={props.handleClick("apple")}
-        >
-          <button className="w-12 h-12 bg-transparent flex justify-center items-center rounded-full border border-dashed border-[#4f4f4f52]">
-            <AppleIcon />
-          </button>
-          <p className="text-black font-light">Apple</p>
-        </div>
+        {isAppleDevice && (
+          <div
+            className="flex justify-center py-4 flex-col gap-1 items-center cursor-pointer"
+            onClick={props.handleClick("apple")}
+          >
+            <button className="w-12 h-12 bg-transparent flex justify-center items-center rounded-full border border-dashed border-[#4f4f4f52]">
+              <AppleIcon />
+            </button>
+            <p className="text-black font-light">Apple</p>
+          </div>
+        )}
       </div>
     </Drawer>
   );
@@ -193,6 +197,7 @@ export default function JoinModal() {
   const [error, setError] = useState<string | null>(null);
   const { user } = useUser();
   const { isSmallScreen } = useScreenSize();
+  const isAppleDevice = useAppleDevice();
 
   const onOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -270,17 +275,19 @@ export default function JoinModal() {
               </span>
             </Button>
 
-            <Button
-              isDisabled={!!loading}
-              isLoading={loading === "apple"}
-              onClick={handleClick("apple")}
-              className="border border-appBlack !rounded-none bg-transparent w-full max-w-[260px] h-[45px] flex items-center justify-between px-4"
-            >
-              <AppleIcon />
-              <span className="flex-1 text-center mb-[-4px]">
-                Join With Apple
-              </span>
-            </Button>
+            {isAppleDevice && (
+              <Button
+                isDisabled={!!loading}
+                isLoading={loading === "apple"}
+                onClick={handleClick("apple")}
+                className="border border-appBlack !rounded-none bg-transparent w-full max-w-[260px] h-[45px] flex items-center justify-between px-4"
+              >
+                <AppleIcon />
+                <span className="flex-1 text-center mb-[-4px]">
+                  Join With Apple
+                </span>
+              </Button>
+            )}
 
             {error && (
               <p className="text-xs mt-4 max-w-[350px] w-full text-center leading-[18px] text-danger-500">

@@ -11,14 +11,22 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export const UserContext = createContext<{
   user: UserDocumentData | null;
   setUser: React.Dispatch<React.SetStateAction<UserDocumentData | null>>;
+  getUserAsync: () => Promise<UserDocumentData | undefined>;
 }>({
   user: null,
   setUser: () => {},
+  getUserAsync: (async () => {}) as any,
 });
 
 export interface UserDocumentData {
@@ -65,6 +73,14 @@ export function UserProvider({
       // navigator.serviceWorker
       //   .register(serviceWorkerUrl)
       //   .then((registration) => console.log("scope is: ", registration.scope));
+    }
+  }, []);
+
+  const getUserAsync = useCallback(async () => {
+    await auth.authStateReady();
+    if (auth.currentUser) {
+      const user = await getDoc(doc(db, "users", auth.currentUser.uid));
+      return transformUserData(user);
     }
   }, []);
 
@@ -137,7 +153,7 @@ export function UserProvider({
   }, [user]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, getUserAsync }}>
       {children}
     </UserContext.Provider>
   );
