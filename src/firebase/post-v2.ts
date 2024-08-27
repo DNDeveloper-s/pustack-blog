@@ -33,6 +33,7 @@ import readingTime from "reading-time";
 import { PostFilters } from "@/components/Me/Posts/PostsEntry";
 import { Descendant } from "slate";
 import {
+  extractFirstWordsFromPostNodes,
   extractTextFromEditor,
   getFirstExistingText,
   getFirstImage,
@@ -256,9 +257,7 @@ export class Post {
     if (this.nodes) {
       const snippetData = {
         title: this.displayTitle,
-        content: this.displayContent
-          ? this.displayContent
-          : getFirstExistingText(this.nodes),
+        content: extractFirstWordsFromPostNodes(this.nodes, 250),
         image: getFirstImage(this.nodes),
         // quote: quotes[0],
         // iframe: iframes[0],

@@ -8,7 +8,7 @@ import { chunk, compact, difference, sortBy } from "lodash";
 import { useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import { useQueryPosts } from "@/api/post";
-import { useQuerySignals } from "@/api/signal";
+import { useGetFlagshipSignal, useQuerySignals } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import useScreenSize from "@/hooks/useScreenSize";
@@ -34,7 +34,8 @@ function DashboardDesktop({
     fetchNextPage,
     isFetchingNextPage,
     error,
-  } = useQuerySignals({ limit: 10 });
+  } = useQuerySignals({ limit: 11 });
+  const { data: flagshipSignal } = useGetFlagshipSignal();
 
   console.log("error - ", error);
 
@@ -52,7 +53,10 @@ function DashboardDesktop({
     );
   }, [_serverSignals]);
 
-  const signals = (_clientSignals || _serverFormedSignals)?.slice(0, 10);
+  const signals = (_clientSignals || _serverFormedSignals)
+    ?.filter((c: Signal) => c?.id !== flagshipSignal?._id)
+    ?.slice(0, 10);
+
   const hasSignals = signals?.length > 0;
 
   const { posts } = useQueryPosts({
@@ -115,7 +119,7 @@ function DashboardDesktop({
 
     const rightPosts = compact(
       difference(posts, [titlePost, ...midContentPosts])
-    ).slice(0, 6);
+    ).slice(0, 4);
 
     const listPosts = compact(
       difference(posts, [
@@ -188,7 +192,6 @@ function DashboardDesktop({
         {postsByPosition.titlePost && (
           <DesignedBlog
             linkClassName="block"
-            size="sm"
             post={postsByPosition.titlePost as Post}
           />
         )}

@@ -54,7 +54,7 @@ export default async function Home() {
   let _signals_query = query(
     signalsRef,
     orderBy("timestamp", "desc"),
-    limit(10)
+    limit(11)
   );
 
   const signal_docs = await getDocs(_signals_query);

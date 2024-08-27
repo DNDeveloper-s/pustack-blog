@@ -42,6 +42,7 @@ import AppImage, { noImageUrl } from "@/components/shared/AppImage";
 import { FaShare, FaStar } from "react-icons/fa6";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import {
+  extractFirstWordsFromPostNodes,
   getFirstExistingText,
   getFirstImage,
 } from "@/components/SlateEditor/utils/helpers";
@@ -228,7 +229,10 @@ export function SavedPostItemV2({ signal }: { signal: Signal }) {
             </div>
             <div className="pt-[8px]">
               <p className="max-h-[40px] leading-[20px] line-clamp-2 text-[16px] text-[#6B6B6B] font-normal">
-                {getFirstExistingText((signal.nodes as CustomElement[]) ?? [])}
+                {extractFirstWordsFromPostNodes(
+                  (signal.nodes as CustomElement[]) ?? [],
+                  50
+                )}
               </p>
             </div>
             <div className="pt-[10px] flex items-center justify-between h-[48px]">

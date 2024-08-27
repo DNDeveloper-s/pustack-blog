@@ -89,7 +89,7 @@ export default function Business() {
                   key={i}
                   className={
                     "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 " +
-                    (i === 1 ? "pt-3" : "")
+                    (i === 1 ? "pt-3" : "pb-3")
                   }
                 >
                   {postChunkOf2.map((post: any, j) => (
@@ -105,8 +105,8 @@ export default function Business() {
                         classNames={{
                           content:
                             posts.length !== 5
-                              ? "h-[70px] overflow-hidden"
-                              : "h-[130px] overflow-hidden",
+                              ? "h-[70px] overflow-hidden "
+                              : "h-[140px] overflow-hidden !line-clamp-[7] ",
                         }}
                       />
                     </div>
@@ -121,6 +121,9 @@ export default function Business() {
                 linkClassName={"h-full block"}
                 size="sm"
                 post={singlePost[0]}
+                classNames={{
+                  content: "!line-clamp-5 ",
+                }}
               />
             </div>
           )}

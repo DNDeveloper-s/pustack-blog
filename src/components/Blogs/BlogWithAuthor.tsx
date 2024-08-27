@@ -181,6 +181,7 @@ export default function BlogWithAuthor({
             style={{
               paddingTop: size === "sm" ? "8px" : "10px",
             }}
+            wordLimit={size === "sm" ? 50 : 70}
           >
             {post.snippetData?.content}
           </TrimmedPara>

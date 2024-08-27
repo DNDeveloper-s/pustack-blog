@@ -153,3 +153,46 @@ export const extractTextFromEditor = (editor: Editor | any[]) => {
   }
   return "";
 };
+
+export const extractFirstWordsFromPostNodes = (
+  data: Descendant[] | undefined,
+  number = 200
+) => {
+  let wordCount = 0;
+  let extractedText = "";
+
+  if (!data) {
+    return extractedText;
+  }
+
+  // Iterate over each item in the data array
+  for (const item of data) {
+    // @ts-ignore
+    if (!item.type) continue;
+
+    // @ts-ignore
+    if (item.type === "paragraph") {
+      // Extract text from the children of the paragraph
+      for (const child of item.children) {
+        // Skip empty text nodes
+        // @ts-ignore
+        if (!child.text) continue;
+        // @ts-ignore
+        const words = child.text.split(" ");
+        wordCount += words.length;
+
+        // Add words to the extractedText
+        if (wordCount <= number) {
+          // @ts-ignore
+          extractedText += child.text + " ";
+        } else {
+          // If the current text block exceeds 200 words, add only the required words
+          const remainingWords = number - (wordCount - words.length);
+          extractedText += words.slice(0, remainingWords).join(" ");
+          return extractedText.trim(); // Return the result once 200 words are reached
+        }
+      }
+    }
+  }
+  return extractedText.trim(); // Return in case there are less than 200 words in total
+};

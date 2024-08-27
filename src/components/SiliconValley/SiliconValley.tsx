@@ -6,9 +6,9 @@ import { chunk } from "lodash";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 
-export default function Africa() {
+export default function SiliconValley() {
   const { posts } = useQueryPosts({
-    topics: ["africa"],
+    topics: ["silicon-valley"],
     limit: 5,
   });
   const { isSmallScreen } = useScreenSize();
@@ -25,7 +25,7 @@ export default function Africa() {
       <div className="my-4 py-5">
         <div className="border-t-2 border-black">
           <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
-            Africa
+            Silicon Valley
           </h2>
           <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
@@ -70,7 +70,7 @@ export default function Africa() {
     <div className="my-4 py-5">
       <div className="border-t-2 border-black">
         <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
-          Technology
+          Silicon Valley
         </h2>
         <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
         <div
@@ -89,7 +89,7 @@ export default function Africa() {
                   key={i}
                   className={
                     "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 " +
-                    (i === 1 ? "pt-3" : "")
+                    (posts.length === 3 ? "h-full" : i === 1 ? "pt-3" : "pb-3")
                   }
                 >
                   {postChunkOf2.map((post: any, j) => (
@@ -105,8 +105,10 @@ export default function Africa() {
                         classNames={{
                           content:
                             posts.length !== 5
-                              ? "h-[70px] overflow-hidden"
-                              : "h-[140px] overflow-hidden",
+                              ? posts.length === 3
+                                ? "h-[104px] !line-clamp-5"
+                                : "h-[70px] overflow-hidden "
+                              : "h-[140px] overflow-hidden !line-clamp-[7] ",
                         }}
                       />
                     </div>
@@ -121,6 +123,9 @@ export default function Africa() {
                 linkClassName={"h-full block"}
                 size="sm"
                 post={singlePost[0]}
+                classNames={{
+                  content: "!h-[104px] !line-clamp-5 ",
+                }}
               />
             </div>
           )}

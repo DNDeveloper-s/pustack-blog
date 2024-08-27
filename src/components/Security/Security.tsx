@@ -106,7 +106,7 @@ export default function Politics() {
                           content:
                             posts.length !== 5
                               ? "h-[70px] overflow-hidden"
-                              : "h-[130px] overflow-hidden",
+                              : "h-[140px] overflow-hidden",
                         }}
                       />
                     </div>

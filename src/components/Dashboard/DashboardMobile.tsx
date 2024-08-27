@@ -8,7 +8,7 @@ import { chunk, compact, difference, sortBy } from "lodash";
 import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import { useGetPostById, useQueryPosts } from "@/api/post";
-import { useQuerySignals } from "@/api/signal";
+import { useGetFlagshipSignal, useQuerySignals } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import { Spinner } from "@nextui-org/spinner";
@@ -33,6 +33,7 @@ export default function DashboardMobile({
     fetchNextPage,
     isFetchingNextPage,
   } = useQuerySignals({ limit: 10 });
+  const { data: flagshipSignal } = useGetFlagshipSignal();
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -48,7 +49,9 @@ export default function DashboardMobile({
     );
   }, [_serverSignals]);
 
-  const signals = (_clientSignals || _serverFormedSignals)?.slice(0, 10);
+  const signals = (_clientSignals || _serverFormedSignals)
+    ?.filter((c: Signal) => c?.id !== flagshipSignal?._id)
+    ?.slice(0, 10);
   const hasSignals = signals?.length > 0;
 
   const { posts } = useQueryPosts({
