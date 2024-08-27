@@ -336,6 +336,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
     }
   }, [_post]);
 
+  console.log("_post - ", post);
+
   const hasPost = !!post;
   const hasNoPost = !post;
 

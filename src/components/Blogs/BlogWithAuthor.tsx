@@ -15,7 +15,13 @@ export interface BlogBaseProps {
   linkClassName?: string;
   href?: string;
   noImage?: boolean;
-  classNames?: { content?: string; h2?: string; h3?: string; img?: string };
+  classNames?: {
+    content?: string;
+    title?: string;
+    h2?: string;
+    h3?: string;
+    img?: string;
+  };
 }
 
 const defaultBlogWithAuthor = (size = "lg") => (
@@ -157,6 +163,7 @@ export default function BlogWithAuthor({
           <h2
             className={
               "font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
+              (classNames?.title ?? "") +
               (size === "sm"
                 ? "text-[20px] lg:text-[24px]"
                 : "text-[28px] lg:text-[32px]")
@@ -172,7 +179,7 @@ export default function BlogWithAuthor({
         {post.snippetData?.content && (
           <TrimmedPara
             className={
-              "leading-[120%] line-clamp-3 group-hover:text-appBlue " +
+              "leading-[120%] line-clamp-3 opacity-80 group-hover:text-appBlue " +
               (classNames?.content ?? "") +
               (size === "sm"
                 ? "text-[14px] lg:text-[16px]"
