@@ -71,7 +71,6 @@ export default function AdminPage({ postId }: { postId?: string }) {
   const ref = useRef(null);
 
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
-  const { isMobileScreen, isTabletScreen } = useScreenSize();
 
   const isDraftSavingRef = useRef<boolean>(false);
 

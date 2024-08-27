@@ -23,6 +23,7 @@ import { Range } from "slate";
 import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { Node } from "slate";
 import { useSlateConfig } from "@/context/SlateContext";
+import useScreenSize from "@/hooks/useScreenSize";
 
 export type ToolType =
   | "bold"
@@ -350,9 +351,19 @@ interface ToolbarProps {
 export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
   const { toolbars } = useSlateConfig();
+  const { isTabletScreen, isMobileScreen } = useScreenSize();
 
   return (
-    <div className="flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky top-0 z-20">
+    <div
+      className={
+        "flex flex-wrap divide-x-1 gap-0 divide-gray-300 bg-primary sticky z-20 " +
+        (isTabletScreen
+          ? "top-[220px]"
+          : isMobileScreen
+          ? "top-[80px]"
+          : "top-[150px]")
+      }
+    >
       {!props.readonly &&
         tools.map((group, i) => (
           <div key={i} className="flex gap-0 h-8 flex-wrap">

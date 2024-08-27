@@ -41,7 +41,7 @@ export default async function unsubscribe({
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-6 justify-center">
+    <div className="flex flex-1 flex-col items-center gap-6 justify-center py-20">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlSpace="preserve"
