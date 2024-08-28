@@ -318,6 +318,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
       setPost(
         new Post(
           _post.title,
+          _post.subTitle,
           _post.author,
           _post.topic,
           _post.sections,

@@ -75,6 +75,7 @@ function JoditWrapper(
   // const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const subTitleInputRef = useRef<HTMLInputElement | null>(null);
   const topicRef = useRef<HTMLSelectElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -87,11 +88,17 @@ function JoditWrapper(
   const slateEditorRef = useRef<SlateEditorRef>(null);
   const [slateEditorKey, setSlateEditorKey] = useState(0);
   const { openNotification } = useNotification();
+  const [titleValue, setTitleValue] = useState<string>("");
 
   useEffect(() => {
     if (prePost) {
       setTopic(prePost.topic);
-      if (inputRef.current) inputRef.current.value = prePost.title ?? "";
+      if (inputRef.current) {
+        // inputRef.current.value = prePost.title ?? "";
+        setTitleValue(prePost.title ?? "");
+      }
+      if (subTitleInputRef.current)
+        subTitleInputRef.current.value = prePost.subTitle ?? "";
     }
   }, [prePost]);
 
@@ -101,7 +108,11 @@ function JoditWrapper(
       // setInitialContent("");
       setSlateEditorKey((prev) => prev + 1);
       currentContent.current = "";
-      if (inputRef.current) inputRef.current.value = "";
+      if (inputRef.current) {
+        // inputRef.current.value = "";
+        setTitleValue("");
+      }
+      if (subTitleInputRef.current) subTitleInputRef.current.value = "";
     },
     getSlateValue: () => {
       return slateEditorRef.current?.getValue();
@@ -113,13 +124,19 @@ function JoditWrapper(
       handleSaveAsDraft();
     },
     getTopicValue: () => topic,
-    getTitleValue: () => inputRef.current?.value ?? "",
-    isValid: (titleValue: string, topicValue: string, silent: boolean) =>
-      isValid(titleValue, topicValue, silent),
+    getTitleValue: () => titleValue,
+    getSubTitleValue: () => subTitleInputRef.current?.value ?? "",
+    isValid: (
+      titleValue: string,
+      subTitleValue: string,
+      topicValue: string,
+      silent: boolean
+    ) => isValid(titleValue, subTitleValue, topicValue, silent),
   }));
 
   const isValid = (
     titleValue: string,
+    subTitleValue: string,
     topicValue: string,
     silent: boolean = false
   ) => {
@@ -130,11 +147,13 @@ function JoditWrapper(
     const _isValid = titleValue && topicValue;
 
     const field = titleValue
-      ? topicValue
-        ? sections && Section.mergedContent(sections).length > 0
-          ? null
-          : "sections"
-        : "topic"
+      ? subTitleValue
+        ? topicValue
+          ? sections && Section.mergedContent(sections).length > 0
+            ? null
+            : "sections"
+          : "topic"
+        : "subTitle"
       : "title";
 
     if (field === "title") {
@@ -146,6 +165,21 @@ function JoditWrapper(
         inputRef.current?.focus();
       }
       return { isValid: false, field, message: "Please enter the post title" };
+    }
+
+    if (field === "subTitle") {
+      if (!silent) {
+        subTitleInputRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        subTitleInputRef.current?.focus();
+      }
+      return {
+        isValid: false,
+        field,
+        message: "Please enter the post sub-title",
+      };
     }
 
     if (field === "topic") {
@@ -176,7 +210,11 @@ function JoditWrapper(
     //   section.updateContent(section.trimContent(section.content));
     // });
 
-    const _isValid = isValid(inputRef.current?.value ?? "", topic);
+    const _isValid = isValid(
+      titleValue ?? "",
+      subTitleInputRef.current?.value ?? "",
+      topic
+    );
 
     if (!_isValid.isValid) {
       openNotification(
@@ -198,7 +236,8 @@ function JoditWrapper(
     }
 
     let post = new Post(
-      inputRef.current?.value || "Untitled",
+      titleValue || "Untitled",
+      subTitleInputRef.current?.value || "",
       {
         name: user?.name || dummyAuthor.name,
         email: user?.email || dummyAuthor.email,
@@ -222,7 +261,8 @@ function JoditWrapper(
 
     if (prePost) {
       post = new Post(
-        inputRef.current?.value || "Untitled",
+        titleValue || "Untitled",
+        subTitleInputRef.current?.value || "",
         {
           name: user?.name || dummyAuthor.name,
           email: user?.email || dummyAuthor.email,
@@ -253,7 +293,11 @@ function JoditWrapper(
 
     if (!isDraft && prePost) return;
 
-    const _isValid = isValid(inputRef.current?.value ?? "", topic);
+    const _isValid = isValid(
+      titleValue ?? "",
+      subTitleInputRef.current?.value ?? "",
+      topic
+    );
 
     if (!_isValid.isValid) {
       openNotification(
@@ -276,7 +320,8 @@ function JoditWrapper(
     }
 
     let post = new Post(
-      inputRef.current?.value || "Untitled",
+      titleValue || "Untitled",
+      subTitleInputRef.current?.value || "",
       {
         name: user?.name || dummyAuthor.name,
         email: user?.email || dummyAuthor.email,
@@ -299,7 +344,8 @@ function JoditWrapper(
 
     if (isDraft && prePost) {
       post = new Post(
-        inputRef.current?.value || "Untitled",
+        titleValue || "Untitled",
+        subTitleInputRef.current?.value || "",
         {
           name: user?.name || dummyAuthor.name,
           email: user?.email || dummyAuthor.email,
@@ -356,9 +402,23 @@ function JoditWrapper(
       </div> */}
       {error && <p className="text-red-500 text-sm my-2">{error}</p>}
       <div className="mt-5">
-        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-          Post Title
-        </h4>
+        <div className="mb-1 flex items-center justify-between">
+          <h4 className="text-[12px] font-helvetica uppercase ml-1 text-appBlack">
+            Post Title
+          </h4>
+          <div>
+            <span
+              className={
+                "text-[10px] " +
+                (titleValue.length >= 100
+                  ? "text-danger-500"
+                  : "text-[#1f1d1a]")
+              }
+            >
+              {titleValue.length}/100
+            </span>
+          </div>
+        </div>
         <input
           // disabled={isPending}
           className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
@@ -369,6 +429,31 @@ function JoditWrapper(
             borderInlineEnd: 0,
           }}
           ref={inputRef}
+          value={titleValue}
+          onChange={(e) => {
+            if (e.target.value && e.target.value.length > 100) {
+              setTitleValue(e.target.value.slice(0, 100));
+              return;
+            }
+            onChange();
+            setTitleValue(e.target.value);
+          }}
+        />
+      </div>
+      <div className="mt-5">
+        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+          Post Sub-Title
+        </h4>
+        <input
+          // disabled={isPending}
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          placeholder="Enter the Post Sub Title"
+          type="text"
+          style={{
+            fontVariationSettings: '"wght" 400,"opsz" 10',
+            borderInlineEnd: 0,
+          }}
+          ref={subTitleInputRef}
           onChange={(e) => {
             onChange();
             updateLocalStorage("title", e.target.value);

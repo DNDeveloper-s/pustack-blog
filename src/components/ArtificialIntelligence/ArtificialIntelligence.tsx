@@ -6,10 +6,16 @@ import { chunk } from "lodash";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 
-export default function ArtificialIntelligence() {
+export default function ArtificialIntelligence({
+  limit = 5,
+  classNames = {},
+}: {
+  limit?: number;
+  classNames?: { base?: string; wrapper?: string };
+}) {
   const { posts } = useQueryPosts({
     topics: ["artificial-intelligence"],
-    limit: 5,
+    limit,
   });
   const { isSmallScreen } = useScreenSize();
 
@@ -67,8 +73,8 @@ export default function ArtificialIntelligence() {
   const onlyPost = posts.length === 1 && posts[0];
 
   return (
-    <div className="my-4 py-5">
-      <div className="border-t-2 border-black">
+    <div className={"my-4 py-5 " + (classNames.base ?? "")}>
+      <div className={"border-t-2 border-black " + (classNames.wrapper ?? "")}>
         <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
           Artificial Intelligence
         </h2>

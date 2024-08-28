@@ -166,9 +166,33 @@ function BlogWithAuthorSide({
   // );
 }
 
-export default function ProductManagement({ limit = 5 }: { limit?: number }) {
+type topicId =
+  | "product-management"
+  | "artificial-intelligence"
+  | "technology"
+  | "silicon-valley"
+  | "more";
+
+type label =
+  | "Product Management"
+  | "Artificial Intelligence"
+  | "Technology"
+  | "Silicon Valley"
+  | "More";
+
+export default function LandingPageSectionLayout({
+  limit = 5,
+  classNames = {},
+  label,
+  topics,
+}: {
+  limit?: number;
+  classNames?: { base?: string; wrapper?: string };
+  label: label;
+  topics: topicId[];
+}) {
   const { posts } = useQueryPosts({
-    topics: ["product-management"],
+    topics,
     limit,
   });
   const { isSmallScreen } = useScreenSize();
@@ -182,8 +206,10 @@ export default function ProductManagement({ limit = 5 }: { limit?: number }) {
 
   if (isSmallScreen)
     return (
-      <div className="my-4 py-5">
-        <div className="border-t-2 border-black">
+      <div className={"my-4 py-5 " + (classNames.base ?? "")}>
+        <div
+          className={"border-t-2 border-black " + (classNames.wrapper ?? "")}
+        >
           <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
             Product Management
           </h2>
@@ -247,103 +273,94 @@ export default function ProductManagement({ limit = 5 }: { limit?: number }) {
         ))}
       </div>
     );
+  } else if (posts.length === 4) {
+    content = (
+      <div
+        className={
+          "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-4 pt-4"
+        }
+      >
+        {posts.map((post: any, j) => (
+          <div key={post.id} className={"px-3"}>
+            <DesignedBlog
+              linkClassName={"h-full block"}
+              size="sm"
+              noImage={posts.length === 5}
+              post={post}
+              classNames={{
+                content: "h-[83px] overflow-hidden !line-clamp-[4] ",
+                title: "!line-clamp-3 ",
+                img: "!h-[200px]",
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    );
   } else {
     content = (
-      <>
-        {posts.length === 4 && (
-          <div
-            className={
-              "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-4 pt-4"
-            }
-          >
-            {posts.map((post: any, j) => (
-              <div key={post.id} className={"px-3"}>
-                <DesignedBlog
-                  linkClassName={"h-full block"}
-                  size="sm"
-                  noImage={posts.length === 5}
-                  post={post}
-                  classNames={{
-                    content: "h-[80px] overflow-hidden !line-clamp-[4] ",
-                    title: "!line-clamp-3 ",
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-        {posts.length !== 4 && (
-          <div
-            className={
-              "grid py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] " +
-              (singlePost ? "grid-cols-[2fr_1fr]" : "grid-cols-1")
-            }
-          >
-            <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
-              {chunkedPosts?.map((postChunkOf2, i) => {
-                // const gridClassName =
-                //   postChunkOf2.length === 1 ? "grid-cols-1" : "grid-cols-2";
-                if (postChunkOf2.length === 1 && !onlyPost) return;
-                return (
-                  <div
-                    key={i}
-                    className={
-                      "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 " +
-                      (posts.length === 3
-                        ? "h-full"
-                        : i === 1
-                        ? "pt-3"
-                        : "pb-3")
-                    }
-                  >
-                    {postChunkOf2.map((post: any, j) => (
-                      <div
-                        key={post.id}
-                        className={j % 2 === 0 ? "pr-3" : "pl-3"}
-                      >
-                        <DesignedBlog
-                          linkClassName={"h-full block"}
-                          size="sm"
-                          noImage={posts.length === 5}
-                          post={post}
-                          classNames={{
-                            content:
-                              posts.length !== 5
-                                ? posts.length === 3
-                                  ? "h-[104px] !line-clamp-5"
-                                  : "h-[70px] overflow-hidden "
-                                : "h-[140px] overflow-hidden !line-clamp-[7] ",
-                          }}
-                        />
-                      </div>
-                    ))}
+      <div
+        className={
+          "grid py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d] " +
+          (singlePost ? "grid-cols-[2fr_1fr]" : "grid-cols-1")
+        }
+      >
+        <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+          {chunkedPosts?.map((postChunkOf2, i) => {
+            // const gridClassName =
+            //   postChunkOf2.length === 1 ? "grid-cols-1" : "grid-cols-2";
+            if (postChunkOf2.length === 1 && !onlyPost) return;
+            return (
+              <div
+                key={i}
+                className={
+                  "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 " +
+                  (posts.length === 3 ? "h-full" : i === 1 ? "pt-3" : "pb-3")
+                }
+              >
+                {postChunkOf2.map((post: any, j) => (
+                  <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
+                    <DesignedBlog
+                      linkClassName={"h-full block"}
+                      size="sm"
+                      noImage={posts.length === 5}
+                      post={post}
+                      classNames={{
+                        content:
+                          posts.length !== 5
+                            ? posts.length === 3
+                              ? "h-[104px] !line-clamp-5"
+                              : "h-[70px] overflow-hidden "
+                            : "h-[140px] overflow-hidden !line-clamp-[7] ",
+                      }}
+                    />
                   </div>
-                );
-              })}
-            </div>
-            {singlePost && (
-              <div className="pl-3 divide-y divide-dashed divide-[#1f1d1a4d]">
-                <DesignedBlog
-                  linkClassName={"h-full block"}
-                  size="sm"
-                  post={singlePost[0]}
-                  classNames={{
-                    content: "!h-[104px] !line-clamp-5 ",
-                  }}
-                />
+                ))}
               </div>
-            )}
+            );
+          })}
+        </div>
+        {singlePost && (
+          <div className="pl-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+            <DesignedBlog
+              linkClassName={"h-full block"}
+              size="sm"
+              post={singlePost[0]}
+              classNames={{
+                content: "!h-[104px] !line-clamp-5 ",
+              }}
+            />
           </div>
         )}
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="my-4 py-5">
-      <div className="border-t-2 border-black">
+    <div className={"my-4 py-5 " + (classNames.base ?? "")}>
+      <div className={"border-t-2 border-black " + (classNames.wrapper ?? "")}>
         <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
-          Product Management
+          {label}
         </h2>
         <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
         {content}

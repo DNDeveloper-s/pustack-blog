@@ -162,10 +162,10 @@ export default function BlogWithAuthor({
         {post.snippetData?.title && (
           <h2
             className={
-              "font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
+              "font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
               (classNames?.title ?? "") +
               (size === "sm"
-                ? "text-[20px] lg:text-[24px]"
+                ? "text-[16px] lg:text-[18px]"
                 : "text-[28px] lg:text-[32px]")
             }
             style={{
@@ -182,7 +182,7 @@ export default function BlogWithAuthor({
               "leading-[120%] line-clamp-3 opacity-80 group-hover:text-appBlue " +
               (classNames?.content ?? "") +
               (size === "sm"
-                ? "text-[14px] lg:text-[16px]"
+                ? "text-[13px] lg:text-[15px]"
                 : "text-[16px] lg:text-[18px]")
             }
             style={{
@@ -221,7 +221,7 @@ export default function BlogWithAuthor({
         <BlogImage
           imageProps={{ className: "!w-full !object-cover !h-full" }}
           noZoom
-          className="mt-2"
+          className={"mt-2 " + (classNames?.img ?? "")}
           src={post.snippetData?.image}
         />
       )}

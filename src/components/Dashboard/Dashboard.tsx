@@ -78,6 +78,7 @@ function DashboardDesktop({
       }
       return new Post(
         data.title,
+        data.subTitle,
         data.author,
         data.topic,
         data.sections,

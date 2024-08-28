@@ -141,6 +141,7 @@ export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
+  readonly subTitle: string;
   readonly topic: string;
   readonly author: Author;
   readonly html: Document;
@@ -164,6 +165,7 @@ export class Post {
     image?: string | null;
     quote?: string | null;
     iframe?: string | null;
+    subTitle?: string | null;
   } | null = null;
 
   get sections() {
@@ -198,6 +200,7 @@ export class Post {
 
   constructor(
     title: string,
+    subTitle: string,
     author: Author,
     topic: string,
     sections: Section[] = [],
@@ -213,6 +216,7 @@ export class Post {
     nodes?: Descendant[]
   ) {
     this.title = title;
+    this.subTitle = subTitle;
     this.displayTitle = displayTitle ?? title;
     this.displayContent = displayContent;
     this._sections = Section.createFactory(sections);
@@ -263,6 +267,7 @@ export class Post {
         // iframe: iframes[0],
         author: this.author,
         topic: this.topic,
+        subTitle: this.subTitle,
       };
 
       this._snippetData = snippetData;
@@ -877,6 +882,7 @@ export const postConverter = {
   toFirestore: (post: Post) => {
     return {
       title: post.title,
+      subTitle: post.subTitle,
       id: post.id,
       author: post.author,
       topic: post.topic,
@@ -931,6 +937,7 @@ export const postConverter = {
 
     return new Post(
       data.title,
+      data.subTitle,
       data.author,
       data.topic,
       data.sections,

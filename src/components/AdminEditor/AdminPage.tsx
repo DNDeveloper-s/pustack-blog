@@ -451,9 +451,14 @@ export default function AdminPage({ postId }: { postId?: string }) {
     // });
 
     const inputValue = joditRef.current?.getTitleValue() ?? "";
+    const subTitleValue = joditRef.current?.getSubTitleValue() ?? "";
     const topic = joditRef.current?.getTopicValue() ?? "";
 
-    const _isValid = joditRef.current?.isValid(inputValue, topic);
+    const _isValid = joditRef.current?.isValid(
+      inputValue,
+      subTitleValue,
+      topic
+    );
 
     if (!_isValid.isValid) {
       openNotification(
@@ -476,6 +481,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
     let post = new Post(
       inputValue || "Untitled",
+      subTitleValue,
       {
         name: user?.name,
         email: user?.email,
@@ -499,6 +505,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
     if (requestedPost) {
       post = new Post(
         inputValue || "Untitled",
+        subTitleValue,
         {
           name: user?.name,
           email: user?.email,
@@ -536,9 +543,15 @@ export default function AdminPage({ postId }: { postId?: string }) {
       }
 
       const inputValue = joditRef.current?.getTitleValue() ?? "";
+      const subTitleValue = joditRef.current?.getSubTitleValue() ?? "";
       const topic = joditRef.current?.getTopicValue() ?? "";
 
-      const _isValid = joditRef.current?.isValid(inputValue, topic, silent);
+      const _isValid = joditRef.current?.isValid(
+        inputValue,
+        subTitleValue,
+        topic,
+        silent
+      );
 
       if (!_isValid.isValid) {
         leavePageModalRef.current?.closeWithoutProceeding();
@@ -565,6 +578,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
       let post = new Post(
         inputValue || "Untitled",
+        subTitleValue,
         {
           name: user?.name,
           email: user?.email,
@@ -588,6 +602,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
       if (isDraft && requestedPost) {
         post = new Post(
           inputValue || "Untitled",
+          subTitleValue,
           {
             name: user?.name,
             email: user?.email,

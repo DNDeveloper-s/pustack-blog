@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { getMeetLinkDetails } from "./EventDetails";
 import Link from "next/link";
 import { getOrdinalSuffix } from "@/lib/date";
+import { usePathname } from "next/navigation";
 
 interface UpcomingEventProps {}
 const UpcomingEventSection = (props: UpcomingEventProps) => {
@@ -13,6 +14,9 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
     occur_in: "upcoming",
     limit: 5,
   });
+
+  const pathname = usePathname();
+  const isEventPage = pathname.includes("/events");
 
   if (!events) return null;
   const event = events[0];
@@ -25,11 +29,14 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
             "grid grid-cols-[35px_1fr] gap-1 md:grid-cols-[35px_1fr] lg:grid-cols-[35px_1fr] w-full items-stretch transition-all before:top-0 before:left-0 before:bg-[linear-gradient(135deg,_rgba(171,71,188,0.7),_rgba(236,64,122,0.7))] before:backdrop-blur-[6px] before:absolute before:w-full before:h-full relative py-1 px-3 overflow-hidden rounded-xl text-white "
           }
           style={{
-            animation: "intense-blink-breath 1.5s infinite ease-in-out",
+            animation: isEventPage
+              ? "none"
+              : "intense-blink-breath 1.5s infinite ease-in-out",
             backgroundImage: `url(/assets/images/colored-elements.webp)`,
             backgroundSize: "cover",
-            boxShadow:
-              "rgba(171, 71, 188, 0.7) 0px 0px 20px, rgba(236, 64, 122, 0.5) 0px 0px 40px",
+            boxShadow: isEventPage
+              ? "rgba(171, 71, 188, 0.7) 0px 0px 10px, rgba(236, 64, 122, 0.5) 0px 0px 20px"
+              : "rgba(171, 71, 188, 0.7) 0px 0px 20px, rgba(236, 64, 122, 0.5) 0px 0px 40px",
             // backgroundColor: event.background ?? getRandomDarkHexColor(),
           }}
         >

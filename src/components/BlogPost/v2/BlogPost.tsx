@@ -3,7 +3,7 @@
 import { useDeletePost, useGetPostById, usePostBookmark } from "@/api/post";
 import Navbar from "@/components/Navbar/Navbar";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { Highlight, themes } from "prism-react-renderer";
@@ -282,8 +282,17 @@ const DeletePostModalRef = forwardRef(DeletePostModal);
 
 export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const { isMobileScreen, isTabletScreen, isDesktopScreen } = useScreenSize();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  if (isMobileScreen) return <BlogPostMobile _post={_post} />;
+  if (isMobileScreen) {
+    if (!!searchParams.get("post_drawer_id"))
+      return <BlogPostMobile _post={_post} />;
+    else {
+      router.push("/?post_drawer_id=" + _post?.id);
+      return null;
+    }
+  }
 
   return <BlogPostDesktop _post={_post} />;
 }

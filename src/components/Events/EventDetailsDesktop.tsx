@@ -841,7 +841,7 @@ export default function EventDetailsDesktop({
             <div className="mt-2">
               {event.venue.type === "offline" ? (
                 <Link href={event.venue.mapsLink ?? "#"} target="_blank">
-                  {event.venue.image && (
+                  {/* {event.venue.image && (
                     <div className="flex items-center before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-60 overflow-hidden before:z-[2] border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
                       <AppImage
                         className="w-full aspect-video rounded-2xl"
@@ -864,7 +864,7 @@ export default function EventDetailsDesktop({
                         </div>
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {event.venue.mapsLink && (
                     <>
                       <div className="w-full max-w-[500px] h-auto aspect-video overflow-hidden mt-3">
@@ -935,13 +935,13 @@ export default function EventDetailsDesktop({
             <div className="mt-2 flex flex-col">
               <Link
                 href={"mailto:" + event.organizer.email}
-                className="leading-[120%] text-appBlue underline cursor-pointer block"
+                className="leading-[120%] text-appBlue cursor-pointer block"
               >
                 <b>{event.organizer.email}</b>
               </Link>
               <Link
                 href={"tel:" + event.organizer.contact}
-                className="leading-[120%] text-appBlue underline cursor-pointer mt-2 block"
+                className="leading-[120%] text-appBlue cursor-pointer mt-2 block"
               >
                 <b>{event.organizer.contact}</b>
               </Link>

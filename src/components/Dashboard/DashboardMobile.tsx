@@ -73,6 +73,7 @@ export default function DashboardMobile({
       }
       return new Post(
         data.title,
+        data.subTitle,
         data.author,
         data.topic,
         data.sections,
@@ -125,7 +126,7 @@ export default function DashboardMobile({
           {signals.map((signal: Signal) => (
             <div
               key={signal.id}
-              className="md:px-0 px-3 min-w-[170px] my-2 md:my-0"
+              className="md:px-0 px-3 min-w-[240px] my-2 md:my-0"
             >
               <BlueSignalBlog
                 href={`?signal_drawer_id=${signal.id}`}

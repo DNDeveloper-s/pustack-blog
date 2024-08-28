@@ -118,7 +118,7 @@ function SignalsMobileRef(
       () =>
         targetEl?.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "start",
         }),
       400
     );
@@ -171,9 +171,9 @@ function SignalsMobileRef(
             {signals.map((signal: Signal) => (
               <div
                 key={signal._id}
-                ref={signal.id === startAt ? targetRef : undefined}
                 className={signal.id === startAt ? classes.quadrat : ""}
               >
+                <div ref={signal.id === startAt ? targetRef : undefined}></div>
                 <SignalComponent signal={signal} />
               </div>
             ))}

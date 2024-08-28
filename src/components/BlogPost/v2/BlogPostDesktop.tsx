@@ -316,6 +316,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
       setPost(
         new Post(
           _post.title,
+          _post.subTitle,
           _post.author,
           _post.topic,
           _post.sections,
@@ -549,7 +550,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           </div>
           <div className="mt-4">
             <h2
-              className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+              className="font-featureHeadline line-clamp-4 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
               style={{
                 fontSize: "32px",
                 fontWeight: "395",
@@ -575,23 +576,27 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           </div>
         </div>
         <div className="pt-5 md:pt-0 md:pl-5 flex flex-col gap-6 justify-between">
-          {!user && (
-            <div>
-              <div className="py-1">
-                <p className="font-featureHeadline style_intro leading-[120%]">
-                  <b className="style_bold">Sign up for Minerva Principals:</b>
-                  {" What the White House is reading. "}
-                  <Link href="#" className="underline whitespace-nowrap">
-                    Read it now.
-                  </Link>
-                </p>
-              </div>
-              <SignUpForNewsLettersButton
-                containerClassName="flex mt-1"
-                checkedLetters={newsLettersList}
-              />
-            </div>
-          )}
+          <div>
+            {!user && (
+              <>
+                <div className="py-1">
+                  <p className="font-featureHeadline style_intro leading-[120%]">
+                    <b className="style_bold">
+                      Sign up for Minerva Principals:
+                    </b>
+                    {" What the White House is reading. "}
+                    <Link href="#" className="underline whitespace-nowrap">
+                      Read it now.
+                    </Link>
+                  </p>
+                </div>
+                <SignUpForNewsLettersButton
+                  containerClassName="flex mt-1"
+                  checkedLetters={newsLettersList}
+                />
+              </>
+            )}
+          </div>
           {sections?.length > 0 && (
             <div className="flex flex-col gap-1">
               <h3

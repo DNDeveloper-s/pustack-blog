@@ -29,8 +29,6 @@ export default function RSVPNowButton({
     user?.uid
   );
 
-  console.log("isUserRSVP - ", isUserRSVP, error);
-
   useEffect(() => {
     if (sessionEmail)
       window.sessionStorage.setItem("sessionEmail", sessionEmail);
@@ -42,7 +40,14 @@ export default function RSVPNowButton({
       inputRef.current.value = user?.email;
       setSessionEmail(user?.email);
     } else {
-      inputRef.current.value = "";
+      const sessionStorage = window.sessionStorage.getItem("sessionEmail");
+      if (sessionStorage) {
+        inputRef.current.value = sessionStorage;
+        setSessionEmail(sessionStorage);
+      } else {
+        inputRef.current.value = "";
+        setSessionEmail(null);
+      }
     }
   }, [user?.email]);
 
@@ -75,9 +80,9 @@ export default function RSVPNowButton({
     return (
       <>
         <p className="text-sm text-center font-featureHeadline style_intro leading-[120%]">
-          See you there! We have email you the invitation at{" "}
+          See you there! We have emailed you the invitation at{" "}
           <b className="font-featureBold">
-            {user?.email ?? inputRef.current?.value}
+            {user?.email ?? sessionEmail ?? inputRef.current?.value}
           </b>
         </p>
         <button

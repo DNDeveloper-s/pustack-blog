@@ -6,10 +6,10 @@ import { chunk } from "lodash";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 
-export default function SiliconValley() {
+export default function SiliconValley({ limit = 5 }: { limit?: number }) {
   const { posts } = useQueryPosts({
     topics: ["silicon-valley"],
-    limit: 5,
+    limit,
   });
   const { isSmallScreen } = useScreenSize();
 

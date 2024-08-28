@@ -6,10 +6,10 @@ import { chunk } from "lodash";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 
-export default function More() {
+export default function More({ limit = 5 }: { limit?: number }) {
   const { posts } = useQueryPosts({
     topics: ["more"],
-    limit: 5,
+    limit,
   });
   const { isSmallScreen } = useScreenSize();
 
