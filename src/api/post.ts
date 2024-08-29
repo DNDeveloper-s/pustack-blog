@@ -15,6 +15,7 @@ import {
 import { useMemo } from "react";
 import { useUser } from "@/context/UserContext";
 import { PostFilters } from "@/components/Me/Posts/PostsEntry";
+import axios from "axios";
 
 export const useQueryPosts = ({
   initialData,
@@ -462,6 +463,25 @@ export const usePostBookmark = (
         queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
       });
     },
+    ...(options ?? {}),
+  });
+};
+
+export const useMutateOpenAIGenerate = (
+  options?: UseMutationOptions<
+    { long: string; medium: string; short: string },
+    Error,
+    { subText: string }
+  >
+) => {
+  const openAIGenerate = async ({ subText }: { subText: string }) => {
+    const res = await axios.post("/api/openai", { subText });
+
+    return res.data.text;
+  };
+
+  return useMutation({
+    mutationFn: openAIGenerate,
     ...(options ?? {}),
   });
 };

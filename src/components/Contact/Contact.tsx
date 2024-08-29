@@ -25,33 +25,44 @@ const OwlIcon = (props: any) => (
 
 const config = {
   zoox: {
+    title: "Zoox",
     border: "1px solid #4faf8b66",
     borderActive: "1px solid #4faf8b",
     background: "#5ebf9c91",
   },
   openai: {
+    title: "Open AI",
     border: "1px solid #ffffff5e",
     borderActive: "1px solid #ffffff",
     background: "#fdfdfd91",
   },
   godaddy: {
+    title: "Go Daddy",
     border: "1px solid #3dcbc775",
     borderActive: "1px solid #3dcbc7",
     background: "#25d5db87",
   },
   meta: {
+    title: "Meta",
     border: "1px solid #005ecc66",
     borderActive: "1px solid #005ecc",
     background: "#005ecc73",
   },
   google: {
+    title: "Google",
     border: "1px solid #e942396e",
     borderActive: "1px solid #e94239",
     background: "#e7452e7a",
   },
 };
 
-function HoveredContent({ background }: { background: string }) {
+function HoveredContent({
+  background,
+  title,
+}: {
+  background: string;
+  title: string;
+}) {
   const [rightMode, setRightMode] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -88,8 +99,8 @@ function HoveredContent({ background }: { background: string }) {
         background,
       }}
     >
-      <h2 className="text-[13px]">Facebook</h2>
-      <p className="text-[9px]">Content Partner</p>
+      <h2 className="text-[13px] font-helvetica">{title}</h2>
+      <p className="text-[9px] opacity-70 font-helvetica">Content Partner</p>
     </div>
   );
 }
@@ -107,6 +118,7 @@ function TeacherElement({
     border: string;
     borderActive: string;
     background: string;
+    title: string;
   };
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,7 +172,10 @@ function TeacherElement({
             : config?.borderActive ?? "1px solid #ffffff",
         }}
       />
-      <HoveredContent background={config?.background ?? "#fdfdfd91"} />
+      <HoveredContent
+        title={config?.title ?? "App"}
+        background={config?.background ?? "#fdfdfd91"}
+      />
     </div>
   );
 }
@@ -171,14 +186,13 @@ function OrbitOne() {
     setIsHovered(_isHovered);
   };
   return (
-    <div className="orbit__3">
-      <div
-        className="orbit__wrapper"
-        style={{
-          zIndex: isHovered ? 12 : 1,
-          // animationPlayState: isHovered ? "paused" : "running",
-        }}
-      >
+    <div
+      className="orbit__3"
+      style={{
+        zIndex: isHovered ? 12 : 1,
+      }}
+    >
+      <div className="orbit__wrapper">
         <Image
           width={100}
           height={100}
@@ -225,14 +239,13 @@ function OrbitTwo() {
   };
 
   return (
-    <div className="orbit__2">
-      <div
-        className="orbit__wrapper"
-        style={{
-          zIndex: isHovered ? 12 : 1,
-          // animationPlayState: isHovered ? "paused" : "running",
-        }}
-      >
+    <div
+      className="orbit__2"
+      style={{
+        zIndex: isHovered ? 12 : 1,
+      }}
+    >
+      <div className="orbit__wrapper">
         <Image
           width={100}
           height={100}
@@ -281,14 +294,13 @@ function OrbitThree() {
   };
 
   return (
-    <div className="orbit__1">
-      <div
-        className="orbit__wrapper"
-        style={{
-          zIndex: isHovered ? 12 : 1,
-          // animationPlayState: isHovered ? "paused" : "running",
-        }}
-      >
+    <div
+      className="orbit__1"
+      style={{
+        zIndex: isHovered ? 12 : 1,
+      }}
+    >
+      <div className="orbit__wrapper">
         <Image
           width={100}
           height={100}

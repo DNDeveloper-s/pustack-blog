@@ -131,8 +131,9 @@ function LeavePageModalRef(
       isOpen={disclosureOptions.isOpen}
       onOpenChange={disclosureOptions.onOpenChange}
       classNames={{
-        wrapper: "bg-black bg-opacity-50",
+        wrapper: "bg-black bg-opacity-50 !z-[9999]",
         base: "!max-w-[500px] !w-[90vw]",
+        backdrop: "!z-[999]",
       }}
       isDismissable={false}
       onClose={onClose}

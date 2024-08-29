@@ -33,6 +33,7 @@ import { Checkbox } from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { CustomElement } from "../../../types/slate";
 import { topics } from "@/constants";
 import { toDashCase } from "@/firebase/signal";
+import { useMutateOpenAIGenerate } from "@/api/post";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -89,6 +90,15 @@ function JoditWrapper(
   const [slateEditorKey, setSlateEditorKey] = useState(0);
   const { openNotification } = useNotification();
   const [titleValue, setTitleValue] = useState<string>("");
+
+  const {
+    mutate: postGenerateTextVariants,
+    data: _variantsData,
+    isPending,
+    error: _error,
+  } = useMutateOpenAIGenerate();
+
+  console.log("error in generation of text variants - ", _error);
 
   useEffect(() => {
     if (prePost) {
@@ -440,26 +450,7 @@ function JoditWrapper(
           }}
         />
       </div>
-      <div className="mt-5">
-        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-          Post Sub-Title
-        </h4>
-        <input
-          // disabled={isPending}
-          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-          placeholder="Enter the Post Sub Title"
-          type="text"
-          style={{
-            fontVariationSettings: '"wght" 400,"opsz" 10',
-            borderInlineEnd: 0,
-          }}
-          ref={subTitleInputRef}
-          onChange={(e) => {
-            onChange();
-            updateLocalStorage("title", e.target.value);
-          }}
-        />
-      </div>
+
       <div className="mt-5">
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
           Topic
@@ -522,6 +513,54 @@ function JoditWrapper(
             showToolbar
           />
         </div>
+      </div>
+      <div className="mt-5">
+        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+          Post Sub-Title
+        </h4>
+        <input
+          // disabled={isPending}
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          placeholder="Enter the Post Sub Title"
+          type="text"
+          style={{
+            fontVariationSettings: '"wght" 400,"opsz" 10',
+            borderInlineEnd: 0,
+          }}
+          ref={subTitleInputRef}
+          onChange={(e) => {
+            onChange();
+            updateLocalStorage("title", e.target.value);
+          }}
+        />
+        {subTitleInputRef.current?.value && (
+          <Button
+            isLoading={isPending}
+            className="mt-2 bg-lightPrimary text-appBlack px-2 py-1 rounded"
+            onClick={() => {
+              postGenerateTextVariants({
+                subText: subTitleInputRef.current?.value ?? "",
+              });
+            }}
+          >
+            Generate
+          </Button>
+        )}
+        {_variantsData && (
+          <div className="mt-2 flex flex-col gap-2">
+            <p>
+              Long - <strong className="text-xs">{_variantsData?.long}</strong>
+            </p>
+            <p>
+              Medium -{" "}
+              <strong className="text-xs">{_variantsData?.medium}</strong>
+            </p>
+            <p>
+              Short -{" "}
+              <strong className="text-xs">{_variantsData?.short}</strong>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

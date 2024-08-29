@@ -44,6 +44,7 @@
     "axios": "^1.7.2",
     "better-react-mathjax": "^2.0.3",
     "cookies-next": "^4.2.1",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
     "draft-js": "^0.11.7",
@@ -99,6 +100,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
     "@types/draft-js": "^0.11.18",
     "@types/jsdom": "^21.1.6",
