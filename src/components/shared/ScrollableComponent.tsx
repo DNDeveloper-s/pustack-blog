@@ -1,7 +1,25 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./ScrollableComponent.module.css";
 
-const ScrollableContent = ({ children }: { children: ReactNode }) => {
+interface ScrollableContentProps {
+  children: ReactNode;
+  classNames?: {
+    wrapper?: string;
+    container?: string;
+    content?: string;
+  };
+  styles?: {
+    wrapper?: React.CSSProperties;
+    container?: React.CSSProperties;
+    content?: React.CSSProperties;
+  };
+}
+
+const ScrollableContent = ({
+  children,
+  classNames,
+  styles: _styles,
+}: ScrollableContentProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [shadowLeft, setShadowLeft] = useState(false);
   const [shadowRight, setShadowRight] = useState(false);
@@ -10,13 +28,16 @@ const ScrollableContent = ({ children }: { children: ReactNode }) => {
     if (!containerRef.current) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+    console.log("scrollLeft", scrollLeft, scrollWidth, clientWidth);
     setShadowLeft(scrollLeft > 0);
     setShadowRight(scrollLeft < scrollWidth - clientWidth);
   };
 
   useEffect(() => {
     if (!containerRef.current) return;
-    handleScroll(); // Initial check
+    setTimeout(() => {
+      handleScroll(); // Initial check
+    }, 500);
     containerRef.current.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -27,7 +48,10 @@ const ScrollableContent = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={styles.wrapper + " " + (classNames?.wrapper ?? "")}
+      style={_styles?.wrapper}
+    >
       <div
         className={`${styles.shadow} ${shadowLeft ? styles.visible : ""} ${
           styles.left

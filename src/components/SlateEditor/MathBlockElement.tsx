@@ -1,6 +1,7 @@
 import { FaAlignCenter, FaAlignLeft, FaAlignRight } from "react-icons/fa6";
 import { Node, Transforms } from "slate";
 import { ReactEditor, useReadOnly, useSlate } from "slate-react";
+import ScrollableContent from "../shared/ScrollableComponent";
 
 export default function MathBlockElement({
   attributes,
@@ -81,7 +82,13 @@ export default function MathBlockElement({
           </div>
         </div>
       )}
-      <div className="w-auto max-w-full overflow-auto">
+      <ScrollableContent
+        styles={{
+          wrapper: {
+            border: "1px solid #e6e6e69e",
+          },
+        }}
+      >
         <div
           className={
             "inline-flex flex-col w-auto px-2 relative group/innerformula " +
@@ -141,7 +148,8 @@ export default function MathBlockElement({
           )}
           {children}
         </div>
-      </div>
+      </ScrollableContent>
+      {/* <div className="w-auto max-w-full overflow-auto"></div> */}
     </div>
   );
 }

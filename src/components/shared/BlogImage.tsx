@@ -1,8 +1,9 @@
 import { useBlogImage } from "@/context/BlogImageContext";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
-import Zoom from "react-medium-image-zoom";
+import Zoom, { Controlled } from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import AppImage from "./AppImage";
+import { useState } from "react";
 
 export function ImageModalPreview() {
   const { state, closePreview } = useBlogImage();
@@ -55,10 +56,13 @@ export default function BlogImage({
   noZoom,
   ...props
 }: BlogImageProps) {
+  const [isZoomed, setIsZoomed] = useState(false);
   const imageContent = (
     <AppImage
       src={src}
       alt="Image Preview"
+      width={1920}
+      height={1080}
       {...imageProps}
       className={
         "max-w-full max-h-full w-full h-full object-cover " +
@@ -78,7 +82,20 @@ export default function BlogImage({
       }}
       {...props}
     >
-      {noZoom ? imageContent : <Zoom>{imageContent}</Zoom>}
+      {noZoom ? (
+        imageContent
+      ) : (
+        <Controlled
+          zoomImg={{
+            width: 1920,
+            height: 1080,
+          }}
+          isZoomed={isZoomed}
+          onZoomChange={setIsZoomed}
+        >
+          {imageContent}
+        </Controlled>
+      )}
     </figure>
   );
   // return (

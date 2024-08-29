@@ -105,13 +105,7 @@ function ImageCarousel({
             </div>
           ))}
         </Slider>
-        <div
-          className={
-            isTouchDeviceState
-              ? "opacity-100"
-              : "opacity-0 group-hover:opacity-100"
-          }
-        >
+        <div>
           {!readonly && (
             <div
               onClick={() => {
@@ -127,7 +121,7 @@ function ImageCarousel({
             onClick={() => {
               sliderRef.current?.slickPrev();
             }}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 rounded-full w-7 h-7 flex items-center justify-center bg-lightPrimary text-appBlack cursor-pointer"
+            className="absolute top-1/2 left-2 transform shadow-sm -translate-y-1/2 rounded-full w-7 h-7 flex items-center justify-center bg-lightPrimary text-appBlack cursor-pointer"
           >
             <MdOutlineArrowBackIos className="text-md" />
           </div>
@@ -135,11 +129,18 @@ function ImageCarousel({
             onClick={() => {
               sliderRef.current?.slickNext();
             }}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 rounded-full w-7 h-7 flex items-center justify-center bg-lightPrimary text-appBlack cursor-pointer"
+            className="absolute top-1/2 right-2 transform shadow-sm -translate-y-1/2 rounded-full w-7 h-7 flex items-center justify-center bg-lightPrimary text-appBlack cursor-pointer"
           >
             <MdOutlineArrowForwardIos className="text-md " />
           </div>
-          <div className="w-full flex items-center gap-4 px-5 py-2 absolute bottom-0 h-10 bg-lightPrimary bg-opacity-65">
+          <div
+            className={
+              "w-full flex items-center gap-4 px-5 py-2 absolute bottom-0 h-10 transition-all bg-lightPrimary bg-opacity-65 " +
+              (isTouchDeviceState
+                ? "opacity-100"
+                : "opacity-0 group-hover:opacity-100")
+            }
+          >
             <div>
               <span className="text-appBlack font-helvetica text-sm">
                 {curSlide + 1} / {imageUrls.length}
@@ -157,6 +158,13 @@ function ImageCarousel({
                 color="foreground"
                 className="max-w-md"
                 value={calculateProgress(curSlide + 1, imageUrls.length)}
+                onChange={(value) => {
+                  if (typeof value !== "number") return;
+                  const newIndex = Math.round(
+                    (value / 100) * (imageUrls.length - 1)
+                  );
+                  sliderRef.current?.slickGoTo(newIndex);
+                }}
               />
             </div>
           </div>

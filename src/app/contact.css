@@ -346,8 +346,8 @@
   .orbit__1
   .orbit__wrapper
   .teacher__wrapper__2:hover {
-  top: 32.5rem;
-  left: 7.5rem;
+  /* top: 12.5rem; */
+  /* left: 7.5rem; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -356,43 +356,15 @@
   .orbit__wrapper
   .teacher__wrapper__2:hover
   .teacher__content {
-  animation-play-state: paused;
-}
-.blaze__sidebar__nosessions__wrapper
-  .blaze__circle
-  .orbits__wrapper
-  .orbit__1
-  .orbit__wrapper
-  .teacher__wrapper__2:hover
-  .teacher__content
-  .teacher__img {
-  animation-play-state: paused;
-  width: 58px;
-  transition: all ease-in-out 250ms;
-  height: 58px;
-  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  object-fit: cover;
-  object-position: top;
-}
-.blaze__sidebar__nosessions__wrapper
-  .blaze__circle
-  .orbits__wrapper
-  .orbit__1
-  .orbit__wrapper
-  .teacher__wrapper__2:hover
-  .teacher__content
-  .teacher__tooltip {
-  left: 28px;
-  opacity: 1;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
   .orbits__wrapper
   .orbit__1:hover
   .orbit__wrapper {
-  cursor: pointer;
-  animation-play-state: paused;
+  /* cursor: pointer; */
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -400,7 +372,7 @@
   .orbit__1:hover
   .orbit__wrapper
   .teacher__wrapper {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper .orbit__3 {
   position: absolute;
@@ -577,7 +549,7 @@
   .orbit__wrapper
   .teacher__wrapper__1:hover
   .teacher__content {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -587,14 +559,14 @@
   .teacher__wrapper__1:hover
   .teacher__content
   .teacher__img {
-  animation-play-state: paused;
-  width: 58px;
-  transition: all ease-in-out 250ms;
-  height: 58px;
-  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  object-fit: cover;
-  object-position: top;
+  /* animation-play-state: paused; */
+  /* width: 58px; */
+  /* transition: all ease-in-out 250ms; */
+  /* height: 58px; */
+  /* box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25); */
+  /* overflow: hidden; */
+  /* object-fit: cover; */
+  /* object-position: top; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -604,8 +576,8 @@
   .teacher__wrapper__1:hover
   .teacher__content
   .teacher__tooltip {
-  left: 28px;
-  opacity: 1;
+  /* left: 28px; */
+  /* opacity: 1; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -626,7 +598,7 @@
   .orbit__wrapper
   .teacher__wrapper__2.t3 {
   top: 10.5rem !important;
-  left: 21.2rem !important;
+  left: 21.75rem !important;
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -774,8 +746,8 @@
   .orbit__3
   .orbit__wrapper
   .teacher__wrapper__2:hover {
-  top: 32.5rem;
-  left: 7.5rem;
+  /* top: 32.5rem;
+  left: 7.5rem; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -784,7 +756,7 @@
   .orbit__wrapper
   .teacher__wrapper__2:hover
   .teacher__content {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -794,14 +766,14 @@
   .teacher__wrapper__2:hover
   .teacher__content
   .teacher__img {
-  animation-play-state: paused;
-  width: 58px;
-  transition: all ease-in-out 250ms;
-  height: 58px;
-  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  object-fit: cover;
-  object-position: top;
+  /* animation-play-state: paused; */
+  /* width: 58px; */
+  /* transition: all ease-in-out 250ms; */
+  /* height: 58px; */
+  /* box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25); */
+  /* overflow: hidden; */
+  /* object-fit: cover; */
+  /* object-position: top; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -811,16 +783,16 @@
   .teacher__wrapper__2:hover
   .teacher__content
   .teacher__tooltip {
-  left: 28px;
-  opacity: 1;
+  /* left: 28px; */
+  /* opacity: 1; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
   .orbits__wrapper
   .orbit__3:hover
   .orbit__wrapper {
-  cursor: pointer;
-  animation-play-state: paused;
+  /* cursor: pointer; */
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -828,7 +800,7 @@
   .orbit__3:hover
   .orbit__wrapper
   .teacher__wrapper {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -837,7 +809,7 @@
   .orbit__wrapper
   .teacher__wrapper
   .teacher__content {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper .blaze__circle .orbits__wrapper .orbit__2 {
   width: 300px;
@@ -913,7 +885,7 @@
   .orbit__wrapper
   .teacher__wrapper__2.t4
   .teacher__content {
-  animation: counterRotate2 ease-in-out 12s infinite !important;
+  animation: counterRotate2 ease-in-out 12s infinite;
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -922,7 +894,7 @@
   .orbit__wrapper
   .teacher__wrapper__2
   .teacher__content {
-  animation: counterRotate ease-in-out 18s infinite;
+  animation: counterRotate ease-in-out 25s infinite;
   position: relative;
 }
 .blaze__sidebar__nosessions__wrapper
@@ -1052,8 +1024,8 @@
   .orbit__2
   .orbit__wrapper
   .teacher__wrapper__2:hover {
-  top: 32.5rem;
-  left: 7.5rem;
+  /* top: 32.5rem;
+  left: 7.5rem; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -1062,7 +1034,7 @@
   .orbit__wrapper
   .teacher__wrapper__2:hover
   .teacher__content {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -1072,14 +1044,14 @@
   .teacher__wrapper__2:hover
   .teacher__content
   .teacher__img {
-  animation-play-state: paused;
-  width: 58px;
-  transition: all ease-in-out 250ms;
-  height: 58px;
-  box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  object-fit: cover;
-  object-position: top;
+  /* animation-play-state: paused; */
+  /* width: 58px; */
+  /* transition: all ease-in-out 250ms; */
+  /* height: 58px; */
+  /* box-shadow: 0px 0px 8px 12px rgba(255, 255, 255, 0.25); */
+  /* overflow: hidden; */
+  /* object-fit: cover; */
+  /* object-position: top; */
 }
 .blaze__sidebar__nosessions__wrapper
   .blaze__circle
@@ -1089,8 +1061,8 @@
   .teacher__wrapper__2:hover
   .teacher__content
   .teacher__tooltip {
-  left: 28px;
-  opacity: 1;
+  /* left: 28px; */
+  /* opacity: 1; */
 }
 @keyframes rotate {
   0% {
@@ -1494,3 +1466,7 @@
     background-position: -200%;
   }
 }
+
+/* .teacher__wrapper__2:hover ~ .teacher__wrapper__1 .teacher__content {
+  animation-play-state: paused !important;
+} */

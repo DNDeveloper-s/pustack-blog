@@ -288,9 +288,9 @@ export default function LandingPageSectionLayout({
               noImage={posts.length === 5}
               post={post}
               classNames={{
-                content: "h-[83px] overflow-hidden !line-clamp-[4] ",
+                content: "h-[80px] overflow-hidden !line-clamp-[4] ",
                 title: "!line-clamp-3 ",
-                img: "!h-[200px]",
+                img: "!aspect-[16 / 10]",
               }}
             />
           </div>

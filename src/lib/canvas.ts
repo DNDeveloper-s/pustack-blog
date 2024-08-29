@@ -177,7 +177,8 @@ export const runCanvasScript = async (
   const fl = canvas.width / 3.5;
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
-  let initialSpeed = window.innerWidth < 600 ? 0.65 : 0.31;
+  // let initialSpeed = window.innerWidth < 600 ? 0.25 : 0.31;
+  let initialSpeed = 0.5;
   let speed = initialSpeed;
 
   const mouse = {
@@ -209,11 +210,11 @@ export const runCanvasScript = async (
       mouse.x = -1;
       mouse.y = -1;
       toggleReview(null);
-      speed = getLinearRateNew({
-        desiredRange: { from: initialSpeed, to: 10 },
-        relativeRange: { from: 0, to: 600 },
-        acc: progress * document.body.scrollHeight,
-      });
+      // speed = getLinearRateNew({
+      //   desiredRange: { from: initialSpeed, to: 10 },
+      //   relativeRange: { from: 0, to: 600 },
+      //   acc: progress * document.body.scrollHeight,
+      // });
     });
 
   class Particle {
