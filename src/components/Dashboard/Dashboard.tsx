@@ -79,6 +79,7 @@ function DashboardDesktop({
       return new Post(
         data.title,
         data.subTitle,
+        data.subTextVariants,
         data.author,
         data.topic,
         data.sections,
@@ -194,6 +195,7 @@ function DashboardDesktop({
           <DesignedBlog
             linkClassName="block"
             post={postsByPosition.titlePost as Post}
+            variant="very_short"
           />
         )}
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
@@ -208,6 +210,7 @@ function DashboardDesktop({
                     linkClassName={"h-full block"}
                     size="sm"
                     post={post}
+                    variant="short"
                   />
                 </div>
               ))}
@@ -233,6 +236,7 @@ function DashboardDesktop({
               linkClassName="block"
               key={post.id}
               post={post}
+              variant="short"
             />
           ))}
         </div>

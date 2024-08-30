@@ -74,6 +74,7 @@ export default function DashboardMobile({
       return new Post(
         data.title,
         data.subTitle,
+        data.subTextVariants,
         data.author,
         data.topic,
         data.sections,

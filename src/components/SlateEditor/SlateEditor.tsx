@@ -36,6 +36,7 @@ import SlateColorPicker from "./SlateColorPicker";
 import { Input, Popover } from "antd";
 import { Button } from "@nextui-org/button";
 import LinkUrlComponent from "./LinkUrlComponent";
+import EventEmitter from "@/lib/EventEmitter";
 
 const TEXT_COLOR_MARK = "color";
 
@@ -87,27 +88,19 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
     isValidSlateValue(props.value) ? props.value : initialValue
   );
   const [readonly, setReadonly] = useState(props.readonly ?? false);
-  const moveUp = useCallback(() => {
-    if (editor.selection) {
-      // @ts-ignore
-      const isActive = isColorActive(editor, "#ff5e4c");
-      // Transforms.setNodes(
-      //   editor,
-      //   // @ts-ignore
-      //   { [TEXT_COLOR_MARK]: "#ff5e4c" },
-      //   // @ts-ignore
-      //   { match: Text.isText, split: true }
-      // );
-      Editor.addMark(editor, TEXT_COLOR_MARK, "#ff5e4c");
-    }
-  }, [editor, value]);
 
-  // useEffect(() => {
-  //   if (props.value) {
-  //     setValue(props.value);
-  //     setKey((prev) => prev + 1);
-  //   }
-  // }, [props.value]);
+  useEffect(() => {
+    const unsub = EventEmitter.addListener("get-slate-value", () => {
+      EventEmitter.emit("slate-value-change", {
+        value,
+        editor,
+      });
+    });
+
+    return () => {
+      unsub.remove();
+    };
+  }, [value, editor]);
 
   const renderLeaf = (props: any) => {
     let { attributes, children, leaf } = props;
@@ -297,6 +290,11 @@ const SlateEditor = (props: SlateEditorProps, ref: any) => {
         onValueChange={(val) => {
           props.onChange?.();
           setValue(val as any);
+          if (!readonly)
+            EventEmitter.emit("slate-value-change", {
+              value: val,
+              editor,
+            });
         }}
         // @ts-ignore
         onChange={setValue}

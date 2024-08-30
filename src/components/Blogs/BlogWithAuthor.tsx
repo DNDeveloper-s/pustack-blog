@@ -8,6 +8,7 @@ import "react-medium-image-zoom/dist/styles.css";
 import { FaStar } from "react-icons/fa6";
 import { Tooltip } from "antd";
 import { Spinner } from "@nextui-org/spinner";
+import { SubTitleVariant } from "../AdminEditor/SubTitleComponent";
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -15,6 +16,7 @@ export interface BlogBaseProps {
   linkClassName?: string;
   href?: string;
   noImage?: boolean;
+  variant?: SubTitleVariant;
   classNames?: {
     content?: string;
     title?: string;
@@ -94,6 +96,7 @@ export default function BlogWithAuthor({
   isPending,
   classNames,
   noImage,
+  variant = "medium",
 }: BlogBaseProps & {
   post?: Post;
   showUnBookmarkButton?: boolean;
@@ -102,6 +105,19 @@ export default function BlogWithAuthor({
   href?: string;
 }) {
   if (!post) return defaultBlogWithAuthor(size);
+
+  const textContent =
+    (variant === "very_short"
+      ? post.snippetData?.subTextVariants?.very_short
+      : variant === "short"
+      ? post.snippetData?.subTextVariants?.short
+      : variant === "medium"
+      ? post.snippetData?.subTextVariants?.medium
+      : variant === "long"
+      ? post.snippetData?.subTextVariants?.long
+      : post.snippetData?.content) ??
+    post.snippetData?.content ??
+    "";
 
   const content = (
     <div className="py-3 group h-full flex flex-col">
@@ -176,10 +192,10 @@ export default function BlogWithAuthor({
             {post.snippetData?.title}
           </h2>
         )}
-        {post.snippetData?.content && (
+        {textContent && (
           <TrimmedPara
             className={
-              "leading-[120%] line-clamp-3 opacity-80 group-hover:text-appBlue " +
+              "leading-[120%] opacity-80 group-hover:text-appBlue " +
               (classNames?.content ?? "") +
               (size === "sm"
                 ? "text-[13px] lg:text-[15px]"
@@ -188,9 +204,9 @@ export default function BlogWithAuthor({
             style={{
               paddingTop: size === "sm" ? "8px" : "10px",
             }}
-            wordLimit={size === "sm" ? 50 : 70}
+            wordLimit={post.snippetData?.subTextVariants ? 350 : 70}
           >
-            {post.snippetData?.content}
+            {textContent}
           </TrimmedPara>
         )}
         {/* {post.snippetData?.image && (
@@ -343,8 +359,22 @@ export function BlogWithAuthorV2({
   noLink,
   linkClassName,
   classNames,
+  variant = "medium",
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
   if (!post) return defaultBlogWithAuthorV2(size, noImage);
+
+  const textContent =
+    (variant === "very_short"
+      ? post.snippetData?.subTextVariants?.very_short
+      : variant === "short"
+      ? post.snippetData?.subTextVariants?.short
+      : variant === "medium"
+      ? post.snippetData?.subTextVariants?.medium
+      : variant === "long"
+      ? post.snippetData?.subTextVariants?.long
+      : post.snippetData?.content) ??
+    post.snippetData?.content ??
+    "";
 
   const content = (
     <div className="py-3 group h-full flex flex-col ">
@@ -384,7 +414,7 @@ export function BlogWithAuthorV2({
         />
         {post.snippetData?.title && (
           <h2
-            className="font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+            className="font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
             style={{
               fontSize: size === "sm" ? "24px" : "32px",
               fontWeight: "395",
@@ -394,18 +424,19 @@ export function BlogWithAuthorV2({
             {post.snippetData?.title}
           </h2>
         )}
-        {post.snippetData?.content && (
+        {textContent && (
           <TrimmedPara
             className={
-              "leading-[120%] line-clamp-3 group-hover:text-appBlue  " +
+              "leading-[120%] group-hover:text-appBlue  " +
               (classNames?.content ?? "")
             }
             style={{
               fontSize: size === "sm" ? "16px" : "18px",
               paddingTop: size === "sm" ? "8px" : "10px",
             }}
+            wordLimit={post.snippetData?.subTextVariants ? 350 : 70}
           >
-            {post.snippetData?.content}
+            {textContent}
           </TrimmedPara>
         )}
         {post.snippetData?.quote && (

@@ -469,7 +469,7 @@ export const usePostBookmark = (
 
 export const useMutateOpenAIGenerate = (
   options?: UseMutationOptions<
-    { long: string; medium: string; short: string },
+    { long: string; medium: string; short: string; very_short: string },
     Error,
     { subText: string }
   >

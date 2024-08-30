@@ -25,6 +25,7 @@ function BlogWithAuthorSide({
   href,
   isPending,
   classNames,
+  variant,
   noImage,
 }: BlogBaseProps & {
   post?: Post;
@@ -34,6 +35,19 @@ function BlogWithAuthorSide({
   href?: string;
 }) {
   if (!post) return;
+
+  const textContent =
+    (variant === "very_short"
+      ? post.snippetData?.subTextVariants?.very_short
+      : variant === "short"
+      ? post.snippetData?.subTextVariants?.short
+      : variant === "medium"
+      ? post.snippetData?.subTextVariants?.medium
+      : variant === "long"
+      ? post.snippetData?.subTextVariants?.long
+      : post.snippetData?.content) ??
+    post.snippetData?.content ??
+    "";
 
   const content = (
     <div className="py-3 group h-full flex flex-col">
@@ -95,9 +109,9 @@ function BlogWithAuthorSide({
           {post.snippetData?.title && (
             <h2
               className={
-                "font-featureHeadline leading-[120%] line-clamp-2 group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
+                "font-featureHeadline leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation " +
                 (size === "sm"
-                  ? "text-[20px] lg:text-[24px]"
+                  ? "text-[18px] lg:text-[20px]"
                   : "text-[28px] lg:text-[32px]")
               }
               style={{
@@ -108,13 +122,13 @@ function BlogWithAuthorSide({
               {post.snippetData?.title}
             </h2>
           )}
-          {post.snippetData?.content && (
+          {textContent && (
             <TrimmedPara
               className={
-                "leading-[120%] line-clamp-[4] opacity-80 group-hover:text-appBlue " +
+                "leading-[120%] group-hover:text-appBlue  " +
                 (classNames?.content ?? "") +
                 (size === "sm"
-                  ? "text-[14px] lg:text-[16px]"
+                  ? "text-[12px] lg:text-[14px]"
                   : "text-[16px] lg:text-[18px]")
               }
               style={{
@@ -122,7 +136,7 @@ function BlogWithAuthorSide({
               }}
               wordLimit={500}
             >
-              {post.snippetData?.content}
+              {textContent}
             </TrimmedPara>
           )}
         </div>
@@ -143,7 +157,7 @@ function BlogWithAuthorSide({
           <BlogImage
             imageProps={{ className: "!w-full !object-cover !h-full" }}
             noZoom
-            className="mt-2 w-[26%] rounded-[6px]"
+            className="mt-2 w-[36%] rounded-[6px]"
             src={post.snippetData?.image}
           />
         )}
@@ -211,7 +225,7 @@ export default function LandingPageSectionLayout({
           className={"border-t-2 border-black " + (classNames.wrapper ?? "")}
         >
           <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
-            Product Management
+            {label}
           </h2>
           <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
@@ -236,6 +250,9 @@ export default function LandingPageSectionLayout({
                           linkClassName={"h-full block"}
                           size="sm"
                           post={post}
+                          variant={
+                            postChunkOf2.length === 1 ? "short" : "very_short"
+                          }
                         />
                       </div>
                     ))}
@@ -266,6 +283,7 @@ export default function LandingPageSectionLayout({
             <BlogWithAuthorSide
               linkClassName={"h-full block"}
               size="sm"
+              variant="long"
               noImage={posts.length === 5}
               post={post}
             />
@@ -287,10 +305,11 @@ export default function LandingPageSectionLayout({
               size="sm"
               noImage={posts.length === 5}
               post={post}
+              variant="short"
               classNames={{
-                content: "h-[80px] overflow-hidden !line-clamp-[4] ",
-                title: "!line-clamp-3 ",
-                img: "!aspect-[16 / 10]",
+                // content: "h-[80px] overflow-hidden !line-clamp-[4] ",
+                // title: "!line-clamp-3 ",
+                img: "!aspect-[16/10]",
               }}
             />
           </div>
@@ -325,14 +344,17 @@ export default function LandingPageSectionLayout({
                       size="sm"
                       noImage={posts.length === 5}
                       post={post}
-                      classNames={{
-                        content:
-                          posts.length !== 5
-                            ? posts.length === 3
-                              ? "h-[104px] !line-clamp-5"
-                              : "h-[70px] overflow-hidden "
-                            : "h-[140px] overflow-hidden !line-clamp-[7] ",
-                      }}
+                      variant="long"
+                      classNames={
+                        {
+                          // content:
+                          //   posts.length !== 5
+                          //     ? posts.length === 3
+                          //       ? "h-[104px] !line-clamp-5"
+                          //       : "h-[70px] overflow-hidden "
+                          //     : "h-[140px] overflow-hidden !line-clamp-[7] ",
+                        }
+                      }
                     />
                   </div>
                 ))}
@@ -345,10 +367,13 @@ export default function LandingPageSectionLayout({
             <DesignedBlog
               linkClassName={"h-full block"}
               size="sm"
+              variant="medium"
               post={singlePost[0]}
-              classNames={{
-                content: "!h-[104px] !line-clamp-5 ",
-              }}
+              classNames={
+                {
+                  // content: "!h-[104px] !line-clamp-5 ",
+                }
+              }
             />
           </div>
         )}

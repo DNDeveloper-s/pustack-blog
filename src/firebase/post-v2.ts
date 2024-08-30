@@ -137,6 +137,13 @@ const headings = {
   h6: [],
 };
 
+export type SubTextVariants = {
+  long: string;
+  short: string;
+  very_short: string;
+  medium: string;
+};
+
 export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 export class Post {
   _id: string | undefined = undefined;
@@ -158,6 +165,7 @@ export class Post {
   nodes: Descendant[] | undefined = undefined;
   private _sections: Section[] = [];
   readonly is_v2: boolean;
+  private _subTextVariants: SubTextVariants | undefined | null = undefined;
 
   private _snippetData: {
     title?: string;
@@ -166,10 +174,15 @@ export class Post {
     quote?: string | null;
     iframe?: string | null;
     subTitle?: string | null;
+    subTextVariants?: SubTextVariants | null;
   } | null = null;
 
   get sections() {
     return this._sections;
+  }
+
+  get subTextVariants() {
+    return this._subTextVariants;
   }
 
   get status() {
@@ -201,6 +214,7 @@ export class Post {
   constructor(
     title: string,
     subTitle: string,
+    subTextVariants: SubTextVariants | null | undefined,
     author: Author,
     topic: string,
     sections: Section[] = [],
@@ -228,6 +242,7 @@ export class Post {
       "blockquote",
       textContentReducer
     );
+    this._subTextVariants = subTextVariants;
     this.nodes = nodes;
     this.preparePostSnippetData();
     this._id = id;
@@ -268,6 +283,7 @@ export class Post {
         author: this.author,
         topic: this.topic,
         subTitle: this.subTitle,
+        subTextVariants: this._subTextVariants ?? null,
       };
 
       this._snippetData = snippetData;
@@ -896,6 +912,7 @@ export const postConverter = {
           ? extractTextFromEditor(post.nodes)
           : Section.mergedContent(post.sections)
       ).text,
+      subTextVariants: post.subTextVariants,
       sections: Section.toPlainObject(post.sections),
       meta: {
         description: post.snippetData?.content ?? null,
@@ -938,6 +955,7 @@ export const postConverter = {
     return new Post(
       data.title,
       data.subTitle,
+      data.subTextVariants,
       data.author,
       data.topic,
       data.sections,

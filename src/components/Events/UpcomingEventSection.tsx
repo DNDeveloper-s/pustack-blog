@@ -26,7 +26,7 @@ const UpcomingEventSection = (props: UpcomingEventProps) => {
       <div>
         <div
           className={
-            "grid grid-cols-[35px_1fr] gap-1 md:grid-cols-[35px_1fr] lg:grid-cols-[35px_1fr] w-full items-stretch transition-all before:top-0 before:left-0 before:bg-[linear-gradient(135deg,_rgba(171,71,188,0.7),_rgba(236,64,122,0.7))] before:backdrop-blur-[6px] before:absolute before:w-full before:h-full relative py-1 px-3 overflow-hidden rounded-xl text-white "
+            "grid grid-cols-[35px_1fr] w-full items-stretch transition-all before:top-0 before:left-0 before:bg-[linear-gradient(135deg,_rgba(171,71,188,0.7),_rgba(236,64,122,0.7))] before:backdrop-blur-[6px] before:absolute before:w-full before:h-full relative py-1 px-3 overflow-hidden rounded-xl text-white "
           }
           style={{
             animation: isEventPage

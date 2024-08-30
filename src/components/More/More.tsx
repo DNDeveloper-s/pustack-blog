@@ -102,6 +102,7 @@ export default function More({ limit = 5 }: { limit?: number }) {
                         size="sm"
                         noImage={posts.length === 5}
                         post={post}
+                        variant="long"
                         classNames={{
                           content:
                             posts.length !== 5
@@ -123,6 +124,7 @@ export default function More({ limit = 5 }: { limit?: number }) {
                 linkClassName={"h-full block"}
                 size="sm"
                 post={singlePost[0]}
+                variant="medium"
                 classNames={{
                   content: "!h-[104px] !line-clamp-5 ",
                 }}
