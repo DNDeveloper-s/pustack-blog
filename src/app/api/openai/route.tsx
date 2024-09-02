@@ -26,7 +26,7 @@ export async function POST(request: Request, response: any) {
     // Set CORS headers manually
     const origin = request.headers.get("origin") ?? "";
     const allowedOrigins = [
-      "http://pustack-blog.vercel.app",
+      "https://pustack-blog.vercel.app",
       "http://localhost:3000",
     ]; // Your allowed origins
 
