@@ -45,7 +45,7 @@ export default function EventListPage({ _event }: { _event: any }) {
         }}
         ref={scrollerRef}
       >
-        <div className="mb-2 pt-3 flex justify-between items-center px-3">
+        <div className="mb-2 pt-2 px-1 flex justify-between items-center">
           <h2 className="text-appBlack text-[26px] md:text-[30px] font-larkenExtraBold">
             Events
           </h2>

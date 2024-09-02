@@ -34,6 +34,7 @@ export default function DashboardMobile({
     isFetchingNextPage,
   } = useQuerySignals({ limit: 10 });
   const { data: flagshipSignal } = useGetFlagshipSignal();
+  const searchParams = useSearchParams();
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -92,6 +93,32 @@ export default function DashboardMobile({
     }),
   });
 
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem("scrollPosition");
+    if (scrollPosition) {
+      window.scrollTo({
+        left: 0,
+        top: parseInt(scrollPosition),
+        behavior: "instant",
+      });
+      console.log("scrollPosition | removed - ", scrollPosition);
+      sessionStorage.removeItem("scrollPosition");
+    }
+
+    const onScroll = () => {
+      console.log("scrollPosition | added - ", scrollPosition);
+      sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+    };
+
+    addEventListener("scroll", onScroll);
+
+    return () => {
+      // console.log("scrollPosition | added - ", scrollPosition);
+      // sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+      removeEventListener("scroll", onScroll);
+    };
+  }, [searchParams]); // Run effect when query parameters change
+
   const postsByPosition = useMemo(() => {
     if (!posts) {
       return {
@@ -143,17 +170,18 @@ export default function DashboardMobile({
             linkClassName="block"
             post={postsByPosition.titlePost as Post}
             href={`?post_drawer_id=${postsByPosition.titlePost?.id}`}
+            variant="very_short"
           />
         )}
       </div>
       <div className="grid grid-cols-1 gap-4">
         {postsByPosition.rightPosts?.map((post) => (
           <DesignedBlog
-            size="sm"
             linkClassName="block"
             key={post.id}
             post={post}
             href={`?post_drawer_id=${post.id}`}
+            variant="very_short"
           />
         ))}
       </div>

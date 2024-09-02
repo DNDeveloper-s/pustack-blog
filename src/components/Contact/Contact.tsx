@@ -31,13 +31,13 @@ const config = {
     background: "#5ebf9c91",
   },
   openai: {
-    title: "Open AI",
+    title: "OpenAI",
     border: "1px solid #ffffff5e",
     borderActive: "1px solid #ffffff",
     background: "#fdfdfd91",
   },
   godaddy: {
-    title: "Go Daddy",
+    title: "GoDaddy",
     border: "1px solid #3dcbc775",
     borderActive: "1px solid #3dcbc7",
     background: "#25d5db87",

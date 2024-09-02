@@ -9,6 +9,7 @@ import { FaStar } from "react-icons/fa6";
 import { Tooltip } from "antd";
 import { Spinner } from "@nextui-org/spinner";
 import { SubTitleVariant } from "../AdminEditor/SubTitleComponent";
+import { formatArticleTopic } from "@/lib/transformers/string";
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -142,7 +143,7 @@ export default function BlogWithAuthor({
               fontVariationSettings: '"wght" 400,"opsz" 10',
             }}
           >
-            {post.topic}
+            {formatArticleTopic(post.topic)}
           </p>
         </div>
         {showUnBookmarkButton && (
@@ -401,7 +402,7 @@ export function BlogWithAuthorV2({
               fontVariationSettings: '"wght" 400,"opsz" 10',
             }}
           >
-            {post.topic}
+            {formatArticleTopic(post.topic)}
           </p>
         </div>
       </div>

@@ -52,11 +52,11 @@ function MobileFooter() {
             withMini
           />
         </div>
-        <div className="pl-4 font-helvetica text-[12px]">
+        <div className="pl-4 font-helvetica text-[12px] text-black text-opacity-70">
           <span>
             Powered by{" "}
             <strong className="font-helvetica font-bold">
-              PuStack Education 1.0.0
+              PuStack Education
             </strong>
           </span>
         </div>

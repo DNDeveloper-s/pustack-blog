@@ -30,6 +30,7 @@ import { Tooltip } from "antd";
 import { useMemo } from "react";
 import { getSections } from "@/components/SlateEditor/utils/helpers";
 import { CustomElement } from "../../../../types/slate";
+import AppImage from "@/components/shared/AppImage";
 
 export const noImageUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -163,22 +164,151 @@ function PostItemActions({
 }
 
 export function PostItemHeader() {
+  return null;
   return (
-    <div
-      className={
-        "grid grid-cols-[1fr_90px_80px_30px] items-center py-3 pt-4 px-3 bg-lightPrimary mb-2 text-[11px]"
-      }
-    >
-      {/* <div className="self-center">
-        <Checkbox id={"item.key"} />
-      </div> */}
-      <div className="min-w-[120px]">Post Title</div>
-      <div className="text-center">Topic</div>
-      <div className="text-center">Timestamp</div>
-      <div className="text-center">Act.</div>
+    <div className="text-[18px] py-2 px-3 font-featureBold">
+      <p>Posts</p>
     </div>
   );
 }
+
+// function PostItem2({
+//   post,
+//   handleSelectChange,
+//   isSelected,
+// }: {
+//   post: Post;
+//   handleSelectChange: (id: string, selected: boolean) => void;
+//   isSelected: boolean;
+// }) {
+//   const disclosureOptions = useDisclosure();
+//   const router = useRouter();
+
+//   const disclosureOptionsUnPublish = useDisclosure();
+//   const disclosureOptionsPublish = useDisclosure();
+//   const {
+//     mutate: postUnpublishPost,
+//     isPending,
+//     error: unpublishError,
+//   } = useUnPublishPost({
+//     onSuccess: () => {
+//       disclosureOptionsUnPublish.onClose();
+//     },
+//   });
+//   const {
+//     mutate: postPublishPost,
+//     isPending: isPublishPending,
+//     error: publishError,
+//   } = usePublishPost({
+//     onSuccess: () => {
+//       disclosureOptionsPublish.onClose();
+//     },
+//   });
+
+//   return (
+//     <div
+//       className={
+//         "grid grid-cols-[1fr_90px_80px_30px] items-center py-2 px-3 " +
+//         (isSelected ? "bg-primaryVariant1" : "bg-transparent")
+//       }
+//     >
+//       {/* <div className="self-center">
+//         <Checkbox
+//           id={"item.key"}
+//           onChange={(checked) => handleSelectChange(post.id as string, checked)}
+//         />
+//       </div> */}
+//       <div className="flex items-start gap-3 overflow-hidden min-w-[120px]">
+//         <div className="mt-1 w-8 h-8 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
+//           <img
+//             className="w-full h-full object-cover"
+//             src={post.snippetData?.image ?? noImageUrl}
+//           />
+//         </div>
+//         <div className="overflow-hidden">
+//           <div className="flex items-center justify-start overflow-hidden gap-2">
+//             <h2 className="text-[16px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden">
+//               {post.displayTitle ?? post.title}
+//             </h2>
+//           </div>
+//         </div>
+//       </div>
+//       <div className="flex items-center justify-center">
+//         <Tooltip
+//           title={post.status.toUpperCase()}
+//           style={{ fontSize: "13px" }}
+//           placement="top"
+//         >
+//           <span
+//             className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
+//             style={{ backgroundColor: colorScheme[post.status]?.bg }}
+//           ></span>
+//         </Tooltip>
+//         <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+//           {post.topic}
+//         </span>
+//       </div>
+//       {/* <div className="flex items-center justify-center">
+//         <span
+//           className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
+//           style={{
+//             backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
+//             fontVariationSettings: `'wght' 700`,
+//           }}
+//         >
+//           {post.status}
+//         </span>
+//       </div> */}
+//       <div>
+//         <p className="leading-[120%] font-helvetica text-center text-tertiary text-[10px]">
+//           <span>{dayjs().to(dayjs(post?.timestamp))}</span>
+//         </p>
+//       </div>
+//       <div className="flex items-center justify-center gap-5 text-xs">
+//         <PostItemActions
+//           disclosureOptions={disclosureOptions}
+//           disclosureOptionsPublish={disclosureOptionsPublish}
+//           disclosureOptionsUnPublish={disclosureOptionsUnPublish}
+//           postId={post.id as string}
+//           status={post.status}
+//         />
+//       </div>
+//       <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
+//       <PostActionModalBase
+//         disclosureOptions={disclosureOptionsUnPublish}
+//         isLoading={isPending}
+//         onConfirm={() => postUnpublishPost(post.id as string)}
+//         error={unpublishError}
+//         post={post}
+//         title={"Unpublish Post"}
+//         content={
+//           <p>
+//             Are you sure you want to unpublish the post &quot;
+//             <strong>{post?.displayTitle}</strong>&quot;
+//           </p>
+//         }
+//         cancelButton={"Cancel"}
+//         confirmButton={"Unpublish"}
+//       />
+//       <PostActionModalBase
+//         disclosureOptions={disclosureOptionsPublish}
+//         isLoading={isPublishPending}
+//         onConfirm={() => postPublishPost(post.id as string)}
+//         error={publishError}
+//         post={post}
+//         title={"Publish Post"}
+//         content={
+//           <p>
+//             Are you sure you want to publish the post &quot;
+//             <strong>{post?.displayTitle}</strong>&quot;
+//           </p>
+//         }
+//         cancelButton={"Cancel"}
+//         confirmButton={"Publish"}
+//       />
+//     </div>
+//   );
+// }
 
 export default function PostItem({
   post,
@@ -216,7 +346,7 @@ export default function PostItem({
   return (
     <div
       className={
-        "grid grid-cols-[1fr_90px_80px_30px] items-center py-2 px-3 " +
+        "grid grid-cols-[1fr_30px] items-start py-2 px-3 " +
         (isSelected ? "bg-primaryVariant1" : "bg-transparent")
       }
     >
@@ -227,52 +357,72 @@ export default function PostItem({
         />
       </div> */}
       <div className="flex items-start gap-3 overflow-hidden min-w-[120px]">
-        <div className="mt-1 w-8 h-8 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
-          <img
+        <div className="mt-1 w-[90px] h-[90px] overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
+          <AppImage
+            width={200}
+            height={200}
+            alt="Event Image"
             className="w-full h-full object-cover"
             src={post.snippetData?.image ?? noImageUrl}
           />
         </div>
         <div className="overflow-hidden">
-          <div className="flex items-center justify-start overflow-hidden gap-2">
-            <h2 className="text-[16px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden">
-              {post.displayTitle ?? post.title}
+          <div className="flex flex-col items-start justify-start overflow-hidden">
+            <h2 className="text-[15px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden">
+              {post.title}
             </h2>
+            <p className="flex items-center gap-1 mt-1.5">
+              <Tooltip
+                title={post.status.toUpperCase()}
+                style={{ fontSize: "13px" }}
+                placement="top"
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
+                  style={{ backgroundColor: colorScheme[post.status]?.bg }}
+                ></span>
+              </Tooltip>
+              <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+                {post.topic}
+              </span>
+            </p>
+            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
+              {post?.scheduledTime && post?.status === "scheduled" ? (
+                <>
+                  Scheduled for{" "}
+                  {dayjs(post?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
+                </>
+              ) : (
+                <>
+                  {post?.status === "published" ? "Published" : "Saved"} at{" "}
+                  {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a")}
+                </>
+              )}
+            </p>
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      {/* <div className="flex items-center justify-center">
         <Tooltip
-          title={post.status.toUpperCase()}
+          title={event.status.toUpperCase()}
           style={{ fontSize: "13px" }}
           placement="top"
         >
           <span
             className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
-            style={{ backgroundColor: colorScheme[post.status]?.bg }}
+            style={{ backgroundColor: colorScheme[event.status]?.bg }}
           ></span>
         </Tooltip>
         <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-          {post.topic}
+          {event.title}
         </span>
       </div>
-      {/* <div className="flex items-center justify-center">
-        <span
-          className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
-          style={{
-            backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
-            fontVariationSettings: `'wght' 700`,
-          }}
-        >
-          {post.status}
-        </span>
-      </div> */}
       <div>
         <p className="leading-[120%] font-helvetica text-center text-tertiary text-[10px]">
-          <span>{dayjs().to(dayjs(post?.timestamp))}</span>
+          <span>{dayjs().to(dayjs(event?.startTime?.toDate()))}</span>
         </p>
-      </div>
-      <div className="flex items-center justify-center gap-5 text-xs">
+      </div> */}
+      <div className="flex items-center py-2 justify-center gap-5 text-xs">
         <PostItemActions
           disclosureOptions={disclosureOptions}
           disclosureOptionsPublish={disclosureOptionsPublish}
@@ -281,39 +431,6 @@ export default function PostItem({
           status={post.status}
         />
       </div>
-      <JoditPreview disclosureOptions={disclosureOptions} nodes={post.nodes} />
-      <PostActionModalBase
-        disclosureOptions={disclosureOptionsUnPublish}
-        isLoading={isPending}
-        onConfirm={() => postUnpublishPost(post.id as string)}
-        error={unpublishError}
-        post={post}
-        title={"Unpublish Post"}
-        content={
-          <p>
-            Are you sure you want to unpublish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
-          </p>
-        }
-        cancelButton={"Cancel"}
-        confirmButton={"Unpublish"}
-      />
-      <PostActionModalBase
-        disclosureOptions={disclosureOptionsPublish}
-        isLoading={isPublishPending}
-        onConfirm={() => postPublishPost(post.id as string)}
-        error={publishError}
-        post={post}
-        title={"Publish Post"}
-        content={
-          <p>
-            Are you sure you want to publish the post &quot;
-            <strong>{post?.displayTitle}</strong>&quot;
-          </p>
-        }
-        cancelButton={"Cancel"}
-        confirmButton={"Publish"}
-      />
     </div>
   );
 }

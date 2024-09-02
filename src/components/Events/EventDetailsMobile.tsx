@@ -776,6 +776,13 @@ export default function EventDetailsMobile({
               </div>
             </div>
           )}
+
+          <div className="mt-5">
+            <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
+            <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+            <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+          </div>
+          <MoreFromMinerva />
         </div>
       </div>
     </>

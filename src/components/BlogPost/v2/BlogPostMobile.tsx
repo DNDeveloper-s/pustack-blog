@@ -487,7 +487,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
           alt="event"
         /> */}
         <div className="absolute top-0 left-0 w-full h-full flex items-end justify-start pb-8 px-3">
-          <p className="font-featureBold text-[25px] text-white line-clamp-3 leading-[28px]">
+          <p className="font-featureBold text-[25px] text-white leading-[28px]">
             {post.title}
           </p>
         </div>
@@ -607,6 +607,12 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
               </div>
             </MathJaxContext>
           )}
+          <div>
+            <Image alt="Minerva" src={minervaMiniImage} className="w-[16px]" />
+            <hr className="border-dashed border-[#1f1d1a4d] mt-[10px]" />
+            <hr className="border-dashed border-[#1f1d1a4d] mt-[1px]" />
+          </div>
+          <MoreFromMinerva />
         </div>
       </div>
     </main>

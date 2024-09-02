@@ -15,6 +15,8 @@ import { Spinner } from "@nextui-org/spinner";
 import { useState } from "react";
 import { getMeetLinkDetails } from "../Events/EventDetails";
 import { compact } from "lodash";
+import { IoChevronBack } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 interface EventCardProps {
   event?: Event;
@@ -124,8 +126,9 @@ const NoEventsIcon = (props: any) => (
 );
 
 export default function RSVPedPage() {
-  const { isMobileScreen } = useScreenSize();
+  const { isMobileScreen, isSmallScreen } = useScreenSize();
   const { user } = useUser();
+  const router = useRouter();
   const [mode, setMode] = useState<"upcoming" | "past">("upcoming");
 
   const {
@@ -139,6 +142,88 @@ export default function RSVPedPage() {
   });
 
   console.log("error - ", error);
+
+  if (isSmallScreen) {
+    return (
+      <div className="w-full flex-1 py-2">
+        <div className="mb-6">
+          <h2 className="text-appBlack text-[22px] md:text-[30px] flex items-center gap-2 font-featureBold">
+            <IoChevronBack
+              onClick={() => {
+                router.back();
+              }}
+              className="text-2xl cursor-pointer"
+            />
+            <span className="mb-[-5px]">RSVP&apos;ed Events</span>
+          </h2>
+          {/* <div className="flex items-center gap-4">
+              <SortByModal handleApply={handleSortApply} />
+              <FilterModal filters={filters} handleApply={handleFiltersApply} />
+            </div> */}
+        </div>
+        {/* <div className="flex items-center gap-4">
+                <SortByModal handleApply={handleSortApply} />
+                <FilterModal filters={filters} handleApply={handleFiltersApply} />
+              </div> */}
+        <div className="w-full md:w-auto">
+          <ConfigProvider
+            theme={{
+              components: {
+                Segmented: {
+                  /* here is your component tokens */
+                  itemActiveBg: "#243bb5",
+                  itemColor: "#1f1d1a",
+                  itemHoverColor: "#1f1d1a",
+                  itemSelectedBg: "#243bb5",
+                  itemSelectedColor: "#fff",
+                  trackBg: "#fcfae4",
+                },
+              },
+            }}
+          >
+            <Segmented<string>
+              size={"large"}
+              options={["Upcoming Events", "Past Events"]}
+              onChange={(value) => {
+                console.log(value); // string
+                setMode(value.split(" ")[0].toLowerCase() as any);
+              }}
+              style={{
+                width: "100%",
+              }}
+              // className="!bg-lightPrimary"
+            />
+          </ConfigProvider>
+        </div>
+
+        {/* {isMobileScreen ? (
+              <div className="grid grid-cols-1 gap-3"></div>
+            ) : (
+              <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]"></div>
+            )} */}
+        {isLoading && (
+          <div className="w-full py-5 px-2 flex items-center justify-center">
+            <Spinner size="lg" label="Loading Events" />
+          </div>
+        )}
+        {!isLoading && events && events.length > 0 && (
+          <div className="grid grid-cols-3 gap-4">
+            {compact(events)?.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+        {!isLoading && (!events || events.length === 0) && (
+          <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
+            <NoEventsIcon />
+            <p className="text-base text-appBlack text-opacity-65">
+              No RSVPed Events
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex-1 py-10">

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Spinner } from "@nextui-org/spinner";
 import { useParams } from "next/navigation";
 import { trimToSentence } from "@/lib/transformers/trimToSentence";
+import useScreenSize from "@/hooks/useScreenSize";
 
 function MinervaBlogPost({ post }: { post: Post }) {
   const wrapper = (children: ReactNode) => (
@@ -93,6 +94,7 @@ interface MoreFromMinervaProps {}
 export default function MoreFromMinerva(props: MoreFromMinervaProps) {
   const { data: posts, error, isLoading } = useGetRecentPosts();
   const params = useParams();
+  const { isSmallScreen } = useScreenSize();
 
   const chunkedPosts = useMemo(() => {
     const _posts = posts
@@ -108,18 +110,16 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
       <div>
         <hr
           style={{
-            margin: "60px 0 0",
+            margin: isSmallScreen ? "35px 0 0" : "60px 0 0",
             borderColor: "#1f1d1a",
             borderBottom: 0,
           }}
         />
         <hr
           style={{
-            margin: "60px 0 0",
+            margin: "2px 0 10px",
             borderColor: "#1f1d1a",
             borderBottom: 0,
-            marginTop: "2px",
-            marginBottom: "10px",
           }}
         />
         <div className="styles_title flex items-center gap-3 !mb-4">

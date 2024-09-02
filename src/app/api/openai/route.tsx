@@ -63,10 +63,10 @@ export async function POST(request: Request, response: any) {
       {
         role: "user",
         content: `Given the sub-text "${subText}", generate three variants and return them in JSON format with the following keys:
-        - long: a long variant (100-120 words).
-        - medium: a medium variant (50-60 words).
-        - short: a short variant (20-30 words).
-        - very_short: a very short variant (10-20 words).`,
+        - long: a long variant (90-100 words).
+        - medium: a medium variant (35-45 words).
+        - short: a short variant (15-25 words).
+        - very_short: a very short variant (8-15 words).`,
       },
     ];
 

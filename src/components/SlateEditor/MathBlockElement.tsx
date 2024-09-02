@@ -35,7 +35,7 @@ export default function MathBlockElement({
   return (
     <div
       {...attributes}
-      className="group/formula flex w-full py-2 px-3"
+      className="group/formula flex w-full py-2"
       style={{
         justifyContent:
           element.align === "center"

@@ -24,9 +24,12 @@ import { NotificationPlacements } from "antd/es/notification/interface";
 import { SnackbarContent } from "../AdminEditor/AdminPage";
 import { NoPostIcon } from "../Me/Posts/PostsEntry";
 import { Spinner } from "@nextui-org/spinner";
+import { IoChevronBack } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 export default function SavedPostPage() {
   const { data: posts, error, isLoading } = useQuerySavedPosts();
+  const router = useRouter();
 
   const { user } = useUser();
   const qc = useQueryClient();
@@ -95,6 +98,90 @@ export default function SavedPostPage() {
         "error"
       );
     }
+  }
+
+  if (isMobileScreen) {
+    return (
+      <div className="w-full flex-1 py-2">
+        <div className="mb-6">
+          <h2 className="text-appBlack text-[22px] md:text-[30px] flex items-center gap-2 font-featureBold">
+            <IoChevronBack
+              onClick={() => {
+                router.back();
+              }}
+              className="text-2xl cursor-pointer"
+            />
+            <span className="mb-[-5px]">Saved Posts</span>
+          </h2>
+          {/* <div className="flex items-center gap-4">
+              <SortByModal handleApply={handleSortApply} />
+              <FilterModal filters={filters} handleApply={handleFiltersApply} />
+            </div> */}
+        </div>
+        {isLoading && (
+          <div className="w-full flex flex-col gap-2 justify-center items-center py-2 text-tertiary text-xs">
+            <Spinner label="Loading Posts" size="lg" />
+          </div>
+        )}
+        {hasPost &&
+          (isMobileScreen ? (
+            <div className="grid grid-cols-1 gap-3">
+              {posts?.map((post: Post) => (
+                <SavedPostItem
+                  key={post.id}
+                  post={post}
+                  isPending={isPending === post?.id}
+                  handleBookMark={(bookmarked: boolean) =>
+                    handleBookMark(post, bookmarked)
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+              {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
+                <div
+                  key={i}
+                  className={
+                    "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                    gridClassName
+                  }
+                >
+                  {postChunkOf2.map((post, j) => (
+                    <div
+                      key={post.id}
+                      className={
+                        j % itemInRowCount === itemInRowCount - 1
+                          ? "pl-3"
+                          : j % itemInRowCount === 0
+                          ? "pr-3"
+                          : "px-3"
+                      }
+                    >
+                      <BlogWithAuthor
+                        linkClassName={"h-full block"}
+                        size="sm"
+                        post={post}
+                        showUnBookmarkButton
+                        handleBookMark={(bookmarked) =>
+                          handleBookMark(post, bookmarked)
+                        }
+                        isPending={isPending === post?.id}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ))}
+        {noPost && (
+          <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
+            <NoPostIcon className="w-16" />
+            <p className="text-tertiary">No Saved Posts</p>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (

@@ -167,6 +167,7 @@ function EventItemActions({
 }
 
 export function EventItemHeader() {
+  return null;
   return (
     // <div
     //   className={

@@ -639,12 +639,18 @@ export default function AdminPage({ postId }: { postId?: string }) {
   );
 
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (requestedPost && requestedPost?.status !== "draft") return;
     intervalIdRef.current = setInterval(() => {
       intervalSaveDraftRef.current = true;
       handleSaveAsDraft(true, newlySavedDraftRef.current?.id);
-    }, 1000 * 60 * 5);
+      console.log(
+        "intervalIdRef.current - ",
+        intervalIdRef.current,
+        newlySavedDraftRef.current?.id
+      );
+    }, 1000 * 60 * 2);
 
     return () => {
       if (intervalIdRef.current) clearInterval(intervalIdRef.current);
@@ -688,7 +694,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                 onClick={() => {
                   setShouldConfirm(false);
                   intervalSaveDraftRef.current = false;
-                  handleSaveAsDraft();
+                  handleSaveAsDraft(false, newlySavedDraftRef.current?.id);
                 }}
                 variant="flat"
                 color="primary"
@@ -820,7 +826,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                 onClick={() => {
                   setShouldConfirm(false);
                   intervalSaveDraftRef.current = false;
-                  handleSaveAsDraft();
+                  handleSaveAsDraft(false, newlySavedDraftRef.current?.id);
                 }}
                 variant="flat"
                 color="primary"
@@ -948,7 +954,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           ref={leavePageModalRef}
           handleConfirm={() => {
             intervalSaveDraftRef.current = false;
-            handleSaveAsDraft();
+            handleSaveAsDraft(false, newlySavedDraftRef.current?.id);
           }}
           isPending={isDraftSaving}
           shouldConfirm={shouldConfirm}

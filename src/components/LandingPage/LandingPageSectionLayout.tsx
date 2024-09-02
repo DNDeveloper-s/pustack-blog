@@ -247,6 +247,7 @@ export default function LandingPageSectionLayout({
                         className={j % 2 === 0 ? "pr-3" : "pl-3"}
                       >
                         <DesignedBlog
+                          href={`/?post_drawer_id=${post.id}`}
                           linkClassName={"h-full block"}
                           size="sm"
                           post={post}

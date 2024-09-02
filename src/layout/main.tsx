@@ -29,6 +29,24 @@ const routesConfig: RouteConfigState[] = [
   { href: "/signals", hideFooter: true },
   { href: "/posts/create", hideFooter: true },
   { href: "/events", hideNavbar: true, hideFooter: true, isSmallScreen: true },
+  {
+    href: "/me/publications",
+    hideNavbar: true,
+    hideFooter: true,
+    isSmallScreen: true,
+  },
+  {
+    href: "/saved",
+    hideNavbar: true,
+    hideFooter: true,
+    isSmallScreen: true,
+  },
+  {
+    href: "/rsvp",
+    hideNavbar: true,
+    hideFooter: true,
+    isSmallScreen: true,
+  },
   { href: "/events", hideFooter: true },
 ];
 

@@ -2,7 +2,7 @@ import PageDrawer from "@/components/shared/PageDrawer";
 import BlogPostMobile from "./BlogPostMobile";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useGetPostById } from "@/api/post";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Post } from "@/firebase/post-v2";
 import { Spinner } from "@nextui-org/spinner";
 

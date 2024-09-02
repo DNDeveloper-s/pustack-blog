@@ -321,6 +321,7 @@ const SubTitleComponentRef = (
         }}
         ref={ref}
         onChange={(e) => {
+          setSubTitleValue(e.target.value);
           onChange();
         }}
         value={subTitleValue}
