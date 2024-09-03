@@ -54,21 +54,31 @@ const NoEventIcon = (props: any) => (
 
 interface EventCardProps {
   event: Event;
+  includeDate?: boolean;
+  stayActive?: boolean;
+  noShadow?: boolean;
 }
-function EventCard({ event }: EventCardProps) {
+export function EventCard({
+  event,
+  includeDate,
+  stayActive,
+  noShadow,
+}: EventCardProps) {
   const searchParams = useSearchParams();
 
-  const isActive = searchParams.get("event_id") === event.id;
+  const isActive = searchParams.get("event_id") === event.id || stayActive;
 
   return (
-    <Link href={`/events?event_id=${event.id}`}>
+    <Link prefetch href={`/events?event_id=${event.id}`}>
       <div
         className="w-full flex gap-2 items-stretch py-2 px-4 text-white rounded-xl transition-all"
         style={{
           backgroundColor: event.background ?? getRandomDarkHexColor(),
           transform: `scale(${isActive ? 1 : 0.9})`,
           opacity: isActive ? 1 : 0.75,
-          boxShadow: isActive
+          boxShadow: noShadow
+            ? "none"
+            : isActive
             ? "0 6px 12px rgba(0, 0, 0, 0.15),  0 3px 6px rgba(0, 0, 0, 0.1), 0 0 15px rgba(255, 140, 0, 0.7)"
             : "none",
         }}
@@ -84,7 +94,12 @@ function EventCard({ event }: EventCardProps) {
                 }`
               : event.venue.name}
           </p>
-          <p className="text-[11px] text-white text-opacity-60 mt-2">
+          {includeDate && (
+            <p className="text-[11px] text-white text-opacity-60 mt-2">
+              {dayjs(event.startTime.toDate()).format("MMM YYYY")}
+            </p>
+          )}
+          <p className="text-[11px] text-white text-opacity-60">
             {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
             {dayjs(event.endTime.toDate()).format("h:mm A")}
           </p>

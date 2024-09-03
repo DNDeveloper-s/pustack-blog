@@ -28,6 +28,7 @@ import useScreenSize from "@/hooks/useScreenSize";
 import SlateEditor from "../SlateEditor/SlateEditor";
 import { useConfirmPageLeave } from "@/hooks/usePreventRouteChange";
 import LeavePageModal from "../shared/LeavePageModal";
+import { prepareThumbnailVariantsByCropData } from "@/lib/transformers/image";
 
 const getButtonLabel = (requestedPost?: Post) => {
   if (requestedPost?.status === "draft") return "Create Post";
@@ -480,6 +481,10 @@ export default function AdminPage({ postId }: { postId?: string }) {
       return;
     }
 
+    const variants = prepareThumbnailVariantsByCropData(
+      joditRef.current?.getThumbnailData()
+    );
+
     let post = new Post(
       inputValue || "Untitled",
       subTitleValue,
@@ -501,14 +506,15 @@ export default function AdminPage({ postId }: { postId?: string }) {
       undefined,
       undefined,
       true,
-      joditRef.current?.getSlateValue()
+      joditRef.current?.getSlateValue(),
+      variants
     );
 
     if (requestedPost) {
       post = new Post(
         inputValue || "Untitled",
         subTitleValue,
-        joditRef.current?.getSubTextVariants(),
+        joditRef.current?.getSubTextVariants() ?? requestedPost.subTextVariants,
         {
           name: user?.name,
           email: user?.email,
@@ -526,7 +532,8 @@ export default function AdminPage({ postId }: { postId?: string }) {
         requestedPost.displayContent,
         requestedPost.scheduledTime,
         true,
-        joditRef.current?.getSlateValue()
+        joditRef.current?.getSlateValue(),
+        variants ?? requestedPost.thumbnailVariants
       );
     }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import useScreenSize from "@/hooks/useScreenSize";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Navbar from "../Navbar/Navbar";
 import EventSidebar from "./EventSidebar";
 import PageDrawer from "../shared/PageDrawer";
@@ -20,6 +20,10 @@ export default function EventListPage({ _event }: { _event: any }) {
   const open = useMemo(() => {
     return !!eventId;
   }, [eventId]);
+
+  useEffect(() => {
+    router.prefetch("/events");
+  }, [router]);
 
   // max-w-[1440px]
   return (

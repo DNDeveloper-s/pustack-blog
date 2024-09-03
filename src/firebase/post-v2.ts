@@ -38,6 +38,10 @@ import {
   getFirstExistingText,
   getFirstImage,
 } from "@/components/SlateEditor/utils/helpers";
+import {
+  AspectRatioType,
+  ImageCropData,
+} from "@/components/AdminEditor/ImageCropper";
 
 export interface Author {
   name: string;
@@ -145,6 +149,11 @@ export type SubTextVariants = {
 };
 
 export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
+
+type ImageVariant = {
+  url: string;
+  alt: string;
+} & ImageCropData;
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
@@ -152,7 +161,6 @@ export class Post {
   readonly topic: string;
   readonly author: Author;
   readonly html: Document;
-  readonly images: string[];
   readonly quotes: string[];
   private _status: PostStatus = "draft";
   private _scheduledTime: string | undefined = undefined;
@@ -166,6 +174,7 @@ export class Post {
   private _sections: Section[] = [];
   readonly is_v2: boolean;
   private _subTextVariants: SubTextVariants | undefined | null = undefined;
+  private _thumbnailVariants: ImageVariant[] | null = null;
 
   private _snippetData: {
     title?: string;
@@ -191,6 +200,10 @@ export class Post {
 
   get scheduledTime() {
     return this._scheduledTime;
+  }
+
+  get thumbnailVariants() {
+    return this._thumbnailVariants;
   }
 
   get id(): string | undefined {
@@ -227,7 +240,8 @@ export class Post {
     displayContent?: string,
     scheduledTime?: string,
     is_v2: boolean = true,
-    nodes?: Descendant[]
+    nodes?: Descendant[],
+    thumbnailVariants: ImageVariant[] | null = null
   ) {
     this.title = title;
     this.subTitle = subTitle;
@@ -237,7 +251,6 @@ export class Post {
     this.author = author;
     this.topic = topic;
     this.html = this.parseContent();
-    this.images = this.extractElements<string>("img", srcReducer);
     this.quotes = this.extractElements<string>(
       "blockquote",
       textContentReducer
@@ -252,6 +265,7 @@ export class Post {
     this.is_v2 = !!is_v2;
     this._status = status;
     this._scheduledTime = scheduledTime;
+    this._thumbnailVariants = thumbnailVariants;
   }
 
   private parseContent(): Document {
@@ -270,6 +284,17 @@ export class Post {
     return compact(
       Array.from(this.html.getElementsByTagName(tag)).reduce(reducer, [])
     );
+  }
+
+  getThumbnail(aspectRatio: AspectRatioType) {
+    console.log("this - ", this._thumbnailVariants);
+    if (this._thumbnailVariants && this._thumbnailVariants.length > 0) {
+      const variant = this._thumbnailVariants.find(
+        (variant) => variant.aspectRatio === aspectRatio
+      );
+      return variant?.url ?? this.snippetData?.image;
+    }
+    return this.snippetData?.image;
   }
 
   preparePostSnippetData() {
@@ -930,6 +955,7 @@ export const postConverter = {
         !!post.snippetData?.content,
       is_v2: true,
       nodes: post.nodes,
+      thumbnailVariants: post.thumbnailVariants,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -968,7 +994,8 @@ export const postConverter = {
       data.displayContent,
       data.scheduledTime?.toDate().toISOString(),
       data.is_v2,
-      data.nodes
+      data.nodes,
+      data.thumbnailVariants
     );
   },
 };

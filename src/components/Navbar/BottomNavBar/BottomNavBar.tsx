@@ -66,7 +66,7 @@ export default function BottomNavBar() {
 
   useEffect(() => {
     setIsBottomNavOpen(!!isSmallScreen);
-  }, [isSmallScreen]);
+  }, [isSmallScreen, setIsBottomNavOpen]);
 
   const isEventActive = pathname.startsWith("/events");
   const isNewsActive = pathname === "/";
@@ -98,6 +98,7 @@ export default function BottomNavBar() {
             }
           >
             <Link
+              prefetch
               href="/"
               onClick={(e) => {}}
               style={{
@@ -175,6 +176,7 @@ export default function BottomNavBar() {
             </svg>
             <Link
               href="/contact"
+              prefetch
               onClick={(e) => {}}
               style={{
                 textDecoration: "inherit",
@@ -200,6 +202,7 @@ export default function BottomNavBar() {
             }
           >
             <Link
+              prefetch
               href="/events"
               style={{
                 textDecoration: "inherit",

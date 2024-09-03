@@ -10,6 +10,9 @@ import { Tooltip } from "antd";
 import { Spinner } from "@nextui-org/spinner";
 import { SubTitleVariant } from "../AdminEditor/SubTitleComponent";
 import { formatArticleTopic } from "@/lib/transformers/string";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AspectRatioType } from "../AdminEditor/ImageCropper";
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -25,6 +28,7 @@ export interface BlogBaseProps {
     h3?: string;
     img?: string;
   };
+  aspectRatio?: AspectRatioType;
 }
 
 const defaultBlogWithAuthor = (size = "lg") => (
@@ -98,6 +102,7 @@ export default function BlogWithAuthor({
   classNames,
   noImage,
   variant = "medium",
+  aspectRatio = "4 / 3",
 }: BlogBaseProps & {
   post?: Post;
   showUnBookmarkButton?: boolean;
@@ -105,6 +110,12 @@ export default function BlogWithAuthor({
   isPending?: boolean;
   href?: string;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(href ?? `/posts/${post?.id}`);
+  }, [href, router, post]);
+
   if (!post) return defaultBlogWithAuthor(size);
 
   const textContent =
@@ -119,6 +130,10 @@ export default function BlogWithAuthor({
       : post.snippetData?.content) ??
     post.snippetData?.content ??
     "";
+
+  const thumbnailImage = post.getThumbnail(aspectRatio);
+
+  console.log("thumbnailImage - ", thumbnailImage);
 
   const content = (
     <div className="py-3 group h-full flex flex-col">
@@ -221,7 +236,7 @@ export default function BlogWithAuthor({
           ></iframe>
         )}
       </div>
-      {!noImage && post.snippetData?.image && (
+      {!noImage && thumbnailImage && (
         // <Zoom>
         //   <img
         //     onClick={(e: any) => {
@@ -239,7 +254,7 @@ export default function BlogWithAuthor({
           imageProps={{ className: "!w-full !object-cover !h-full" }}
           noZoom
           className={"mt-2 " + (classNames?.img ?? "")}
-          src={post.snippetData?.image}
+          src={thumbnailImage}
         />
       )}
       {/* <p
@@ -256,7 +271,11 @@ export default function BlogWithAuthor({
   return noLink ? (
     content
   ) : (
-    <Link className={linkClassName} href={href ?? `/posts/${post.id}`}>
+    <Link
+      prefetch={true}
+      className={linkClassName}
+      href={href ?? `/posts/${post.id}`}
+    >
       {content}
     </Link>
   );
@@ -358,10 +377,18 @@ export function BlogWithAuthorV2({
   post,
   noImage,
   noLink,
+  href,
   linkClassName,
   classNames,
+  aspectRatio = "4 / 3",
   variant = "medium",
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(href ?? `/posts/${post?.id}`);
+  }, [href, router, post]);
+
   if (!post) return defaultBlogWithAuthorV2(size, noImage);
 
   const textContent =
@@ -376,6 +403,8 @@ export function BlogWithAuthorV2({
       : post.snippetData?.content) ??
     post.snippetData?.content ??
     "";
+
+  const thumbnailImage = post.getThumbnail(aspectRatio);
 
   const content = (
     <div className="py-3 group h-full flex flex-col ">
@@ -471,7 +500,7 @@ export function BlogWithAuthorV2({
           REUTERS/Leah Millis
         </p> */}
       </div>
-      {!noImage && post.snippetData?.image && (
+      {!noImage && thumbnailImage && (
         <>
           {/* <Zoom>
             <img
@@ -482,7 +511,7 @@ export function BlogWithAuthorV2({
                 // console.log("src - ", src);
               }}
               className="max-w-full max-h-full w-auto h-auto object-contain"
-              src={post.snippetData?.image}
+              src={thumbnailImage}
               alt="Image Preview"
             />
           </Zoom> */}
@@ -490,11 +519,11 @@ export function BlogWithAuthorV2({
             imageProps={{ className: "!w-full !object-cover !h-full" }}
             noZoom
             className="mt-2"
-            src={post.snippetData?.image}
+            src={thumbnailImage}
           />
         </>
       )}
-      {/* {post.snippetData?.image && (
+      {/* {thumbnailImage && (
         <Zoom>
           <img
             onClick={(e: any) => {
@@ -523,7 +552,7 @@ export function BlogWithAuthorV2({
   return noLink ? (
     content
   ) : (
-    <Link className={linkClassName} href={`/posts/${post.id}`}>
+    <Link className={linkClassName} href={href ?? `/posts/${post.id}`}>
       {content}
     </Link>
   );

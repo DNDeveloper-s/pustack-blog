@@ -5,6 +5,8 @@ import Link from "next/link";
 import { BlogBaseProps } from "./BlogWithAuthor";
 import { Post } from "@/firebase/post-v2";
 import { Signal } from "@/firebase/signal";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const defaultBlueCircleBlog = () => {
   return (
@@ -74,6 +76,12 @@ export function BlueSignalBlog({
   href?: string;
   signal: Signal;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(href ?? "/signals?id=" + signal.id);
+  }, [router, href, signal.id]);
+
   const content = (
     <div className="py-0 md:py-3 group">
       {/* <div className="flex group-hover:text-appBlue uppercase items-center gap-3 text-[12px] font-featureHeadline mb-1">

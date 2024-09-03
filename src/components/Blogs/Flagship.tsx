@@ -9,7 +9,7 @@ export default function Flagship(props: FlagshipProps) {
   console.log("error - ", error);
 
   return flagshipSignal ? (
-    <Link href={`/signals?id=${flagshipSignal.id}`}>
+    <Link prefetch href={`/signals?id=${flagshipSignal.id}`}>
       <div className="bg-[#dde0f3] p-[10px]">
         <h2 className="font-featureRegular text-[#233bb5] text-[24px] leading-[110%] mb-[10px]">
           Today&apos;s Flagship

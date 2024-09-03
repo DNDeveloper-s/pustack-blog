@@ -4,7 +4,7 @@ import useScreenSize from "@/hooks/useScreenSize";
 import EventDetailMobilePage from "./EventDetailMobilePage";
 import EventDetailDesktopPage from "./EventDetailDesktopPage";
 import PageDrawer from "../shared/PageDrawer";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function EventDetailPage({ _event }: { _event?: DocumentData }) {
@@ -17,6 +17,10 @@ export default function EventDetailPage({ _event }: { _event?: DocumentData }) {
   }, []);
 
   // max-w-[1440px]
+
+  useEffect(() => {
+    router.prefetch("/events");
+  }, [router]);
 
   if (isMobileScreen) {
     return (

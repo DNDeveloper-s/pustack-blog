@@ -12,16 +12,17 @@ import dayjs from "dayjs";
 import { useQueryEvents, useQueryRsvpEvents } from "@/api/event";
 import { useUser } from "@/context/UserContext";
 import { Spinner } from "@nextui-org/spinner";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getMeetLinkDetails } from "../Events/EventDetails";
 import { compact } from "lodash";
 import { IoChevronBack } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { EventCard } from "../Events/EventSidebar";
 
 interface EventCardProps {
   event?: Event;
 }
-export function EventCard({ event }: EventCardProps) {
+export function EventCardDesktop({ event }: EventCardProps) {
   if (!event) return null;
   const isUpcoming = dayjs() <= dayjs(event?.startTime?.toDate());
   return (
@@ -125,6 +126,35 @@ const NoEventsIcon = (props: any) => (
   </svg>
 );
 
+type GroupedEvents = Record<string, Event[]>;
+
+function groupEventsByDate(events: Event[]): GroupedEvents {
+  const groupedEvents: GroupedEvents = {};
+
+  events.forEach((event) => {
+    // Convert the event's startTime to a human-readable date (YYYY-MM-DD format)
+    const eventDate = dayjs(event.startTime.toDate()).format("YYYY-MM-DD");
+
+    // If the date key doesn't exist, create it and initialize with an empty array
+    if (!groupedEvents[eventDate]) {
+      groupedEvents[eventDate] = [];
+    }
+
+    // Push the event to the corresponding date's array
+    groupedEvents[eventDate].push(event);
+  });
+
+  return groupedEvents;
+}
+
+function getSortedKeys(groupedEvents: GroupedEvents) {
+  // Extract the keys (dates) from the groupedEvents object and sort them
+  const sortedKeys = Object.keys(groupedEvents).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+  );
+  return sortedKeys;
+}
+
 export default function RSVPedPage() {
   const { isMobileScreen, isSmallScreen } = useScreenSize();
   const { user } = useUser();
@@ -141,7 +171,17 @@ export default function RSVPedPage() {
     occur_in: mode,
   });
 
+  console.log("events - ", events);
+
   console.log("error - ", error);
+
+  const eventsArr = useMemo(() => {
+    const groupedEvents = groupEventsByDate(compact(events) || []);
+    return getSortedKeys(groupedEvents).map((date) => ({
+      date,
+      events: groupedEvents[date],
+    }));
+  }, [events]);
 
   if (isSmallScreen) {
     return (
@@ -207,9 +247,39 @@ export default function RSVPedPage() {
           </div>
         )}
         {!isLoading && events && events.length > 0 && (
-          <div className="grid grid-cols-3 gap-4">
-            {compact(events)?.map((event) => (
-              <EventCard key={event.id} event={event} />
+          // <div className="grid grid-cols-3 gap-4">
+          //   {compact(events)?.map((event) => (
+          //     <EventCard key={event.id} event={event} />
+          //   ))}
+          // </div>
+          <div className="flex flex-col gap-4 mt-4">
+            {eventsArr.map((eventGroup) => (
+              <div
+                className="grid grid-cols-[40px_1fr] gap-3"
+                key={eventGroup.date}
+              >
+                <div className="flex items-start">
+                  <div className="flex font-helvetica flex-col items-center text-sm p-2 justify-center bg-appBlack rounded-lg">
+                    <p className="text-white text-opacity-70">
+                      {dayjs(eventGroup.date).format("MMM")}
+                    </p>
+                    <p className="text-white text-opacity-100">
+                      {dayjs(eventGroup.date).format("D")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {eventGroup.events.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      includeDate
+                      stayActive
+                      noShadow
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -279,7 +349,7 @@ export default function RSVPedPage() {
       {!isLoading && events && events.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           {compact(events)?.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCardDesktop key={event.id} event={event} />
           ))}
         </div>
       )}

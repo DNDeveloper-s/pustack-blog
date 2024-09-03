@@ -36,6 +36,9 @@ import { toDashCase } from "@/firebase/signal";
 import { useMutateOpenAIGenerate } from "@/api/post";
 import SubTitleComponent from "./SubTitleComponent";
 import EventEmitter from "@/lib/EventEmitter";
+import Cropper from "react-easy-crop";
+import { getFirstImage } from "../SlateEditor/utils/helpers";
+import ImageCropper from "./ImageCropper";
 
 const dummyAuthor = {
   name: "John Doe",
@@ -79,6 +82,7 @@ function JoditWrapper(
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const subTitleInputRef = useRef<HTMLInputElement | null>(null);
+  const imageCropperRef = useRef<any>(null);
   const topicRef = useRef<HTMLSelectElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -163,6 +167,9 @@ function JoditWrapper(
         subTitleInputRef.current?.value
       );
       return subTitleInputRef.current?.value ?? "";
+    },
+    getThumbnailData: () => {
+      return imageCropperRef.current?.getImageCropData();
     },
     isValid: (
       titleValue: string,
@@ -273,6 +280,8 @@ function JoditWrapper(
       return;
     }
 
+    const variants = imageCropperRef.current?.getImageCropData();
+
     let post = new Post(
       titleValue || "Untitled",
       subTitleInputRef.current?.value || "",
@@ -294,7 +303,8 @@ function JoditWrapper(
       undefined,
       undefined,
       true,
-      slateEditorRef.current?.getValue()
+      slateEditorRef.current?.getValue(),
+      variants
       // sections
     );
 
@@ -320,7 +330,8 @@ function JoditWrapper(
         prePost.displayContent,
         prePost.scheduledTime,
         true,
-        slateEditorRef.current?.getValue()
+        slateEditorRef.current?.getValue(),
+        variants
       );
     }
 
@@ -359,6 +370,8 @@ function JoditWrapper(
       return;
     }
 
+    const variants = imageCropperRef.current?.getImageCropData();
+
     let post = new Post(
       titleValue || "Untitled",
       subTitleInputRef.current?.value || "",
@@ -380,7 +393,8 @@ function JoditWrapper(
       undefined,
       undefined,
       true,
-      slateEditorRef.current?.getValue()
+      slateEditorRef.current?.getValue(),
+      variants
     );
 
     if (isDraft && prePost) {
@@ -405,7 +419,8 @@ function JoditWrapper(
         prePost?.displayContent,
         undefined,
         true,
-        slateEditorRef.current?.getValue()
+        slateEditorRef.current?.getValue(),
+        variants
       );
     }
 
@@ -545,6 +560,9 @@ function JoditWrapper(
             showToolbar
           />
         </div>
+      </div>
+      <div className="mt-5">
+        <ImageCropper ref={imageCropperRef} />
       </div>
       <div className="mt-5">
         <SubTitleComponent ref={subTitleInputRef} onChange={onChange} />
