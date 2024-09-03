@@ -13,6 +13,7 @@ import { formatArticleTopic } from "@/lib/transformers/string";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AspectRatioType } from "../AdminEditor/ImageCropper";
+import useScreenSize from "@/hooks/useScreenSize";
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -111,6 +112,7 @@ export default function BlogWithAuthor({
   href?: string;
 }) {
   const router = useRouter();
+  const { isSmallScreen } = useScreenSize();
 
   useEffect(() => {
     router.prefetch(href ?? `/posts/${post?.id}`);
@@ -158,7 +160,7 @@ export default function BlogWithAuthor({
               fontVariationSettings: '"wght" 400,"opsz" 10',
             }}
           >
-            {formatArticleTopic(post.topic)}
+            {isSmallScreen ? formatArticleTopic(post.topic) : post.topic}
           </p>
         </div>
         {showUnBookmarkButton && (

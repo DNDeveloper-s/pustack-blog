@@ -1,4 +1,6 @@
 export const formatArticleTopic = (topic: string) => {
-  if (topic === "Artificial Intelligence") return "A.I.";
+  console.log("topic - ", topic);
+  if (topic === "artificial-intelligence") return "AI";
+  if (topic === "product-management") return "PM";
   return topic;
 };

@@ -84,6 +84,7 @@ import {
 import { useJoinModal } from "@/context/JoinModalContext";
 import { QueryClient } from "@tanstack/react-query";
 import { API_QUERY } from "@/config/api-query";
+import { noImageUrl } from "@/components/shared/AppImage";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -330,7 +331,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           _post.displayContent,
           _post.scheduledTime,
           _post.is_v2,
-          _post.nodes
+          _post.nodes,
+          _post.thumbnailVariants
         )
       );
     } else {
@@ -462,6 +464,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
     return null;
   }
 
+  const thumbnailImage = post.getThumbnail("16 / 9", true);
+
   return (
     <div className="max-w-[900px] mx-auto pb-10">
       <div
@@ -560,19 +564,18 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
             >
               {post?.snippetData?.title}
             </h2>
-            {post?.snippetData?.image && (
-              <BlogImage
-                className="mt-4 w-[77%] cover-figure"
-                src={
-                  post?.snippetData?.image
-                  // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
-                  // encodeURIComponent(post?.snippetData?.image)
-                }
-                style={{
-                  aspectRatio: "auto 700 / 453",
-                }}
-              />
-            )}
+
+            <BlogImage
+              className="mt-4 w-[77%] cover-figure"
+              src={
+                thumbnailImage ?? post.snippetData?.image ?? noImageUrl
+                // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                // encodeURIComponent(post?.snippetData?.image)
+            }
+              style={{
+                aspectRatio: thumbnailImage ? "" : "auto 700 / 453",
+              }}
+            />
             {post && <BlogPostShareLinks post={post} appendClassName="mt-4" />}
           </div>
         </div>

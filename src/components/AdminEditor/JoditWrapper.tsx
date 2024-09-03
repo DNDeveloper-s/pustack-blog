@@ -98,7 +98,7 @@ function JoditWrapper(
   const [titleValue, setTitleValue] = useState<string>("");
 
   const subTextVariants = useRef<SubTextVariants>(
-    (prePost?.subTextVariants ?? {}) as any
+    prePost?.subTextVariants as any
   );
 
   useEffect(() => {
@@ -312,7 +312,7 @@ function JoditWrapper(
       post = new Post(
         titleValue || "Untitled",
         subTitleInputRef.current?.value || "",
-        subTextVariants.current,
+        subTextVariants.current ?? prePost.subTextVariants,
         {
           name: user?.name || dummyAuthor.name,
           email: user?.email || dummyAuthor.email,
@@ -401,7 +401,7 @@ function JoditWrapper(
       post = new Post(
         titleValue || "Untitled",
         subTitleInputRef.current?.value || "",
-        subTextVariants.current,
+        subTextVariants.current ?? prePost.subTextVariants,
         {
           name: user?.name || dummyAuthor.name,
           email: user?.email || dummyAuthor.email,
@@ -562,7 +562,10 @@ function JoditWrapper(
         </div>
       </div>
       <div className="mt-5">
-        <ImageCropper ref={imageCropperRef} />
+        <ImageCropper
+          ref={imageCropperRef}
+          cropData={prePost?.thumbnailVariants}
+        />
       </div>
       <div className="mt-5">
         <SubTitleComponent ref={subTitleInputRef} onChange={onChange} />

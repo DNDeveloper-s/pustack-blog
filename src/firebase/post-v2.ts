@@ -150,10 +150,11 @@ export type SubTextVariants = {
 
 export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 
-type ImageVariant = {
+export type ImageVariant = {
   url: string;
   alt: string;
 } & ImageCropData;
+
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
@@ -286,15 +287,15 @@ export class Post {
     );
   }
 
-  getThumbnail(aspectRatio: AspectRatioType) {
+  getThumbnail(aspectRatio: AspectRatioType, noFallback = false) {
     console.log("this - ", this._thumbnailVariants);
     if (this._thumbnailVariants && this._thumbnailVariants.length > 0) {
       const variant = this._thumbnailVariants.find(
         (variant) => variant.aspectRatio === aspectRatio
       );
-      return variant?.url ?? this.snippetData?.image;
+      return variant?.url ?? (noFallback ? null : this.snippetData?.image);
     }
-    return this.snippetData?.image;
+    return noFallback ? null : this.snippetData?.image;
   }
 
   preparePostSnippetData() {

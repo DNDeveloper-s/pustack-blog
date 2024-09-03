@@ -345,7 +345,7 @@ export default function LandingPageSectionLayout({
                       size="sm"
                       noImage={posts.length === 5}
                       post={post}
-                      variant="long"
+                      variant={posts.length === 5 ? "medium" : "short"}
                       classNames={
                         {
                           // content:
@@ -368,7 +368,7 @@ export default function LandingPageSectionLayout({
             <DesignedBlog
               linkClassName={"h-full block"}
               size="sm"
-              variant="medium"
+              variant="short"
               post={singlePost[0]}
               classNames={
                 {

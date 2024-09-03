@@ -88,7 +88,8 @@ export default function DashboardMobile({
         data.displayContent,
         data.scheduledTime,
         data.is_v2,
-        data.nodes
+        data.nodes,
+        data.thumbnailVariants
       );
     }),
   });

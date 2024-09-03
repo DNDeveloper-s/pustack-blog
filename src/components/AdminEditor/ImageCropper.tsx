@@ -10,6 +10,7 @@ import EventEmitter from "@/lib/EventEmitter";
 import { Descendant } from "slate";
 import { Editor } from "slate";
 import { trimToSentence } from "@/lib/transformers/trimToSentence";
+import { ImageVariant, Post } from "@/firebase/post-v2";
 
 const tabs = ["4 / 3", "16 / 9"];
 export type AspectRatioType = keyof typeof aspectRatioOptions;
@@ -28,13 +29,16 @@ function ImageCropItem({
   baseImageUrl,
   onCropComplete,
   aspectRatio,
+  imageCropData,
 }: {
   baseImageUrl: string;
   onCropComplete: any;
   aspectRatio: any;
+  imageCropData: ImageCropData | undefined;
 }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+
   return (
     <div className="relative h-[500px]">
       <Cropper
@@ -45,6 +49,8 @@ function ImageCropItem({
         onCropChange={setCrop}
         onCropComplete={onCropComplete}
         onZoomChange={setZoom}
+        initialCroppedAreaPercentages={imageCropData?.croppedArea}
+        initialCroppedAreaPixels={imageCropData?.croppedAreaPixels}
       />
     </div>
   );
@@ -58,13 +64,27 @@ export type ImageCropData = {
   outputWidth: number;
   outputHeight: number;
 };
-function ImageCropperRef(props: any, ref: any) {
+function ImageCropperRef(
+  props: { cropData: ImageVariant[] | undefined | null },
+  ref: any
+) {
   const [selectedTab, setSelectedTab] = useState("4 / 3");
   const [index, setIndex] = useState(0);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [baseImageUrl, setBaseImageUrl] = useState<string | null>(null);
   const [imageCropData, setImageCropData] = useState<ImageCropData[]>([]);
+
+  useEffect(() => {
+    if (props.cropData && baseImageUrl) {
+      setImageCropData(
+        props.cropData.map((data) => ({
+          ...data,
+          baseImageUrl: baseImageUrl,
+        }))
+      );
+    }
+  }, [props.cropData, baseImageUrl]);
 
   const onChangeIndex = (ind: number) => {
     setIndex(ind);
@@ -168,11 +188,17 @@ function ImageCropperRef(props: any, ref: any) {
               aspectRatio={4 / 3}
               onCropComplete={onCropComplete("4 / 3")}
               baseImageUrl={baseImageUrl}
+              imageCropData={imageCropData.find(
+                (c) => c.aspectRatio === "4 / 3"
+              )}
             />
             <ImageCropItem
               aspectRatio={16 / 9}
               onCropComplete={onCropComplete("16 / 9")}
               baseImageUrl={baseImageUrl}
+              imageCropData={imageCropData.find(
+                (c) => c.aspectRatio === "16 / 9"
+              )}
             />
           </SwipeableViews>
         </>
