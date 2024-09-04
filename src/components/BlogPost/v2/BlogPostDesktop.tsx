@@ -332,7 +332,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           _post.scheduledTime,
           _post.is_v2,
           _post.nodes,
-          _post.thumbnailVariants
+          _post.displayThumbnail
         )
       );
     } else {

@@ -93,7 +93,7 @@ function DashboardDesktop({
         data.scheduledTime,
         data.is_v2,
         data.nodes,
-        data.thumbnailVariants
+        data.displayThumbnail
       );
     }),
     limit: 40,

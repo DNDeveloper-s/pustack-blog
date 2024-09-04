@@ -38,6 +38,7 @@ export default function Logo({
 }) {
   return (
     <Link
+      prefetch={true}
       href="/"
       style={linkStyle}
       className={"!flex items-center gap-1 " + linkClassName}

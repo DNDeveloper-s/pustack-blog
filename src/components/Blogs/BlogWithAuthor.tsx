@@ -14,6 +14,19 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AspectRatioType } from "../AdminEditor/ImageCropper";
 import useScreenSize from "@/hooks/useScreenSize";
+
+import {
+  ShimmerButton,
+  ShimmerTitle,
+  ShimmerText,
+  ShimmerCircularImage,
+  ShimmerThumbnail,
+  ShimmerBadge,
+  ShimmerTableCol,
+  ShimmerTableRow,
+  // @ts-ignore
+} from "react-shimmer-effects";
+
 export interface BlogBaseProps {
   size?: "lg" | "sm";
   noLink?: boolean;
@@ -287,6 +300,80 @@ export default function BlogWithAuthor({
   // ) : (
   //   defaultBlogWithAuthor(size)
   // );
+}
+
+export function BlogWithAuthorShimmer({
+  noImage,
+  size = "lg",
+}: {
+  noImage?: boolean;
+  size?: "lg" | "sm";
+}) {
+  return (
+    <div className="py-3 group h-full flex flex-col">
+      <div className="flex">
+        <div className="mr-1 lg:mr-2 flex-shrink-0">
+          <ShimmerThumbnail
+            height={size === "sm" ? 30 : 45}
+            width={size === "sm" ? 30 : 45}
+            className="m-0 !mb-0 !min-w-[unset]"
+            rounded
+          />
+        </div>
+        <div className="flex-1 overflow-hidden">
+          {/* <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
+            {post.author.name}
+          </h3> */}
+          <ShimmerThumbnail
+            height={size === "sm" ? 10 : 15}
+            width={size === "sm" ? 90 : 120}
+            variant="secondary"
+            rounded
+            className="!mb-0"
+          />
+          <ShimmerThumbnail
+            height={size === "sm" ? 10 : 15}
+            width={size === "sm" ? 90 : 120}
+            variant="secondary"
+            rounded
+            className="!mb-0"
+          />
+          {/* <p
+            className={
+              "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
+            }
+            style={{
+              fontWeight: "300",
+              fontVariationSettings: '"wght" 400,"opsz" 10',
+            }}
+          >
+            {isSmallScreen ? formatArticleTopic(post.topic) : post.topic}
+          </p> */}
+        </div>
+      </div>
+      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
+      <div className="flex-1">
+        <ShimmerTitle line={size === "sm" ? 1 : 2} gap={10} variant="primary" />
+        <ShimmerText line={size === "sm" ? 3 : 5} gap={10} variant="primary" />
+      </div>
+      {!noImage && (
+        <ShimmerThumbnail
+          height={size === "sm" ? 180 : 315}
+          width={"100%"}
+          className="m-0 !mb-0"
+          rounded
+        />
+      )}
+      {/* <p
+            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
+            style={{
+              fontFamily: "Courier,monospace",
+            }}
+          >
+            REUTERS/Leah Millis
+          </p> */}
+    </div>
+  );
 }
 
 const defaultBlogWithAuthorV2 = (size = "lg", noImage = false) => (

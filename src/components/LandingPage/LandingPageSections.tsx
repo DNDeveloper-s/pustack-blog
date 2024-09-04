@@ -37,23 +37,6 @@ export default function LandingPageSections() {
           limit={10}
         />
       ))}
-      {/* <LandingPageSectionLayout
-        label="Technology"
-        topics={["technology"]}
-        limit={10}
-      />
-      <ArtificialIntelligence />
-      <Technology />
-      <SiliconValley />
-      <ProductManagement />
-      <More /> */}
-      {/* <Politics />
-      <Business />
-      <Technology />
-      <Africa />
-      <NetZero />
-      <Security />
-      <Media /> */}
       {isTabletScreen && <SignUpForNewsLetters />}
     </div>
   );

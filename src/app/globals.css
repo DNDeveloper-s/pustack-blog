@@ -3055,3 +3055,12 @@ li[data-placeholder]::before {
       rgba(236, 64, 122, 0.3) 0px 0px 20px;
   }
 }
+
+.shimmer {
+  background-image: linear-gradient(
+    to right,
+    #ebe8c2 8%,
+    #f2f0d0 18%,
+    #ebe8c2 33%
+  ) !important;
+}

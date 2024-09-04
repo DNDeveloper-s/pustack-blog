@@ -320,6 +320,7 @@ function NavbarDesktop({
           <div className="flex justify-center items-center relative w-full my-3">
             <div className="flex items-center gap-5 absolute left-0 bottom-0 text-[10px]">
               <Link
+                prefetch={true}
                 className={
                   "leading-[120%] text-[1rem] font-featureHeadline " +
                   (pathname.startsWith("/events")
@@ -376,6 +377,7 @@ function NavbarDesktop({
           <nav className="flex justify-between py-2">
             {navLinks.map((link) => (
               <Link
+                prefetch={true}
                 key={link.key}
                 href={link.href}
                 className={

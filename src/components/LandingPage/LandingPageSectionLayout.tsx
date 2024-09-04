@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { chunk } from "lodash";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import useScreenSize from "@/hooks/useScreenSize";
-import { BlogBaseProps } from "../Blogs/BlogWithAuthor";
+import { BlogBaseProps, BlogWithAuthorShimmer } from "../Blogs/BlogWithAuthor";
 import { Post } from "@/firebase/post-v2";
 import { avatar } from "@/assets";
 import { Tooltip } from "antd";
@@ -128,7 +128,7 @@ function BlogWithAuthorSide({
                 "leading-[120%] group-hover:text-appBlue  " +
                 (classNames?.content ?? "") +
                 (size === "sm"
-                  ? "text-[12px] lg:text-[14px]"
+                  ? "text-[12px] lg:text-[15px]"
                   : "text-[16px] lg:text-[18px]")
               }
               style={{
@@ -205,7 +205,7 @@ export default function LandingPageSectionLayout({
   label: label;
   topics: topicId[];
 }) {
-  const { posts } = useQueryPosts({
+  const { posts, isLoading } = useQueryPosts({
     topics,
     limit,
   });
@@ -216,9 +216,60 @@ export default function LandingPageSectionLayout({
     return chunk(posts, 2);
   }, [posts]);
 
-  if (!posts || posts?.length === 0) return null;
+  // if (!posts || posts?.length === 0) return null;
 
-  if (isSmallScreen)
+  if (isSmallScreen) {
+    if (isLoading)
+      return (
+        <div className={"my-4 py-5 " + (classNames.base ?? "")}>
+          <div
+            className={"border-t-2 border-black " + (classNames.wrapper ?? "")}
+          >
+            <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
+              {label}
+            </h2>
+            <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
+            <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
+              <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+                <div
+                  className={
+                    "grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+                  }
+                >
+                  <div className={"pr-3"}>
+                    <BlogWithAuthorShimmer size="sm" />
+                  </div>
+                  <div className={"pl-3"}>
+                    <BlogWithAuthorShimmer size="sm" />
+                  </div>
+                </div>
+                <div
+                  className={
+                    "grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+                  }
+                >
+                  <div className={"pr-3"}>
+                    <BlogWithAuthorShimmer size="sm" />
+                  </div>
+                  <div className={"pl-3"}>
+                    <BlogWithAuthorShimmer size="sm" />
+                  </div>
+                </div>
+                <div
+                  className={
+                    "grid grid-cols-1 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+                  }
+                >
+                  <div className={"pr-3"}>
+                    <BlogWithAuthorShimmer size="sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
     return (
       <div className={"my-4 py-5 " + (classNames.base ?? "")}>
         <div
@@ -265,12 +316,62 @@ export default function LandingPageSectionLayout({
         </div>
       </div>
     );
+  }
 
   const singlePost =
     posts.length > 1 && chunkedPosts.find((post) => post.length === 1);
   const onlyPost = posts.length === 1 && posts[0];
 
   let content = null;
+
+  if (isLoading)
+    return (
+      <div className={"my-4 py-5 w-full " + (classNames.base ?? "")}>
+        <div
+          className={"border-t-2 border-black " + (classNames.wrapper ?? "")}
+        >
+          <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
+            {label}
+          </h2>
+          <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
+          <div
+            className={
+              "grid py-4 divide-y md:divide-y-0 grid-cols-[2fr_1fr] md:divide-x divide-dashed divide-[#1f1d1a4d]"
+            }
+          >
+            <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+              <div
+                className={
+                  "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 pb-3 "
+                }
+              >
+                <div className="pr-3">
+                  <BlogWithAuthorShimmer noImage />
+                </div>
+                <div className="pl-3">
+                  <BlogWithAuthorShimmer noImage />
+                </div>
+              </div>
+              <div
+                className={
+                  "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 pt-3 "
+                }
+              >
+                <div className="pr-3">
+                  <BlogWithAuthorShimmer noImage />
+                </div>
+                <div className="pl-3">
+                  <BlogWithAuthorShimmer noImage />
+                </div>
+              </div>
+            </div>
+            <div className="pl-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+              <BlogWithAuthorShimmer />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   if (posts.length === 2) {
     content = (

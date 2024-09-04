@@ -332,7 +332,8 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
           _post.displayContent,
           _post.scheduledTime,
           _post.is_v2,
-          _post.nodes
+          _post.nodes,
+          _post.displayThumbnail
         )
       );
     } else {

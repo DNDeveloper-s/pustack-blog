@@ -481,7 +481,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
       return;
     }
 
-    const variants = prepareThumbnailVariantsByCropData(
+    const thumbnail = prepareThumbnailVariantsByCropData(
       joditRef.current?.getThumbnailData()
     );
 
@@ -507,7 +507,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
       undefined,
       true,
       joditRef.current?.getSlateValue(),
-      variants
+      thumbnail
     );
 
     if (requestedPost) {
@@ -533,7 +533,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
         requestedPost.scheduledTime,
         true,
         joditRef.current?.getSlateValue(),
-        variants ?? requestedPost.thumbnailVariants
+        thumbnail ?? requestedPost.thumbnail
       );
     }
 

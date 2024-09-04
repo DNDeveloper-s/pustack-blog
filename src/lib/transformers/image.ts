@@ -1,11 +1,16 @@
 import { ImageCropData } from "@/components/AdminEditor/ImageCropper";
+import { PostThumbnail } from "@/firebase/post-v2";
 
-export function prepareThumbnailVariantsByCropData(cropData?: ImageCropData[]) {
-  if (!cropData) return null;
+export function prepareThumbnailVariantsByCropData(
+  thumbnail?: PostThumbnail
+): PostThumbnail | null {
+  const cropData = thumbnail?.variants;
 
-  return cropData.map((crop) => {
+  if (!cropData || !thumbnail) return null;
+
+  const newVariants = cropData.map((crop) => {
     const searchParams = new URLSearchParams();
-    searchParams.append("imageUrl", crop.baseImageUrl ?? "");
+    searchParams.append("imageUrl", thumbnail.baseImageUrl ?? "");
     searchParams.append("x", crop.croppedAreaPixels.x.toString());
     searchParams.append("y", crop.croppedAreaPixels.y.toString());
     searchParams.append("width", crop.croppedAreaPixels.width.toString());
@@ -24,4 +29,9 @@ export function prepareThumbnailVariantsByCropData(cropData?: ImageCropData[]) {
       url: `https://pustack-blog.vercel.app/api/resize-image?${searchParams.toString()}`,
     };
   });
+
+  return {
+    baseImageUrl: thumbnail.baseImageUrl,
+    variants: newVariants,
+  };
 }

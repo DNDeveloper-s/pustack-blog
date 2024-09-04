@@ -42,6 +42,8 @@ import {
   AspectRatioType,
   ImageCropData,
 } from "@/components/AdminEditor/ImageCropper";
+import { handleUploadAsync } from "@/lib/firebase/upload";
+import { prepareThumbnailVariantsByCropData } from "@/lib/transformers/image";
 
 export interface Author {
   name: string;
@@ -155,6 +157,11 @@ export type ImageVariant = {
   alt: string;
 } & ImageCropData;
 
+export type PostThumbnail = {
+  baseImageUrl: string;
+  variants: ImageVariant[];
+};
+
 export class Post {
   _id: string | undefined = undefined;
   readonly title: string;
@@ -176,6 +183,7 @@ export class Post {
   readonly is_v2: boolean;
   private _subTextVariants: SubTextVariants | undefined | null = undefined;
   private _thumbnailVariants: ImageVariant[] | null = null;
+  private _thumbnail: PostThumbnail | null = null;
 
   private _snippetData: {
     title?: string;
@@ -205,6 +213,10 @@ export class Post {
 
   get thumbnailVariants() {
     return this._thumbnailVariants;
+  }
+
+  get thumbnail() {
+    return this._thumbnail;
   }
 
   get id(): string | undefined {
@@ -242,7 +254,7 @@ export class Post {
     scheduledTime?: string,
     is_v2: boolean = true,
     nodes?: Descendant[],
-    thumbnailVariants: ImageVariant[] | null = null
+    thumbnail: PostThumbnail | null = null
   ) {
     this.title = title;
     this.subTitle = subTitle;
@@ -266,7 +278,8 @@ export class Post {
     this.is_v2 = !!is_v2;
     this._status = status;
     this._scheduledTime = scheduledTime;
-    this._thumbnailVariants = thumbnailVariants;
+    this._thumbnailVariants = thumbnail?.variants ?? null;
+    this._thumbnail = thumbnail;
   }
 
   private parseContent(): Document {
@@ -427,9 +440,33 @@ export class Post {
     const postId = this.id ?? (await this.generateUniqueId());
     const postRef = doc(db, "posts", postId).withConverter(postConverter);
 
+    await this.makeThumbnailLive();
+
     await setDoc(postRef, this, { merge: true });
 
     return this;
+  }
+
+  async makeThumbnailLive() {
+    const url = this.thumbnail?.baseImageUrl;
+    if (!url) return;
+
+    if (url.startsWith("blob:")) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], "thumbnail.jpg", { type: "image/jpeg" });
+
+      const live_url = await handleUploadAsync(file, {
+        setProgress: (value: number) => {
+          console.log("Progress - ", value);
+        },
+      });
+
+      this._thumbnail = prepareThumbnailVariantsByCropData({
+        baseImageUrl: live_url,
+        variants: this._thumbnail?.variants ?? [],
+      });
+    }
   }
 
   async saveDraftToFirestore() {
@@ -448,6 +485,9 @@ export class Post {
     }
 
     const postRef = doc(db, "posts", this.id).withConverter(postConverter);
+
+    await this.makeThumbnailLive();
+
     await setDoc(postRef, this, { merge: true });
 
     return this;
@@ -956,7 +996,7 @@ export const postConverter = {
         !!post.snippetData?.content,
       is_v2: true,
       nodes: post.nodes,
-      thumbnailVariants: post.thumbnailVariants,
+      displayThumbnail: post.thumbnail,
     };
   },
   fromFirestore: (snapshot: any) => {
@@ -996,7 +1036,7 @@ export const postConverter = {
       data.scheduledTime?.toDate().toISOString(),
       data.is_v2,
       data.nodes,
-      data.thumbnailVariants
+      data.displayThumbnail
     );
   },
 };

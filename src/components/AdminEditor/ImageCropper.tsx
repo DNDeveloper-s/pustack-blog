@@ -1,5 +1,5 @@
 import { ConfigProvider, Segmented } from "antd";
-import Cropper, { Area } from "react-easy-crop";
+import Cropper, { Area, Point } from "react-easy-crop";
 import SwipeableViews from "react-swipeable-views";
 import {
   extractTextFromEditor,
@@ -10,7 +10,7 @@ import EventEmitter from "@/lib/EventEmitter";
 import { Descendant } from "slate";
 import { Editor } from "slate";
 import { trimToSentence } from "@/lib/transformers/trimToSentence";
-import { ImageVariant, Post } from "@/firebase/post-v2";
+import { ImageVariant, Post, PostThumbnail } from "@/firebase/post-v2";
 
 const tabs = ["4 / 3", "16 / 9"];
 export type AspectRatioType = keyof typeof aspectRatioOptions;
@@ -36,8 +36,15 @@ function ImageCropItem({
   aspectRatio: any;
   imageCropData: ImageCropData | undefined;
 }) {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState(imageCropData?.crop ?? { x: 0, y: 0 });
+  const [zoom, setZoom] = useState(imageCropData?.zoom ?? 1);
+
+  useEffect(() => {
+    if (imageCropData) {
+      setCrop(imageCropData.crop);
+      setZoom(imageCropData.zoom);
+    }
+  }, [imageCropData]);
 
   return (
     <div className="relative h-[500px]">
@@ -47,10 +54,10 @@ function ImageCropItem({
         zoom={zoom}
         aspect={aspectRatio}
         onCropChange={setCrop}
-        onCropComplete={onCropComplete}
+        onCropComplete={onCropComplete(zoom, crop)}
         onZoomChange={setZoom}
-        initialCroppedAreaPercentages={imageCropData?.croppedArea}
-        initialCroppedAreaPixels={imageCropData?.croppedAreaPixels}
+        // initialCroppedAreaPercentages={imageCropData?.croppedArea}
+        // initialCroppedAreaPixels={imageCropData?.croppedAreaPixels}
       />
     </div>
   );
@@ -61,30 +68,26 @@ export type ImageCropData = {
   croppedArea: Area;
   croppedAreaPixels: Area;
   baseImageUrl: string | null;
+  zoom: number;
+  crop: Point;
   outputWidth: number;
   outputHeight: number;
 };
 function ImageCropperRef(
-  props: { cropData: ImageVariant[] | undefined | null },
+  props: { thumbnail: PostThumbnail | undefined | null },
   ref: any
 ) {
   const [selectedTab, setSelectedTab] = useState("4 / 3");
   const [index, setIndex] = useState(0);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
   const [baseImageUrl, setBaseImageUrl] = useState<string | null>(null);
   const [imageCropData, setImageCropData] = useState<ImageCropData[]>([]);
 
   useEffect(() => {
-    if (props.cropData && baseImageUrl) {
-      setImageCropData(
-        props.cropData.map((data) => ({
-          ...data,
-          baseImageUrl: baseImageUrl,
-        }))
-      );
+    if (props.thumbnail) {
+      setImageCropData(props.thumbnail.variants);
+      setBaseImageUrl(props.thumbnail.baseImageUrl);
     }
-  }, [props.cropData, baseImageUrl]);
+  }, [props.thumbnail]);
 
   const onChangeIndex = (ind: number) => {
     setIndex(ind);
@@ -92,11 +95,17 @@ function ImageCropperRef(
   };
 
   useImperativeHandle(ref, () => ({
-    getImageCropData: () => imageCropData,
+    getThumbnail: () => {
+      return {
+        baseImageUrl: baseImageUrl,
+        variants: imageCropData,
+      };
+    },
   }));
 
   const onCropComplete =
     (aspectRatio: keyof typeof aspectRatioOptions) =>
+    (zoom: number, crop: Point) =>
     (croppedArea: any, croppedAreaPixels: any) => {
       console.log(croppedArea, croppedAreaPixels);
       setImageCropData((prev: any) => {
@@ -110,6 +119,8 @@ function ImageCropperRef(
             aspectRatio,
             croppedArea,
             croppedAreaPixels,
+            zoom,
+            crop,
             outputHeight: aspectRatioOptions[aspectRatio].height,
             outputWidth: aspectRatioOptions[aspectRatio].width,
           },
@@ -117,7 +128,19 @@ function ImageCropperRef(
       });
     };
 
+  const handleImageChange = (e: any) => {
+    const file = e.target.files[0];
+
+    const blob = new Blob([file], { type: file.type });
+    const objectUrl = URL.createObjectURL(blob);
+
+    console.log("objectUrl - ", objectUrl);
+
+    setBaseImageUrl(objectUrl);
+  };
+
   useEffect(() => {
+    if (props.thumbnail) return;
     const timeoutId = setTimeout(() => {
       EventEmitter.emit("get-slate-value");
     }, 2000);
@@ -135,19 +158,55 @@ function ImageCropperRef(
       clearTimeout(timeoutId);
       unsub.remove();
     };
-  }, []);
+  }, [props.thumbnail]);
 
   return (
     <div className="mt-5">
-      <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-        Crop Thumbnail
-      </h4>
+      <div className="mb-1 flex items-center justify-between">
+        <h4 className="text-[12px] font-helvetica uppercase ml-1  text-appBlack">
+          Post Thumbnail
+        </h4>
+        {baseImageUrl && (
+          <div className="flex items-center gap-3">
+            <label htmlFor="change-thumbnail" className="cursor-pointer">
+              <p className="text-[12px] font-helvetica text-appBlack px-2 py-1">
+                Change Image
+              </p>
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageChange}
+                name="change-thumbnail"
+                id="change-thumbnail"
+              />
+            </label>
+            <button
+              className="text-[12px] font-helvetica text-danger-500 px-2 py-1"
+              onClick={() => setBaseImageUrl(null)}
+            >
+              Remove
+            </button>
+          </div>
+        )}
+      </div>
       {!baseImageUrl && (
-        <div className="border bg-lightPrimary py-8">
+        <label
+          htmlFor="thumbnail"
+          className="border block bg-lightPrimary py-8 cursor-pointer"
+        >
           <p className="text-[15px] text-opacity-20 text-center font-helvetica text-appBlack">
             Please add at least one image to the content to crop thumbnail
           </p>
-        </div>
+          <input
+            hidden
+            id="thumbnail"
+            name="thumbnail"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </label>
       )}
       {baseImageUrl && (
         <>

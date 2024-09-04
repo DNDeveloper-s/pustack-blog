@@ -169,7 +169,7 @@ function JoditWrapper(
       return subTitleInputRef.current?.value ?? "";
     },
     getThumbnailData: () => {
-      return imageCropperRef.current?.getImageCropData();
+      return imageCropperRef.current?.getThumbnail();
     },
     isValid: (
       titleValue: string,
@@ -280,7 +280,7 @@ function JoditWrapper(
       return;
     }
 
-    const variants = imageCropperRef.current?.getImageCropData();
+    const thumbnail = imageCropperRef.current?.getThumbnail();
 
     let post = new Post(
       titleValue || "Untitled",
@@ -304,7 +304,7 @@ function JoditWrapper(
       undefined,
       true,
       slateEditorRef.current?.getValue(),
-      variants
+      thumbnail
       // sections
     );
 
@@ -331,7 +331,7 @@ function JoditWrapper(
         prePost.scheduledTime,
         true,
         slateEditorRef.current?.getValue(),
-        variants
+        thumbnail ?? prePost.thumbnail
       );
     }
 
@@ -370,7 +370,7 @@ function JoditWrapper(
       return;
     }
 
-    const variants = imageCropperRef.current?.getImageCropData();
+    const thumbnail = imageCropperRef.current?.getThumbnail();
 
     let post = new Post(
       titleValue || "Untitled",
@@ -394,7 +394,7 @@ function JoditWrapper(
       undefined,
       true,
       slateEditorRef.current?.getValue(),
-      variants
+      thumbnail
     );
 
     if (isDraft && prePost) {
@@ -420,7 +420,7 @@ function JoditWrapper(
         undefined,
         true,
         slateEditorRef.current?.getValue(),
-        variants
+        thumbnail ?? prePost.thumbnail
       );
     }
 
@@ -562,10 +562,7 @@ function JoditWrapper(
         </div>
       </div>
       <div className="mt-5">
-        <ImageCropper
-          ref={imageCropperRef}
-          cropData={prePost?.thumbnailVariants}
-        />
+        <ImageCropper ref={imageCropperRef} thumbnail={prePost?.thumbnail} />
       </div>
       <div className="mt-5">
         <SubTitleComponent ref={subTitleInputRef} onChange={onChange} />

@@ -14,6 +14,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { compact } from "lodash";
+import { Metadata, ResolvingMetadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import dynamic from "next/dynamic";
 // const Dashboard from "@/components/Dashboard/Dashboard";
@@ -28,6 +29,56 @@ function flattenQueryDataWithId<T>(data: QuerySnapshot<T>) {
 }
 
 export const revalidate = 0;
+
+type Props = {
+  params: { postId: [string] };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const title = "Minerva";
+  const description = "This is a sample description of the web page.";
+
+  const imageUrl = `https://pustack-blog.vercel.app/minerva.svg`;
+
+  const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
+  const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "https://pustack-blog.vercel.app/",
+      siteName: "Minerva",
+      images: [
+        {
+          url: processedImageUrl2,
+          width: 450,
+          height: 235,
+        },
+        {
+          url: processedImageUrl,
+          width: 450,
+          height: 300,
+        },
+        {
+          url: processedImageUrl3,
+          width: 400,
+          height: 400,
+        },
+      ],
+      locale: "en_US",
+      type: "website",
+    },
+  };
+}
 
 export default async function Home() {
   // const posts = await Post.getAll({ _flatten: true });
