@@ -196,7 +196,7 @@ function DashboardDesktop({
           <DesignedBlog
             linkClassName="block"
             post={postsByPosition.titlePost as Post}
-            variant="very_short"
+            variant="short"
           />
         )}
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">

@@ -271,15 +271,15 @@ export default function LandingPageSectionLayout({
       );
 
     return (
-      <div className={"my-4 py-5 " + (classNames.base ?? "")}>
+      <div className={"my-2 py-2 " + (classNames.base ?? "")}>
         <div
           className={"border-t-2 border-black " + (classNames.wrapper ?? "")}
         >
-          <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
+          <h2 className="font-featureHeadline lg:text-[40px] md:text-[30px] text-[26px] leading-[120%] pt-1">
             {label}
           </h2>
-          <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
+          <hr className="border-dashed border-[#1f1d1a4d] mt-3" />
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
             <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
               {chunkedPosts?.map((postChunkOf2, i) => {
                 const gridClassName =
@@ -408,11 +408,6 @@ export default function LandingPageSectionLayout({
               noImage={posts.length === 5}
               post={post}
               variant="short"
-              classNames={{
-                // content: "h-[80px] overflow-hidden !line-clamp-[4] ",
-                // title: "!line-clamp-3 ",
-                img: "!aspect-[16/10]",
-              }}
             />
           </div>
         ))}
@@ -469,7 +464,7 @@ export default function LandingPageSectionLayout({
             <DesignedBlog
               linkClassName={"h-full block"}
               size="sm"
-              variant="short"
+              variant="medium"
               post={singlePost[0]}
               classNames={
                 {
@@ -486,7 +481,7 @@ export default function LandingPageSectionLayout({
   return (
     <div className={"my-4 py-5 " + (classNames.base ?? "")}>
       <div className={"border-t-2 border-black " + (classNames.wrapper ?? "")}>
-        <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
+        <h2 className="font-featureHeadline lg:text-[40px] md:text-[30px] text-[26px] leading-[120%] pt-1">
           {label}
         </h2>
         <hr className="border-dashed border-[#1f1d1a4d] mt-6" />

@@ -52,7 +52,7 @@ function MobileFooter() {
             withMini
           />
         </div>
-        <div className="pl-4 font-helvetica text-[12px] text-black text-opacity-70">
+        <div className="font-helvetica text-[12px] text-black text-opacity-70">
           <span>
             Powered by{" "}
             <strong className="font-helvetica font-bold">

@@ -75,7 +75,7 @@ export default function BlogImage({
     <figure
       //   className="mt-2"
       style={{
-        aspectRatio: 1.33,
+        aspectRatio: 1.77,
         overflow: "hidden",
         cursor: "pointer",
         ...(style ?? {}),

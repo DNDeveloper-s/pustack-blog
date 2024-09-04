@@ -116,7 +116,7 @@ export default function BlogWithAuthor({
   classNames,
   noImage,
   variant = "medium",
-  aspectRatio = "4 / 3",
+  aspectRatio = "16 / 9",
 }: BlogBaseProps & {
   post?: Post;
   showUnBookmarkButton?: boolean;
@@ -213,7 +213,7 @@ export default function BlogWithAuthor({
               (classNames?.title ?? "") +
               (size === "sm"
                 ? "text-[16px] lg:text-[18px]"
-                : "text-[28px] lg:text-[32px]")
+                : "text-[22px] lg:text-[32px]")
             }
             style={{
               fontWeight: "395",
@@ -230,7 +230,7 @@ export default function BlogWithAuthor({
               (classNames?.content ?? "") +
               (size === "sm"
                 ? "text-[13px] lg:text-[15px]"
-                : "text-[16px] lg:text-[18px]")
+                : "text-[15px] lg:text-[18px]")
             }
             style={{
               paddingTop: size === "sm" ? "8px" : "10px",
