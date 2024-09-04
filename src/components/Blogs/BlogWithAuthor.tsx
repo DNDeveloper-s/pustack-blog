@@ -26,6 +26,7 @@ import {
   ShimmerTableRow,
   // @ts-ignore
 } from "react-shimmer-effects";
+import TrimmableText from "../shared/TrimmableText";
 
 export interface BlogBaseProps {
   size?: "lg" | "sm";
@@ -205,7 +206,7 @@ export default function BlogWithAuthor({
         )}
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         {post.snippetData?.title && (
           <h2
             className={
@@ -224,21 +225,34 @@ export default function BlogWithAuthor({
           </h2>
         )}
         {textContent && (
-          <TrimmedPara
-            className={
-              "leading-[120%] opacity-80 group-hover:text-appBlue " +
-              (classNames?.content ?? "") +
-              (size === "sm"
-                ? "text-[13px] lg:text-[15px]"
-                : "text-[15px] lg:text-[18px]")
-            }
-            style={{
-              paddingTop: size === "sm" ? "8px" : "10px",
-            }}
-            wordLimit={post.snippetData?.subTextVariants ? 350 : 70}
-          >
-            {textContent}
-          </TrimmedPara>
+          <div className="w-full flex-1">
+            <TrimmableText
+              text={textContent}
+              paraClassName={
+                "leading-[120%] group-hover:text-appBlue  " +
+                (classNames?.content ?? "")
+              }
+              paraStyle={{
+                fontSize: size === "sm" ? "16px" : "18px",
+                paddingTop: size === "sm" ? "8px" : "10px",
+              }}
+            />
+          </div>
+          // <TrimmedPara
+          //   className={
+          //     "leading-[120%] opacity-80 group-hover:text-appBlue " +
+          //     (classNames?.content ?? "") +
+          //     (size === "sm"
+          //       ? "text-[13px] lg:text-[15px]"
+          //       : "text-[15px] lg:text-[18px]")
+          //   }
+          //   style={{
+          //     paddingTop: size === "sm" ? "8px" : "10px",
+          //   }}
+          //   wordLimit={post.snippetData?.subTextVariants ? 350 : 70}
+          // >
+          //   {textContent}
+          // </TrimmedPara>
         )}
         {/* {post.snippetData?.image && (
           <BlogImage className="mt-2" src={post.snippetData?.image} />
@@ -543,7 +557,7 @@ export function BlogWithAuthorV2({
             {post.snippetData?.title}
           </h2>
         )}
-        {textContent && (
+        {/* {textContent && (
           <TrimmedPara
             className={
               "leading-[120%] group-hover:text-appBlue  " +
@@ -557,6 +571,21 @@ export function BlogWithAuthorV2({
           >
             {textContent}
           </TrimmedPara>
+        )} */}
+        {textContent && (
+          <div className="w-full flex-1">
+            <TrimmableText
+              text={textContent}
+              paraClassName={
+                "leading-[120%] group-hover:text-appBlue  " +
+                (classNames?.content ?? "")
+              }
+              paraStyle={{
+                fontSize: size === "sm" ? "16px" : "18px",
+                paddingTop: size === "sm" ? "8px" : "10px",
+              }}
+            />
+          </div>
         )}
         {post.snippetData?.quote && (
           <div className="flex mt-3">

@@ -441,7 +441,7 @@ export default function LandingPageSectionLayout({
                       size="sm"
                       noImage={posts.length === 5}
                       post={post}
-                      variant={posts.length === 5 ? "medium" : "short"}
+                      variant={posts.length === 5 ? "long" : "short"}
                       classNames={
                         {
                           // content:
