@@ -41,7 +41,7 @@ export default function AppImage(props: AppImageProps) {
         {...props}
         src={noImageUrl}
         onLoad={() => {
-          setLoaded(true);
+          // setLoaded(true);
         }}
       />
     );
@@ -53,16 +53,21 @@ export default function AppImage(props: AppImageProps) {
         <img
           onError={() => handleError("none")}
           onLoad={() => {
-            setLoaded(true);
+            // setLoaded(true);
           }}
           {...props}
+          // @ts-ignore
+          alt="Image Preview 2"
         />
-        {!loaded && (
-          <ShimmerThumbnail
-            className="absolute top-0 left-0 !h-auto w-full !aspect-video"
-            rounded
+        {/* {!loaded && (
+          <Image
+            // @ts-ignore
+            src={props.blurDataUrl}
+            className="absolute top-0 left-0 !h-auto w-full !aspect-video rounded"
+            alt="Image Blur Preview 2"
+            unoptimized
           />
-        )}
+        )} */}
       </>
     );
   }
@@ -73,18 +78,21 @@ export default function AppImage(props: AppImageProps) {
       <Image
         onError={() => handleError("next")}
         onLoad={() => {
-          setLoaded(true);
+          // setLoaded(true);
         }}
         {...props}
         // @ts-ignore
-        alt="Image Preview"
+        alt="Image Preview 1"
       />
-      {!loaded && (
-        <ShimmerThumbnail
-          className="absolute top-0 left-0 !h-auto w-full !aspect-video"
-          rounded
+      {/* {!loaded && (
+        <Image
+          // @ts-ignore
+          src={props.blurDataUrl}
+          className="absolute top-0 left-0 !h-auto w-full !aspect-video rounded"
+          alt="Image Blur Preview 1"
+          unoptimized
         />
-      )}
+      )} */}
     </>
   );
 }

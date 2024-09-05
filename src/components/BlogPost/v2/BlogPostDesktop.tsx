@@ -466,6 +466,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
 
   const thumbnailImage = post.getThumbnail("16 / 9", true);
 
+  const thumbnailBlurData = post.getThumbnailData("16 / 9")?.blurData;
+
   return (
     <div className="max-w-[900px] mx-auto pb-10">
       <div
@@ -571,9 +573,14 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                 thumbnailImage ?? post.snippetData?.image ?? noImageUrl
                 // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
                 // encodeURIComponent(post?.snippetData?.image)
-            }
+              }
               style={{
                 aspectRatio: thumbnailImage ? "" : "auto 700 / 453",
+              }}
+              imageProps={{
+                // @ts-ignore
+                placeholder: "blur",
+                blurDataURL: thumbnailBlurData,
               }}
             />
             {post && <BlogPostShareLinks post={post} appendClassName="mt-4" />}

@@ -9,18 +9,30 @@ import { useEffect, useState } from "react";
 import useScreenSize from "@/hooks/useScreenSize";
 import EventsEntry from "../Events/EventsEntry";
 import { IoChevronBack } from "react-icons/io5";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function Publications() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [mode, setMode] = useState("posts");
   const router = useRouter();
   const { isSmallScreen } = useScreenSize();
 
   useEffect(() => {
-    if (mode !== "posts" && mode !== "signals" && mode !== "events") {
-      setMode("posts");
+    if (searchParams.has("mode")) {
+      setMode(searchParams.get("mode") || "posts");
     }
-  }, [mode]);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!searchParams.has("mode")) {
+      const _searchParams = new URLSearchParams(searchParams.toString());
+
+      _searchParams.set("mode", "posts");
+
+      router.push(pathname + `?${_searchParams.toString()}`);
+    }
+  }, [mode, pathname, router, searchParams]);
 
   if (isSmallScreen) {
     return (
@@ -61,11 +73,20 @@ export default function Publications() {
               options={["Posts", "Signals", "Events"]}
               onChange={(value) => {
                 console.log(value); // string
-                setMode(value.toLowerCase());
+                // setMode(value.toLowerCase());
+
+                const _searchParams = new URLSearchParams(
+                  searchParams.toString()
+                );
+
+                _searchParams.set("mode", value.toLowerCase());
+
+                router.push(pathname + `?${_searchParams.toString()}`);
               }}
               style={{
                 width: "100%",
               }}
+              value={mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase()}
               // className="!bg-lightPrimary"
             />
           </ConfigProvider>
@@ -108,8 +129,17 @@ export default function Publications() {
               options={["Posts", "Signals", "Events"]}
               onChange={(value) => {
                 console.log(value); // string
-                setMode(value.toLowerCase());
+                // setMode(value.toLowerCase());
+
+                const _searchParams = new URLSearchParams(
+                  searchParams.toString()
+                );
+
+                _searchParams.set("mode", value.toLowerCase());
+
+                router.push(pathname + `?${_searchParams.toString()}`);
               }}
+              value={mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase()}
               // className="!bg-lightPrimary"
             />
           </ConfigProvider>

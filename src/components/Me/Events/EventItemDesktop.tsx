@@ -20,6 +20,7 @@ import { Event } from "@/firebase/event";
 import AppImage from "@/components/shared/AppImage";
 import { getMeetLinkDetails } from "@/components/Events/EventDetails";
 import { getRandomDarkHexColor } from "@/lib/colors";
+import Link from "next/link";
 
 export const colorScheme = {
   draft: {
@@ -181,6 +182,13 @@ export default function EventItemDesktop({
         >
           <MdModeEdit />
         </div>
+        <Link
+          className="flex items-center gap-1 cursor-pointer hover:text-appBlue"
+          href={"/events?event_id=" + event.id}
+          prefetch={true}
+        >
+          <FaEye />
+        </Link>
         <div className="flex items-center gap-1 cursor-pointer hover:text-appBlue">
           <MdDelete />
         </div>

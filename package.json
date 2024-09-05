@@ -68,6 +68,7 @@
     "next-auth": "^4.24.7",
     "node-fetch": "^3.3.2",
     "oauth": "^0.10.0",
+    "plaiceholder": "^3.0.0",
     "prism-react-renderer": "^2.3.1",
     "program-language-detector": "^0.0.12",
     "react": "^18",

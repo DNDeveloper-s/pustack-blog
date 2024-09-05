@@ -481,7 +481,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
       return;
     }
 
-    const thumbnail = prepareThumbnailVariantsByCropData(
+    const thumbnail = await prepareThumbnailVariantsByCropData(
       joditRef.current?.getThumbnailData()
     );
 

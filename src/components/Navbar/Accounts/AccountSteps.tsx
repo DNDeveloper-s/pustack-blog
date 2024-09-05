@@ -211,7 +211,7 @@ export function AccountStepOne({
                 </h6>
                 <StarRatings
                   name="rating"
-                  rating={2}
+                  rating={0}
                   numberOfStars={5}
                   starSpacing="2px"
                   starDimension="20px"

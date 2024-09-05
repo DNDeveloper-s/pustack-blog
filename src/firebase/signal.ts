@@ -261,6 +261,7 @@ export class Signal {
     const _query = query(
       signalRef,
       where("flagshipDate", "==", dayjs().format("DD-MM-YYYY")),
+      where("status", "==", "published"),
       limit(1),
       orderBy("timestamp", "desc")
     );

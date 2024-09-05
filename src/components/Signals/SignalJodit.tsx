@@ -46,6 +46,15 @@ const TOPICS = [
   { key: "others", value: "Others" },
 ];
 
+function isValidURL(string: string) {
+  try {
+    new URL(string); // If the string is a valid URL, it will not throw
+    return true; // Return true if no exception is thrown
+  } catch (_) {
+    return false; // Return false if exception is thrown
+  }
+}
+
 interface SignalJoditProps {
   preSignal?: Signal;
 }
@@ -100,9 +109,11 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
     sourceValue: string,
     silent: boolean = false
   ) => {
-    const _isValid = titleValue && sourceValue;
-
-    const field = titleValue ? (sourceValue ? null : "source") : "title";
+    const field = titleValue
+      ? sourceValue && isValidURL(sourceValue)
+        ? null
+        : "source"
+      : "title";
 
     if (field === "title") {
       if (!silent) {
@@ -123,7 +134,11 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
         });
         sourceInputRef.current?.focus();
       }
-      return { isValid: false, field, message: "Please fill in the source" };
+      return {
+        isValid: false,
+        field,
+        message: "Please fill in the source link.",
+      };
     }
 
     // slateEditorRef.current?.getValue();

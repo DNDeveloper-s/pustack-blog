@@ -27,7 +27,7 @@ import {
 } from "@nextui-org/dropdown";
 import { IoIosEye } from "react-icons/io";
 import { Tooltip } from "antd";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { getSections } from "@/components/SlateEditor/utils/helpers";
 import { CustomElement } from "../../../../types/slate";
 import { Event } from "@/firebase/event";
@@ -74,6 +74,10 @@ function EventItemActions({
   // const disclosureOptions = useDisclosure();
   const isReadyToPublish = status === "draft" || status === "unpublished";
 
+  useEffect(() => {
+    router.prefetch("/events?event_id=" + postId);
+  }, [router, postId]);
+
   return (
     <Dropdown
       classNames={{
@@ -119,7 +123,9 @@ function EventItemActions({
           </p>
         </DropdownItem>
         <DropdownItem
-          onClick={() => disclosureOptions.onOpen()}
+          onClick={() => {
+            router.push("/events?event_id=" + postId);
+          }}
           className="!p-[6px_9px_6px] !pl-1 !rounded-none !bg-transparent"
         >
           <p

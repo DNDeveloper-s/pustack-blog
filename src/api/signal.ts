@@ -190,6 +190,10 @@ export const useCreateSignal = (
           return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
         },
       });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_FLAGSHIP_SIGNAL,
+      });
     },
     ...(options ?? {}),
   });
@@ -215,6 +219,10 @@ export const useUpdateSignal = (
         predicate: (query) => {
           return query.queryKey[0] === API_QUERY.QUERY_SIGNALS()[0];
         },
+      });
+
+      qc.invalidateQueries({
+        queryKey: API_QUERY.GET_FLAGSHIP_SIGNAL,
       });
     },
     ...(options ?? {}),

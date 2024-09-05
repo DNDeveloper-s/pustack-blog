@@ -151,6 +151,8 @@ export default function BlogWithAuthor({
 
   const thumbnailImage = post.getThumbnail(aspectRatio);
 
+  const thumbnailBlurData = post.getThumbnailData(aspectRatio)?.blurData;
+
   const content = (
     <div className="py-3 group h-full flex flex-col">
       <div className="flex">
@@ -283,6 +285,9 @@ export default function BlogWithAuthor({
           imageProps={{
             className: "!w-full !object-cover !h-full",
             ...imageProps,
+            // @ts-ignore
+            blurDataURL: thumbnailBlurData,
+            placeholder: "blur",
           }}
           noZoom
           className={"mt-2 " + (classNames?.img ?? "")}

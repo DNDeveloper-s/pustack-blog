@@ -35,9 +35,9 @@ function DashboardDesktop({
     isFetchingNextPage,
     error,
   } = useQuerySignals({ limit: 11 });
-  const { data: flagshipSignal } = useGetFlagshipSignal();
+  const { data: flagshipSignal, error: _Error } = useGetFlagshipSignal();
 
-  console.log("error - ", error);
+  console.log("error - ", _Error);
 
   const _serverFormedSignals = useMemo(() => {
     return _serverSignals.map(
@@ -197,6 +197,10 @@ function DashboardDesktop({
             linkClassName="block"
             post={postsByPosition.titlePost as Post}
             variant="short"
+            imageProps={{
+              width: 650,
+              height: 500,
+            }}
           />
         )}
         <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">

@@ -44,6 +44,7 @@ import {
 } from "@/components/AdminEditor/ImageCropper";
 import { handleUploadAsync } from "@/lib/firebase/upload";
 import { prepareThumbnailVariantsByCropData } from "@/lib/transformers/image";
+import axios from "axios";
 
 export interface Author {
   name: string;
@@ -155,10 +156,12 @@ export type PostStatus = "draft" | "published" | "scheduled" | "unpublished";
 export type ImageVariant = {
   url: string;
   alt: string;
+  blurData?: string;
 } & ImageCropData;
 
 export type PostThumbnail = {
   baseImageUrl: string;
+  blurData?: string;
   variants: ImageVariant[];
 };
 
@@ -308,6 +311,15 @@ export class Post {
       return variant?.url ?? (noFallback ? null : this.snippetData?.image);
     }
     return noFallback ? null : this.snippetData?.image;
+  }
+
+  getThumbnailData(aspectRatio: AspectRatioType) {
+    if (this._thumbnailVariants && this._thumbnailVariants.length > 0) {
+      return this._thumbnailVariants.find(
+        (variant) => variant.aspectRatio === aspectRatio
+      );
+    }
+    return null;
   }
 
   preparePostSnippetData() {
@@ -461,10 +473,36 @@ export class Post {
         },
       });
 
-      this._thumbnail = prepareThumbnailVariantsByCropData({
-        baseImageUrl: live_url,
-        variants: this._thumbnail?.variants ?? [],
-      });
+      const res = await axios.get(
+        "/api/get-blur-data-url?imageUrl=" + encodeURIComponent(live_url)
+      );
+
+      const blurData = res.data;
+
+      this._thumbnail = await prepareThumbnailVariantsByCropData(
+        {
+          baseImageUrl: live_url,
+          blurData: blurData,
+          variants: this._thumbnail?.variants ?? [],
+        },
+        true
+      );
+    } else {
+      if (this.thumbnail.blurData) return;
+      const res = await axios.get(
+        "/api/get-blur-data-url?imageUrl=" + encodeURIComponent(url)
+      );
+
+      const blurData = res.data;
+
+      this._thumbnail = await prepareThumbnailVariantsByCropData(
+        {
+          baseImageUrl: url,
+          blurData: blurData,
+          variants: this._thumbnail?.variants ?? [],
+        },
+        true
+      );
     }
   }
 

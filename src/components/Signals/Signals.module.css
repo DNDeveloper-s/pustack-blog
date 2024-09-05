@@ -102,6 +102,7 @@
   color: #53524c;
   display: flex;
   margin-bottom: 10px;
+  gap: 3px;
 }
 
 .signal_para {

@@ -10,7 +10,7 @@ import { Post, PostStatus } from "@/firebase/post-v2";
 import { useDisclosure } from "@nextui-org/modal";
 import dayjs from "@/lib/dayjsConfig";
 import { useRouter } from "next/navigation";
-import { FaEye } from "react-icons/fa";
+import { FaExternalLinkAlt, FaEye } from "react-icons/fa";
 import {
   MdDelete,
   MdEdit,
@@ -36,6 +36,8 @@ import { CustomElement } from "../../../../types/slate";
 import { usePublishSignal, useUnPublishSignal } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import AppImage from "@/components/shared/AppImage";
+import { SignalPreview } from "./SignalItemDesktop";
+import Link from "next/link";
 
 export const noImageUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -398,8 +400,15 @@ export default function SignalItem({
                   style={{ backgroundColor: colorScheme[signal.status]?.bg }}
                 ></span>
               </Tooltip>
-              <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                {signal.source}
+              <span className="text-[11px] text-[#53524c] font-helvetica leading-[14px]">
+                <Link
+                  href={signal.source}
+                  target="_blank"
+                  className="flex items-center gap-2 text-appBlue"
+                >
+                  <span>Go to Link</span>
+                  <FaExternalLinkAlt />
+                </Link>
               </span>
             </p>
             <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
@@ -438,6 +447,7 @@ export default function SignalItem({
           <span>{dayjs().to(dayjs(event?.startTime?.toDate()))}</span>
         </p>
       </div> */}
+      <SignalPreview disclosureOptions={disclosureOptions} signal={signal} />
       <div className="flex items-center py-2 justify-center gap-5 text-xs">
         <SignalItemActions
           disclosureOptions={disclosureOptions}

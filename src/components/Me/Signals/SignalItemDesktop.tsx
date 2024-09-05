@@ -11,11 +11,17 @@ import {
   getSections,
 } from "@/components/SlateEditor/utils/helpers";
 import { Post } from "@/firebase/post-v2";
-import { useDisclosure } from "@nextui-org/modal";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/modal";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { FaEye } from "react-icons/fa";
+import { FaExternalLinkAlt, FaEye } from "react-icons/fa";
 import { MdDelete, MdModeEdit, MdPublish, MdUnpublished } from "react-icons/md";
 import { CustomElement } from "../../../../types/slate";
 import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
@@ -25,6 +31,8 @@ import { usePublishSignal, useUnPublishSignal } from "@/api/signal";
 import AppImage from "@/components/shared/AppImage";
 import { noImageUrl } from "./SignalItem";
 import { useMediaQuery } from "react-responsive";
+import { SignalComponent } from "@/components/Signals/Signals";
+import Link from "next/link";
 
 export const colorScheme = {
   draft: {
@@ -65,6 +73,34 @@ export function SignalItemDesktopHeader() {
       <div className="text-center">Timestamp</div>
       <div className="text-center">Actions</div>
     </div>
+  );
+}
+
+export function SignalPreview({
+  disclosureOptions,
+  signal,
+}: {
+  disclosureOptions: ReturnType<typeof useDisclosure>;
+  signal: Signal;
+}) {
+  return (
+    <Modal
+      isOpen={disclosureOptions.isOpen}
+      onOpenChange={disclosureOptions.onOpenChange}
+      classNames={{
+        wrapper: "bg-black bg-opacity-50 !items-center",
+        base: "!max-w-[900px] !w-[90vw]",
+      }}
+    >
+      <ModalContent className="h-auto min-h-[400px] max-h-[90vh] overflow-auto jodit-table bg-primary no-preflight">
+        <ModalHeader style={{ borderBottom: "1px dashed #1f1f1f1d" }}>
+          Preview
+        </ModalHeader>
+        <ModalBody>
+          <SignalComponent signal={signal} />
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 }
 
@@ -124,27 +160,32 @@ export default function SignalItemDesktop({
         </div> */}
       <div className="flex items-start gap-3 overflow-hidden">
         <div className="mt-1 w-16 h-16 overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
-          {getFirstImage(signal.nodes ?? []) && (
-            <AppImage
-              alt="sd"
-              src={getFirstImage(signal.nodes ?? []) ?? noImageUrl}
-              width={200}
-              height={200}
-              className="w-full h-full object-cover rounded-[4px] bg-gray-400"
-            />
-          )}
+          <AppImage
+            alt="sd"
+            src={getFirstImage(signal.nodes ?? []) ?? noImageUrl}
+            width={200}
+            height={200}
+            className="w-full h-full object-cover rounded-[4px] bg-gray-400"
+          />
         </div>
         <div className="overflow-hidden">
           <div className="flex items-center justify-center overflow-hidden gap-2">
-            <h2 className="text-[22px] font-featureHeadline font-medium mt-0 line-clamp-2">
+            <h2 className="text-[16px] font-featureHeadline font-medium mt-0">
               {signal.title}
             </h2>
           </div>
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <span className="ml-4 text-[13px] text-[#53524c] font-helvetica uppercase leading-[16px] text-center">
-          {signal.source}
+        <span className="ml-4 text-[13px] text-[#53524c] font-helvetica leading-[16px] text-center">
+          <Link
+            href={signal.source}
+            target="_blank"
+            className="flex items-center gap-2 text-appBlue"
+          >
+            <span>Go to Link</span>
+            <FaExternalLinkAlt />
+          </Link>
         </span>
       </div>
       <div className="flex items-center justify-center">
@@ -206,10 +247,7 @@ export default function SignalItemDesktop({
           </div>
         </Tooltip>
       </div>
-      <JoditPreview
-        disclosureOptions={disclosureOptions}
-        nodes={signal.nodes}
-      />
+      <SignalPreview disclosureOptions={disclosureOptions} signal={signal} />
       <PostActionModalBase
         disclosureOptions={disclosureOptionsUnPublish}
         isLoading={isPending}

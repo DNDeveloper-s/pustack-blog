@@ -94,16 +94,30 @@ export default async function Home() {
 
   const docs = await getDocs(_query);
 
-  const posts = flattenQueryDataWithId(docs).map((doc) => ({
-    ...doc,
-    timestamp: doc.timestamp.toDate().toISOString(),
-    flagged_at: doc.flagged_at?.toDate().toISOString(),
-    unflagged_at: doc.unflagged_at?.toDate().toISOString(),
-  }));
+  const posts = flattenQueryDataWithId(docs).map((doc) => {
+    return {
+      ...doc,
+      timestamp: doc.timestamp.toDate().toISOString(),
+      flagged_at: doc.flagged_at?.toDate().toISOString(),
+      unflagged_at: doc.unflagged_at?.toDate().toISOString(),
+    };
+  });
+
+  // const promises = posts.map((post) => {
+  //   return new Promise((resolve) => {
+  //     // @ts-ignore
+  //     getBase64(post.meta.image).then((base64) => {
+  //       resolve({ base64, id: post.id });
+  //     });
+  //   });
+  // });
+
+  // const images = await Promise.all(promises);
 
   const signalsRef = collection(db, "signals");
   let _signals_query = query(
     signalsRef,
+    where("status", "==", "published"),
     orderBy("timestamp", "desc"),
     limit(11)
   );

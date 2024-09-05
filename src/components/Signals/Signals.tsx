@@ -31,6 +31,8 @@ import { Button } from "@nextui-org/button";
 import useScreenSize from "@/hooks/useScreenSize";
 import SlateEditor from "../SlateEditor/SlateEditor";
 import { CustomElement } from "../../../types/slate";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import Link from "next/link";
 
 function filterAndTrimStrings(arr: any[]) {
   return (
@@ -39,7 +41,7 @@ function filterAndTrimStrings(arr: any[]) {
   );
 }
 
-function SignalComponent({ signal }: { signal: Signal }) {
+export function SignalComponent({ signal }: { signal: Signal }) {
   console.log("signal - ", signal);
   return (
     <div className={classes.body_block} id={signal.id}>
@@ -50,9 +52,16 @@ function SignalComponent({ signal }: { signal: Signal }) {
             <div>
               <Image className="w-[14px]" src={arrowSignalBlue} alt="Sources" />
             </div>
-            <span className="ml-[8px]">Sources: &nbsp;</span>
+            <span className="ml-[8px]">Source: &nbsp;</span>
           </div>
-          <span>{signal.source}</span>
+          <Link
+            href={signal.source}
+            target="_blank"
+            className="flex items-center gap-2 text-appBlue"
+          >
+            <span>Go to Link</span>
+            <FaExternalLinkAlt />
+          </Link>
         </div>
         <div className={classes.signal_para}>
           <SlateEditor readonly value={signal.nodes as CustomElement[]} />
