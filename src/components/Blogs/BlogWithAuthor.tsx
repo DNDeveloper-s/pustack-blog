@@ -36,6 +36,7 @@ export interface BlogBaseProps {
   href?: string;
   noImage?: boolean;
   variant?: SubTitleVariant;
+  imageProps?: React.ImgHTMLAttributes<HTMLImageElement>;
   classNames?: {
     content?: string;
     title?: string;
@@ -112,6 +113,7 @@ export default function BlogWithAuthor({
   linkClassName,
   showUnBookmarkButton,
   handleBookMark,
+  imageProps = {},
   href,
   isPending,
   classNames,
@@ -148,8 +150,6 @@ export default function BlogWithAuthor({
     "";
 
   const thumbnailImage = post.getThumbnail(aspectRatio);
-
-  console.log("thumbnailImage - ", thumbnailImage);
 
   const content = (
     <div className="py-3 group h-full flex flex-col">
@@ -229,7 +229,7 @@ export default function BlogWithAuthor({
             <TrimmableText
               text={textContent}
               paraClassName={
-                "leading-[120%] group-hover:text-appBlue  " +
+                "leading-[120%] group-hover:text-appBlue opacity-70  " +
                 (classNames?.content ?? "")
               }
               paraStyle={{
@@ -280,7 +280,10 @@ export default function BlogWithAuthor({
         //   />
         // </Zoom>
         <BlogImage
-          imageProps={{ className: "!w-full !object-cover !h-full" }}
+          imageProps={{
+            className: "!w-full !object-cover !h-full",
+            ...imageProps,
+          }}
           noZoom
           className={"mt-2 " + (classNames?.img ?? "")}
           src={thumbnailImage}

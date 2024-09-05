@@ -78,6 +78,7 @@ export default function BlogImage({
         aspectRatio: 1.77,
         overflow: "hidden",
         cursor: "pointer",
+        position: "relative",
         ...(style ?? {}),
       }}
       {...props}

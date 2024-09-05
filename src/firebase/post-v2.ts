@@ -301,7 +301,6 @@ export class Post {
   }
 
   getThumbnail(aspectRatio: AspectRatioType, noFallback = false) {
-    console.log("this - ", this._thumbnailVariants);
     if (this._thumbnailVariants && this._thumbnailVariants.length > 0) {
       const variant = this._thumbnailVariants.find(
         (variant) => variant.aspectRatio === aspectRatio
