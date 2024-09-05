@@ -580,7 +580,7 @@ export function BlogWithAuthorV2({
             <TrimmableText
               text={textContent}
               paraClassName={
-                "leading-[120%] group-hover:text-appBlue  " +
+                "leading-[120%] group-hover:text-appBlue opacity-70  " +
                 (classNames?.content ?? "")
               }
               paraStyle={{

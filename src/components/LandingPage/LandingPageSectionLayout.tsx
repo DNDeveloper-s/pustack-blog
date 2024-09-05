@@ -442,16 +442,9 @@ export default function LandingPageSectionLayout({
                       noImage={posts.length === 5}
                       post={post}
                       variant={posts.length === 5 ? "long" : "short"}
-                      classNames={
-                        {
-                          // content:
-                          //   posts.length !== 5
-                          //     ? posts.length === 3
-                          //       ? "h-[104px] !line-clamp-5"
-                          //       : "h-[70px] overflow-hidden "
-                          //     : "h-[140px] overflow-hidden !line-clamp-[7] ",
-                        }
-                      }
+                      classNames={{
+                        content: "!max-h-[140px]",
+                      }}
                     />
                   </div>
                 ))}
@@ -466,11 +459,9 @@ export default function LandingPageSectionLayout({
               size="sm"
               variant="medium"
               post={singlePost[0]}
-              classNames={
-                {
-                  // content: "!h-[104px] !line-clamp-5 ",
-                }
-              }
+              classNames={{
+                content: "!max-h-[130px]",
+              }}
             />
           </div>
         )}

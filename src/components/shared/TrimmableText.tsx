@@ -139,25 +139,37 @@ export default function TrimmableText({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
-    const style = window.getComputedStyle(container);
+    function adjustTextToFit() {
+      if (!container) return;
+      const style = window.getComputedStyle(container);
 
-    const containerWidth = container.clientWidth;
-    const fontSize = parseFloat(style.fontSize);
-    const lineHeight = parseFloat(style.lineHeight);
+      const containerWidth = container.clientWidth;
+      const fontSize = parseFloat(style.fontSize);
+      const lineHeight = parseFloat(style.lineHeight);
 
-    // Calculate characters per line based on font properties and container width
-    const charsPerLine = getCharLimit(containerWidth, fontSize, lineHeight);
+      // Calculate characters per line based on font properties and container width
+      const charsPerLine = getCharLimit(containerWidth, fontSize, lineHeight);
 
-    // Calculate how many lines fit in the container
-    const totalLines = Math.floor(container.clientHeight / lineHeight);
+      // Calculate how many lines fit in the container
+      const totalLines = Math.floor(container.clientHeight / lineHeight);
 
-    // Calculate the maximum number of characters that can fit
-    const charLimit = charsPerLine * totalLines;
+      // Calculate the maximum number of characters that can fit
+      const charLimit = charsPerLine * totalLines;
 
-    // Trim the text based on this character limit and ensure it's meaningfully trimmed
-    const newTrimmedText = trimText(text, charLimit);
-    setTrimmedText(newTrimmedText);
+      // Trim the text based on this character limit and ensure it's meaningfully trimmed
+      const newTrimmedText = trimText(text, charLimit);
+      setTrimmedText(newTrimmedText);
+    }
+
+    setTimeout(() => {
+      adjustTextToFit();
+    }, 1000);
+
+    // window.addEventListener("resize", adjustTextToFit);
+
+    return () => {
+      // window.removeEventListener("resize", adjustTextToFit);
+    };
   }, [text]);
 
   return (
