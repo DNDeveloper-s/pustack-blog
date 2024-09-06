@@ -120,9 +120,8 @@ export class Post {
   readonly content: string;
   readonly topic: string;
   readonly author: Author;
-  readonly html: Document;
-  readonly images: string[];
-  readonly quotes: string[];
+  // readonly images: string[];
+  // readonly quotes: string[];
   readonly timestamp: string | undefined = undefined;
   private _flagship: boolean = false;
   private _position: PostPosition | undefined = undefined;
@@ -179,12 +178,11 @@ export class Post {
     this.displayContent = displayContent;
     this.author = author;
     this.topic = topic;
-    this.html = this.parseContent();
-    this.images = this.extractElements<string>("img", srcReducer);
-    this.quotes = this.extractElements<string>(
-      "blockquote",
-      textContentReducer
-    );
+    // this.images = this.extractElements<string>("img", srcReducer);
+    // this.quotes = this.extractElements<string>(
+    //   "blockquote",
+    //   textContentReducer
+    // );
     this.preparePostSnippetData();
     this._id = id;
     this.timestamp = timestamp;
@@ -193,106 +191,78 @@ export class Post {
     this._flagship = isFlagship ?? false;
   }
 
-  private parseContent(): Document {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(this.content, "text/html");
-    return doc;
-  }
-
-  private extractElements<T extends any>(
-    tag: string,
-    reducer = defaultExtractReducer
-  ): T[] {
-    return compact(
-      Array.from(this.html.getElementsByTagName(tag)).reduce(reducer, [])
-    );
-  }
-
   preparePostSnippetData() {
-    const textElements = {
-      h1: this.extractElements<string>("h1", textContentReducer),
-      h2: this.extractElements<string>("h2", textContentReducer),
-      h3: this.extractElements<string>("h3", textContentReducer),
-      h4: this.extractElements<string>("h4", textContentReducer),
-      h5: this.extractElements<string>("h5", textContentReducer),
-      h6: this.extractElements<string>("h6", textContentReducer),
-      p: this.extractElements<string>("p", textContentReducer),
-    };
-
-    const images = this.extractElements<string>("img", srcReducer);
-
-    const iframes = this.extractElements<string>("iframe", srcReducer);
-
-    const quotes = this.extractElements<string>(
-      "blockquote",
-      textContentReducer
-    );
-
-    const priorities: (keyof typeof textElements)[] = [
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "p",
-    ];
-
-    const titleTag = priorities.find(
-      (priority) => textElements[priority].length > 0
-    );
-
-    if (!titleTag) return null;
-
-    const contentTag = priorities.find(
-      (priority) => textElements[priority].length > 0 && priority !== titleTag
-    );
-
-    const snippetData = {
-      title: this.displayTitle,
-      content: this.displayContent
-        ? this.displayContent
-        : contentTag
-        ? textElements[contentTag]?.[0]
-        : textElements[titleTag]?.[1] ?? "",
-      image: images[0],
-      quote: quotes[0],
-      iframe: iframes[0],
-      author: this.author,
-      topic: this.topic,
-    };
-
-    this._snippetData = snippetData;
-
-    if (
-      (snippetData.content || snippetData.title) &&
-      (snippetData.image || snippetData.iframe) &&
-      snippetData.author &&
-      snippetData.topic
-    ) {
-      this._position = PostPosition.Full_C;
-      return;
-    }
-
-    if (
-      (snippetData.content || snippetData.title) &&
-      snippetData.quote &&
-      snippetData.author &&
-      snippetData.topic
-    ) {
-      this._position = PostPosition.Full_Q;
-      return;
-    }
-
-    if (snippetData.title && snippetData.content) {
-      this._position = PostPosition.TEXT_CONTENT;
-      return;
-    }
-
-    if (snippetData.title) {
-      this._position = PostPosition.HEADLINE;
-      return;
-    }
+    // const textElements = {
+    //   h1: this.extractElements<string>("h1", textContentReducer),
+    //   h2: this.extractElements<string>("h2", textContentReducer),
+    //   h3: this.extractElements<string>("h3", textContentReducer),
+    //   h4: this.extractElements<string>("h4", textContentReducer),
+    //   h5: this.extractElements<string>("h5", textContentReducer),
+    //   h6: this.extractElements<string>("h6", textContentReducer),
+    //   p: this.extractElements<string>("p", textContentReducer),
+    // };
+    // const images = this.extractElements<string>("img", srcReducer);
+    // const iframes = this.extractElements<string>("iframe", srcReducer);
+    // const quotes = this.extractElements<string>(
+    //   "blockquote",
+    //   textContentReducer
+    // );
+    // const priorities: (keyof typeof textElements)[] = [
+    //   "h1",
+    //   "h2",
+    //   "h3",
+    //   "h4",
+    //   "h5",
+    //   "h6",
+    //   "p",
+    // ];
+    // const titleTag = priorities.find(
+    //   (priority) => textElements[priority].length > 0
+    // );
+    // if (!titleTag) return null;
+    // const contentTag = priorities.find(
+    //   (priority) => textElements[priority].length > 0 && priority !== titleTag
+    // );
+    // const snippetData = {
+    //   title: this.displayTitle,
+    //   content: this.displayContent
+    //     ? this.displayContent
+    //     : contentTag
+    //     ? textElements[contentTag]?.[0]
+    //     : textElements[titleTag]?.[1] ?? "",
+    //   image: images[0],
+    //   quote: quotes[0],
+    //   iframe: iframes[0],
+    //   author: this.author,
+    //   topic: this.topic,
+    // };
+    // this._snippetData = snippetData;
+    // if (
+    //   (snippetData.content || snippetData.title) &&
+    //   (snippetData.image || snippetData.iframe) &&
+    //   snippetData.author &&
+    //   snippetData.topic
+    // ) {
+    //   this._position = PostPosition.Full_C;
+    //   return;
+    // }
+    // if (
+    //   (snippetData.content || snippetData.title) &&
+    //   snippetData.quote &&
+    //   snippetData.author &&
+    //   snippetData.topic
+    // ) {
+    //   this._position = PostPosition.Full_Q;
+    //   return;
+    // }
+    // if (snippetData.title && snippetData.content) {
+    //   this._position = PostPosition.TEXT_CONTENT;
+    //   return;
+    // }
+    // if (snippetData.title) {
+    //   this._position = PostPosition.HEADLINE;
+    //   return;
+    // }
   }
 
   private async generateUniqueId() {

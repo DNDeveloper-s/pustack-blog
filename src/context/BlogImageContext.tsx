@@ -1,5 +1,6 @@
 // interface ILinkState {}
 
+import { useDisclosure } from "@nextui-org/modal";
 import {
   FC,
   createContext,
@@ -7,6 +8,7 @@ import {
   useContext,
   useReducer,
   useRef,
+  useState,
 } from "react";
 
 // const initLinkState = {
@@ -82,15 +84,17 @@ const initBlogImageState = {
 
 type UseBlogImageContextType = {
   //   state: IBlogImageState;
-  state: IBlogImageState;
-  openPreview: (url: string) => void;
-  closePreview: () => void;
+  isOpen: boolean;
+  imageUrl: string | null;
+  openWithUrl: (url: string) => void;
+  onClose: () => void;
 };
 
 export const BlogImageContext = createContext<UseBlogImageContextType>({
-  state: initBlogImageState,
-  openPreview: () => {},
-  closePreview: () => {},
+  isOpen: false,
+  imageUrl: null,
+  openWithUrl: () => {},
+  onClose: () => {},
 });
 
 const BlogImageContextProvider: FC<{ children: React.ReactElement }> = ({
@@ -135,18 +139,29 @@ function useBlogImageContext(
 ): UseBlogImageContextType {
   const [state, dispatch] = useReducer(BlogImageReducer, initState);
 
-  const openPreview = useCallback((url: string) => {
-    dispatch({ type: "OPEN_PREVIEW", payload: url });
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const openWithUrl = useCallback((url: string) => {
+    setImageUrl(url);
   }, []);
 
-  const closePreview = useCallback(() => {
-    dispatch({ type: "CLOSE_PREVIEW", payload: null });
+  const onClose = useCallback(() => {
+    setImageUrl(null);
   }, []);
+
+  // const openPreview = useCallback((url: string) => {
+  //   dispatch({ type: "OPEN_PREVIEW", payload: url });
+  // }, []);
+
+  // const closePreview = useCallback(() => {
+  //   dispatch({ type: "CLOSE_PREVIEW", payload: null });
+  // }, []);
 
   return {
-    state,
-    openPreview,
-    closePreview,
+    isOpen: !!imageUrl,
+    imageUrl,
+    openWithUrl,
+    onClose,
   };
 }
 

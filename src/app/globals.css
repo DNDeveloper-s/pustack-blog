@@ -3064,3 +3064,8 @@ li[data-placeholder]::before {
     #ebe8c2 33%
   ) !important;
 }
+
+.react-transform-wrapper {
+  height: 100vh !important;
+  width: 100vw !important;
+}

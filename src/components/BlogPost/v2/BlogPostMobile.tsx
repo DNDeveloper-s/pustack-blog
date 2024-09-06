@@ -520,18 +520,6 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
             <div className="pt-3 flex flex-col gap-6 justify-between">
               {!user && (
                 <div>
-                  <div className="py-1">
-                    <p className="font-featureHeadline style_intro leading-[120%]">
-                      <b className="style_bold">
-                        Sign up for Minerva Principals:
-                      </b>
-                      {" What the White House is reading. "}
-                      <Link href="#" className="underline whitespace-nowrap">
-                        Read it now.
-                      </Link>
-                    </p>
-                  </div>
-
                   <SignUpForNewsLettersButton
                     containerClassName="flex mt-1"
                     checkedLetters={newsLettersList}

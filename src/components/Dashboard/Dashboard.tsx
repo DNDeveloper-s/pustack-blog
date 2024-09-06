@@ -1,9 +1,7 @@
 "use client";
 import Flagship from "@/components/Blogs/Flagship";
 import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
-import { useMediaQuery } from "react-responsive";
 import { Post, SnippetPosition } from "@/firebase/post-v2";
-import { Post as PostV1 } from "@/firebase/post";
 import { chunk, compact, difference, sortBy } from "lodash";
 import { useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
@@ -14,7 +12,6 @@ import { BlueSignalBlog } from "../Blogs/BlueCircleBlog";
 import useScreenSize from "@/hooks/useScreenSize";
 import DashboardMobile from "./DashboardMobile";
 import { useUser } from "@/context/UserContext";
-import UpcomingEventSection from "../Events/UpcomingEventSection";
 
 function DashboardDesktop({
   posts: _serverPosts,
@@ -34,7 +31,7 @@ function DashboardDesktop({
     fetchNextPage,
     isFetchingNextPage,
     error,
-  } = useQuerySignals({ limit: 11 });
+  } = useQuerySignals({ limit: 11, status: "published" });
   const { data: flagshipSignal, error: _Error } = useGetFlagshipSignal();
 
   console.log("error - ", _Error);
@@ -61,21 +58,6 @@ function DashboardDesktop({
 
   const { posts } = useQueryPosts({
     initialData: _serverPosts.map((data: any) => {
-      if (!data.sections && data.content) {
-        return new PostV1(
-          data.title,
-          data.content,
-          data.author,
-          data.topic,
-          data.id,
-          data.timestamp,
-          data.position,
-          data.design,
-          data.isFlagship,
-          data.displayTitle,
-          data.displayContent
-        );
-      }
       return new Post(
         data.title,
         data.subTitle,
@@ -200,6 +182,9 @@ function DashboardDesktop({
             imageProps={{
               width: 650,
               height: 500,
+              // @ts-ignore
+              priority: true,
+              layout: "responsive",
             }}
           />
         )}

@@ -1,6 +1,4 @@
-import { API_QUERY } from "@/config/api-query";
 import { db } from "@/lib/firebase";
-import { QueryClient } from "@tanstack/react-query";
 import {
   CollectionReference,
   DocumentData,
@@ -28,7 +26,6 @@ import {
 import { compact, keysIn } from "lodash";
 import { toDashCase } from "./signal";
 import { Section } from "@/components/AdminEditor/Sections/Section";
-import { Post as PostV1 } from "@/firebase/post";
 import readingTime from "reading-time";
 import { PostFilters } from "@/components/Me/Posts/PostsEntry";
 import { Descendant } from "slate";
@@ -171,8 +168,6 @@ export class Post {
   readonly subTitle: string;
   readonly topic: string;
   readonly author: Author;
-  readonly html: Document;
-  readonly quotes: string[];
   private _status: PostStatus = "draft";
   private _scheduledTime: string | undefined = undefined;
   readonly timestamp: string | undefined = undefined;
@@ -266,11 +261,6 @@ export class Post {
     this._sections = Section.createFactory(sections);
     this.author = author;
     this.topic = topic;
-    this.html = this.parseContent();
-    this.quotes = this.extractElements<string>(
-      "blockquote",
-      textContentReducer
-    );
     this._subTextVariants = subTextVariants;
     this.nodes = nodes;
     this.preparePostSnippetData();
@@ -283,24 +273,6 @@ export class Post {
     this._scheduledTime = scheduledTime;
     this._thumbnailVariants = thumbnail?.variants ?? null;
     this._thumbnail = thumbnail;
-  }
-
-  private parseContent(): Document {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(
-      Section.mergedContent(this.sections),
-      "text/html"
-    );
-    return doc;
-  }
-
-  private extractElements<T extends any>(
-    tag: string,
-    reducer = defaultExtractReducer
-  ): T[] {
-    return compact(
-      Array.from(this.html.getElementsByTagName(tag)).reduce(reducer, [])
-    );
   }
 
   getThumbnail(aspectRatio: AspectRatioType, noFallback = false) {
@@ -338,91 +310,6 @@ export class Post {
 
       this._snippetData = snippetData;
 
-      return;
-    }
-
-    const textElements = {
-      h1: this.extractElements<string>("h1", textContentReducer),
-      h2: this.extractElements<string>("h2", textContentReducer),
-      h3: this.extractElements<string>("h3", textContentReducer),
-      h4: this.extractElements<string>("h4", textContentReducer),
-      h5: this.extractElements<string>("h5", textContentReducer),
-      h6: this.extractElements<string>("h6", textContentReducer),
-      p: this.extractElements<string>("p", textContentReducer),
-    };
-
-    const images = this.extractElements<string>("img", srcReducer);
-
-    const iframes = this.extractElements<string>("iframe", srcReducer);
-
-    const quotes = this.extractElements<string>(
-      "blockquote",
-      textContentReducer
-    );
-
-    const priorities: (keyof typeof textElements)[] = [
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "p",
-    ];
-
-    const titleTag = priorities.find(
-      (priority) => textElements[priority].length > 0
-    );
-
-    if (!titleTag) return null;
-
-    const contentTag = priorities.find(
-      (priority) => textElements[priority].length > 0 && priority !== titleTag
-    );
-
-    const snippetData = {
-      title: this.displayTitle,
-      content: this.displayContent
-        ? this.displayContent
-        : contentTag
-        ? textElements[contentTag]?.[0]
-        : textElements[titleTag]?.[1] ?? "",
-      image: images[0],
-      quote: quotes[0],
-      iframe: iframes[0],
-      author: this.author,
-      topic: this.topic,
-    };
-
-    this._snippetData = snippetData;
-
-    if (
-      (snippetData.content || snippetData.title) &&
-      (snippetData.image || snippetData.iframe) &&
-      snippetData.author &&
-      snippetData.topic
-    ) {
-      this._position = PostPosition.Full_C;
-      return;
-    }
-
-    if (
-      (snippetData.content || snippetData.title) &&
-      snippetData.quote &&
-      snippetData.author &&
-      snippetData.topic
-    ) {
-      this._position = PostPosition.Full_Q;
-      return;
-    }
-
-    if (snippetData.title && snippetData.content) {
-      this._position = PostPosition.TEXT_CONTENT;
-      return;
-    }
-
-    if (snippetData.title) {
-      this._position = PostPosition.HEADLINE;
       return;
     }
   }
@@ -720,7 +607,7 @@ export class Post {
   static async getByCategory(
     category: string,
     _limit: QueryParams["_limit"] = 4
-  ): Promise<(Post | PostV1)[]> {
+  ): Promise<Post[]> {
     const postsRef = collection(db, "posts").withConverter(postConverter);
     const _query = query(
       postsRef,
@@ -737,7 +624,7 @@ export class Post {
 
   static async getRecentPosts(
     _limit: QueryParams["_limit"] = 4
-  ): Promise<(Post | PostV1)[]> {
+  ): Promise<Post[]> {
     const postsRef = collection(db, "posts").withConverter(postConverter);
     const _query = query(
       postsRef,
@@ -867,7 +754,7 @@ export class Post {
    * @param userId
    * @returns
    */
-  static async getSavedPosts(userId: string): Promise<(Post | PostV1)[]> {
+  static async getSavedPosts(userId: string): Promise<Post[]> {
     const userRef = collection(db, "users", userId, "bookmarks");
     const docs = await getDocs(userRef);
     const bookMarks = docs.docs.map((doc) => doc.id);
@@ -1039,22 +926,6 @@ export const postConverter = {
   fromFirestore: (snapshot: any) => {
     if (!snapshot.exists) return undefined;
     const data = snapshot.data();
-
-    if (!data.sections && data.content) {
-      return new PostV1(
-        data.title,
-        data.content,
-        data.author,
-        data.topic,
-        snapshot.id,
-        data.timestamp.toDate().toISOString(),
-        data.position,
-        data.design,
-        data.isFlagship,
-        data.displayTitle,
-        data.displayContent
-      );
-    }
 
     return new Post(
       data.title,

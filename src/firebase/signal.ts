@@ -273,10 +273,12 @@ export class Signal {
     const flagship = signals[0];
 
     if (!flagship) {
-      return (await Signal.getAll({ _limit: 1, _flatten: true })).data[0];
+      return (
+        await Signal.getAll({ _limit: 1, _flatten: true, _status: "published" })
+      ).data[0];
     }
 
-    return signals[0];
+    return flagship;
   }
 
   static async updatePublishStatusInFirestore(

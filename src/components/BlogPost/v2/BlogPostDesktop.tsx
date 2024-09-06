@@ -85,6 +85,7 @@ import { useJoinModal } from "@/context/JoinModalContext";
 import { QueryClient } from "@tanstack/react-query";
 import { API_QUERY } from "@/config/api-query";
 import { noImageUrl } from "@/components/shared/AppImage";
+import { pstDayjs } from "@/lib/dayjsConfig";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -476,27 +477,18 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
       >
         <div className="pb-5 md:pb-0 md:pr-5">
           <div className="flex items-end justify-between">
-            <div className="mr-2">
+            <Link href={"/author/" + post?.author?.uid} className="mr-2">
               <img
                 className="w-[38px] h-[38px]"
                 src={post?.author?.photoURL ? post.author.photoURL : avatar.src}
                 alt="avatar"
               />
-            </div>
-            <div className="flex-1">
+            </Link>
+            <Link href={"/author/" + post?.author?.uid} className="flex-1">
               <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
                 {post?.author?.name}
               </h3>
-              {/* <p
-                  className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
-                  style={{
-                    fontWeight: "300",
-                    fontVariationSettings: '"wght" 400,"opsz" 10',
-                  }}
-                >
-                  POLITICS
-                </p> */}
-            </div>
+            </Link>
             <div className="flex items-center gap-3">
               {post?.sections && (
                 <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
@@ -544,10 +536,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
             <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
               <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
                 Updated{" "}
-                {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                  " " +
-                  " GMT " +
-                  dayjs(post?.timestamp).format("Z")}
+                {pstDayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
+                  " | PST "}
               </p>
               <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
                 {post?.topic}
@@ -590,17 +580,6 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           <div>
             {!user && (
               <>
-                <div className="py-1">
-                  <p className="font-featureHeadline style_intro leading-[120%]">
-                    <b className="style_bold">
-                      Sign up for Minerva Principals:
-                    </b>
-                    {" What the White House is reading. "}
-                    <Link href="#" className="underline whitespace-nowrap">
-                      Read it now.
-                    </Link>
-                  </p>
-                </div>
                 <SignUpForNewsLettersButton
                   containerClassName="flex mt-1"
                   checkedLetters={newsLettersList}

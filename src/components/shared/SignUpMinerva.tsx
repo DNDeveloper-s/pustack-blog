@@ -12,15 +12,13 @@ export function isValidEmail(email: string) {
 
 interface SignUpMinervaButtonProps {
   containerClassName?: string;
-  [key: string]: any;
-  checkedLetters?: any;
+  eventId: string;
 }
-export default function SignUpForNewsLettersButton({
+export default function SignUpMinervaButton({
   containerClassName,
 }: SignUpMinervaButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { user } = useUser();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   //   const {
   //     mutate: postRSVPNow,
@@ -36,10 +34,7 @@ export default function SignUpForNewsLettersButton({
     mutate: postSignUpNewsLetters,
     isSuccess,
     reset,
-    error,
   } = useSignupNewsLetters();
-
-  const _error = errorMessage || error?.message;
 
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false);
@@ -63,33 +58,16 @@ export default function SignUpForNewsLettersButton({
         setSessionEmail(sessionStorage);
         setIsSignedUp(true);
       } else {
-      inputRef.current.value = "";
+        inputRef.current.value = "";
         setSessionEmail(null);
         setIsSignedUp(false);
       }
     }
   }, [user?.email]);
 
-  useEffect(() => {
-    if (isSuccess) {
-      setIsSignedUp(true);
-    }
-  }, [isSuccess]);
-
   const handleSignUpButton = () => {
     if (!inputRef.current || isPending) return;
     const email = inputRef.current.value;
-
-    const isValid = isValidEmail(email);
-
-    if (!isValid) {
-      setErrorMessage("Please enter a valid email address.");
-
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 3000);
-      return;
-    }
 
     setSessionEmail(email);
 
@@ -124,13 +102,9 @@ export default function SignUpForNewsLettersButton({
 
   return (
     <>
-      <div className="py-1">
-        <p className="font-featureHeadline style_intro leading-[120%]">
-          <b className="style_bold">Sign up for Minerva Principals:</b>
-          {" What the Silicon Valley is reading. "}
-          <span className="underline whitespace-nowrap">Read More</span>
-        </p>
-      </div>
+      <p className="text-sm font-featureHeadline style_intro leading-[120%]">
+        <b className="font-featureBold">Sign up for our Newsletters</b>
+      </p>
       <div className={"relative " + containerClassName}>
         <input
           className="font-featureHeadline email_input"
@@ -158,12 +132,6 @@ export default function SignUpForNewsLettersButton({
           {isPending ? <Spinner size="sm" color="warning" /> : "Sign Up"}
         </button>
       </div>
-      {_error && <p className="mt-1 text-xs text-danger-500">{_error}</p>}
-      {isSuccess && (
-        <p className="mt-1 text-xs text-green-500">
-          You have successfully suscribed to the newsletter.
-        </p>
-      )}
     </>
   );
 }

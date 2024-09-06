@@ -102,7 +102,7 @@ export function EventCardDesktop({ event }: EventCardProps) {
   );
 }
 
-const NoEventsIcon = (props: any) => (
+export const NoEventsIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"

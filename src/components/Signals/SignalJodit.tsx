@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { Post } from "@/firebase/post";
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import { MathJax } from "better-react-mathjax";
@@ -19,7 +18,6 @@ import {
   useDisclosure,
 } from "@nextui-org/modal";
 import { useUser } from "@/context/UserContext";
-import JoditEditor from "../AdminEditor/JoditEditor";
 import { useCreateSignal } from "@/api/signal";
 import { Signal } from "@/firebase/signal";
 import SlateEditor, { SlateEditorRef } from "../SlateEditor/SlateEditor";

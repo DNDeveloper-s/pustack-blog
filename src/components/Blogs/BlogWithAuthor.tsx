@@ -154,60 +154,7 @@ export default function BlogWithAuthor({
   const thumbnailBlurData = post.getThumbnailData(aspectRatio)?.blurData;
 
   const content = (
-    <div className="py-3 group h-full flex flex-col">
-      <div className="flex">
-        <div className="mr-1 lg:mr-2 flex-shrink-0">
-          <img
-            className="w-[30px] h-[30px] lg:w-[38px] lg:h-[38px]"
-            src={post.author.photoURL ?? avatar.src}
-            alt="avatar"
-          />
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
-            {post.author.name}
-          </h3>
-          <p
-            className={
-              "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
-            }
-            style={{
-              fontWeight: "300",
-              fontVariationSettings: '"wght" 400,"opsz" 10',
-            }}
-          >
-            {isSmallScreen ? formatArticleTopic(post.topic) : post.topic}
-          </p>
-        </div>
-        {showUnBookmarkButton && (
-          <div className="flex-shrink-0 relative">
-            <Tooltip title="Delete Bookmark">
-              <FaStar
-                className={
-                  "text-[#d9c503] cursor-pointer " +
-                  (isPending ? "opacity-0" : "opacity-100")
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleBookMark?.(false);
-                }}
-              />
-            </Tooltip>
-            {isPending && (
-              <Spinner
-                size="sm"
-                classNames={{
-                  circle1: "!border-b-appBlack",
-                  circle2: "!border-b-appBlack",
-                }}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              />
-            )}
-          </div>
-        )}
-      </div>
-      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
+    <>
       <div className="flex-1 flex flex-col">
         {post.snippetData?.title && (
           <h2
@@ -240,25 +187,7 @@ export default function BlogWithAuthor({
               }}
             />
           </div>
-          // <TrimmedPara
-          //   className={
-          //     "leading-[120%] opacity-80 group-hover:text-appBlue " +
-          //     (classNames?.content ?? "") +
-          //     (size === "sm"
-          //       ? "text-[13px] lg:text-[15px]"
-          //       : "text-[15px] lg:text-[18px]")
-          //   }
-          //   style={{
-          //     paddingTop: size === "sm" ? "8px" : "10px",
-          //   }}
-          //   wordLimit={post.snippetData?.subTextVariants ? 350 : 70}
-          // >
-          //   {textContent}
-          // </TrimmedPara>
         )}
-        {/* {post.snippetData?.image && (
-          <BlogImage className="mt-2" src={post.snippetData?.image} />
-        )} */}
         {!post.snippetData?.image && post.snippetData?.iframe && (
           <iframe
             width="100%"
@@ -268,19 +197,6 @@ export default function BlogWithAuthor({
         )}
       </div>
       {!noImage && thumbnailImage && (
-        // <Zoom>
-        //   <img
-        //     onClick={(e: any) => {
-        //       e.stopPropagation();
-        //       e.preventDefault();
-        //       // openPreview(src);
-        //       // console.log("src - ", src);
-        //     }}
-        //     className="max-w-full max-h-full w-auto h-auto object-contain"
-        //     src={post.snippetData?.image}
-        //     alt="Image Preview"
-        //   />
-        // </Zoom>
         <BlogImage
           imageProps={{
             className: "!w-full !object-cover !h-full",
@@ -294,27 +210,84 @@ export default function BlogWithAuthor({
           src={thumbnailImage}
         />
       )}
-      {/* <p
-            className="leading-[120%] text-[12px] mt-1.5 text-tertiary"
-            style={{
-              fontFamily: "Courier,monospace",
-            }}
-          >
-            REUTERS/Leah Millis
-          </p> */}
-    </div>
+    </>
   );
 
-  return noLink ? (
+  const finalContent = noLink ? (
     content
   ) : (
     <Link
       prefetch={true}
-      className={linkClassName}
+      className={"flex-1 group  " + (linkClassName ?? "")}
       href={href ?? `/posts/${post.id}`}
     >
       {content}
     </Link>
+  );
+
+  return (
+    <div className="py-3 h-full flex flex-col">
+      <div className="flex">
+        <div className="mr-1 lg:mr-2 flex-shrink-0">
+          <Link href={"/author/" + post.author.uid}>
+            <img
+              className="w-[30px] h-[30px] lg:w-[38px] lg:h-[38px]"
+              src={post.author.photoURL ?? avatar.src}
+              alt="avatar"
+            />
+          </Link>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <Link href={"/author/" + post.author.uid}>
+            <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              {post.author.name}
+            </h3>
+          </Link>
+          <Link href={"/" + post.topic}>
+            <p
+              className={
+                "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
+              }
+              style={{
+                fontWeight: "300",
+                fontVariationSettings: '"wght" 400,"opsz" 10',
+              }}
+            >
+              {isSmallScreen ? formatArticleTopic(post.topic) : post.topic}
+            </p>
+          </Link>
+        </div>
+        {showUnBookmarkButton && (
+          <div className="flex-shrink-0 relative">
+            <Tooltip title="Delete Bookmark">
+              <FaStar
+                className={
+                  "text-[#d9c503] cursor-pointer " +
+                  (isPending ? "opacity-0" : "opacity-100")
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleBookMark?.(false);
+                }}
+              />
+            </Tooltip>
+            {isPending && (
+              <Spinner
+                size="sm"
+                classNames={{
+                  circle1: "!border-b-appBlack",
+                  circle2: "!border-b-appBlack",
+                }}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              />
+            )}
+          </div>
+        )}
+      </div>
+      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
+      {finalContent}
+    </div>
   );
 
   // return noLink ? content :  (

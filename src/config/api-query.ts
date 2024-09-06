@@ -9,6 +9,7 @@ export const API_QUERY = {
     topics?: string[]
   ) => ["query-posts", userId, status?.join(","), sort, dateRange, topics],
   GET_CLOSEST_EVENT: ["get-closest-event"],
+  AUTHOR: (authorId?: string | null) => ["author", authorId],
   QUERY_SAVED_POSTS: (userId?: string | null | undefined) => [
     "query-saved-posts",
     userId,

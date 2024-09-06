@@ -13,7 +13,6 @@ import { notableImage } from "@/assets";
 import { FaCaretDown } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import { MathJaxContext } from "better-react-mathjax";
-import JoditEditor from "../JoditEditor";
 import { Popover } from "antd";
 import { debounce, divide } from "lodash";
 import { useFetchNounProjectIcon } from "@/api/misc";
@@ -418,22 +417,7 @@ function SectionEditor(
             className="text-2xl cursor-pointer text-[#ddc900] absolute top-[-25px] right-[-25px]"
           />
         </div>
-        <div ref={editorContainerRef}>
-          <MathJaxContext>
-            <JoditEditor
-              //   content={""}
-              content={section.content}
-              setContent={(_content) => {
-                // setContent(_content);
-                currentContent.current = _content;
-                section.updateContent(_content);
-              }}
-              updateLiveContent={(content) => {
-                // updateLocalStorage("content", content);
-              }}
-            />
-          </MathJaxContext>
-        </div>
+        <div ref={editorContainerRef}></div>
       </div>
     )
   );

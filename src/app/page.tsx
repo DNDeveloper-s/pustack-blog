@@ -17,10 +17,10 @@ import { compact } from "lodash";
 import { Metadata, ResolvingMetadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import dynamic from "next/dynamic";
-// const Dashboard from "@/components/Dashboard/Dashboard";
-const Dashboard = dynamic(() => import("@/components/Dashboard/Dashboard"), {
-  ssr: false,
-});
+import Dashboard from "@/components/Dashboard/Dashboard";
+// const Dashboard = dynamic(() => import("@/components/Dashboard/Dashboard"), {
+//   ssr: false,
+// });
 
 function flattenQueryDataWithId<T>(data: QuerySnapshot<T>) {
   return compact(

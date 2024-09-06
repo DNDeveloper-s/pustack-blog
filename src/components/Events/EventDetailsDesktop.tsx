@@ -36,6 +36,7 @@ import {
   ShimmerTableRow,
   // @ts-ignore
 } from "react-shimmer-effects";
+import { pstDayjs } from "@/lib/dayjsConfig";
 
 const DateTimeIcon = (props: any) => (
   <svg
@@ -557,10 +558,9 @@ export default function EventDetailsDesktop({
             <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
               <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
                 Updated{" "}
-                {dayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
+                {pstDayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
                   " " +
-                  " GMT " +
-                  dayjs(event?.timestamp).format("Z")}
+                  " PST "}
               </p>
               {/* <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
                     {post?.topic}
@@ -791,7 +791,7 @@ export default function EventDetailsDesktop({
               <div className="flex items-center divide-x divide-dashed divide-[#1f1d1a19]">
                 <div className="flex-1">
                   <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                    Starts On:
+                    Date:
                   </p>
                   <p>
                     <b>
@@ -799,20 +799,25 @@ export default function EventDetailsDesktop({
                     </b>
                   </p>
                   <p>
-                    <b>{dayjs(event.startTime.toDate()).format("hh:mm A")}</b>
-                  </p>
-                </div>
-                <div className="flex-1 pl-4">
-                  <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                    Ends On:
-                  </p>
-                  <p>
                     <b>
                       {dayjs(event.endTime.toDate()).format("MMMM DD, YYYY")}
                     </b>
                   </p>
+                </div>
+                <div className="flex-1 pl-4">
+                  <p className="text-sm mb-1 text-appBlack text-opacity-60">
+                    Time:
+                  </p>
                   <p>
-                    <b>{dayjs(event.endTime.toDate()).format("hh:mm A")}</b>
+                    <b>
+                      {pstDayjs(event.startTime.toDate()).format("hh:mm A")} |
+                      PST
+                    </b>
+                  </p>
+                  <p>
+                    <b>
+                      {pstDayjs(event.endTime.toDate()).format("hh:mm A")} | PST
+                    </b>
                   </p>
                 </div>
               </div>

@@ -4,12 +4,11 @@ import Zoom, { Controlled } from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import AppImage from "./AppImage";
 import { useState } from "react";
+import e from "cors";
 
 export function ImageModalPreview() {
-  const { state, closePreview } = useBlogImage();
-
-  console.log("previewUrl - ", state.previewUrl);
-
+  // const { state, closePreview } = useBlogImage();
+  // console.log("previewUrl - ", state.previewUrl);
   // return (
   //   <Modal
   //     isOpen={!!state.previewUrl}
@@ -57,6 +56,7 @@ export default function BlogImage({
   ...props
 }: BlogImageProps) {
   const [isZoomed, setIsZoomed] = useState(false);
+  const { openWithUrl } = useBlogImage();
   const imageContent = (
     <AppImage
       src={src}
@@ -68,6 +68,9 @@ export default function BlogImage({
         "max-w-full max-h-full w-full h-full object-cover " +
         (imageProps.className ?? "")
       }
+      onClick={(e: any) => {
+        openWithUrl(src);
+      }}
     />
   );
 
@@ -83,7 +86,7 @@ export default function BlogImage({
       }}
       {...props}
     >
-      {noZoom ? (
+      {/* {noZoom ? (
         imageContent
       ) : (
         <Controlled
@@ -96,7 +99,8 @@ export default function BlogImage({
         >
           {imageContent}
         </Controlled>
-      )}
+      )} */}
+      {imageContent}
     </figure>
   );
   // return (

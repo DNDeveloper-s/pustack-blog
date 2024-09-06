@@ -21,6 +21,7 @@ import JoinModal from "@/components/shared/JoinModal";
 import { SlateContextProvider } from "@/context/SlateContext";
 import { NavbarContextProvider } from "@/context/NavbarContext";
 import useScreenSize from "@/hooks/useScreenSize";
+import ImageScale from "@/components/shared/ImageScale";
 // import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 // import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
@@ -154,6 +155,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                     <JoinModalContextProvider>
                       {children}
                       <JoinModal />
+                      <ImageScale />
                     </JoinModalContextProvider>
                   </UserProvider>
                 </>
