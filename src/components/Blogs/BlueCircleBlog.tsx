@@ -94,7 +94,7 @@ export function BlueSignalBlog({
           className="w-[16px] h-[13px] float-left mt-[5px] mr-[5px]"
         />
         <h2
-          className="font-featureHeadline group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+          className="font-featureHeadline group-hover:text-appBlue bg-animation group-hover:bg-hover-animation text-appBlack text-opacity-75 "
           style={{
             fontWeight: "395",
             fontVariationSettings: '"wght" 495,"opsz" 10',

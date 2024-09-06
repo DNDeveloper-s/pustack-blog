@@ -12,8 +12,20 @@ import { Spinner } from "@nextui-org/spinner";
 import { useParams } from "next/navigation";
 import { trimToSentence } from "@/lib/transformers/trimToSentence";
 import useScreenSize from "@/hooks/useScreenSize";
+import { AspectRatioType } from "../AdminEditor/ImageCropper";
+import BlogImage from "../shared/BlogImage";
+import TrimmableText from "../shared/TrimmableText";
+import DesignedBlog from "../Blogs/DesignedBlog";
 
-function MinervaBlogPost({ post }: { post: Post }) {
+function MinervaBlogPost({
+  post,
+  noImage,
+  aspectRatio = "16 / 9",
+}: {
+  post: Post;
+  noImage?: boolean;
+  aspectRatio?: AspectRatioType;
+}) {
   const wrapper = (children: ReactNode) => (
     <div className="pb-[10px] group">{children}</div>
   );
@@ -22,6 +34,13 @@ function MinervaBlogPost({ post }: { post: Post }) {
     () => trimToSentence(post?.snippetData?.title ?? "", 20),
     [post?.snippetData?.title]
   );
+
+  const textContent =
+    post.snippetData?.subTextVariants?.short ?? post.snippetData?.content ?? "";
+
+  const thumbnailImage = post.getThumbnail(aspectRatio);
+
+  const thumbnailBlurData = post.getThumbnailData(aspectRatio)?.blurData;
 
   const content = (
     <>
@@ -62,21 +81,33 @@ function MinervaBlogPost({ post }: { post: Post }) {
             {trimmedTitle}
           </h2>
         )}
-        {post.snippetData?.content && (
-          <TrimmedPara
-            className="leading-[120%] group-hover:text-appBlue"
-            style={{
-              fontSize: "16px",
-              paddingTop: "10px",
-            }}
-            wordLimit={40}
-          >
-            {post.snippetData?.content}
-          </TrimmedPara>
+        {textContent && (
+          <div className="w-full flex-1">
+            <TrimmableText
+              text={textContent}
+              paraClassName={
+                "leading-[120%] group-hover:text-appBlue opacity-70  "
+              }
+              paraStyle={{
+                fontSize: "16px",
+                paddingTop: "8px",
+              }}
+            />
+          </div>
         )}
-        {/* {post.snippetData?.image && (
-          <BlogImage className="mt-2" src={post.snippetData?.image} />
-        )} */}
+        {!noImage && thumbnailImage && (
+          <BlogImage
+            imageProps={{
+              className: "!w-full !object-cover !h-full",
+              // @ts-ignore
+              blurDataURL: thumbnailBlurData,
+              placeholder: "blur",
+            }}
+            noZoom
+            className={"mt-2 "}
+            src={thumbnailImage}
+          />
+        )}
       </div>
     </>
   );
@@ -101,7 +132,7 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
       ?.filter((post) => post.id !== params?.postId?.[0])
       .slice(0, 4);
     return chunk(_posts ?? [], 2);
-  }, [posts, params?.postId?.[0]]);
+  }, [params?.postId, posts]);
 
   const hasNoPosts = !isLoading && !posts?.length;
 
@@ -143,9 +174,11 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
                 {postChunkOf2.map((post, j) => (
                   <div
                     key={post.id}
-                    className={j % 2 === 0 ? "pr-3 pb-[10px]" : "pl-3"}
+                    className={
+                      "flex flex-col " + (j % 2 === 0 ? "pr-3" : "pl-3")
+                    }
                   >
-                    <MinervaBlogPost post={post as any} />
+                    <DesignedBlog size="sm" post={post as any} />
                   </div>
                 ))}
               </div>

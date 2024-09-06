@@ -18,6 +18,7 @@ import { compact } from "lodash";
 import { IoChevronBack } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { EventCard } from "../Events/EventSidebar";
+import { pstDayjs } from "@/lib/dayjsConfig";
 
 interface EventCardProps {
   event?: Event;
@@ -128,7 +129,7 @@ export const NoEventsIcon = (props: any) => (
 
 type GroupedEvents = Record<string, Event[]>;
 
-function groupEventsByDate(events: Event[]): GroupedEvents {
+export function groupEventsByDate(events: Event[]): GroupedEvents {
   const groupedEvents: GroupedEvents = {};
 
   events.forEach((event) => {
@@ -147,7 +148,7 @@ function groupEventsByDate(events: Event[]): GroupedEvents {
   return groupedEvents;
 }
 
-function getSortedKeys(groupedEvents: GroupedEvents) {
+export function getSortedKeys(groupedEvents: GroupedEvents) {
   // Extract the keys (dates) from the groupedEvents object and sort them
   const sortedKeys = Object.keys(groupedEvents).sort(
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
@@ -261,10 +262,10 @@ export default function RSVPedPage() {
                 <div className="flex items-start">
                   <div className="flex font-helvetica flex-col items-center text-sm p-2 justify-center bg-appBlack rounded-lg">
                     <p className="text-white text-opacity-70">
-                      {dayjs(eventGroup.date).format("MMM")}
+                      {pstDayjs(eventGroup.date).format("MMM")}
                     </p>
                     <p className="text-white text-opacity-100">
-                      {dayjs(eventGroup.date).format("D")}
+                      {pstDayjs(eventGroup.date).format("D")}
                     </p>
                   </div>
                 </div>

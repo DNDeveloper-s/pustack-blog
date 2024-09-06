@@ -179,6 +179,9 @@ function DashboardDesktop({
             linkClassName="block"
             post={postsByPosition.titlePost as Post}
             variant="short"
+            classNames={{
+              wrapper: "!h-auto",
+            }}
             imageProps={{
               width: 650,
               height: 500,

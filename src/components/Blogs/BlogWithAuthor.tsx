@@ -43,6 +43,7 @@ export interface BlogBaseProps {
     h2?: string;
     h3?: string;
     img?: string;
+    wrapper?: string;
   };
   aspectRatio?: AspectRatioType;
 }
@@ -218,7 +219,7 @@ export default function BlogWithAuthor({
   ) : (
     <Link
       prefetch={true}
-      className={"flex-1 group  " + (linkClassName ?? "")}
+      className={"flex-1 flex flex-col group  " + (linkClassName ?? "")}
       href={href ?? `/posts/${post.id}`}
     >
       {content}
@@ -226,7 +227,7 @@ export default function BlogWithAuthor({
   );
 
   return (
-    <div className="py-3 h-full flex flex-col">
+    <div className={"py-3 h-full flex flex-col " + (classNames?.wrapper ?? "")}>
       <div className="flex">
         <div className="mr-1 lg:mr-2 flex-shrink-0">
           <Link href={"/author/" + post.author.uid}>

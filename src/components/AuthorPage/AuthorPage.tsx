@@ -2,7 +2,7 @@
 
 import { ConfigProvider, Segmented } from "antd";
 import AppImage from "../shared/AppImage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGetAuthorById } from "@/api/author";
 import { useQueryPosts } from "@/api/post";
 import useInView from "@/hooks/useInView";
@@ -17,7 +17,15 @@ import { Signal } from "@/firebase/signal";
 import { SignalComponent } from "../Signals/Signals";
 import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
 import { useQueryEvents } from "@/api/event";
-import { EventCardDesktop, NoEventsIcon } from "../RSVP/RSVPedPage";
+import {
+  EventCardDesktop,
+  getSortedKeys,
+  groupEventsByDate,
+  NoEventsIcon,
+} from "../RSVP/RSVPedPage";
+import { compact } from "lodash";
+import { pstDayjs } from "@/lib/dayjsConfig";
+import { EventCard } from "../Events/EventSidebar";
 
 const tabs = ["Posts", "Signals", "Events"];
 
@@ -46,7 +54,7 @@ function PostsEntry({ authorId }: { authorId?: string }) {
 
   return (
     <div>
-      <div className="w-full grid grid-cols-4 gap-x-4 gap-y-6">
+      <div className="w-full grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:grid-cols-4 gap-x-2 md:gap-x-4 gap-y-3 md:gap-y-6">
         {hasPosts &&
           posts?.map((post) => (
             <BlogWithAuthor key={post.id} post={post} size="sm" />
@@ -187,6 +195,16 @@ function EventsEntry({ authorId }: { authorId?: string }) {
     enabled: !!authorId,
     userId: authorId,
   });
+  const { isSmallScreen } = useScreenSize();
+
+  const eventsArr = useMemo(() => {
+    const groupedEvents = groupEventsByDate(compact(events) || []);
+    return getSortedKeys(groupedEvents).map((date) => ({
+      date,
+      events: groupedEvents[date],
+    }));
+  }, [events]);
+
   return (
     <div className="w-full flex-1 py-10">
       {isLoading && (
@@ -195,10 +213,47 @@ function EventsEntry({ authorId }: { authorId?: string }) {
         </div>
       )}
       {!isLoading && events && events.length > 0 && (
-        <div className="grid grid-cols-3 gap-4">
-          {events?.map((event) => (
-            <EventCardDesktop key={event.id} event={event} />
-          ))}
+        <div
+          className={
+            !isSmallScreen ? "grid grid-cols-3 gap-4" : "grid grid-cols-1"
+          }
+        >
+          {events?.map((event) =>
+            !isSmallScreen ? (
+              <EventCardDesktop key={event.id} event={event} />
+            ) : (
+              <div className="flex flex-col gap-4 mt-4" key={event.id}>
+                {eventsArr.map((eventGroup) => (
+                  <div
+                    className="grid grid-cols-[40px_1fr] gap-3"
+                    key={eventGroup.date}
+                  >
+                    <div className="flex items-start">
+                      <div className="flex font-helvetica flex-col items-center text-sm p-2 justify-center bg-appBlack rounded-lg">
+                        <p className="text-white text-opacity-70">
+                          {pstDayjs(eventGroup.date).format("MMM")}
+                        </p>
+                        <p className="text-white text-opacity-100">
+                          {pstDayjs(eventGroup.date).format("D")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {eventGroup.events.map((event) => (
+                        <EventCard
+                          key={event.id}
+                          event={event}
+                          includeDate
+                          stayActive
+                          noShadow
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
         </div>
       )}
       {!isLoading && (!events || events.length === 0) && (
