@@ -69,7 +69,7 @@ export default function BlogImage({
         (imageProps.className ?? "")
       }
       onClick={(e: any) => {
-        openWithUrl(src);
+        !noZoom && openWithUrl(src);
       }}
     />
   );
