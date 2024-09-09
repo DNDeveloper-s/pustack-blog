@@ -255,11 +255,20 @@ export default function EventItem({
             <h2 className="text-[18px] leading-[24px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden">
               {event.title}
             </h2>
-            <p>
-              <span className="text-[13px] text-[#676662] font-helvetica leading-[14px]">
-                Venue:{" "}
+            <div className="flex items-center justify-center gap-2 mt-1">
+              <div className="flex-shrink-0 w-4 h-4 rounded-full">
+                <AppImage
+                  src={event.organizer.photoURL}
+                  alt="Organizer Image"
+                  className="rounded-full w-full h-full object-cover"
+                />
+              </div>
+              <span className="leading-[120%] font-helvetica text-[14px] whitespace-nowrap flex-1 overflow-hidden text-ellipsis">
+                {event.organizer.name}
               </span>
-              <span className="ml-1 text-[13px] text-[#53524c] font-helvetica leading-[14px] whitespace-nowrap">
+            </div>
+            <p className="mt-1">
+              <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
                 {event.venue.type === "online"
                   ? `Online via ${
                       getMeetLinkDetails(event.venue.meetingLink).label
@@ -281,35 +290,31 @@ export default function EventItem({
                   : "Past"}
               </span> */}
             </p>
-            <div className="flex gap-1 items-center">
-              <div
-                className="w-2 h-2 rounded-full flex-shrink-0"
+            <div>
+              <span
+                className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
                 style={{
                   backgroundColor:
                     dayjs() <= dayjs(event.startTime?.toDate())
                       ? "#32CD32"
                       : "#A9A9A9",
+                  fontVariationSettings: `'wght' 700`,
                 }}
-              ></div>
+              >
+                {dayjs() <= dayjs(event.startTime?.toDate())
+                  ? "Upcoming"
+                  : "Past"}
+              </span>
+            </div>
+            <div className="flex gap-1 items-center mt-1">
               <p
                 style={{ color: event.background ?? getRandomDarkHexColor() }}
                 className="text-[11px] text-opacity-60"
               >
+                {dayjs(event.startTime.toDate()).format("MMM DD, YYYY")} |{" "}
                 {dayjs(event.startTime.toDate()).format("h:mm A")} -{" "}
                 {dayjs(event.endTime.toDate()).format("h:mm A")}
               </p>
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-1">
-              <div className="flex-shrink-0 w-4 h-4 rounded-full">
-                <AppImage
-                  src={event.organizer.photoURL}
-                  alt="Organizer Image"
-                  className="rounded-full w-full h-full object-cover"
-                />
-              </div>
-              <span className="leading-[120%] font-helvetica text-[14px] whitespace-nowrap flex-1 overflow-hidden text-ellipsis">
-                {event.organizer.name}
-              </span>
             </div>
           </div>
         </div>

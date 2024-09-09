@@ -89,6 +89,8 @@ export default function EventDetailDesktopPage({
             )}
             {eventFetchStatus === "loading" ? (
               <EventDetailDesktopShimmer />
+            ) : _event ? (
+              <EventDetailsDesktop _event={_event} />
             ) : eventFetchStatus === "error" ? (
               <div className="pt-10">
                 <h2 className="font-featureBold text-[24px] text-center text-[#666666]">
@@ -119,8 +121,6 @@ export default function EventDetailDesktopPage({
                 </div>
                 <MoreFromMinerva />
               </div>
-            ) : _event ? (
-              <EventDetailsDesktop _event={_event} />
             ) : (
               <div className="pt-10">
                 <h2 className="font-featureBold text-[24px] text-center text-[#666666]">

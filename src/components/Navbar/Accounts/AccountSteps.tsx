@@ -568,13 +568,14 @@ function AccountStepTwoRef(
   const emailInputRef = useRef<any>(null);
   const phoneInputRef = useRef<any>(null);
   const companyInputRef = useRef<any>(null);
+  const aboutInputRef = useRef<any>(null);
   const { isMobileScreen } = useScreenSize();
 
   const [isValidPhone, setIsValidPhone] = useState(false);
   const [_isValidEmail, setIsValidEmail] = useState(false);
 
   const [activeField, setActiveField] = useState<
-    "name" | "email" | "phone" | "company"
+    "name" | "email" | "phone" | "company" | "about"
   >();
   const { user } = useUser();
   const [url, setUrl] = useState(user?.image_url ?? "");
@@ -813,6 +814,43 @@ function AccountStepTwoRef(
                 value={user?.company}
                 noBottomBorder
                 ref={companyInputRef}
+              />
+              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
+              <label className="text-sm mb-1" htmlFor="name">
+                Company
+              </label>
+              <div>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Enter here"
+                  className="w-full bg-transparent py-2 pt-3 text-sm font-featureBold !outline-none pr-[45px]"
+                  // value={profileName}
+                  // onChange={handleProfileNameChange}
+                />
+                <span className="absolute text-xs top-1/2 transform -translate-y-1/2 right-[25px]">
+                  Update
+                </span>
+              </div>
+            </form> */}
+            </div>
+            <div>
+              <FormInput
+                label="About"
+                onUpdate={(value: string) => {
+                  setActiveField("about");
+                  postUpdateUser({
+                    about: value,
+                    userId: user?.uid,
+                  });
+                }}
+                onCompleteAnimation={handleCompleteAnimation}
+                isPending={activeField === "about" && isPending}
+                isSuccess={activeField === "about" && isSuccess}
+                placeholder="Enter here"
+                value={user?.about}
+                noBottomBorder
+                ref={aboutInputRef}
               />
               {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
               <label className="text-sm mb-1" htmlFor="name">

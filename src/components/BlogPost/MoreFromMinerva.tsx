@@ -131,7 +131,8 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
     const _posts = posts
       ?.filter((post) => post.id !== params?.postId?.[0])
       .slice(0, 4);
-    return chunk(_posts ?? [], 2);
+    return _posts;
+    // return chunk(_posts ?? [], 2);
   }, [params?.postId, posts]);
 
   const hasNoPosts = !isLoading && !posts?.length;
@@ -160,27 +161,10 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
           </h2>
         </div>
         {!isLoading ? (
-          <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-            {chunkedPosts?.map((postChunkOf2, i) => (
-              <div
-                key={i}
-                className={
-                  "grid divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
-                  (posts?.length === 1
-                    ? " grid-cols-1 md:grid-cols-2"
-                    : " grid-cols-2")
-                }
-              >
-                {postChunkOf2.map((post, j) => (
-                  <div
-                    key={post.id}
-                    className={
-                      "flex flex-col " + (j % 2 === 0 ? "pr-3" : "pl-3")
-                    }
-                  >
-                    <DesignedBlog size="sm" post={post as any} />
-                  </div>
-                ))}
+          <div className="grid grid-cols-4 divide-x divide-dashed divide-[#1f1d1a4d]">
+            {chunkedPosts?.map((post, j) => (
+              <div key={post.id} className={"px-3"}>
+                <DesignedBlog size="sm" post={post as any} variant="short" />
               </div>
             ))}
             {/* <div className="pr-3">

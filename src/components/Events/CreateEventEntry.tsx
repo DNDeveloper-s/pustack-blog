@@ -117,26 +117,14 @@ export default function CreateEventEntry() {
         return;
       }
     });
-  }, [event, user, router]);
+  }, [event, user, router, getUserAsync]);
 
   useEffect(() => {
+    if (user?.is_admin) return;
     if (user && !user.is_event_creator) {
-      // openDefaultNotification(
-      //   "You are not authorized to create events",
-      //   "error"
-      // );
-      // openNotification(
-      //   "topRight",
-      //   {
-      //     message: (
-      //       <SnackbarContent label="You are not authorized to create events" />
-      //     ),
-      //   },
-      //   "error"
-      // );
       router.push("/events");
     }
-  }, [user]);
+  }, [router, user]);
 
   useEffect(() => {
     if (event) {

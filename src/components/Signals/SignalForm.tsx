@@ -167,15 +167,21 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
     }
 
     checkUser();
-  }, []);
+  }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user.is_author || user.is_admin) return;
+    router.push("/");
+  }, [router, user]);
 
   useEffect(() => {
     if (requestedSignal) {
-      if (requestedSignal.author.uid !== user?.uid)
+      if (requestedSignal.author.uid !== user?.uid && !user?.is_admin)
         return router.push("/" + signalId);
       setCurrentSignal(requestedSignal);
     }
-  }, [requestedSignal, user?.uid, signalId]);
+  }, [requestedSignal, user?.uid, signalId, router, user?.is_admin]);
 
   async function handleContinueSignal() {
     if (!user) return;
@@ -187,8 +193,11 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
 
     const inputValue = joditRef.current?.getTitleValue() ?? "";
     const source = joditRef.current?.getSourceValue() ?? "";
+    const sourceURL = joditRef.current?.getSourceURLValue() ?? "";
 
-    const _isValid = joditRef.current?.isValid(inputValue, source);
+    console.log("inputValue - ", inputValue, source, sourceURL);
+
+    const _isValid = joditRef.current?.isValid(inputValue, source, sourceURL);
 
     if (!_isValid.isValid) {
       openNotification(
@@ -218,7 +227,8 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
         photoURL: user.image_url,
         uid: user.uid,
       },
-      source || "Unknown"
+      source || "Unknown",
+      sourceURL
     );
 
     if (requestedSignal) {
@@ -232,6 +242,7 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
           uid: user.uid,
         },
         source || "Unknown",
+        sourceURL,
         requestedSignal.id,
         requestedSignal.timestamp,
         requestedSignal.status ?? "draft"

@@ -9,7 +9,6 @@ import { FaStar } from "react-icons/fa6";
 import { Tooltip } from "antd";
 import { Spinner } from "@nextui-org/spinner";
 import { SubTitleVariant } from "../AdminEditor/SubTitleComponent";
-import { formatArticleTopic } from "@/lib/transformers/string";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AspectRatioType } from "../AdminEditor/ImageCropper";
@@ -254,7 +253,9 @@ export default function BlogWithAuthor({
                 fontVariationSettings: '"wght" 400,"opsz" 10',
               }}
             >
-              {isSmallScreen ? formatArticleTopic(post.topic) : post.topic}
+              {isSmallScreen
+                ? post.formatArticleTopic(true)
+                : post.formatArticleTopic()}
             </p>
           </Link>
         </div>
@@ -469,6 +470,7 @@ export function BlogWithAuthorV2({
   variant = "medium",
 }: BlogBaseProps & { post?: Post; noImage?: boolean }) {
   const router = useRouter();
+  const { isSmallScreen } = useScreenSize();
 
   useEffect(() => {
     router.prefetch(href ?? `/posts/${post?.id}`);
@@ -516,7 +518,9 @@ export function BlogWithAuthorV2({
               fontVariationSettings: '"wght" 400,"opsz" 10',
             }}
           >
-            {formatArticleTopic(post.topic)}
+            {isSmallScreen
+              ? post.formatArticleTopic(true)
+              : post.formatArticleTopic()}
           </p>
         </div>
       </div>

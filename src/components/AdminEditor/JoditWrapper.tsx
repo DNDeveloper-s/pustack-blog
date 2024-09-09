@@ -81,6 +81,7 @@ function JoditWrapper(
   // const [content, setContent] = useState("");
   const [topic, setTopic] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const customTopicRef = useRef<HTMLInputElement | null>(null);
   const subTitleInputRef = useRef<HTMLInputElement | null>(null);
   const imageCropperRef = useRef<any>(null);
   const topicRef = useRef<HTMLSelectElement | null>(null);
@@ -96,6 +97,7 @@ function JoditWrapper(
   const [slateEditorKey, setSlateEditorKey] = useState(0);
   const { openNotification } = useNotification();
   const [titleValue, setTitleValue] = useState<string>("");
+  const [customTopicValue, setCustomTopicValue] = useState<string>("");
 
   const subTextVariants = useRef<SubTextVariants>(
     prePost?.subTextVariants as any
@@ -129,6 +131,8 @@ function JoditWrapper(
         // inputRef.current.value = prePost.title ?? "";
         setTitleValue(prePost.title ?? "");
       }
+      if (customTopicRef.current)
+        customTopicRef.current.value = prePost.customTopic ?? "";
       if (subTitleInputRef.current)
         subTitleInputRef.current.value = prePost.subTitle ?? "";
     }
@@ -159,6 +163,7 @@ function JoditWrapper(
       handleSaveAsDraft();
     },
     getTopicValue: () => topic,
+    getCustomTopicValue: () => customTopicValue,
     getTitleValue: () => titleValue,
     getSubTitleValue: () => {
       console.log(
@@ -175,14 +180,17 @@ function JoditWrapper(
       titleValue: string,
       subTitleValue: string,
       topicValue: string,
+      customTopicValue: string,
       silent: boolean
-    ) => isValid(titleValue, subTitleValue, topicValue, silent),
+    ) =>
+      isValid(titleValue, subTitleValue, topicValue, customTopicValue, silent),
   }));
 
   const isValid = (
     titleValue: string,
     subTitleValue: string,
     topicValue: string,
+    customTopicValue: string,
     silent: boolean = false
   ) => {
     const sections = postSectionsRef.current?.getSections();
@@ -194,9 +202,11 @@ function JoditWrapper(
     const field = titleValue
       ? subTitleValue
         ? topicValue
-          ? sections && Section.mergedContent(sections).length > 0
-            ? null
-            : "sections"
+          ? (topicValue === "more" ? customTopicValue : true)
+            ? sections && Section.mergedContent(sections).length > 0
+              ? null
+              : "sections"
+            : "customTopic"
           : "topic"
         : "subTitle"
       : "title";
@@ -238,6 +248,21 @@ function JoditWrapper(
       return { isValid: false, field, message: "Please select a topic" };
     }
 
+    if (field === "customTopic") {
+      if (!silent) {
+        customTopicRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        customTopicRef.current?.focus();
+      }
+      return {
+        isValid: false,
+        field,
+        message: "Please enter the custom topic",
+      };
+    }
+
     // slateEditorRef.current?.getValue();
     if (slateEditorRef.current?.hasSomeContent() === false) {
       return { isValid: false, field, message: "Please enter some content" };
@@ -258,7 +283,8 @@ function JoditWrapper(
     const _isValid = isValid(
       titleValue ?? "",
       subTitleInputRef.current?.value ?? "",
-      topic
+      topic,
+      customTopicValue ?? ""
     );
 
     if (!_isValid.isValid) {
@@ -293,6 +319,7 @@ function JoditWrapper(
         uid: user?.uid,
       },
       topic,
+      customTopicValue,
       undefined,
       undefined,
       undefined,
@@ -320,6 +347,7 @@ function JoditWrapper(
           uid: user?.uid,
         },
         topic,
+        customTopicValue,
         [],
         prePost.status ?? "published",
         prePost.id,
@@ -347,7 +375,8 @@ function JoditWrapper(
     const _isValid = isValid(
       titleValue ?? "",
       subTitleInputRef.current?.value ?? "",
-      topic
+      topic,
+      customTopicValue
     );
 
     if (!_isValid.isValid) {
@@ -383,6 +412,7 @@ function JoditWrapper(
         uid: user?.uid,
       },
       topic,
+      customTopicValue,
       [],
       "draft",
       undefined,
@@ -409,6 +439,7 @@ function JoditWrapper(
           uid: user?.uid,
         },
         topic,
+        customTopicValue,
         [],
         prePost?.status ?? "published",
         prePost?.id,
@@ -525,26 +556,34 @@ function JoditWrapper(
           ))}
         </select>
       </div>
-      {/* <div className="my-5">
-        <Button
-          className="h-9 px-5 rounded text-xs font-featureRegular create-maths-formula-button"
-          variant="flat"
-          color="default"
-          onClick={onOpen}
-        >
-          Create Maths Formula
-        </Button>
-      </div> */}
-      {/* <DndProvider backend={HTML5Backend}>
-        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-          Sections
-        </h4>
-        <PostSections
-          key={sectionsIndexKey}
-          sections={prePost?.sections}
-          ref={postSectionsRef}
-        />
-      </DndProvider> */}
+
+      {topic === "more" && (
+        <div className="mt-2">
+          <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+            Enter Your Topic
+          </h4>
+          <input
+            // disabled={isPending}
+            className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+            placeholder="Enter the Topic here..."
+            type="text"
+            style={{
+              fontVariationSettings: '"wght" 400,"opsz" 10',
+              borderInlineEnd: 0,
+            }}
+            ref={customTopicRef}
+            value={customTopicValue}
+            onChange={(e) => {
+              if (e.target.value && e.target.value.length > 30) {
+                setCustomTopicValue(e.target.value.slice(0, 30));
+                return;
+              }
+              onChange();
+              setCustomTopicValue(e.target.value);
+            }}
+          />
+        </div>
+      )}
       <div className="mt-5">
         <div className="flex justify-between gap-2">
           <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">

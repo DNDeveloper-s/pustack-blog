@@ -18,6 +18,7 @@ import { CustomElement } from "../../../../types/slate";
 import { noImageUrl } from "./PostItem";
 import { PostActionModalBase } from "@/components/BlogPost/v2/BlogPost";
 import { Tooltip } from "antd";
+import Link from "next/link";
 
 export const colorScheme = {
   draft: {
@@ -51,7 +52,7 @@ export function PostItemDesktopHeader() {
       <div className="pl-1">Post Title</div>
       <div className="text-center">Topic</div>
       <div className="text-center">Status</div>
-      <div className="text-center">Timestamp</div>
+      <div className="text-center">Published At</div>
       <div className="text-center">Actions</div>
     </div>
   );
@@ -123,9 +124,13 @@ export default function PostItemDesktop({
         </div>
         <div className="overflow-hidden">
           <div className="flex items-center justify-start overflow-hidden gap-2">
-            <h2 className="text-[22px] font-featureHeadline font-medium mt-0 text-ellipsis whitespace-nowrap overflow-hidden">
+            <Link
+              href={"/posts/" + post.id}
+              prefetch={true}
+              className="text-[16px] font-featureHeadline font-medium mt-0"
+            >
               {post.displayTitle ?? post.title}
-            </h2>
+            </Link>
           </div>
           <p className="leading-[120%] text-sm line-clamp-3">
             <span className="text-tertiary">Sections:</span>{" "}
@@ -134,9 +139,11 @@ export default function PostItemDesktop({
         </div>
       </div>
       <div className="flex items-center justify-center">
-        <span className="ml-4 text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-          {post.topic}
-        </span>
+        <Tooltip title={post.formatArticleTopic()}>
+          <span className="ml-4 text-[13px] text-[#53524c] text-center font-helvetica uppercase leading-[14px]">
+            {post.formatArticleTopic(true)}
+          </span>
+        </Tooltip>
       </div>
       <div className="flex items-center justify-center">
         <span
@@ -151,7 +158,7 @@ export default function PostItemDesktop({
       </div>
       <div>
         <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs">
-          {post?.scheduledTime && post?.status === "scheduled" ? (
+          {/* {post?.scheduledTime && post?.status === "scheduled" ? (
             <>
               Scheduled for{" "}
               {dayjs(post?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
@@ -161,7 +168,8 @@ export default function PostItemDesktop({
               {post?.status === "published" ? "Published" : "Saved"} at{" "}
               {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a")}
             </>
-          )}
+          )} */}
+          {dayjs(post?.timestamp).format("MMMM DD, YYYY")}
         </p>
       </div>
       <div className="flex items-center justify-center gap-5">

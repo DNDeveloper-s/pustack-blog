@@ -64,6 +64,7 @@ function DashboardDesktop({
         data.subTextVariants,
         data.author,
         data.topic,
+        data.customTopic,
         data.sections,
         data.status ?? "published",
         data.id,

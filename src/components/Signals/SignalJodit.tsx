@@ -75,6 +75,7 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
   const slateEditorRef = useRef<SlateEditorRef>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const sourceInputRef = useRef<HTMLInputElement | null>(null);
+  const sourceURLInputRef = useRef<HTMLInputElement | null>(null);
 
   // Imperative Handle
   useImperativeHandle(ref, () => ({
@@ -82,14 +83,20 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
       setSlateEditorKey((prev) => prev + 1);
       if (inputRef.current) inputRef.current.value = "";
       if (sourceInputRef.current) sourceInputRef.current.value = "";
+      if (sourceURLInputRef.current) sourceURLInputRef.current.value = "";
     },
     getSlateValue: () => {
       return slateEditorRef.current?.getValue();
     },
     getSourceValue: () => sourceInputRef.current?.value ?? "",
+    getSourceURLValue: () => sourceURLInputRef.current?.value ?? "",
     getTitleValue: () => inputRef.current?.value ?? "",
-    isValid: (titleValue: string, sourceValue: string, silent: boolean) =>
-      isValid(titleValue, sourceValue, silent),
+    isValid: (
+      titleValue: string,
+      sourceValue: string,
+      sourceURLValue: string,
+      silent: boolean
+    ) => isValid(titleValue, sourceValue, sourceURLValue, silent),
   }));
 
   // Use Effects
@@ -97,6 +104,8 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
     if (preSignal) {
       if (sourceInputRef.current)
         sourceInputRef.current.value = preSignal.source ?? "";
+      if (sourceURLInputRef.current)
+        sourceURLInputRef.current.value = preSignal.sourceURL ?? "";
       if (inputRef.current) inputRef.current.value = preSignal.title ?? "";
     }
   }, [preSignal]);
@@ -105,11 +114,14 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
   const isValid = (
     titleValue: string,
     sourceValue: string,
+    sourceURLValue: string,
     silent: boolean = false
   ) => {
     const field = titleValue
-      ? sourceValue && isValidURL(sourceValue)
-        ? null
+      ? sourceValue
+        ? sourceURLValue && isValidURL(sourceURLValue)
+          ? null
+          : "sourceURL"
         : "source"
       : "title";
 
@@ -131,6 +143,21 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
           behavior: "smooth",
         });
         sourceInputRef.current?.focus();
+      }
+      return {
+        isValid: false,
+        field,
+        message: "Please fill in the source name.",
+      };
+    }
+
+    if (field === "sourceURL") {
+      if (!silent) {
+        sourceURLInputRef.current?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+        sourceURLInputRef.current?.focus();
       }
       return {
         isValid: false,
@@ -188,18 +215,35 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
       </div>
       <div className="mt-5">
         <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-          Source
+          Source Name
         </h4>
         <input
           // disabled={isPending}
           className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-          placeholder="Enter Source"
+          placeholder="Enter Source Name"
           type="text"
           style={{
             fontVariationSettings: '"wght" 400,"opsz" 10',
             borderInlineEnd: 0,
           }}
           ref={sourceInputRef}
+          onChange={(e) => updateLocalStorage("source", e.target.value)}
+        />
+      </div>
+      <div className="mt-5">
+        <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+          Source Link
+        </h4>
+        <input
+          // disabled={isPending}
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          placeholder="Enter Source Link"
+          type="text"
+          style={{
+            fontVariationSettings: '"wght" 400,"opsz" 10',
+            borderInlineEnd: 0,
+          }}
+          ref={sourceURLInputRef}
           onChange={(e) => updateLocalStorage("source", e.target.value)}
         />
       </div>

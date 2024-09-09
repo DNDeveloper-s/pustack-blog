@@ -322,6 +322,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           _post.subTextVariants,
           _post.author,
           _post.topic,
+          _post.customTopic,
           _post.sections,
           _post.status ?? "published",
           _post.id,
@@ -512,7 +513,7 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                   onClick={() => handleBookMark(false)}
                 />
               )}
-              {user?.uid === post?.author.uid && (
+              {(user?.uid === post?.author.uid || !!user?.is_admin) && (
                 <MdModeEdit
                   className="cursor-pointer"
                   onClick={() =>
@@ -540,7 +541,9 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                   " | PST "}
               </p>
               <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                {post?.topic}
+                {post?.topic === "more"
+                  ? post.customTopic ?? "more"
+                  : post.topic}
               </p>
             </div>
             <NavigatorShare handleShare={handleShare} />

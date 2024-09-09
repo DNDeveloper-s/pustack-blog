@@ -107,6 +107,7 @@ export class Signal {
   _id: string | undefined = undefined;
   readonly title: string;
   readonly source: string;
+  readonly sourceURL: string | undefined = undefined;
   readonly author: Author;
   private _status: PostStatus = "draft";
   private _scheduledTime: string | undefined = undefined;
@@ -145,6 +146,7 @@ export class Signal {
     nodes: Descendant[] | undefined,
     author: Author,
     source: string,
+    sourceURL?: string,
     id?: string,
     timestamp?: string,
     status?: PostStatus,
@@ -154,6 +156,7 @@ export class Signal {
     this._nodes = nodes;
     this.author = author;
     this.source = source;
+    this.sourceURL = sourceURL;
     this._id = id;
     this.timestamp = timestamp;
     this._status = status ?? "draft";
@@ -516,6 +519,7 @@ export const signalConverter = {
       nodes: signal.nodes,
       author: signal.author,
       source: signal.source,
+      sourceURL: signal.sourceURL,
       timestamp: serverTimestamp(),
       id: signal.id,
       status: signal.status,
@@ -530,6 +534,7 @@ export const signalConverter = {
       data.nodes,
       data.author,
       data.source,
+      data.sourceURL,
       snapshot.id,
       data.timestamp.toDate().toISOString(),
       data.status,

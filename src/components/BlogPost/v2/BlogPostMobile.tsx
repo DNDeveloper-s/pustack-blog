@@ -322,6 +322,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
           _post.subTextVariants,
           _post.author,
           _post.topic,
+          _post.customTopic,
           _post.sections,
           _post.status ?? "published",
           _post.id,

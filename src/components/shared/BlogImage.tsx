@@ -61,15 +61,16 @@ export default function BlogImage({
     <AppImage
       src={src}
       alt="Image Preview"
-      width={1920}
-      height={1080}
+      width={600}
+      height={400}
       {...imageProps}
       className={
         "max-w-full max-h-full w-full h-full object-cover " +
         (imageProps.className ?? "")
       }
       onClick={(e: any) => {
-        !noZoom && openWithUrl(src);
+        // @ts-ignore
+        !noZoom && openWithUrl({ url: src, blurData: imageProps.blurDataURL });
       }}
     />
   );

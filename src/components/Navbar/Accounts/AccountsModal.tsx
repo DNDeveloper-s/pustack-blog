@@ -25,8 +25,6 @@ interface AccountsModalProps {
 }
 export default function AccountsModal(props: AccountsModalProps) {
   const accountStepTwoRef = useRef<any>(null);
-  const [isTransitionPending, startTransition] = useTransition();
-  const [stepTwoKey, setStepTwoKey] = useState(0);
   const { user } = useUser();
   const {
     isPending,

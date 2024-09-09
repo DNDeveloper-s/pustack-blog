@@ -118,9 +118,12 @@ export default function EventItemDesktop({
         </div>
         <div className="overflow-hidden">
           <div className="flex items-start justify-start flex-col overflow-hidden gap-2">
-            <h2 className="text-[22px] font-featureHeadline font-medium mt-0 text-ellipsis whitespace-nowrap overflow-hidden w-full">
+            <Link
+              href={"/events?event_id=" + event.id}
+              className="text-[22px] font-featureHeadline font-medium mt-0 text-ellipsis whitespace-nowrap overflow-hidden w-full"
+            >
               {event.title}
-            </h2>
+            </Link>
             <p>
               <span className="text-[13px] text-[#676662] font-helvetica leading-[14px]">
                 Venue:{" "}
@@ -189,7 +192,7 @@ export default function EventItemDesktop({
         >
           <FaEye />
         </Link>
-        <div className="flex items-center gap-1 cursor-pointer hover:text-appBlue">
+        <div className="flex items-center gap-1 cursor-pointer text-danger-500 hover:text-danger-700">
           <MdDelete />
         </div>
       </div>

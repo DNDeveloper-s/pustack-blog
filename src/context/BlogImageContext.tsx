@@ -78,6 +78,11 @@ interface IBlogImageState {
   previewUrl: string | null;
 }
 
+interface ImageData {
+  url: string;
+  blurData?: string;
+}
+
 const initBlogImageState = {
   previewUrl: null,
 };
@@ -85,14 +90,14 @@ const initBlogImageState = {
 type UseBlogImageContextType = {
   //   state: IBlogImageState;
   isOpen: boolean;
-  imageUrl: string | null;
-  openWithUrl: (url: string) => void;
+  imageData: ImageData | null;
+  openWithUrl: (imageData: ImageData) => void;
   onClose: () => void;
 };
 
 export const BlogImageContext = createContext<UseBlogImageContextType>({
   isOpen: false,
-  imageUrl: null,
+  imageData: null,
   openWithUrl: () => {},
   onClose: () => {},
 });
@@ -139,14 +144,14 @@ function useBlogImageContext(
 ): UseBlogImageContextType {
   const [state, dispatch] = useReducer(BlogImageReducer, initState);
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<ImageData | null>(null);
 
-  const openWithUrl = useCallback((url: string) => {
-    setImageUrl(url);
+  const openWithUrl = useCallback((imageData: ImageData) => {
+    setImageData(imageData);
   }, []);
 
   const onClose = useCallback(() => {
-    setImageUrl(null);
+    setImageData(null);
   }, []);
 
   // const openPreview = useCallback((url: string) => {
@@ -158,8 +163,8 @@ function useBlogImageContext(
   // }, []);
 
   return {
-    isOpen: !!imageUrl,
-    imageUrl,
+    isOpen: !!imageData,
+    imageData,
     openWithUrl,
     onClose,
   };

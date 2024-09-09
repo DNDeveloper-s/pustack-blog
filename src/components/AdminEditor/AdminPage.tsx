@@ -118,7 +118,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   useEffect(() => {
     if (!user) return;
-    if (user.is_author) return;
+    if (user.is_author || user.is_admin) return;
     router.push("/");
   }, [router, user]);
 
@@ -336,7 +336,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
   useEffect(() => {
     createPostReset();
     updatePostReset();
-  }, [step]);
+  }, [createPostReset, step, updatePostReset]);
 
   const handleSavePost = async (isDraft: boolean = false) => {
     const currentPost = await handleContinuePost();
@@ -455,11 +455,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
     const inputValue = joditRef.current?.getTitleValue() ?? "";
     const subTitleValue = joditRef.current?.getSubTitleValue() ?? "";
     const topic = joditRef.current?.getTopicValue() ?? "";
+    const customTopic = joditRef.current?.getCustomTopicValue();
 
     const _isValid = joditRef.current?.isValid(
       inputValue,
       subTitleValue,
-      topic
+      topic,
+      customTopic
     );
 
     if (!_isValid.isValid) {
@@ -496,6 +498,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
         uid: user?.uid,
       },
       topic,
+      customTopic,
       undefined,
       undefined,
       newlySavedDraftRef.current?.id,
@@ -522,6 +525,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           uid: user?.uid,
         },
         topic,
+        customTopic,
         [],
         requestedPost.status ?? "published",
         requestedPost.id,
@@ -559,11 +563,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
       const inputValue = joditRef.current?.getTitleValue() ?? "";
       const subTitleValue = joditRef.current?.getSubTitleValue() ?? "";
       const topic = joditRef.current?.getTopicValue() ?? "";
+      const customTopic = joditRef.current?.getCustomTopicValue();
 
       const _isValid = joditRef.current?.isValid(
         inputValue,
         subTitleValue,
         topic,
+        customTopic,
         silent
       );
 
@@ -601,6 +607,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           photoURL: user?.image_url,
         },
         topic,
+        customTopic,
         [],
         "draft",
         id,
@@ -626,6 +633,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
             photoURL: user?.image_url,
           },
           topic,
+          customTopic,
           [],
           requestedPost?.status ?? "published",
           requestedPost?.id,

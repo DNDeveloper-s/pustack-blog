@@ -29,6 +29,70 @@ import { EventCard } from "../Events/EventSidebar";
 
 const tabs = ["Posts", "Signals", "Events"];
 
+const DocumentIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22}
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 512 512"
+    {...props}
+  >
+    <path
+      d="M106 512h300c24.814 0 45-20.186 45-45V150H346c-24.814 0-45-20.186-45-45V0H106C81.186 0 61 20.186 61 45v422c0 24.814 20.186 45 45 45zm60-301h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h120c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15z"
+      data-original="#000000"
+    />
+    <path
+      d="M346 120h96.211L331 8.789V105c0 8.276 6.724 15 15 15z"
+      data-original="#000000"
+    />
+  </svg>
+);
+
+const SignalIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22.2}
+    fillRule="evenodd"
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 100 101"
+    {...props}
+  >
+    <path
+      d="M73.064 31.973a3.92 3.92 0 0 0-3.92-3.919H56.793a3.92 3.92 0 0 0-3.92 3.92v61.753a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM21.191 81.376a3.92 3.92 0 0 0-3.92-3.919L4.92 77.456A3.92 3.92 0 0 0 1 81.376v12.351a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM99 7.272a3.92 3.92 0 0 0-3.92-3.92H82.729a3.92 3.92 0 0 0-3.92 3.92v86.455a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM47.127 56.675a3.92 3.92 0 0 0-3.92-3.92H30.856a3.92 3.92 0 0 0-3.92 3.92v37.051a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92z"
+      data-original="#000000"
+    />
+  </svg>
+);
+
+const EventIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22}
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 48 48"
+    {...props}
+  >
+    <rect width={4} height={6} x={11} y={3} data-original="#000000" rx={2} />
+    <rect width={4} height={6} x={33} y={3} data-original="#000000" rx={2} />
+    <path
+      d="M4 18v23a4 4 0 0 0 4 4h32a4 4 0 0 0 4-4V18zm12 20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm11 11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm11 11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm6-11v-6a4 4 0 0 0-4-4h-1v1c0 2.206-1.794 4-4 4s-4-1.794-4-4V6H17v1c0 2.206-1.794 4-4 4S9 9.206 9 7V6H8a4 4 0 0 0-4 4v6z"
+      data-original="#000000"
+    />
+  </svg>
+);
+
 function PostsEntry({ authorId }: { authorId?: string }) {
   const {
     posts,
@@ -272,26 +336,76 @@ export default function AuthorDetailsPage({ authorId }: { authorId?: string }) {
     id: authorId,
   });
 
+  const { isSmallScreen } = useScreenSize();
+
   const [index, setIndex] = useState(0);
+
   return (
     <div className="py-6">
-      <div className="flex gap-4">
-        <div className="flex-shrink-0">
-          <AppImage
-            src={author?.image_url}
-            alt="Nice one"
-            width={80}
-            height={80}
-            className="w-[80px] h-[80px] rounded-full"
-          />
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-[20px] md:gap-[40px] lg:gap-[70px]">
+        <div className="flex gap-4 md:items-center">
+          <div className="flex-shrink-0">
+            <AppImage
+              src={author?.image_url}
+              alt="Nice one"
+              width={80}
+              height={80}
+              className="w-[80px] h-[80px] rounded-full"
+            />
+          </div>
+          <div>
+            <h2 className="font-featureHeadline text-[25px]">
+              {author?.name ?? "Saurabh Singh"}
+            </h2>
+            <p className="text-appBlack text-opacity-60 text-[14px]">
+              {author?.about ??
+                `Saurabh Singh is a seasoned technology expert based in Silicon Valley, with years of experience in cutting-edge innovations and software development. Specializing in areas like cloud computing, artificial intelligence, and full-stack development.`}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-featureHeadline text-[25px]">
-            {author?.name ?? "Saurabh Singh"}
-          </h2>
-          <p className="text-appBlack text-opacity-60 text-[14px]">
-            {`${author?.name} is a seasoned technology expert based in Silicon Valley, with years of experience in cutting-edge innovations and software development. Specializing in areas like cloud computing, artificial intelligence, and full-stack development, ${author?.name} has worked with leading tech firms and startups, driving digital transformation across various industries. A passionate advocate for open-source contributions and emerging technologies, ${author?.name} is also a thought leader, sharing insights through articles, conferences, and mentorship to help shape the future of tech.`}
-          </p>
+        <div className="grid grid-cols-3 gap-4 w-full">
+          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#00B3A6] border border-white">
+            <div className="flex items-center gap-2">
+              <DocumentIcon
+                width={isSmallScreen ? 17 : 22}
+                height={isSmallScreen ? 17 : 22}
+              />
+              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+                Posts
+              </h4>
+            </div>
+            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-black">
+              {author?.articleCount ?? 0}
+            </p>
+          </div>
+          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#FFB400] border border-white">
+            <div className="flex items-center gap-2">
+              <SignalIcon
+                width={isSmallScreen ? 17 : 22}
+                height={isSmallScreen ? 17 : 22.2}
+              />
+              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+                Signals
+              </h4>
+            </div>
+            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-black">
+              {author?.signalCount ?? 0}
+            </p>
+          </div>
+          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#a487f1] border border-white">
+            <div className="flex items-center gap-2">
+              <EventIcon
+                width={isSmallScreen ? 17 : 22}
+                height={isSmallScreen ? 17 : 22}
+              />
+              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+                Events
+              </h4>
+            </div>
+            <p className="text-[20px] md:text-[24px] font-helvetica font-bold ml-[30px] text-black">
+              {author?.eventCount ?? 0}
+            </p>
+          </div>
         </div>
       </div>
       <hr className="border-dashed border-[#1f1d1a4d] mt-[20px]" />

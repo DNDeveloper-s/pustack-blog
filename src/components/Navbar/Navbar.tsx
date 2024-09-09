@@ -143,7 +143,7 @@ function NavbarDesktop({
       removeEventListener("scroll", handleWindowScroll);
       scrollRef?.current?.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [scrollRef]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -161,6 +161,11 @@ function NavbarDesktop({
   const manageList = useMemo(() => {
     if (!user) return [];
     let filteredList = managePaths.filter((path) => path.href !== pathname);
+
+    if (user.is_admin) {
+      return filteredList;
+    }
+
     if (!user.is_author) {
       filteredList = filteredList.filter(
         (path) => path.href !== "/posts/create"

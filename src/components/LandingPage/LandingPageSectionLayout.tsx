@@ -413,7 +413,7 @@ export default function LandingPageSectionLayout({
         ))}
       </div>
     );
-  } else {
+  } else if (posts.length === 5) {
     content = (
       <div
         className={
@@ -465,6 +465,26 @@ export default function LandingPageSectionLayout({
             />
           </div>
         )}
+      </div>
+    );
+  } else {
+    content = (
+      <div
+        className={
+          "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-3 pt-4"
+        }
+      >
+        {posts.map((post: any, j) => (
+          <div key={post.id} className={"px-3"}>
+            <DesignedBlog
+              linkClassName={"h-full block"}
+              size="sm"
+              noImage={posts.length === 5}
+              post={post}
+              variant="short"
+            />
+          </div>
+        ))}
       </div>
     );
   }

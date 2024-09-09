@@ -21,6 +21,7 @@ interface UseUpdateUserOptions {
   phone_country_code?: string;
   company?: string;
   subscriber?: boolean;
+  about?: string;
   userId: string;
 }
 export const useUpdateUser = (

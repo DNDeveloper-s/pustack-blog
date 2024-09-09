@@ -13,9 +13,10 @@ import { AiOutlineFullscreenExit } from "react-icons/ai";
 import { LuMinusCircle, LuPlusCircle } from "react-icons/lu";
 import { BiReset } from "react-icons/bi";
 import { useBlogImage } from "@/context/BlogImageContext";
+import { useEffect } from "react";
 
 export default function ImageScale() {
-  const { isOpen, imageUrl, onClose } = useBlogImage();
+  const { isOpen, imageData, onClose } = useBlogImage();
 
   let zoomLevel = 1.0; // Initial zoom level
 
@@ -30,6 +31,24 @@ export default function ImageScale() {
   const handleReset = (resetTransform: any) => {
     resetTransform();
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handleMouseDown(e: any) {
+      if (e.target.classList.contains("react-transform-wrapper")) {
+        onClose();
+      }
+    }
+
+    window.addEventListener("mousedown", handleMouseDown);
+
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [isOpen, onClose]);
 
   return (
     <Modal
@@ -83,9 +102,9 @@ export default function ImageScale() {
                   </Button>
                 </div>
                 <TransformComponent>
-                  {imageUrl && (
+                  {imageData && (
                     <Image
-                      src={imageUrl}
+                      src={imageData.url}
                       alt="Zoomable content"
                       style={{
                         width: "100%",
@@ -94,6 +113,8 @@ export default function ImageScale() {
                       }}
                       width={2000}
                       height={1000}
+                      placeholder={imageData.blurData ? "blur" : "empty"}
+                      blurDataURL={imageData.blurData}
                     />
                   )}
                 </TransformComponent>

@@ -54,14 +54,17 @@ export function SignalComponent({ signal }: { signal: Signal }) {
             </div>
             <span className="ml-[8px]">Source: &nbsp;</span>
           </div>
-          <Link
-            href={signal.source}
-            target="_blank"
-            className="flex items-center gap-2 text-appBlue"
-          >
-            <span>Go to Link</span>
-            <FaExternalLinkAlt />
-          </Link>
+          {signal.sourceURL && (
+            <Link
+              href={signal.sourceURL}
+              target="_blank"
+              className="flex items-center gap-2 text-appBlue"
+            >
+              <span>{signal.source}</span>
+              <FaExternalLinkAlt />
+            </Link>
+          )}
+          {!signal.sourceURL && <span>{signal.source}</span>}
         </div>
         <div className={classes.signal_para}>
           <SlateEditor readonly value={signal.nodes as CustomElement[]} />

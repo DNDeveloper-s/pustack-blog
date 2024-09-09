@@ -350,12 +350,6 @@ export default function PostItem({
         (isSelected ? "bg-primaryVariant1" : "bg-transparent")
       }
     >
-      {/* <div className="self-center">
-        <Checkbox
-          id={"item.key"}
-          onChange={(checked) => handleSelectChange(post.id as string, checked)}
-        />
-      </div> */}
       <div className="flex items-start gap-3 overflow-hidden min-w-[120px]">
         <div className="mt-1 w-[90px] h-[90px] overflow-hidden border-2 border-gray-200 shadow-sm rounded flex-shrink-0">
           <AppImage
@@ -372,7 +366,7 @@ export default function PostItem({
               {post.title}
             </h2>
             <p className="flex items-center gap-1 mt-1.5">
-              <Tooltip
+              {/* <Tooltip
                 title={post.status.toUpperCase()}
                 style={{ fontSize: "13px" }}
                 placement="top"
@@ -384,44 +378,28 @@ export default function PostItem({
               </Tooltip>
               <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
                 {post.topic}
+              </span> */}
+              <span
+                className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
+                style={{
+                  backgroundColor: colorScheme[post.status]?.bg ?? "#FFA500",
+                  fontVariationSettings: `'wght' 700`,
+                }}
+              >
+                {post.status}
               </span>
             </p>
-            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
-              {post?.scheduledTime && post?.status === "scheduled" ? (
-                <>
-                  Scheduled for{" "}
-                  {dayjs(post?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
-                </>
-              ) : (
-                <>
-                  {post?.status === "published" ? "Published" : "Saved"} at{" "}
-                  {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a")}
-                </>
-              )}
+            <p>
+              <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+                {post.formatArticleTopic()}
+              </span>
+            </p>
+            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs">
+              {dayjs(post?.timestamp).format("MMMM DD, YYYY")}
             </p>
           </div>
         </div>
       </div>
-      {/* <div className="flex items-center justify-center">
-        <Tooltip
-          title={event.status.toUpperCase()}
-          style={{ fontSize: "13px" }}
-          placement="top"
-        >
-          <span
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
-            style={{ backgroundColor: colorScheme[event.status]?.bg }}
-          ></span>
-        </Tooltip>
-        <span className="ml-1 text-[10px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-          {event.title}
-        </span>
-      </div>
-      <div>
-        <p className="leading-[120%] font-helvetica text-center text-tertiary text-[10px]">
-          <span>{dayjs().to(dayjs(event?.startTime?.toDate()))}</span>
-        </p>
-      </div> */}
       <div className="flex items-center py-2 justify-center gap-5 text-xs">
         <PostItemActions
           disclosureOptions={disclosureOptions}

@@ -167,6 +167,7 @@ export class Post {
   readonly title: string;
   readonly subTitle: string;
   readonly topic: string;
+  readonly customTopic?: string | null;
   readonly author: Author;
   private _status: PostStatus = "draft";
   private _scheduledTime: string | undefined = undefined;
@@ -241,6 +242,7 @@ export class Post {
     subTextVariants: SubTextVariants | null | undefined,
     author: Author,
     topic: string,
+    customTopic: string | null = null,
     sections: Section[] = [],
     status: PostStatus = "published",
     id?: string,
@@ -261,6 +263,7 @@ export class Post {
     this._sections = Section.createFactory(sections);
     this.author = author;
     this.topic = topic;
+    this.customTopic = customTopic;
     this._subTextVariants = subTextVariants;
     this.nodes = nodes;
     this.preparePostSnippetData();
@@ -292,6 +295,20 @@ export class Post {
       );
     }
     return null;
+  }
+
+  formatArticleTopic(useShort?: boolean) {
+    if (useShort) {
+      if (this.topic === "artificial-intelligence") return "AI";
+      if (this.topic === "product-management") return "PM";
+    }
+
+    const _topic = this.topic
+      .split("-")
+      .map((t) => t[0].toUpperCase() + t.slice(1))
+      .join(" ");
+
+    return _topic === "More" ? this.customTopic ?? "More" : _topic;
   }
 
   preparePostSnippetData() {
@@ -892,6 +909,7 @@ export const postConverter = {
       id: post.id,
       author: post.author,
       topic: post.topic,
+      customTopic: post.customTopic,
       timestamp: serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,
@@ -933,6 +951,7 @@ export const postConverter = {
       data.subTextVariants,
       data.author,
       data.topic,
+      data.customTopic,
       data.sections,
       data.status ?? "published",
       snapshot.id,

@@ -389,29 +389,7 @@ export default function SignalItem({
             <h2 className="text-[14px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden">
               {signal.title}
             </h2>
-            <p className="flex items-center gap-1 mt-1.5">
-              <Tooltip
-                title={signal.status.toUpperCase()}
-                style={{ fontSize: "13px" }}
-                placement="top"
-              >
-                <span
-                  className="w-1.5 h-1.5 rounded-full flex-shrink-0 block"
-                  style={{ backgroundColor: colorScheme[signal.status]?.bg }}
-                ></span>
-              </Tooltip>
-              <span className="text-[11px] text-[#53524c] font-helvetica leading-[14px]">
-                <Link
-                  href={signal.source}
-                  target="_blank"
-                  className="flex items-center gap-2 text-appBlue"
-                >
-                  <span>Go to Link</span>
-                  <FaExternalLinkAlt />
-                </Link>
-              </span>
-            </p>
-            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
+            {/* <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
               {signal?.scheduledTime && signal?.status === "scheduled" ? (
                 <>
                   Scheduled for{" "}
@@ -423,6 +401,33 @@ export default function SignalItem({
                   {dayjs(signal?.timestamp).format("MMM DD, YYYY, H:mm a")}
                 </>
               )}
+            </p> */}
+            <p className="flex items-center gap-1 mt-1.5">
+              <span
+                className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
+                style={{
+                  backgroundColor: colorScheme[signal.status]?.bg ?? "#FFA500",
+                  fontVariationSettings: `'wght' 700`,
+                }}
+              >
+                {signal.status}
+              </span>
+            </p>
+            <p className="mt-2">
+              <span className="text-[11px] text-[#53524c] font-helvetica leading-[14px]">
+                Source:{" "}
+                <Link
+                  href={signal.source}
+                  target="_blank"
+                  className="flex items-center gap-2 text-appBlue"
+                >
+                  <span>Go to Link</span>
+                  <FaExternalLinkAlt />
+                </Link>
+              </span>
+            </p>
+            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
+              {dayjs(signal?.timestamp).format("MMMM DD, YYYY")}
             </p>
           </div>
         </div>

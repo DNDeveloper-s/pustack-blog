@@ -70,7 +70,7 @@ export function SignalItemDesktopHeader() {
       <div className="pl-1">Signal Title</div>
       <div className="text-center">Source</div>
       <div className="text-center">Status</div>
-      <div className="text-center">Timestamp</div>
+      <div className="text-center">Published At</div>
       <div className="text-center">Actions</div>
     </div>
   );
@@ -170,9 +170,12 @@ export default function SignalItemDesktop({
         </div>
         <div className="overflow-hidden">
           <div className="flex items-center justify-center overflow-hidden gap-2">
-            <h2 className="text-[16px] font-featureHeadline font-medium mt-0">
+            <Link
+              href={"/signals?id=" + signal.id}
+              className="text-[16px] font-featureHeadline font-medium mt-0"
+            >
               {signal.title}
-            </h2>
+            </Link>
           </div>
         </div>
       </div>
@@ -201,17 +204,15 @@ export default function SignalItemDesktop({
       </div>
       <div>
         <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs">
-          {signal?.scheduledTime && signal?.status === "scheduled" ? (
+          {/* {signal?.scheduledTime && signal?.status === "scheduled" ? (
             <>
               Scheduled for{" "}
               {dayjs(signal?.scheduledTime).format("MMM DD, YYYY, H:mm a")}
             </>
           ) : (
-            <>
-              {signal?.status === "published" ? "Published" : "Saved"} at{" "}
-              {dayjs(signal?.timestamp).format("MMM DD, YYYY, H:mm a")}
-            </>
-          )}
+            <>{signal?.status === "published" ? "Published" : "Saved"} at </>
+          )} */}
+          {dayjs(signal?.timestamp).format("MMMM DD, YYYY")}
         </p>
       </div>
       <div className="flex items-center justify-center gap-5">

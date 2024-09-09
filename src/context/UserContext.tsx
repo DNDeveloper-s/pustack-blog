@@ -41,6 +41,8 @@ export interface UserDocumentData {
   subscriber?: boolean;
   is_author?: boolean;
   is_event_creator?: boolean;
+  is_admin?: boolean;
+  about?: string;
 }
 
 export function transformUserData(user?: any): UserDocumentData {

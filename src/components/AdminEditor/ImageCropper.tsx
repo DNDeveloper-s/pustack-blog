@@ -196,7 +196,7 @@ function ImageCropperRef(
           className="border block bg-lightPrimary py-8 cursor-pointer"
         >
           <p className="text-[15px] text-opacity-20 text-center font-helvetica text-appBlack">
-            Please add at least one image to the content to crop thumbnail
+            Click to Choose an Image
           </p>
           <input
             hidden
