@@ -72,9 +72,13 @@ export default function BottomNavBar() {
   const isNewsActive = pathname === "/";
 
   const isContactScreen = pathname.startsWith("/contact");
+  const isPublicationsScreen = pathname.startsWith("/me/publications");
+  const isSavedScreen = pathname.startsWith("/saved");
+  const isRSVPScreen = pathname.startsWith("/rsvp");
   const eventsScreen = pathname.startsWith("/events");
 
-  if (!isSmallScreen) return null;
+  if (!isSmallScreen || isPublicationsScreen || isSavedScreen || isRSVPScreen)
+    return null;
   return (
     <div
       className={

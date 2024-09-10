@@ -31,6 +31,7 @@ import { useMemo } from "react";
 import { getSections } from "@/components/SlateEditor/utils/helpers";
 import { CustomElement } from "../../../../types/slate";
 import AppImage from "@/components/shared/AppImage";
+import Link from "next/link";
 
 export const noImageUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -362,10 +363,19 @@ export default function PostItem({
         </div>
         <div className="overflow-hidden">
           <div className="flex flex-col items-start justify-start overflow-hidden">
-            <h2 className="text-[15px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden">
+            <Link
+              href={"/?post_drawer_id=" + post.id}
+              prefetch={true}
+              className="text-[15px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden"
+            >
               {post.title}
-            </h2>
-            <p className="flex items-center gap-1 mt-1.5">
+            </Link>
+            <p>
+              <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
+                {post.formatArticleTopic()}
+              </span>
+            </p>
+            <p className="flex items-center gap-1">
               {/* <Tooltip
                 title={post.status.toUpperCase()}
                 style={{ fontSize: "13px" }}
@@ -389,12 +399,7 @@ export default function PostItem({
                 {post.status}
               </span>
             </p>
-            <p>
-              <span className="text-[11px] text-[#53524c] font-helvetica uppercase leading-[14px] whitespace-nowrap">
-                {post.formatArticleTopic()}
-              </span>
-            </p>
-            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs">
+            <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
               {dayjs(post?.timestamp).format("MMMM DD, YYYY")}
             </p>
           </div>

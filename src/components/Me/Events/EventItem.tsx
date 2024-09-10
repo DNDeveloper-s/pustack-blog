@@ -34,6 +34,7 @@ import { Event } from "@/firebase/event";
 import AppImage from "@/components/shared/AppImage";
 import { getMeetLinkDetails } from "@/components/Events/EventDetails";
 import { getRandomDarkHexColor } from "@/lib/colors";
+import Link from "next/link";
 
 export const noImageUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
@@ -252,9 +253,12 @@ export default function EventItem({
         </div>
         <div className="overflow-hidden">
           <div className="flex flex-col items-start justify-start overflow-hidden">
-            <h2 className="text-[18px] leading-[24px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden">
+            <Link
+              href={"/events?event_id=" + event.id}
+              className="text-[18px] leading-[24px] font-featureHeadline font-medium mt-0 line-clamp-2 overflow-hidden"
+            >
               {event.title}
-            </h2>
+            </Link>
             <div className="flex items-center justify-center gap-2 mt-1">
               <div className="flex-shrink-0 w-4 h-4 rounded-full">
                 <AppImage

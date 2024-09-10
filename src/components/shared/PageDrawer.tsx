@@ -7,11 +7,13 @@ interface PageDrawerProps {
   children: React.ReactNode;
   open: boolean;
   onClose: () => void;
+  scrollContainerClassName?: string;
 }
 export default function PageDrawer({
   children,
   open,
   onClose,
+  scrollContainerClassName,
 }: PageDrawerProps) {
   return (
     <Drawer
@@ -34,7 +36,11 @@ export default function PageDrawer({
       }}
     >
       <div className="h-full flex flex-col overflow-hidden">
-        <div className="overflow-auto flex-1 bg-primary">
+        <div
+          className={
+            "overflow-auto flex-1 bg-primary " + scrollContainerClassName
+          }
+        >
           {open ? children : null}
         </div>
         <div

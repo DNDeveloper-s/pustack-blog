@@ -11,9 +11,10 @@ export default function SignalDrawer({ _signals }: { _signals?: any }) {
   const signalId = searchParams.get("signal_drawer_id");
 
   const handleClose = () => {
-    const url = new URLSearchParams(searchParams.toString());
-    url.delete("signal_drawer_id");
-    router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    // const url = new URLSearchParams(searchParams.toString());
+    // url.delete("signal_drawer_id");
+    // router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    router.back();
   };
 
   return (

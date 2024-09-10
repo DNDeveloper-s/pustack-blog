@@ -134,6 +134,8 @@ export default function PostsEntry({ _serverPosts }: { _serverPosts?: any }) {
     setFilters(_filters);
   };
 
+  console.log("isLoading - ", isLoading, posts, isFetching);
+
   return (
     <div className="overflow-x-auto bg-lightPrimary">
       {isMobileScreen ? <PostItemHeader /> : <PostItemDesktopHeader />}

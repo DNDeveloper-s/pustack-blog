@@ -15,7 +15,7 @@ import TrimmedPara from "../shared/TrimmedPara";
 import BlogImage from "../shared/BlogImage";
 import Link from "next/link";
 
-function BlogWithAuthorSide({
+export function BlogWithAuthorSide({
   size = "lg",
   post,
   noLink,

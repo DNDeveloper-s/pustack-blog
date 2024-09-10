@@ -137,6 +137,25 @@ export function BlogImageDefault({
   imageProps = {},
   ...props
 }: BlogImageProps) {
+  const { openWithUrl } = useBlogImage();
+  const imageContent = (
+    <AppImage
+      src={src}
+      alt="Image Preview"
+      width={600}
+      height={400}
+      {...imageProps}
+      className={
+        "max-w-full max-h-full w-full h-full object-cover " +
+        (imageProps.className ?? "")
+      }
+      onClick={(e: any) => {
+        // @ts-ignore
+        openWithUrl({ url: src, blurData: imageProps.blurDataURL });
+      }}
+    />
+  );
+
   return (
     <figure
       //   className="mt-2"
@@ -146,8 +165,7 @@ export function BlogImageDefault({
       }}
       {...props}
     >
-      <Zoom>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* <Zoom>
         <img
           onClick={(e: any) => {
             e.stopPropagation();
@@ -160,7 +178,8 @@ export function BlogImageDefault({
           alt="Image Preview"
           {...imageProps}
         />
-      </Zoom>
+      </Zoom> */}
+      {imageContent}
     </figure>
   );
 

@@ -111,7 +111,7 @@ export default function CreateEventEntry() {
           : router.push("/events");
         return;
       }
-      if (event && event.author.uid !== user.uid) {
+      if (event && event.author.uid !== user.uid && !user?.is_admin) {
         // Redirect to login
         router.push("/events?event_id=" + event.id);
         return;

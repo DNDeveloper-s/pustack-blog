@@ -8,8 +8,8 @@ import useScreenSize from "@/hooks/useScreenSize";
 
 export default function Technology({ limit = 5 }: { limit?: number }) {
   const { posts } = useQueryPosts({
-    topics: ["technology"],
-    limit,
+    // topics: ["technology"],
+    limit: 30,
   });
   const { isSmallScreen } = useScreenSize();
 

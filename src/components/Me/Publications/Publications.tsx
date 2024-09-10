@@ -10,6 +10,17 @@ import useScreenSize from "@/hooks/useScreenSize";
 import EventsEntry from "../Events/EventsEntry";
 import { IoChevronBack } from "react-icons/io5";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  DocumentIcon,
+  EventIcon,
+  SignalIcon,
+} from "@/components/AuthorPage/AuthorPage";
+
+export const contentTabs = [
+  { title: "Posts", key: "posts", Icon: DocumentIcon },
+  { title: "Signals", key: "signals", Icon: SignalIcon },
+  { title: "Events", key: "events", Icon: EventIcon },
+];
 
 export default function Publications() {
   const searchParams = useSearchParams();
@@ -30,7 +41,7 @@ export default function Publications() {
 
       _searchParams.set("mode", "posts");
 
-      router.push(pathname + `?${_searchParams.toString()}`);
+      router.replace(pathname + `?${_searchParams.toString()}`);
     }
   }, [mode, pathname, router, searchParams]);
 
@@ -58,10 +69,10 @@ export default function Publications() {
               components: {
                 Segmented: {
                   /* here is your component tokens */
-                  itemActiveBg: "#243bb5",
+                  itemActiveBg: "#1f1d1a",
                   itemColor: "#1f1d1a",
                   itemHoverColor: "#1f1d1a",
-                  itemSelectedBg: "#243bb5",
+                  itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
                   trackBg: "#fcfae4",
                 },
@@ -70,7 +81,23 @@ export default function Publications() {
           >
             <Segmented<string>
               size={"large"}
-              options={["Posts", "Signals", "Events"]}
+              options={contentTabs.map((tab) => ({
+                label: (
+                  <div className={"flex justify-center items-center gap-3"}>
+                    <tab.Icon
+                      width={18}
+                      height={18}
+                      fill={tab.key === mode ? "#fff" : "#1f1d1a"}
+                    />
+                    <span
+                      style={{ color: tab.key === mode ? "#fff" : "#1f1d1a" }}
+                    >
+                      {tab.title}
+                    </span>
+                  </div>
+                ),
+                value: tab.key,
+              }))}
               onChange={(value) => {
                 console.log(value); // string
                 // setMode(value.toLowerCase());
@@ -86,7 +113,7 @@ export default function Publications() {
               style={{
                 width: "100%",
               }}
-              value={mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase()}
+              value={mode}
               // className="!bg-lightPrimary"
             />
           </ConfigProvider>
@@ -97,7 +124,6 @@ export default function Publications() {
       </div>
     );
   }
-
   return (
     <div className="py-10">
       <div className="mb-6 flex justify-between items-center">
@@ -114,10 +140,10 @@ export default function Publications() {
               components: {
                 Segmented: {
                   /* here is your component tokens */
-                  itemActiveBg: "#243bb5",
+                  itemActiveBg: "#1f1d1a",
                   itemColor: "#1f1d1a",
                   itemHoverColor: "#1f1d1a",
-                  itemSelectedBg: "#243bb5",
+                  itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
                   trackBg: "#fcfae4",
                 },
@@ -126,7 +152,23 @@ export default function Publications() {
           >
             <Segmented<string>
               size={"large"}
-              options={["Posts", "Signals", "Events"]}
+              options={contentTabs.map((tab) => ({
+                label: (
+                  <div className={"flex justify-center items-center gap-3"}>
+                    <tab.Icon
+                      width={18}
+                      height={18}
+                      fill={tab.key === mode ? "#fff" : "#1f1d1a"}
+                    />
+                    <span
+                      style={{ color: tab.key === mode ? "#fff" : "#1f1d1a" }}
+                    >
+                      {tab.title}
+                    </span>
+                  </div>
+                ),
+                value: tab.key,
+              }))}
               onChange={(value) => {
                 console.log(value); // string
                 // setMode(value.toLowerCase());
@@ -139,7 +181,7 @@ export default function Publications() {
 
                 router.push(pathname + `?${_searchParams.toString()}`);
               }}
-              value={mode.charAt(0).toUpperCase() + mode.slice(1).toLowerCase()}
+              value={mode}
               // className="!bg-lightPrimary"
             />
           </ConfigProvider>

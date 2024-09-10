@@ -43,6 +43,7 @@ export interface UserDocumentData {
   is_event_creator?: boolean;
   is_admin?: boolean;
   about?: string;
+  app_rating?: number;
 }
 
 export function transformUserData(user?: any): UserDocumentData {

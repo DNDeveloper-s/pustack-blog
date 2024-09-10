@@ -24,7 +24,7 @@ export default function EventDetailPage({ _event }: { _event?: DocumentData }) {
 
   if (isMobileScreen) {
     return (
-      <PageDrawer open={open} onClose={() => router.push("/events")}>
+      <PageDrawer open={open} onClose={() => router.back()}>
         <EventDetailMobilePage _event={_event} />
       </PageDrawer>
     );

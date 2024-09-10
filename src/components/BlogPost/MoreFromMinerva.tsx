@@ -131,9 +131,9 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
     const _posts = posts
       ?.filter((post) => post.id !== params?.postId?.[0])
       .slice(0, 4);
+    if (isSmallScreen) return chunk(_posts ?? [], 2);
     return _posts;
-    // return chunk(_posts ?? [], 2);
-  }, [params?.postId, posts]);
+  }, [params?.postId, posts, isSmallScreen]);
 
   const hasNoPosts = !isLoading && !posts?.length;
 
@@ -161,19 +161,55 @@ export default function MoreFromMinerva(props: MoreFromMinervaProps) {
           </h2>
         </div>
         {!isLoading ? (
-          <div className="grid grid-cols-4 divide-x divide-dashed divide-[#1f1d1a4d]">
-            {chunkedPosts?.map((post, j) => (
-              <div key={post.id} className={"px-3"}>
-                <DesignedBlog size="sm" post={post as any} variant="short" />
-              </div>
-            ))}
-            {/* <div className="pr-3">
+          isSmallScreen ? (
+            <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+              {chunkedPosts?.map((postChunkOf2: any, i) => (
+                <div
+                  key={i}
+                  className={
+                    "grid divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                    (posts?.length === 1
+                      ? " grid-cols-1 md:grid-cols-2"
+                      : " grid-cols-2")
+                  }
+                >
+                  {postChunkOf2.map((post: any, j: number) => (
+                    <div
+                      key={post.id}
+                      className={
+                        "flex flex-col " + (j % 2 === 0 ? "pr-3" : "pl-3")
+                      }
+                    >
+                      <DesignedBlog
+                        size="sm"
+                        post={post as any}
+                        variant="very_short"
+                        href={"/?post_drawer_id=" + post.id}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className={
+                "grid divide-x grid-cols-4 divide-dashed divide-[#1f1d1a4d]"
+              }
+            >
+              {chunkedPosts?.map((post: any, j) => (
+                <div key={post.id} className={"px-3"}>
+                  <DesignedBlog size="sm" post={post as any} variant="short" />
+                </div>
+              ))}
+              {/* <div className="pr-3">
             <BlogWithAuthorV2 size="sm" />
           </div>
           <div className="pl-3">
             <BlogWithAuthor size="sm" />
           </div> */}
-          </div>
+            </div>
+          )
         ) : (
           <div className="flex items-center justify-center py-4">
             <Spinner

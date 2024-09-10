@@ -524,7 +524,6 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
               <div className="flex gap-5 items-center justify-between">
                 <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
                   <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                    Updated{" "}
                     {dayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
                       " " +
                       " GMT " +

@@ -23,6 +23,7 @@ interface UseUpdateUserOptions {
   subscriber?: boolean;
   about?: string;
   userId: string;
+  app_rating?: number;
 }
 export const useUpdateUser = (
   options?: UseMutationOptions<any, Error, UseUpdateUserOptions>

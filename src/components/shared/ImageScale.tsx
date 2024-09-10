@@ -14,6 +14,7 @@ import { LuMinusCircle, LuPlusCircle } from "react-icons/lu";
 import { BiReset } from "react-icons/bi";
 import { useBlogImage } from "@/context/BlogImageContext";
 import { useEffect } from "react";
+import { MdZoomIn, MdZoomOut } from "react-icons/md";
 
 export default function ImageScale() {
   const { isOpen, imageData, onClose } = useBlogImage();
@@ -72,34 +73,32 @@ export default function ImageScale() {
           >
             {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
               <>
-                <div
+                {/* <div
                   onClick={() => onClose()}
                   className="top-3 right-3 absolute transform text-white text-2xl bg-black rounded-full p-1 cursor-pointer z-10"
                 >
                   <AiOutlineFullscreenExit />
-                </div>
-                <div className="flex gap-4 text-2xl absolute z-20 top-5 left-1/2 transform -translate-x-1/2 h-auto">
+                </div> */}
+                <div className="flex gap-4 text-2xl absolute z-20 bottom-5 left-1/2 transform -translate-x-1/2 h-auto">
                   <Button
-                    className="text-sm bg-appBlack text-white"
+                    className="text-sm bg-appBlack text-white !min-w-[unset]"
                     onClick={() => handleZoomIn(zoomIn)}
                   >
-                    <LuPlusCircle className="cursor-pointer text-lg" />
-                    <span>Zoom In</span>
+                    <MdZoomIn className="cursor-pointer text-4xl" />
                   </Button>
                   <Button
-                    className="text-sm bg-appBlack text-white"
+                    className="text-sm bg-appBlack text-white !min-w-[unset]"
                     onClick={() => handleZoomOut(zoomOut)}
                   >
-                    <LuMinusCircle className="cursor-pointer text-lg" />
-                    <span>Zoom Out</span>
+                    <MdZoomOut className="cursor-pointer text-4xl" />
                   </Button>
-                  <Button
+                  {/* <Button
                     className="text-sm bg-appBlack text-white"
                     onClick={() => handleReset(resetTransform)}
                   >
                     <BiReset className="cursor-pointer text-lg" />
                     <span>Reset</span>
-                  </Button>
+                  </Button> */}
                 </div>
                 <TransformComponent>
                   {imageData && (

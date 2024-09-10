@@ -3,6 +3,7 @@ import { Drawer } from "antd";
 import SwipeableViews from "react-swipeable-views";
 import {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,

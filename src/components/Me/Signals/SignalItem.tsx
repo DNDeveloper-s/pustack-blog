@@ -386,9 +386,12 @@ export default function SignalItem({
         </div>
         <div className="overflow-hidden">
           <div className="flex flex-col items-start justify-start overflow-hidden">
-            <h2 className="text-[14px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden">
+            <Link
+              href={"/?signal_drawer_id=" + signal.id}
+              className="text-[14px] leading-[19px] font-featureHeadline font-medium mt-0 overflow-hidden"
+            >
               {signal.title}
-            </h2>
+            </Link>
             {/* <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">
               {signal?.scheduledTime && signal?.status === "scheduled" ? (
                 <>
@@ -402,7 +405,20 @@ export default function SignalItem({
                 </>
               )}
             </p> */}
-            <p className="flex items-center gap-1 mt-1.5">
+            <p>
+              <span className="text-[11px] text-[#53524c] font-helvetica leading-[14px]">
+                Source:{" "}
+                <Link
+                  href={signal.source}
+                  target="_blank"
+                  className="inline-flex items-center gap-2 text-appBlue"
+                >
+                  <span className="mb-[-3px]">Go to Link</span>
+                  <FaExternalLinkAlt />
+                </Link>
+              </span>
+            </p>
+            <p className="flex items-center gap-1">
               <span
                 className="flex-shrink-0 inline-block py-0.5 px-2 font-helvetica uppercase rounded text-[10px] text-white"
                 style={{
@@ -411,19 +427,6 @@ export default function SignalItem({
                 }}
               >
                 {signal.status}
-              </span>
-            </p>
-            <p className="mt-2">
-              <span className="text-[11px] text-[#53524c] font-helvetica leading-[14px]">
-                Source:{" "}
-                <Link
-                  href={signal.source}
-                  target="_blank"
-                  className="flex items-center gap-2 text-appBlue"
-                >
-                  <span>Go to Link</span>
-                  <FaExternalLinkAlt />
-                </Link>
               </span>
             </p>
             <p className="leading-[120%] font-helvetica text-center text-tertiary text-xs mt-1">

@@ -19,6 +19,13 @@ import { IoChevronBack } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { EventCard } from "../Events/EventSidebar";
 import { pstDayjs } from "@/lib/dayjsConfig";
+import { FaClock } from "react-icons/fa";
+import { TbBellRingingFilled } from "react-icons/tb";
+
+const rsvpTabs = [
+  { title: "Upcoming Events", key: "upcoming", Icon: TbBellRingingFilled },
+  { title: "Past Events", key: "past", Icon: FaClock },
+];
 
 interface EventCardProps {
   event?: Event;
@@ -212,10 +219,10 @@ export default function RSVPedPage() {
               components: {
                 Segmented: {
                   /* here is your component tokens */
-                  itemActiveBg: "#243bb5",
+                  itemActiveBg: "#1f1d1a",
                   itemColor: "#1f1d1a",
                   itemHoverColor: "#1f1d1a",
-                  itemSelectedBg: "#243bb5",
+                  itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
                   trackBg: "#fcfae4",
                 },
@@ -224,10 +231,24 @@ export default function RSVPedPage() {
           >
             <Segmented<string>
               size={"large"}
-              options={["Upcoming Events", "Past Events"]}
+              options={rsvpTabs.map((tab) => ({
+                label: (
+                  <div className={"flex justify-center items-center gap-3"}>
+                    <tab.Icon fill={tab.key === mode ? "#fff" : "#1f1d1a"} />
+                    <span
+                      style={{
+                        color: tab.key === mode ? "#fff" : "#1f1d1a",
+                      }}
+                    >
+                      {tab.title}
+                    </span>
+                  </div>
+                ),
+                value: tab.key,
+              }))}
               onChange={(value) => {
                 console.log(value); // string
-                setMode(value.split(" ")[0].toLowerCase() as any);
+                setMode(value as any);
               }}
               style={{
                 width: "100%",
@@ -312,10 +333,10 @@ export default function RSVPedPage() {
               components: {
                 Segmented: {
                   /* here is your component tokens */
-                  itemActiveBg: "#243bb5",
+                  itemActiveBg: "#1f1d1a",
                   itemColor: "#1f1d1a",
                   itemHoverColor: "#1f1d1a",
-                  itemSelectedBg: "#243bb5",
+                  itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
                   trackBg: "#fcfae4",
                 },
@@ -324,10 +345,24 @@ export default function RSVPedPage() {
           >
             <Segmented<string>
               size={"large"}
-              options={["Upcoming Events", "Past Events"]}
+              options={rsvpTabs.map((tab) => ({
+                label: (
+                  <div className={"flex justify-center items-center gap-3"}>
+                    <tab.Icon fill={tab.key === mode ? "#fff" : "#1f1d1a"} />
+                    <span
+                      style={{
+                        color: tab.key === mode ? "#fff" : "#1f1d1a",
+                      }}
+                    >
+                      {tab.title}
+                    </span>
+                  </div>
+                ),
+                value: tab.key,
+              }))}
               onChange={(value) => {
                 console.log(value); // string
-                setMode(value.split(" ")[0].toLowerCase() as any);
+                setMode(value as any);
               }}
               style={{
                 width: "100%",

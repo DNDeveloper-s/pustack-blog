@@ -59,7 +59,7 @@ export default function EventListPage({ _event }: { _event: any }) {
           <EventSidebar className="!bg-transparent" />
         </div>
       </div>
-      <PageDrawer open={open} onClose={() => router.push("/events")}>
+      <PageDrawer open={open} onClose={() => router.back()}>
         {_event && <EventDetailMobilePage _event={_event} />}
       </PageDrawer>
     </main>

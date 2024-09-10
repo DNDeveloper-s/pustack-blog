@@ -347,7 +347,7 @@ export class Event {
 
   static async fetchEventsForDateRange() {
     const now = dayjs();
-    const startDate = Timestamp.fromDate(now.toDate());
+    const startDate = Timestamp.fromDate(now.startOf("month").toDate());
     const endDate = Timestamp.fromDate(now.add(1, "month").toDate());
 
     const eventsRef = collection(
@@ -696,7 +696,9 @@ export const eventConverter = {
       displayImage: event.displayImage,
       isAllDay: event.isAllDay,
       background: event.background,
-      timestamp: serverTimestamp(),
+      timestamp: event.timestamp
+        ? Timestamp.fromDate(new Date(event.timestamp))
+        : serverTimestamp(),
       author: event.author,
     };
   },

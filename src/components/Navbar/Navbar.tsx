@@ -387,9 +387,7 @@ function NavbarDesktop({
                 href={link.href}
                 className={
                   "font-featureBold " +
-                  (pathname === link.href
-                    ? "text-appBlue uppercase"
-                    : "text-appBlack")
+                  (pathname === link.href ? "text-appBlue" : "text-appBlack")
                 }
               >
                 {link.label}

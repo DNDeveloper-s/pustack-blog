@@ -22,14 +22,19 @@ export default function BlogPostDrawer({ _posts }: { _posts?: Post[] }) {
   const postId = searchParams.get("post_drawer_id");
 
   const handleClose = () => {
-    const url = new URLSearchParams(searchParams.toString());
-    url.delete("post_drawer_id");
-    router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    // const url = new URLSearchParams(searchParams.toString());
+    // url.delete("post_drawer_id");
+    // router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    router.back();
   };
 
   return (
     <div>
-      <PageDrawer open={!!postId} onClose={handleClose}>
+      <PageDrawer
+        scrollContainerClassName="post-drawer-scroll-container"
+        open={!!postId}
+        onClose={handleClose}
+      >
         {!drawerPost ? (
           <div className="h-full w-full flex items-center justify-center">
             <Spinner

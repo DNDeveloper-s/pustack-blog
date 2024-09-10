@@ -15,6 +15,7 @@ import Image from "next/image";
 import { minervaMiniImage } from "@/assets";
 import MoreFromMinerva from "../BlogPost/MoreFromMinerva";
 import _ from "lodash";
+import { NoPostIcon } from "../Me/Posts/PostsEntry";
 
 export default function EventDetailDesktopPage({
   _event,
@@ -96,11 +97,9 @@ export default function EventDetailDesktopPage({
                 <h2 className="font-featureBold text-[24px] text-center text-[#666666]">
                   No Upcoming Events
                 </h2>
-                <Image
-                  src={noEventSVG}
-                  className="w-[400px] mx-auto mt-10"
-                  alt=""
-                />
+                <div className="w-10 mx-auto">
+                  <NoPostIcon />
+                </div>
                 <div className="mt-5">
                   <p className="text-[18px] text-[#888888] text-center">
                     You&apos;re all caught up!
@@ -126,11 +125,9 @@ export default function EventDetailDesktopPage({
                 <h2 className="font-featureBold text-[24px] text-center text-[#666666]">
                   No Upcoming Events
                 </h2>
-                <Image
-                  src={noEventSVG}
-                  className="w-[400px] mx-auto mt-10"
-                  alt=""
-                />
+                <div className="w-10 mx-auto">
+                  <NoPostIcon />
+                </div>
                 <div className="mt-5">
                   <p className="text-[18px] text-[#888888] text-center">
                     You&apos;re all caught up!

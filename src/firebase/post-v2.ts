@@ -183,6 +183,7 @@ export class Post {
   private _subTextVariants: SubTextVariants | undefined | null = undefined;
   private _thumbnailVariants: ImageVariant[] | null = null;
   private _thumbnail: PostThumbnail | null = null;
+  isUpdating = false;
 
   private _snippetData: {
     title?: string;
@@ -424,6 +425,8 @@ export class Post {
     if (!this.id) {
       throw new Error("Post id is missing");
     }
+
+    this.isUpdating = true;
 
     const postRef = doc(db, "posts", this.id).withConverter(postConverter);
 
@@ -910,7 +913,9 @@ export const postConverter = {
       author: post.author,
       topic: post.topic,
       customTopic: post.customTopic,
-      timestamp: serverTimestamp(),
+      timestamp: post.timestamp
+      ? Timestamp.fromDate(new Date(post.timestamp))
+        : serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,
       displayTitle: post.displayTitle ?? post.title,

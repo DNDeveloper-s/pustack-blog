@@ -57,7 +57,7 @@ const classes = {
 
 export function SnackbarContent({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-2 whitespace-nowrap">
+    <div className="flex items-center gap-2">
       <p>{label}</p>
     </div>
   );
@@ -110,11 +110,11 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   useEffect(() => {
     if (requestedPost) {
-      if (requestedPost.author.uid !== user?.uid)
-        return router.push("/" + postId);
+      if (requestedPost.author.uid !== user?.uid && !user?.is_admin)
+        return router.push("/posts/" + postId);
       setCurrentPost(requestedPost);
     }
-  }, [requestedPost, user?.uid, postId, router]);
+  }, [requestedPost, user?.uid, user?.is_admin, postId, router]);
 
   useEffect(() => {
     if (!user) return;

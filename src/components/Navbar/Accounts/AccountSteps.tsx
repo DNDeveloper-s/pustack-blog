@@ -46,6 +46,9 @@ import DeleteAccountModal from "./DeleteAccountModal";
 import { useDisclosure } from "@nextui-org/modal";
 import { CountryCallingCode, CountryCode } from "libphonenumber-js";
 import { isValidEmail } from "@/components/shared/SignUpForNewsLettersButton";
+import { useNotification } from "@/context/NotificationContext";
+import { NotificationPlacements } from "antd/es/notification/interface";
+import { SnackbarContent } from "@/components/AdminEditor/AdminPage";
 
 const userImageUrl = "https://www.w3schools.com/howto/img_avatar2.png";
 
@@ -90,10 +93,44 @@ export function AccountStepOne({
   const [hasRated, setHasRated] = useState(false);
   const { isMobileScreen } = useScreenSize();
   const [_isSubscribed, setIsSubscribed] = useState(!!userDetails.isSubscribed);
+  const { user } = useUser();
+  const { openNotification } = useNotification();
+
+  const {
+    isPending,
+    isSuccess,
+    mutate: postUpdateUser,
+  } = useUpdateUser({
+    onSettled: () => {
+      // activeField.current = undefined;
+    },
+  });
 
   const onSubscriptionChange = (checked: boolean, event: any) => {
     setIsSubscribed(checked);
     _onSubscriptionChange(checked, event);
+
+    if (checked) {
+      openNotification(
+        NotificationPlacements[5],
+        {
+          message: (
+            <SnackbarContent
+              label={"You will now receive updates on " + user?.email}
+            />
+          ),
+          closable: false,
+          showProgress: true,
+          duration: 3,
+          closeIcon: null,
+          key: "drafts-notification",
+          className: isMobileScreen
+            ? "drafts-notification"
+            : "drafts-notification auto-width",
+        },
+        "success"
+      );
+    }
   };
 
   useEffect(() => {
@@ -130,6 +167,7 @@ export function AccountStepOne({
             width={100}
             className="w-full rounded-xl"
             src={goldCard}
+            priority
             alt="user-card-bg"
             draggable={false}
           />
@@ -175,6 +213,7 @@ export function AccountStepOne({
             alt="gold"
             className="absolute top-3 left-3"
             draggable={false}
+            priority
           />
           <Image
             height={100}
@@ -183,6 +222,7 @@ export function AccountStepOne({
             alt="user-card-sim"
             className="absolute top-1/2 w-12 transform -translate-y-1/2 right-4"
             draggable={false}
+            priority
           />
 
           <div className="absolute bottom-0 flex justify-between w-full py-2 px-3">
@@ -197,6 +237,7 @@ export function AccountStepOne({
                 src={memberSince}
                 alt="member-since"
                 draggable={false}
+                priority
               />
               <h6>{dayjs(userDetails.sign_up_ts).year()}</h6>
             </div>
@@ -211,14 +252,22 @@ export function AccountStepOne({
                 </h6>
                 <StarRatings
                   name="rating"
-                  rating={0}
+                  rating={user?.app_rating ?? 0}
                   numberOfStars={5}
                   starSpacing="2px"
                   starDimension="20px"
                   svgIconPath={starPath}
                   starHoverColor="#fec107"
                   starRatedColor="#fec107"
-                  changeRating={() => {
+                  changeRating={(rating: number) => {
+                    if (user) {
+                      postUpdateUser({
+                        app_rating: rating,
+                        userId: user.uid,
+                      });
+                    } else {
+                      console.error("User not found");
+                    }
                     setHasRated(true);
                     setTimeout(() => {
                       setHasRated(false);
@@ -778,24 +827,6 @@ function AccountStepTwoRef(
                   setIsValidEmail(isValidEmail(e.target.value));
                 }}
               />
-              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
-              <label className="text-sm mb-1" htmlFor="name">
-                Email
-              </label>
-              <div>
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Enter here"
-                  className="w-full bg-transparent py-2 pt-3 border-b border-dashed border-[#1f1d1a4d] text-sm font-featureBold !outline-none pr-[45px]"
-                  // value={profileName}
-                  // onChange={handleProfileNameChange}
-                />
-                <span className="absolute text-xs top-1/2 transform -translate-y-1/2 right-[25px]">
-                  Update
-                </span>
-              </div>
-            </form> */}
             </div>
             <div>
               <FormInput
@@ -812,27 +843,8 @@ function AccountStepTwoRef(
                 isSuccess={activeField === "company" && isSuccess}
                 placeholder="Enter here"
                 value={user?.company}
-                noBottomBorder
                 ref={companyInputRef}
               />
-              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
-              <label className="text-sm mb-1" htmlFor="name">
-                Company
-              </label>
-              <div>
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Enter here"
-                  className="w-full bg-transparent py-2 pt-3 text-sm font-featureBold !outline-none pr-[45px]"
-                  // value={profileName}
-                  // onChange={handleProfileNameChange}
-                />
-                <span className="absolute text-xs top-1/2 transform -translate-y-1/2 right-[25px]">
-                  Update
-                </span>
-              </div>
-            </form> */}
             </div>
             <div>
               <FormInput
@@ -852,43 +864,7 @@ function AccountStepTwoRef(
                 noBottomBorder
                 ref={aboutInputRef}
               />
-              {/* <form className="relative grid grid-cols-[90px_1fr] items-center px-4">
-              <label className="text-sm mb-1" htmlFor="name">
-                Company
-              </label>
-              <div>
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Enter here"
-                  className="w-full bg-transparent py-2 pt-3 text-sm font-featureBold !outline-none pr-[45px]"
-                  // value={profileName}
-                  // onChange={handleProfileNameChange}
-                />
-                <span className="absolute text-xs top-1/2 transform -translate-y-1/2 right-[25px]">
-                  Update
-                </span>
-              </div>
-            </form> */}
             </div>
-            {/* <div className="user-settings-form">
-                <form
-                  onClick={() => {
-                    // setSwipeFlow(() => {
-                    //   setActiveIndex(2, SWIPE_FLOW.PHONE);
-                    //   return SWIPE_FLOW.PHONE;
-                    // });
-                  }}
-                >
-                  <label htmlFor="name">Phone</label>
-                  <PhoneInput
-                    value={`+91 93198-25600`}
-                    placeholder="+91 XXXXX-XXXXX"
-                    // disableDropdown={true}
-                    // disabled={true}
-                  />
-                </form>
-              </div> */}
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-0.5" />
           <div className="flex flex-col text-sm font-medium text-appBlue divide-y divide-dashed divide-[#1f1d1a4d]">

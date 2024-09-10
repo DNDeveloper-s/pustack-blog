@@ -427,6 +427,7 @@ export const useQuerySavedPosts = (): UseQueryResult<Post[], Error> => {
   return useQuery({
     queryKey: API_QUERY.QUERY_SAVED_POSTS(user?.uid),
     queryFn: querySavedPosts,
+    retry: false,
   });
 };
 

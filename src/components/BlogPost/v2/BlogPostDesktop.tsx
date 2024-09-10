@@ -516,9 +516,9 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
               {(user?.uid === post?.author.uid || !!user?.is_admin) && (
                 <MdModeEdit
                   className="cursor-pointer"
-                  onClick={() =>
-                    // router.push("/posts/create?post_id=" + post?.id)
-                    router.push("/me/publications")
+                  onClick={
+                    () => router.push("/posts/create?post_id=" + post?.id)
+                    // router.push("/me/publications")
                   }
                 />
               )}
@@ -536,7 +536,6 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
           <div className="flex gap-5 items-center justify-between">
             <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
               <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                Updated{" "}
                 {pstDayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
                   " | PST "}
               </p>

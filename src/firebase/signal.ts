@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 import {
   DocumentSnapshot,
   QuerySnapshot,
+  Timestamp,
   collection,
   deleteDoc,
   doc,
@@ -520,7 +521,9 @@ export const signalConverter = {
       author: signal.author,
       source: signal.source,
       sourceURL: signal.sourceURL,
-      timestamp: serverTimestamp(),
+      timestamp: signal.timestamp
+        ? Timestamp.fromDate(new Date(signal.timestamp))
+        : serverTimestamp(),
       id: signal.id,
       status: signal.status,
       flagshipDate: signal.flagshipDate,

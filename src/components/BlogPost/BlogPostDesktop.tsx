@@ -583,7 +583,6 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                 <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
                   <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
                     {/* Updated May 29, 2024, 3:10 am GMT+5:30 {''} */}
-                    Updated{" "}
                     {dayjs(post?.timestamp).format("MMM DD, YYYY, H:mm a") +
                       " " +
                       " GMT " +

@@ -2480,6 +2480,10 @@ font-size: 180px;
   width: 355px !important;
 }
 
+.drafts-notification.auto-width {
+  width: auto !important;
+}
+
 .drafts-notification .ant-notification-notice-close {
   position: relative !important;
   width: auto !important;

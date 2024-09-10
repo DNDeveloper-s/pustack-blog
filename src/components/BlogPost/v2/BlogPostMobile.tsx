@@ -3,7 +3,7 @@
 import { useDeletePost, useGetPostById, usePostBookmark } from "@/api/post";
 import Navbar from "@/components/Navbar/Navbar";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { getDownloadURL, ref as storageRef } from "firebase/storage";
 import { Highlight, themes } from "prism-react-renderer";
@@ -285,6 +285,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
   const [post, setPost] = useState<Post | null | undefined>(null);
   const [copied, setCopied] = useState(false);
   const pageTimeSpent = usePageTime();
+  const searchParams = useSearchParams();
   const { user } = useUser();
   const readDoc = useRef(false);
   const [isBookMarked, setIsBookMarked] = useState(false);
@@ -311,6 +312,21 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
         console.log("error - ", e);
       });
   }, []);
+
+  const postDrawerId = searchParams.get("post_drawer_id");
+
+  useEffect(() => {
+    if (postDrawerId) {
+      const el = document.querySelector(".post-drawer-scroll-container");
+      if (el) {
+        el.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "instant",
+        });
+      }
+    }
+  }, [postDrawerId]);
 
   useEffect(() => {
     if (_post instanceof Post) return setPost(_post);
@@ -466,6 +482,8 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
     return null;
   }
 
+  const thumbnailImage = post.getThumbnail("16 / 9");
+
   return (
     <main
       className="max-w-[1440px] min-h-screen mx-auto"
@@ -476,7 +494,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
       <div
         className="h-[220px] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-50 relative"
         style={{
-          backgroundImage: `url(${post.snippetData?.image})`,
+          backgroundImage: `url(${thumbnailImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

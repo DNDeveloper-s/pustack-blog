@@ -26,10 +26,11 @@ import {
 import { compact } from "lodash";
 import { pstDayjs } from "@/lib/dayjsConfig";
 import { EventCard } from "../Events/EventSidebar";
+import { contentTabs } from "../Me/Publications/Publications";
 
 const tabs = ["Posts", "Signals", "Events"];
 
-const DocumentIcon = (props: any) => (
+export const DocumentIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
@@ -52,7 +53,7 @@ const DocumentIcon = (props: any) => (
   </svg>
 );
 
-const SignalIcon = (props: any) => (
+export const SignalIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
@@ -72,7 +73,7 @@ const SignalIcon = (props: any) => (
   </svg>
 );
 
-const EventIcon = (props: any) => (
+export const EventIcon = (props: any) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
@@ -124,7 +125,7 @@ function PostsEntry({ authorId }: { authorId?: string }) {
             <BlogWithAuthor key={post.id} post={post} size="sm" />
           ))}
       </div>
-      {!hasPosts && (
+      {!hasPosts && !isLoading && (
         <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
           <Image alt="No Posts Found" src={emptyBox} className="w-[150px]" />
           <p>No Posts Found</p>
@@ -142,6 +143,7 @@ function PostsEntry({ authorId }: { authorId?: string }) {
             }}
             color="warning"
             size="lg"
+            label="Fetching more posts..."
           />
         </div>
       )}
@@ -215,7 +217,7 @@ function SignalsEntry({ authorId }: { authorId?: string }) {
           ))}
         </>
       )}
-      {!hasSignals && (
+      {!hasSignals && !isLoading && (
         <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
           <Image alt="No Signals Found" src={emptyBox} className="w-[150px]" />
           <p>No Signals Found</p>
@@ -261,6 +263,12 @@ function EventsEntry({ authorId }: { authorId?: string }) {
   });
   const { isSmallScreen } = useScreenSize();
 
+  const { ref: lastItemRef, isInView } = useInView();
+
+  useEffect(() => {
+    if (!isFetching && !isFetchingNextPage && isInView) fetchNextPage();
+  }, [fetchNextPage, isFetching, isFetchingNextPage, isInView]);
+
   const eventsArr = useMemo(() => {
     const groupedEvents = groupEventsByDate(compact(events) || []);
     return getSortedKeys(groupedEvents).map((date) => ({
@@ -271,11 +279,11 @@ function EventsEntry({ authorId }: { authorId?: string }) {
 
   return (
     <div className="w-full flex-1 py-10">
-      {isLoading && (
+      {/* {isLoading && (
         <div className="w-full py-5 px-2 flex items-center justify-center">
           <Spinner size="lg" label="Loading Events" />
         </div>
-      )}
+      )} */}
       {!isLoading && events && events.length > 0 && (
         <div
           className={
@@ -324,6 +332,22 @@ function EventsEntry({ authorId }: { authorId?: string }) {
         <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
           <NoEventsIcon />
           <p className="text-base text-appBlack text-opacity-65">No Events</p>
+        </div>
+      )}
+      {(hasNextPage || isFetching || isLoading) && (
+        <div
+          ref={lastItemRef}
+          className="w-full flex items-center justify-center py-4"
+        >
+          <Spinner
+            classNames={{
+              circle1: "blue-border-b",
+              circle2: "blue-border-b",
+            }}
+            color="warning"
+            size="lg"
+            label="Fetching more events..."
+          />
         </div>
       )}
     </div>
@@ -415,10 +439,10 @@ export default function AuthorDetailsPage({ authorId }: { authorId?: string }) {
           components: {
             Segmented: {
               /* here is your component tokens */
-              itemActiveBg: "#243bb5",
+              itemActiveBg: "#1f1d1a",
               itemColor: "#1f1d1a",
               itemHoverColor: "#1f1d1a",
-              itemSelectedBg: "#243bb5",
+              itemSelectedBg: "#1f1d1a",
               itemSelectedColor: "#fff",
               trackBg: "#fcfae4",
             },
@@ -427,16 +451,31 @@ export default function AuthorDetailsPage({ authorId }: { authorId?: string }) {
       >
         <Segmented<string>
           size={"large"}
-          options={tabs}
+          options={contentTabs.map((tab) => ({
+            label: (
+              <div className={"flex justify-center items-center gap-3"}>
+                <tab.Icon
+                  width={18}
+                  height={18}
+                  fill={tab.key === selectedTab ? "#fff" : "#1f1d1a"}
+                />
+                <span
+                  style={{
+                    color: tab.key === selectedTab ? "#fff" : "#1f1d1a",
+                  }}
+                >
+                  {tab.title}
+                </span>
+              </div>
+            ),
+            value: tab.key,
+          }))}
           onChange={(value) => {
             console.log(value); // string
             setSelectedTab(value.toLowerCase());
             setIndex(tabs.indexOf(value));
           }}
-          value={
-            selectedTab.charAt(0).toUpperCase() +
-            selectedTab.slice(1).toLowerCase()
-          }
+          value={selectedTab}
           label={"Select Aspect Ratio"}
           style={{
             width: "100%",

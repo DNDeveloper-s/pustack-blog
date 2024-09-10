@@ -215,10 +215,10 @@ function ImageCropperRef(
               components: {
                 Segmented: {
                   /* here is your component tokens */
-                  itemActiveBg: "#243bb5",
+                  itemActiveBg: "#1f1d1a",
                   itemColor: "#1f1d1a",
                   itemHoverColor: "#1f1d1a",
-                  itemSelectedBg: "#243bb5",
+                  itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
                   trackBg: "#fcfae4",
                 },

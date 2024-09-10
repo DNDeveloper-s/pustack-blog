@@ -127,12 +127,13 @@ function JoditWrapper(
   useEffect(() => {
     if (prePost) {
       setTopic(prePost.topic);
-      if (inputRef.current) {
+      if (prePost.title) {
         // inputRef.current.value = prePost.title ?? "";
         setTitleValue(prePost.title ?? "");
       }
-      if (customTopicRef.current)
-        customTopicRef.current.value = prePost.customTopic ?? "";
+      if (prePost.customTopic) {
+        setCustomTopicValue(prePost.customTopic ?? "");
+      }
       if (subTitleInputRef.current)
         subTitleInputRef.current.value = prePost.subTitle ?? "";
     }
