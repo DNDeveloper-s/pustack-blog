@@ -11,7 +11,7 @@ import {
 import { trimToSentence } from "@/lib/transformers/trimToSentence";
 import BlogImage from "../shared/BlogImage";
 import { useUser } from "@/context/UserContext";
-import { avatar } from "@/assets";
+import { aiShimmer, avatar } from "@/assets";
 import AppImage from "../shared/AppImage";
 import { FaCheck } from "react-icons/fa6";
 import { IoCloseSharp } from "react-icons/io5";
@@ -308,12 +308,15 @@ const SubTitleComponentRef = (
 
   return (
     <>
-      <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-        Post Sub-Text
-      </h4>
+      <div className="ml-1 mb-1 flex items-center gap-2">
+        <h4 className="text-[12px] font-helvetica uppercase text-appBlack">
+          Post Sub-Text
+        </h4>
+        <img width={17} height={17} src={aiShimmer.src} alt="" />
+      </div>
       <textarea
         // disabled={isPending}
-        className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+        className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] placeholder:text-black placeholder:text-opacity-20"
         placeholder="Enter your sub-text here with at least 50 words, and we will automatically generate different variants for you."
         style={{
           fontVariationSettings: '"wght" 400,"opsz" 10',

@@ -16,6 +16,7 @@ import { useUser } from "@/context/UserContext";
 import { useMediaQuery } from "react-responsive";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
+import { TiHome } from "react-icons/ti";
 import {
   Dropdown,
   DropdownItem,
@@ -99,6 +100,48 @@ function SignOutButton({ noCaret }: { noCaret?: boolean }) {
   );
 }
 
+function NavItem({
+  href,
+  label,
+  isFirst,
+  isLast,
+}: {
+  href: string;
+  label: string;
+  isLast?: boolean;
+  isFirst?: boolean;
+}) {
+  const pathname = usePathname();
+
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      prefetch={true}
+      href={href}
+      className={
+        "font-featureBold relative whitespace-nowrap " +
+        (isActive ? "text-appBlue" : "text-appBlack")
+      }
+    >
+      <span style={{ opacity: isActive ? 0 : 1 }}>{label}</span>
+      <span
+        className={
+          "uppercase absolute " +
+          (isFirst
+            ? "left-0"
+            : isLast
+            ? "right-0"
+            : "left-1/2 transform -translate-x-1/2")
+        }
+        style={{ opacity: isActive ? 1 : 0 }}
+      >
+        {label}
+      </span>
+    </Link>
+  );
+}
+
 function NavbarDesktop({
   scrollRef,
 }: {
@@ -128,7 +171,8 @@ function NavbarDesktop({
 
   useEffect(() => {
     function handleWindowScroll() {
-      setIsOnTop(window.scrollY === 0);
+      console.log("scroll", document.body.scrollTop);
+      setIsOnTop(document.body.scrollTop === 0);
     }
 
     function handleScroll() {
@@ -136,11 +180,12 @@ function NavbarDesktop({
     }
 
     handleScroll();
+    handleWindowScroll();
     scrollRef?.current?.addEventListener("scroll", handleScroll);
-    addEventListener("scroll", handleWindowScroll);
+    document.body.addEventListener("scroll", handleWindowScroll);
 
     return () => {
-      removeEventListener("scroll", handleWindowScroll);
+      document.body.removeEventListener("scroll", handleWindowScroll);
       scrollRef?.current?.removeEventListener("scroll", handleScroll);
     };
   }, [scrollRef]);
@@ -380,18 +425,14 @@ function NavbarDesktop({
           <hr className="border-appBlack" />
           <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" />
           <nav className="flex justify-between py-2">
-            {navLinks.map((link) => (
-              <Link
-                prefetch={true}
-                key={link.key}
+            {navLinks.map((link, index) => (
+              <NavItem
+                key={link.href}
+                isFirst={index === 0}
+                isLast={index === navLinks.length - 1}
                 href={link.href}
-                className={
-                  "font-featureBold " +
-                  (pathname === link.href ? "text-appBlue" : "text-appBlack")
-                }
-              >
-                {link.label}
-              </Link>
+                label={link.label}
+              />
             ))}
           </nav>
           <hr className="border-dashed border-[#1f1d1a4d]" />
@@ -1077,18 +1118,25 @@ function NavbarMobile() {
   const accountsDrawerRef = useRef<any>(null);
   const disclosureOptions = useDisclosure();
   const { setOpen: openJoinModal } = useJoinModal();
+  const bodyRef = useRef<any>(document.body);
 
   /** Framer Motion */
-  const { scrollY } = useScroll();
+  const { scrollY } = useScroll({ container: bodyRef });
   const yTransform = useTransform(scrollY, [0, 100], [0, -100]);
   const opacity = useTransform(scrollY, [0, 100], [1, 0]);
   const scale = useTransform(scrollY, [70, 100], [1, 0.75]);
   const height = useTransform(scrollY, [70, 100], ["12px", "0px"]);
   const marginTop = useTransform(scrollY, [70, 100], [0.75, 0]);
+  const chipMarginTop = useTransform(scrollY, [70, 100], [20, 6]);
   const borderWidth = useTransform(scrollY, [70, 100], [0, 1]);
   const headerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const sloganRef = useRef<HTMLDivElement>(null);
+  const chipRef = useRef<HTMLDivElement>(null);
+
+  const className =
+    " flex-1 flex items-center font-helvetica justify-center rounded-full px-1.5 py-0.5 text-xs text-black bg-lightPrimary border border-dashed border-[#8e8e8db3] whitespace-nowrap";
+  const activeClassName = " !bg-black !text-lightPrimary !border-solid";
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -1147,13 +1195,15 @@ function NavbarMobile() {
   useEffect(() => {
     const headerElement = headerRef.current;
     const sloganElement = sloganRef.current;
-    if (!sloganElement || !headerElement) return;
+    const chipElement = chipRef.current;
+    if (!sloganElement || !headerElement || !chipElement) return;
     const unsubscribe = height.on("change", (latest) => {
       sloganElement.style.height = latest;
       sloganElement.style.opacity = `${opacity.get()}`;
     });
     const unsubscribe2 = marginTop.on("change", (latest) => {
       sloganElement.style.marginTop = `${latest}rem`;
+      // sloganElement.style.marginBottom = `${latest}rem`;
     });
     const unsubscribe3 = opacity.on("change", (latest) => {
       sloganElement.style.opacity = `${latest}`;
@@ -1161,14 +1211,18 @@ function NavbarMobile() {
     const unsubscribe4 = borderWidth.on("change", (latest) => {
       headerElement.style.borderBottomWidth = `${latest}px`;
     });
+    // const unsubscribe5 = chipMarginTop.on("change", (latest) => {
+    //   chipElement.style.marginTop = `${latest}px`;
+    // });
 
     return () => {
       unsubscribe();
       unsubscribe2();
       unsubscribe3();
       unsubscribe4();
+      // unsubscribe5();
     };
-  }, [height, marginTop, opacity, borderWidth]);
+  }, [height, marginTop, opacity, borderWidth, chipMarginTop]);
 
   return (
     <motion.div
@@ -1418,6 +1472,70 @@ function NavbarMobile() {
         <span className="text-appBlack leading-[120%]">EFFICIENT</span>
         <div className="w-1 h-1 rounded-full bg-appBlack" />
         <span className="text-appBlack leading-[120%]">RESPONSIBLE</span>
+      </div>
+      <div className="flex gap-x-2 gap-y-1 flex-wrap mt-3" ref={chipRef}>
+        <Link
+          href={"/"}
+          prefetch
+          className={
+            "min-w-[120px] " +
+            className +
+            (pathname === "/" ? activeClassName : "")
+          }
+        >
+          <span>
+            <TiHome className="text-base" />
+          </span>
+        </Link>
+        <Link
+          href={"/artificial-intelligence"}
+          prefetch
+          className={
+            className +
+            (pathname === "/artificial-intelligence" ? activeClassName : "")
+          }
+        >
+          <span>Artificial Intelligence</span>
+        </Link>
+        <Link
+          href={"/technology"}
+          prefetch
+          className={
+            className + (pathname === "/technology" ? activeClassName : "")
+          }
+        >
+          <span>Technology</span>
+        </Link>
+        <Link
+          href={"/silicon-valley"}
+          prefetch
+          className={
+            className + (pathname === "/silicon-valley" ? activeClassName : "")
+          }
+        >
+          <span>Silicon Valley</span>
+        </Link>
+        <Link
+          href={"/product-management"}
+          prefetch
+          className={
+            className +
+            (pathname === "/product-management" ? activeClassName : "")
+          }
+        >
+          <span>Product Management</span>
+        </Link>
+        <Link
+          href={"/others"}
+          prefetch
+          className={
+            "min-w-[130px] " +
+            className +
+            (pathname === "/others" ? activeClassName : "")
+          }
+        >
+          <span>Others</span>
+        </Link>
       </div>
       {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 

@@ -12,7 +12,7 @@ export default function TechnologyPage() {
         topics={[
           "technology",
           "artificial-intelligence",
-          "more",
+          "others",
           "product-management",
           "silicon-valley",
         ]}

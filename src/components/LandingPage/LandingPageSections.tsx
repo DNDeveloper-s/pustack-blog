@@ -21,7 +21,7 @@ const sections = [
   { id: "technology", label: "Technology" },
   { id: "silicon-valley", label: "Silicon Valley" },
   { id: "product-management", label: "Product Management" },
-  { id: "more", label: "More" },
+  { id: "others", label: "Others" },
 ];
 
 export default function LandingPageSections() {

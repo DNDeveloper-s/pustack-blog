@@ -540,8 +540,8 @@ export default function BlogPostDesktop({ _post }: { _post?: DocumentData }) {
                   " | PST "}
               </p>
               <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                {post?.topic === "more"
-                  ? post.customTopic ?? "more"
+                {post?.topic === "others"
+                  ? post.customTopic ?? "others"
                   : post.topic}
               </p>
             </div>

@@ -27,3 +27,4 @@ export { default as colorPicker } from "./tutorials/color-picker.png";
 export { default as insertLink } from "./tutorials/insert-link.png";
 export { default as textFormatting } from "./tutorials/text-formatting.png";
 export { default as greenTickLottie } from "./lottie/green-tick.json";
+export { default as aiShimmer } from "./images/ai-shimmer.svg";

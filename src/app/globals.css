@@ -10,6 +10,7 @@
   scroll-padding-top: 160px;
   background: #f8f5d7;
   height: 100%;
+  overflow: hidden;
 }
 
 * {
@@ -2472,7 +2473,7 @@ font-size: 180px;
 
 .drafts-notification {
   padding: 15px 20px !important;
-  background: #fffce1;
+  background: #000000;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
@@ -2480,8 +2481,25 @@ font-size: 180px;
   width: 355px !important;
 }
 
+.drafts-notification .ant-notification-notice-with-icon {
+  display: flex;
+  align-items: center;
+}
+
+.drafts-notification .ant-notification-notice-message {
+  color: white !important;
+}
+
 .drafts-notification.auto-width {
   width: auto !important;
+}
+
+.drafts-notification .ant-notification-notice-progress {
+  height: 4px !important;
+}
+
+progress[value]::-webkit-progress-value {
+  background-color: #ffffff !important;
 }
 
 .drafts-notification .ant-notification-notice-close {

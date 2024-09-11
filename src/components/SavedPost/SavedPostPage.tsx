@@ -123,7 +123,21 @@ export default function SavedPostPage() {
             <Spinner label="Loading Posts" size="lg" />
           </div>
         )}
-        {hasPost &&
+        {hasPost && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {posts?.map((post: Post) => (
+              <SavedPostItem
+                key={post.id}
+                post={post}
+                isPending={isPending === post?.id}
+                handleBookMark={(bookmarked: boolean) =>
+                  handleBookMark(post, bookmarked)
+                }
+              />
+            ))}
+          </div>
+        )}
+        {/* {hasPost &&
           (isMobileScreen ? (
             <div className="grid grid-cols-1 gap-3">
               {posts?.map((post: Post) => (
@@ -166,6 +180,7 @@ export default function SavedPostPage() {
                         handleBookMark={(bookmarked) =>
                           handleBookMark(post, bookmarked)
                         }
+                        hideHeader
                         isPending={isPending === post?.id}
                       />
                     </div>
@@ -173,7 +188,7 @@ export default function SavedPostPage() {
                 </div>
               ))}
             </div>
-          ))}
+          ))} */}
         {noPost && (
           <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
             <NoPostIcon className="w-16" />
@@ -206,57 +221,20 @@ export default function SavedPostPage() {
           <Spinner label="Loading Posts" size="lg" />
         </div>
       )}
-      {hasPost &&
-        (isMobileScreen ? (
-          <div className="grid grid-cols-1 gap-3">
-            {posts?.map((post: Post) => (
-              <SavedPostItem
-                key={post.id}
-                post={post}
-                isPending={isPending === post?.id}
-                handleBookMark={(bookmarked: boolean) =>
-                  handleBookMark(post, bookmarked)
-                }
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-            {chunkedPosts?.map((postChunkOf2: Post[], i: number) => (
-              <div
-                key={i}
-                className={
-                  "divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
-                  gridClassName
-                }
-              >
-                {postChunkOf2.map((post, j) => (
-                  <div
-                    key={post.id}
-                    className={
-                      j % itemInRowCount === itemInRowCount - 1
-                        ? "pl-3"
-                        : j % itemInRowCount === 0
-                        ? "pr-3"
-                        : "px-3"
-                    }
-                  >
-                    <BlogWithAuthor
-                      linkClassName={"h-full block"}
-                      size="sm"
-                      post={post}
-                      showUnBookmarkButton
-                      handleBookMark={(bookmarked) =>
-                        handleBookMark(post, bookmarked)
-                      }
-                      isPending={isPending === post?.id}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        ))}
+      {hasPost && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {posts?.map((post: Post) => (
+            <SavedPostItem
+              key={post.id}
+              post={post}
+              isPending={isPending === post?.id}
+              handleBookMark={(bookmarked: boolean) =>
+                handleBookMark(post, bookmarked)
+              }
+            />
+          ))}
+        </div>
+      )}
       {noPost && (
         <div className="flex flex-col w-full gap-1 py-5 items-center justify-center">
           <NoPostIcon className="w-16" />

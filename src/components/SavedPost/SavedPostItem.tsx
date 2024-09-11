@@ -7,6 +7,7 @@ import { FaShare, FaStar } from "react-icons/fa6";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
 import { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
+import useScreenSize from "@/hooks/useScreenSize";
 
 const VerifyIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -40,72 +41,57 @@ export default function SavedPostItem({
   isPending,
   handleBookMark,
 }: SavedPostItemProps) {
+  const { isSmallScreen } = useScreenSize();
   return (
-    <Link href={"/posts/" + post?.id}>
-      <div className="flex gap-2 bg-[#f7f1ae] p-[4px_8px] items-stretch rounded-md">
-        <div className="h-full w-auto aspect-square rounded-md overflow-hidden basis-[25%] lg:basis-[30%]">
-          <AppImage
-            src={post?.snippetData?.image ?? noImageUrl}
-            alt="No Image"
-            className="object-cover w-full h-full"
-            width={200}
-            height={200}
-          />
-        </div>
-        <div className="flex flex-col flex-1">
-          <h3
-            className="mb-0 lg:mb-1 text-[17px] lg:text-lg font-featureHeadline"
-            style={{
-              fontWeight: 600,
-              fontVariationSettings: '"wght" 700,"opsz" 10',
-            }}
-          >
-            {post?.snippetData?.title ?? "Missing Post Title"}
-          </h3>
-          <p className="font-featureRegular line-clamp-4 text-[11px] lg:text-[14px] leading-[1.2] mb-1 flex-1">
-            {post?.snippetData?.content}
-          </p>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 text-[11px] lg:text-[14px]">
-              <AppImage
-                width={50}
-                height={50}
-                src={post?.author?.photoURL ?? noImageUrl}
-                alt="dp"
-                className="rounded-md w-[16px] h-[16px] lg:w-[23px] lg:h-[23px] object-cover"
-              />
-              <span>{post?.author?.name}</span>
-              <VerifyIcon className="!w-[15px] !h-[15px]" />
-            </div>
-            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-            <div>
-              <span className=" text-[11px] lg:text-[14px]">
-                {dayjs(post?.timestamp).format("MMMM D, YYYY")}
-              </span>
-            </div>
-            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-            <div className="flex-1 flex justify-end items-center flex-shrink-0 relative">
-              <FaStar
-                className={
-                  "text-[#d9c503] cursor-pointer " +
-                  (isPending ? "opacity-0" : "opacity-100")
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleBookMark?.(false);
-                }}
-              />
-              {isPending && (
-                <Spinner
-                  size="sm"
-                  classNames={{
-                    circle1: "!border-b-appBlack",
-                    circle2: "!border-b-appBlack",
-                  }}
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    <Link
+      href={
+        isSmallScreen ? "/?post_drawer_id=" + post?.id : "/posts/" + post?.id
+      }
+    >
+      <div className="bg-[#f7f1ae] p-[4px_8px] md:p-[6px_10px] rounded-md h-full flex gap-2 flex-col">
+        <div className="flex gap-2 items-stretch">
+          <div className="h-full w-auto aspect-square rounded-md overflow-hidden basis-[25%] lg:basis-[30%]">
+            <AppImage
+              src={post?.snippetData?.image ?? noImageUrl}
+              alt="No Image"
+              className="object-cover w-full h-full"
+              width={200}
+              height={200}
+            />
+          </div>
+          <div className="flex flex-col flex-1">
+            <h3
+              className="mb-1 lg:mb-1 text-[14px] lg:text-[17px] font-featureHeadline !leading-[120%]"
+              style={{
+                fontWeight: 600,
+                fontVariationSettings: '"wght" 700,"opsz" 10',
+              }}
+            >
+              {post?.snippetData?.title ?? "Missing Post Title"}
+            </h3>
+            <p className="font-featureRegular text-[11px] lg:text-[14px] leading-[1.2] mb-1 flex-1">
+              {post.snippetData?.subTextVariants?.very_short ??
+                post.snippetData?.content ??
+                "No Content"}
+            </p>
+            <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 text-[11px] lg:text-[14px]">
+                <AppImage
+                  width={50}
+                  height={50}
+                  src={post?.author?.photoURL ?? noImageUrl}
+                  alt="dp"
+                  className="rounded-md w-[16px] h-[16px] lg:w-[23px] lg:h-[23px] object-cover"
                 />
-              )}
+                <span>{post?.author?.name}</span>
+                <VerifyIcon className="!w-[15px] !h-[15px]" />
+              </div>
+              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+              <div>
+                <span className=" text-[11px] lg:text-[14px]">
+                  {dayjs(post?.timestamp).format("MMMM D, YYYY")}
+                </span>
+              </div>
             </div>
           </div>
         </div>

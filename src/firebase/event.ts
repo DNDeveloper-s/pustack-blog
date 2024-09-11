@@ -134,7 +134,7 @@ export type EventOnlineType = {
 export type EventOfflineType = {
   type: "offline";
   name: string;
-  image: string;
+  // image: string;
   mapsLink: string;
   address: string | null;
 };

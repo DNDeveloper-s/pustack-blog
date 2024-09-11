@@ -67,7 +67,7 @@ export default function AccountsModal(props: AccountsModalProps) {
       backdrop="transparent"
       onClose={() => {
         setSlide(0);
-        document.body.style.overflow = "unset";
+        document.body.style.overflow = "auto";
       }}
       onOpenChange={(open) => {
         if (open) {

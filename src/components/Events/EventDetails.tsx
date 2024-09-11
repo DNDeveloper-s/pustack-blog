@@ -810,7 +810,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                 <div className="mt-2">
                   {event.venue.type === "offline" ? (
                     <Link href={event.venue.mapsLink ?? "#"} target="_blank">
-                      {event.venue.image && (
+                      {/* {event.venue.image && (
                         <div className="flex items-center before:absolute relative before:top-0 before:left-0 before:w-full before:h-full before:bg-black before:bg-opacity-60 overflow-hidden before:z-[2] border divide-x divide-dashed divide-[#1f1d1a19] border-dashed border-[#1f1d1a] rounded-2xl bg-lightPrimary">
                           <AppImage
                             className="w-full aspect-video rounded-2xl"
@@ -833,7 +833,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                             </div>
                           </div>
                         </div>
-                      )}
+                      )} */}
                       {event.venue.mapsLink && (
                         <>
                           <div className="w-full max-w-[500px] h-auto aspect-video overflow-hidden mt-3">

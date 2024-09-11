@@ -2,7 +2,13 @@
 
 import Navbar from "../Navbar/Navbar";
 import JoditWrapper from "./JoditWrapper";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Post, SnippetDesign, SnippetPosition } from "@/firebase/post-v2";
 import { Button } from "@nextui-org/button";
 import { useCreatePost, useGetPostById, useUpdatePost } from "@/api/post";
@@ -55,7 +61,7 @@ const classes = {
   previewEditorButton: ".preview-editor-button",
 };
 
-export function SnackbarContent({ label }: { label: string }) {
+export function SnackbarContent({ label }: { label: ReactNode }) {
   return (
     <div className="flex items-center gap-2">
       <p>{label}</p>
@@ -723,9 +729,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
               // disabled={isPending}
               disabled={requestedPost?.status === "published" || isPending}
               classNames={{
-                content: "!bg-appBlue p-0 !rounded-none !min-w-[150px]",
+                content: "!bg-appBlack p-0 !rounded-none !min-w-[150px]",
                 base: "!p-[0_4px] !rounded-none",
-                arrow: "!bg-appBlue",
+                arrow: "!bg-appBlack",
               }}
               style={{
                 // @ts-ignore
@@ -739,7 +745,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
               <div className="flex items-start">
                 <Button
                   isDisabled={isPending}
-                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
+                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
                   onClick={() => handleSavePost()}
                   variant="flat"
                   color="primary"
@@ -758,7 +764,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                     (requestedPost?.status === "published" ? " !hidden" : "")
                   }
                 >
-                  <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlue !text-primary">
+                  <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlack !text-primary">
                     <FaCaretDown />
                   </div>
                 </DropdownTrigger>
@@ -776,7 +782,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                   className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
                 >
                   <p
-                    className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
+                    className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlack text-primary uppercase"
                     style={{
                       fontWeight: 600,
                       fontVariationSettings: '"wght" 700,"opsz" 10',
@@ -855,9 +861,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
               // disabled={isPending}
               disabled={requestedPost?.status === "published" || isPending}
               classNames={{
-                content: "!bg-appBlue p-0 !rounded-none !min-w-[150px]",
+                content: "!bg-appBlack p-0 !rounded-none !min-w-[150px]",
                 base: "!p-[0_4px] !rounded-none",
-                arrow: "!bg-appBlue",
+                arrow: "!bg-appBlack",
               }}
               style={{
                 // @ts-ignore
@@ -871,7 +877,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
               <div className="flex items-start">
                 <Button
                   isDisabled={isPending}
-                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
+                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
                   onClick={() => handleSavePost()}
                   variant="flat"
                   color="primary"
@@ -890,7 +896,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                     (requestedPost?.status === "published" ? " !hidden" : "")
                   }
                 >
-                  <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlue !text-primary">
+                  <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlack !text-primary">
                     <FaCaretDown />
                   </div>
                 </DropdownTrigger>
@@ -908,7 +914,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
                   className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
                 >
                   <p
-                    className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
+                    className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlack text-primary uppercase"
                     style={{
                       fontWeight: 600,
                       fontVariationSettings: '"wght" 700,"opsz" 10',

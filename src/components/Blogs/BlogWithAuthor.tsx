@@ -117,6 +117,7 @@ export default function BlogWithAuthor({
   href,
   isPending,
   classNames,
+  hideHeader,
   noImage,
   variant = "medium",
   aspectRatio = "16 / 9",
@@ -126,6 +127,7 @@ export default function BlogWithAuthor({
   handleBookMark?: (isBookmarked: boolean) => void;
   isPending?: boolean;
   href?: string;
+  hideHeader?: boolean;
 }) {
   const router = useRouter();
   const { isSmallScreen } = useScreenSize();
@@ -227,67 +229,71 @@ export default function BlogWithAuthor({
 
   return (
     <div className={"py-3 h-full flex flex-col " + (classNames?.wrapper ?? "")}>
-      <div className="flex">
-        <div className="mr-1 lg:mr-2 flex-shrink-0">
-          <Link href={"/author/" + post.author.uid}>
-            <img
-              className="w-[30px] h-[30px] lg:w-[38px] lg:h-[38px]"
-              src={post.author.photoURL ?? avatar.src}
-              alt="avatar"
-            />
-          </Link>
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <Link href={"/author/" + post.author.uid}>
-            <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
-              {post.author.name}
-            </h3>
-          </Link>
-          <Link href={"/" + post.topic}>
-            <p
-              className={
-                "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
-              }
-              style={{
-                fontWeight: "300",
-                fontVariationSettings: '"wght" 400,"opsz" 10',
-              }}
-            >
-              {isSmallScreen
-                ? post.formatArticleTopic(true)
-                : post.formatArticleTopic()}
-            </p>
-          </Link>
-        </div>
-        {showUnBookmarkButton && (
-          <div className="flex-shrink-0 relative">
-            <Tooltip title="Delete Bookmark">
-              <FaStar
-                className={
-                  "text-[#d9c503] cursor-pointer " +
-                  (isPending ? "opacity-0" : "opacity-100")
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleBookMark?.(false);
-                }}
+      {!hideHeader && (
+        <div className="flex">
+          <div className="mr-1 lg:mr-2 flex-shrink-0">
+            <Link href={"/author/" + post.author.uid}>
+              <img
+                className="w-[30px] h-[30px] lg:w-[38px] lg:h-[38px]"
+                src={post.author.photoURL ?? avatar.src}
+                alt="avatar"
               />
-            </Tooltip>
-            {isPending && (
-              <Spinner
-                size="sm"
-                classNames={{
-                  circle1: "!border-b-appBlack",
-                  circle2: "!border-b-appBlack",
-                }}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              />
-            )}
+            </Link>
           </div>
-        )}
-      </div>
-      <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
+          <div className="flex-1 overflow-hidden">
+            <Link href={"/author/" + post.author.uid}>
+              <h3 className="leading-[120%] text-[15px] lg:text-[17px] group-hover:text-appBlue w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                {post.author.name}
+              </h3>
+            </Link>
+            <Link href={"/" + post.topic}>
+              <p
+                className={
+                  "leading-[120%] text-[13px] lg:text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase "
+                }
+                style={{
+                  fontWeight: "300",
+                  fontVariationSettings: '"wght" 400,"opsz" 10',
+                }}
+              >
+                {isSmallScreen
+                  ? post.formatArticleTopic(true)
+                  : post.formatArticleTopic()}
+              </p>
+            </Link>
+          </div>
+          {showUnBookmarkButton && (
+            <div className="flex-shrink-0 relative">
+              <Tooltip title="Delete Bookmark">
+                <FaStar
+                  className={
+                    "text-[#d9c503] cursor-pointer " +
+                    (isPending ? "opacity-0" : "opacity-100")
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleBookMark?.(false);
+                  }}
+                />
+              </Tooltip>
+              {isPending && (
+                <Spinner
+                  size="sm"
+                  classNames={{
+                    circle1: "!border-b-appBlack",
+                    circle2: "!border-b-appBlack",
+                  }}
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                />
+              )}
+            </div>
+          )}
+        </div>
+      )}
+      {!hideHeader && (
+        <hr className="border-dashed border-[#1f1d1a4d] my-2 md:my-4" />
+      )}
       {finalContent}
     </div>
   );

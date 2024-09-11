@@ -116,17 +116,22 @@ export function AccountStepOne({
         {
           message: (
             <SnackbarContent
-              label={"You will now receive updates on " + user?.email}
+              label={
+                <span>
+                  You will now receive updates on{" "}
+                  <strong className="font-featureHeadline">
+                    {user?.email}
+                  </strong>
+                </span>
+              }
             />
           ),
           closable: false,
           showProgress: true,
-          duration: 3,
+          duration: 5,
           closeIcon: null,
           key: "drafts-notification",
-          className: isMobileScreen
-            ? "drafts-notification"
-            : "drafts-notification auto-width",
+          className: "drafts-notification !w-[330px]",
         },
         "success"
       );

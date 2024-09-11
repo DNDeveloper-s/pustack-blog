@@ -17,5 +17,5 @@ export const topics = [
   "Technology",
   "Silicon Valley",
   "Product Management",
-  "More...",
+  "Others",
 ];

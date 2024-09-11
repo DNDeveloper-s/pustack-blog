@@ -8,7 +8,7 @@ import useScreenSize from "@/hooks/useScreenSize";
 
 export default function More({ limit = 5 }: { limit?: number }) {
   const { posts } = useQueryPosts({
-    topics: ["more"],
+    topics: ["others"],
     limit,
   });
   const { isSmallScreen } = useScreenSize();
@@ -25,7 +25,7 @@ export default function More({ limit = 5 }: { limit?: number }) {
       <div className="my-4 py-5">
         <div className="border-t-2 border-black">
           <h2 className="font-featureHeadline text-[40px] leading-[120%] pt-1">
-            More
+            Others
           </h2>
           <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">

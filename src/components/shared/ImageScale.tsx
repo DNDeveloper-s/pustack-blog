@@ -55,9 +55,9 @@ export default function ImageScale() {
     <Modal
       isOpen={isOpen}
       classNames={{
-        wrapper: "bg-transparent !z-[9999]",
+        wrapper: "bg-transparent !z-[9999] !overflow-hidden",
         base: "!w-screen !max-w-[unset] !h-screen !max-h-[unset] !mx-0 !bg-transparent",
-        backdrop: "!z-[999]",
+        backdrop: "!z-[2312]",
       }}
       isDismissable={false}
       onClose={onClose}

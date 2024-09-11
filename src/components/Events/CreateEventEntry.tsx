@@ -37,7 +37,7 @@ export interface CreateEventFormValues {
   venue_name?: string;
   venue_maps_link?: string;
   venue_address?: string | null;
-  venue_image?: string;
+  // venue_image?: string;
   isAllDay: boolean;
 }
 
@@ -82,7 +82,7 @@ const createEventSchema = Yup.object().shape({
       ? schema.required("Venue Maps Link is required for offline events")
       : schema.notRequired()
   ),
-  venue_image: Yup.string(),
+  // venue_image: Yup.string(),
   venue_address: Yup.string().nullable(),
 });
 
@@ -146,14 +146,14 @@ export default function CreateEventEntry() {
         // Offline venue
         methods.setValue("venue_name", event.venue.name);
         methods.setValue("venue_maps_link", event.venue.mapsLink);
-        methods.setValue("venue_image", event.venue.image);
+        // methods.setValue("venue_image", event.venue.image);
         methods.setValue("venue_address", event.venue.address);
       }
       methods.setValue("isAllDay", event.isAllDay);
 
       console.log("event - ", event);
     }
-  }, [event, methods.setValue]);
+  }, [event, methods]);
 
   return (
     <div className="w-full pb-20 max-w-[900px] mx-auto">

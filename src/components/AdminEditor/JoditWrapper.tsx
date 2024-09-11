@@ -203,7 +203,7 @@ function JoditWrapper(
     const field = titleValue
       ? subTitleValue
         ? topicValue
-          ? (topicValue === "more" ? customTopicValue : true)
+          ? (topicValue === "others" ? customTopicValue : true)
             ? sections && Section.mergedContent(sections).length > 0
               ? null
               : "sections"
@@ -510,7 +510,7 @@ function JoditWrapper(
         </div>
         <input
           // disabled={isPending}
-          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] placeholder:text-black placeholder:text-opacity-30"
           placeholder="Enter the Post Title"
           type="text"
           style={{
@@ -543,7 +543,7 @@ function JoditWrapper(
             onChange();
             updateLocalStorage("topic", e.target.value);
           }}
-          className="border text-[16px] w-full flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] w-full flex-1 flex-shrink py-2 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] invalid:text-black invalid:text-opacity-30"
         >
           {TOPICS.map((_topic) => (
             <option
@@ -551,6 +551,7 @@ function JoditWrapper(
               key={_topic.key}
               value={_topic.key}
               disabled={_topic.disabled}
+              hidden={_topic.disabled}
             >
               {_topic.value}
             </option>
@@ -558,7 +559,7 @@ function JoditWrapper(
         </select>
       </div>
 
-      {topic === "more" && (
+      {topic === "others" && (
         <div className="mt-2">
           <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
             Enter Your Topic

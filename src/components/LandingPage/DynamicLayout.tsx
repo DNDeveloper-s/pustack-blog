@@ -23,14 +23,14 @@ type topicId =
   | "artificial-intelligence"
   | "technology"
   | "silicon-valley"
-  | "more";
+  | "others";
 
 type label =
   | "Product Management"
   | "Artificial Intelligence"
   | "Technology"
   | "Silicon Valley"
-  | "More";
+  | "Others";
 
 export default function DynamicLayout({
   limit = 5,

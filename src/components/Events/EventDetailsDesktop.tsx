@@ -301,7 +301,7 @@ const sections = [
   },
   {
     id: "organizer",
-    title: "Organizer",
+    title: "Host",
     icon: <FaUser />,
   },
   {
@@ -726,7 +726,7 @@ export default function EventDetailsDesktop({
           </div>
           <div>
             <div className="font-featureBold text-[20px] leading-[27px]">
-              <p>Organizer</p>
+              <p>Host</p>
             </div>
             <div className="mt-1">
               <div className="flex flex-col w-full items-center gap-2 p-4">

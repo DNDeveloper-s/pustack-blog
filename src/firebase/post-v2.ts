@@ -309,7 +309,7 @@ export class Post {
       .map((t) => t[0].toUpperCase() + t.slice(1))
       .join(" ");
 
-    return _topic === "More" ? this.customTopic ?? "More" : _topic;
+    return _topic === "Others" ? this.customTopic ?? "Others" : _topic;
   }
 
   preparePostSnippetData() {
@@ -914,7 +914,7 @@ export const postConverter = {
       topic: post.topic,
       customTopic: post.customTopic,
       timestamp: post.timestamp
-      ? Timestamp.fromDate(new Date(post.timestamp))
+        ? Timestamp.fromDate(new Date(post.timestamp))
         : serverTimestamp(),
       position: post.snippetPosition,
       design: post.snippetDesign,

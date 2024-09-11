@@ -309,7 +309,7 @@ export default function RSVPedPage() {
           <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
             <NoEventsIcon />
             <p className="text-base text-appBlack text-opacity-65">
-              No RSVPed Events
+              No RSVP&apos;ed Events
             </p>
           </div>
         )}
@@ -393,7 +393,7 @@ export default function RSVPedPage() {
         <div className="w-full py-5 px-2 text-center flex flex-col items-center gap-3 justify-center">
           <NoEventsIcon />
           <p className="text-base text-appBlack text-opacity-65">
-            No RSVPed Events
+            No RSVP&apos;ed Events
           </p>
         </div>
       )}

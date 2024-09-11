@@ -39,7 +39,6 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
 interface CreateEventAttachments {
   event_image: string;
   organizer_image: string;
-  venue_image?: string;
 }
 
 export default function CreateEventForm({ event }: { event?: Event }) {
@@ -219,9 +218,9 @@ export default function CreateEventForm({ event }: { event?: Event }) {
       setIsUploading(true);
       validateAttachments("event_image");
       validateAttachments("organizer_image");
-      if (venueValue === "offline") {
-        validateAttachments("venue_image");
-      }
+      // if (venueValue === "offline") {
+      //   validateAttachments("venue_image");
+      // }
 
       // Check for the start time and end time. If the end time is before the start time, throw an error
       if (dayjs(data.startTime).isAfter(dayjs(data.endTime))) {
@@ -235,16 +234,16 @@ export default function CreateEventForm({ event }: { event?: Event }) {
       await uploadAttachment("event_image");
       await uploadAttachment("organizer_image");
 
-      if (venueValue === "offline") {
-        await uploadAttachment("venue_image");
-      }
+      // if (venueValue === "offline") {
+      //   await uploadAttachment("venue_image");
+      // }
 
       const values = getValues();
 
       let venueObject: EventVenueType = {
         type: "offline",
         name: values.venue_name as string,
-        image: values.venue_image as string,
+        // image: values.venue_image as string,
         mapsLink: values.venue_maps_link as string,
         address: (values.venue_address as string) ?? null,
       };
@@ -253,7 +252,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
         venueObject = {
           type: "offline",
           name: values.venue_name as string,
-          image: values.venue_image as string,
+          // image: values.venue_image as string,
           mapsLink: values.venue_maps_link as string,
           address: (values.venue_address as string) ?? null,
         };
@@ -442,7 +441,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
           <div>
             <div className="flex justify-between items-center">
               <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-                Event Date
+                Event Date & Time
               </h4>
               <Controller
                 name="isAllDay"
@@ -698,7 +697,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                       </div>
                     )}
                   />
-                  <Upload
+                  {/* <Upload
                     name="avatar"
                     listType="picture-card"
                     className="minerva-venue-image-uploader"
@@ -721,7 +720,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                     <p className="text-xs mt-1 text-danger-500">
                       {formState.errors.venue_image.message}
                     </p>
-                  )}
+                  )} */}
                 </>
               )}
             </div>
@@ -731,7 +730,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
       <div className="mt-12">
         <div>
           <span className="uppercase block text-sm mb-1 font-larkenExtraBold text-black text-opacity-60">
-            Organizer Info
+            Host Info
           </span>
           <hr />
         </div>
@@ -741,7 +740,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
             render={({ field, fieldState, formState }) => (
               <div>
                 <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-                  Organizer Name
+                  Host Name
                 </h4>
                 <input
                   // disabled={isPending}
@@ -766,7 +765,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
             render={({ field, fieldState, formState }) => (
               <div>
                 <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-                  Organizer Info
+                  Host Info
                 </h4>
                 <textarea
                   // disabled={isPending}
@@ -789,7 +788,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
 
           <div className="flex flex-col md:col-start-2 md:row-start-1 md:row-end-3">
             <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-              Organizer Image
+              Host Image
             </h4>
             <Upload
               name="avatar"
@@ -807,7 +806,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                   style={{ width: "100%" }}
                 />
               ) : (
-                uploadButton("Upload Organizer Image")
+                uploadButton("Upload Host Image")
               )}
             </Upload>
             {formState.errors.organizer_image && (
@@ -882,7 +881,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
         <Button
           type="submit"
           isDisabled={isPending || isUploading}
-          className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
+          className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
           // onClick={() => handleSavePost()}
           variant="flat"
           color="primary"

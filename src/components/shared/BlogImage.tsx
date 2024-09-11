@@ -5,6 +5,7 @@ import "react-medium-image-zoom/dist/styles.css";
 import AppImage from "./AppImage";
 import { useState } from "react";
 import e from "cors";
+import Image from "next/image";
 
 export function ImageModalPreview() {
   // const { state, closePreview } = useBlogImage();
@@ -102,6 +103,14 @@ export default function BlogImage({
         </Controlled>
       )} */}
       {imageContent}
+      <Image
+        alt=""
+        style={{ position: "absolute", opacity: 0 }}
+        src={src}
+        width={2000}
+        height={1000}
+        priority
+      />
     </figure>
   );
   // return (
@@ -180,6 +189,14 @@ export function BlogImageDefault({
         />
       </Zoom> */}
       {imageContent}
+      <Image
+        alt=""
+        style={{ position: "absolute", opacity: 0 }}
+        src={src}
+        width={2000}
+        height={1000}
+        priority
+      />
     </figure>
   );
 

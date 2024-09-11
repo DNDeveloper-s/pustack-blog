@@ -6,8 +6,8 @@ export default function MorePage() {
   return (
     <div className="mb-6 w-full py-3 flex justify-between items-center">
       <LandingPageSectionLayout
-        label="More"
-        topics={["more"]}
+        label="Others"
+        topics={["others"]}
         limit={10}
         classNames={{ base: "!p-0", wrapper: "!border-none" }}
       />
