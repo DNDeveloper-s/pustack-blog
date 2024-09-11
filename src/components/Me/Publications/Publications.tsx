@@ -10,11 +10,70 @@ import useScreenSize from "@/hooks/useScreenSize";
 import EventsEntry from "../Events/EventsEntry";
 import { IoChevronBack } from "react-icons/io5";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  DocumentIcon,
-  EventIcon,
-  SignalIcon,
-} from "@/components/AuthorPage/AuthorPage";
+
+export const DocumentIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22}
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 512 512"
+    {...props}
+  >
+    <path
+      d="M106 512h300c24.814 0 45-20.186 45-45V150H346c-24.814 0-45-20.186-45-45V0H106C81.186 0 61 20.186 61 45v422c0 24.814 20.186 45 45 45zm60-301h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h180c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15zm0 60h120c8.291 0 15 6.709 15 15s-6.709 15-15 15H166c-8.291 0-15-6.709-15-15s6.709-15 15-15z"
+      data-original="#000000"
+    />
+    <path
+      d="M346 120h96.211L331 8.789V105c0 8.276 6.724 15 15 15z"
+      data-original="#000000"
+    />
+  </svg>
+);
+
+export const SignalIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22.2}
+    fillRule="evenodd"
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 100 101"
+    {...props}
+  >
+    <path
+      d="M73.064 31.973a3.92 3.92 0 0 0-3.92-3.919H56.793a3.92 3.92 0 0 0-3.92 3.92v61.753a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM21.191 81.376a3.92 3.92 0 0 0-3.92-3.919L4.92 77.456A3.92 3.92 0 0 0 1 81.376v12.351a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM99 7.272a3.92 3.92 0 0 0-3.92-3.92H82.729a3.92 3.92 0 0 0-3.92 3.92v86.455a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92zM47.127 56.675a3.92 3.92 0 0 0-3.92-3.92H30.856a3.92 3.92 0 0 0-3.92 3.92v37.051a3.92 3.92 0 0 0 3.92 3.921l12.351-.001a3.919 3.919 0 0 0 3.92-3.92z"
+      data-original="#000000"
+    />
+  </svg>
+);
+
+export const EventIcon = (props: any) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlSpace="preserve"
+    width={props.width ?? 22}
+    height={props.height ?? 22}
+    style={{
+      enableBackground: "new 0 0 512 512",
+    }}
+    viewBox="0 0 48 48"
+    {...props}
+  >
+    <rect width={4} height={6} x={11} y={3} data-original="#000000" rx={2} />
+    <rect width={4} height={6} x={33} y={3} data-original="#000000" rx={2} />
+    <path
+      d="M4 18v23a4 4 0 0 0 4 4h32a4 4 0 0 0 4-4V18zm12 20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm11 11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm11 11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm0-11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm6-11v-6a4 4 0 0 0-4-4h-1v1c0 2.206-1.794 4-4 4s-4-1.794-4-4V6H17v1c0 2.206-1.794 4-4 4S9 9.206 9 7V6H8a4 4 0 0 0-4 4v6z"
+      data-original="#000000"
+    />
+  </svg>
+);
 
 export const contentTabs = [
   { title: "Posts", key: "posts", Icon: DocumentIcon },
