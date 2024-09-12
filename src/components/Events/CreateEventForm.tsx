@@ -745,7 +745,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <input
                   // disabled={isPending}
                   className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the name of the organizer"
+                  placeholder="Enter the Name of the Host"
                   type="text"
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
@@ -770,7 +770,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <textarea
                   // disabled={isPending}
                   className="block border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the Organizer Info"
+                  placeholder="Enter the OrHostganizer Info"
                   rows={4}
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
