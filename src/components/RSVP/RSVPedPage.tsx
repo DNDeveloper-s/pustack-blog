@@ -320,8 +320,8 @@ export default function RSVPedPage() {
   return (
     <div className="w-full flex-1 py-10">
       <div className="mb-6 flex flex-col md:flex-row justify-between items-start gap-4 md:items-center">
-        <h2 className="text-appBlack text-[22px] md:text-[30px] font-larkenExtraBold">
-          RSVP&nbsp;ed Events
+        <h2 className="text-appBlack text-[22px] md:text-[30px] font-featureHeadline">
+          RSVP&apos;ed Events
         </h2>
         {/* <div className="flex items-center gap-4">
               <SortByModal handleApply={handleSortApply} />
