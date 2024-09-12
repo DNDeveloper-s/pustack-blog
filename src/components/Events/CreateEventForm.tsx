@@ -770,7 +770,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <textarea
                   // disabled={isPending}
                   className="block border text-[16px] w-full resize-none flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the OrHostganizer Info"
+                  placeholder="Enter the Host Info"
                   rows={4}
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
