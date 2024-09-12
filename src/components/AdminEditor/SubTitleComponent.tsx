@@ -12,7 +12,7 @@ import { trimToSentence } from "@/lib/transformers/trimToSentence";
 import BlogImage from "../shared/BlogImage";
 import { useUser } from "@/context/UserContext";
 import { aiShimmer, avatar } from "@/assets";
-import AppImage from "../shared/AppImage";
+import AppImage, { noImageUrl } from "../shared/AppImage";
 import { FaCheck } from "react-icons/fa6";
 import { IoCloseSharp } from "react-icons/io5";
 import { MdModeEdit, MdOutlineSettingsBackupRestore } from "react-icons/md";
@@ -203,17 +203,17 @@ function BlogWithAuthor({
 
 interface SubTitleComponentProps {
   onChange: () => void;
+  title: string;
+  customTopic: string;
+  topic: string;
 }
 const SubTitleComponentRef = (
-  { onChange }: SubTitleComponentProps,
+  { onChange, title, customTopic, topic }: SubTitleComponentProps,
   ref: any
 ) => {
   const [subTitleValue, setSubTitleValue] = useState("");
   const [index, setIndex] = useState(0);
-  const [extractedData, setExtractedData] = useState<{
-    image?: string;
-    text?: string;
-  }>({ image: "", text: "" });
+  const [extractedImage, setExtractedImage] = useState<string | null>(null);
 
   const {
     mutate: postGenerateTextVariants,
@@ -283,22 +283,30 @@ const SubTitleComponentRef = (
       "slate-value-change",
       (data: { value: Descendant[]; editor: Editor }) => {
         const extractedTextFromEditor = extractTextFromEditor(data.editor);
-        const extractedImage = getFirstImage(data.value);
+        const _extractedImage = getFirstImage(data.value);
 
         const extractedText = trimToSentence(extractedTextFromEditor, 200);
 
         setSubTitleValue(extractedText);
 
-        setExtractedData({
-          image: extractedImage ?? "",
-          text: extractedText,
+        setExtractedImage((c) => {
+          if (c) return c;
+          return _extractedImage;
         });
+      }
+    );
+
+    const unsub1 = EventEmitter.addListener(
+      "thumbnail-change",
+      (data: { url: string }) => {
+        setExtractedImage(data.url);
       }
     );
 
     return () => {
       clearTimeout(timeoutId);
       unsub.remove();
+      unsub1.remove();
     };
   }, []);
 
@@ -416,12 +424,10 @@ const SubTitleComponentRef = (
           <SwipeableViews index={index} onChangeIndex={onChangeIndex}>
             <div className="w-full mx-auto max-w-[570px]">
               <BlogWithAuthor
-                image={
-                  "https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2Fimage_1724746830885.jpeg?alt=media&token=50bf235a-5777-48f8-a96d-769412d78ff9"
-                }
+                image={extractedImage ?? noImageUrl}
                 textContent={_variantsData?.very_short ?? ""}
-                title="The Growing Importance of Mental Health Awareness in the Workplace"
-                topic="More"
+                title={title}
+                topic={topic === "others" ? customTopic ?? "Others" : topic}
                 size="sm"
                 variant="very_short"
                 classNames={{
@@ -432,12 +438,10 @@ const SubTitleComponentRef = (
             </div>
             <div className="w-full mx-auto max-w-[300px]">
               <BlogWithAuthor
-                image={
-                  "https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2Fimage_1724746830885.jpeg?alt=media&token=50bf235a-5777-48f8-a96d-769412d78ff9"
-                }
+                image={extractedImage ?? noImageUrl}
                 textContent={_variantsData?.short ?? ""}
-                title="The Growing Importance of Mental Health Awareness in the Workplace"
-                topic="More"
+                title={title}
+                topic={topic === "others" ? customTopic ?? "Others" : topic}
                 size="md"
                 variant="short"
                 classNames={{
@@ -448,12 +452,10 @@ const SubTitleComponentRef = (
             </div>
             <div className="w-full mx-auto max-w-[460px]">
               <BlogWithAuthor
-                image={
-                  "https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2Fimage_1724746830885.jpeg?alt=media&token=50bf235a-5777-48f8-a96d-769412d78ff9"
-                }
+                image={extractedImage ?? noImageUrl}
                 textContent={_variantsData?.medium ?? ""}
-                title="The Growing Importance of Mental Health Awareness in the Workplace"
-                topic="More"
+                title={title}
+                topic={topic === "others" ? customTopic ?? "Others" : topic}
                 variant="medium"
                 classNames={{
                   title: "text-[16px] lg:text-[18px]",
@@ -463,12 +465,10 @@ const SubTitleComponentRef = (
             </div>
             <div className="w-full mx-auto max-w-[700px]">
               <BlogWithAuthor
-                image={
-                  "https://firebasestorage.googleapis.com/v0/b/minerva-0000.appspot.com/o/images%2Fimage_1724746830885.jpeg?alt=media&token=50bf235a-5777-48f8-a96d-769412d78ff9"
-                }
+                image={extractedImage ?? noImageUrl}
                 textContent={_variantsData?.long ?? ""}
-                title="The Growing Importance of Mental Health Awareness in the Workplace"
-                topic="More"
+                title={title}
+                topic={topic === "others" ? customTopic ?? "Others" : topic}
                 variant="long"
                 classNames={{
                   title: "text-[16px] lg:text-[18px]",

@@ -15,6 +15,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/modal";
@@ -79,9 +80,11 @@ export function SignalItemDesktopHeader() {
 export function SignalPreview({
   disclosureOptions,
   signal,
+  Footer,
 }: {
   disclosureOptions: ReturnType<typeof useDisclosure>;
   signal: Signal;
+  Footer?: React.ReactNode;
 }) {
   return (
     <Modal
@@ -99,6 +102,7 @@ export function SignalPreview({
         <ModalBody>
           <SignalComponent signal={signal} />
         </ModalBody>
+        {Footer && <ModalFooter>{Footer}</ModalFooter>}
       </ModalContent>
     </Modal>
   );

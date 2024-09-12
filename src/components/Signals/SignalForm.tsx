@@ -2,7 +2,7 @@
 
 import Navbar from "../Navbar/Navbar";
 import { MathJaxContext } from "better-react-mathjax";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SignalJodit from "./SignalJodit";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,8 @@ import {
 import { NotificationPlacements } from "antd/es/notification/interface";
 import { SnackbarContent } from "../AdminEditor/AdminPage";
 import MarkAsFlagshipButton from "./MarkAsFlagshipButton";
+import { SignalPreview } from "../Me/Signals/SignalItemDesktop";
+import { useDisclosure } from "@nextui-org/modal";
 
 const getButtonLabel = (requestedSignal?: Signal) => {
   if (requestedSignal?.status === "draft") return "Create Signal";
@@ -47,6 +49,8 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
   // Contexts
   const { user } = useUser();
   const { openNotification } = useNotification();
+
+  const previewDisclosureOptions = useDisclosure();
 
   // Custom Hooks
   const { isMobileScreen, isTabletScreen } = useScreenSize();
@@ -183,7 +187,7 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
     }
   }, [requestedSignal, user?.uid, signalId, router, user?.is_admin]);
 
-  async function handleContinueSignal() {
+  const handleContinueSignal = useCallback(() => {
     if (!user) return;
 
     // const sections = postSectionsRef.current?.getSections();
@@ -254,14 +258,10 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
     // TODO:
 
     return signal;
-
-    // // postCreatePost(post);
-    // handleContinue(post);
-    // postCreateSignal(signal);
-  }
+  }, [openNotification, requestedSignal, user]);
 
   async function handleSaveDraftSignal() {
-    const currentSignal = await handleContinueSignal();
+    const currentSignal = handleContinueSignal();
     if (!currentSignal) return;
 
     currentSignal.draft();
@@ -273,18 +273,21 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
       : postCreateSignal(currentSignal);
   }
 
-  async function handleSaveSignal() {
-    const currentSignal = await handleContinueSignal();
-    if (!currentSignal) return;
+  const handleSaveSignal = useCallback(
+    async function () {
+      const currentSignal = handleContinueSignal();
+      if (!currentSignal) return;
 
-    currentSignal.live();
+      currentSignal.live();
 
-    isDraftSavingRef.current = false;
+      isDraftSavingRef.current = false;
 
-    requestedSignal
-      ? postUpdateSignal(currentSignal)
-      : postCreateSignal(currentSignal);
-  }
+      requestedSignal
+        ? postUpdateSignal(currentSignal)
+        : postCreateSignal(currentSignal);
+    },
+    [handleContinueSignal, postCreateSignal, postUpdateSignal, requestedSignal]
+  );
 
   return (
     isAuthInitialized && (
@@ -312,6 +315,7 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
                 onClick={() => {
                   // setShouldConfirm(false);
                   // intervalSaveDraftRef.current = false;
+                  // saveSignalGenerator.next();
                   handleSaveDraftSignal();
                   // setAllSignalsToPublished();
                 }}
@@ -323,103 +327,80 @@ export default function SignalForm({ signalId }: { signalId?: string | null }) {
                 Save as Draft
               </Button>
             )}
-            <Dropdown
-              // disabled={isPending}
-              disabled={requestedSignal?.status === "published" || isPending}
-              classNames={{
-                content: "!bg-appBlue p-0 !rounded-none !min-w-[150px]",
-                base: "!p-[0_4px] !rounded-none",
-                arrow: "!bg-appBlue",
+            <Button
+              isDisabled={isPending}
+              className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
+              onClick={async () => {
+                const currentSignal = handleContinueSignal();
+
+                if (currentSignal) {
+                  setCurrentSignal(currentSignal);
+                  previewDisclosureOptions.onOpen();
+                }
               }}
-              style={{
-                // @ts-ignore
-                "--nextui-content1": "230 67% 43%",
-                backgroundColor: "#243bb5",
-              }}
-              placement="bottom-end"
-              showArrow={true}
-              // isDisabled={true}
-              isDisabled={requestedSignal?.status === "published" || isPending}
+              variant="flat"
+              color="primary"
+              isLoading={isPending}
+              // isLoading={isPending && !isDraftSaving}
             >
-              <div className="flex items-start">
+              <IoIosCreate />
+              <span>
+                {isPending && !isDraftSaving
+                  ? "Saving..."
+                  : getButtonLabel(requestedSignal)}
+              </span>
+            </Button>
+          </div>
+        </div>
+        <div>
+          <SignalJodit
+            openPreview={() => {
+              previewDisclosureOptions.onOpen();
+            }}
+            preSignal={requestedSignal}
+            ref={joditRef}
+          />
+        </div>
+        {currentSignal && (
+          <SignalPreview
+            disclosureOptions={previewDisclosureOptions}
+            signal={currentSignal}
+            Footer={
+              <>
                 <Button
                   isDisabled={isPending}
-                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlue !text-primary"
-                  onClick={() => handleSaveSignal()}
+                  className="font-featureHeadline email_button flex items-center justify-center"
+                  onClick={() => {
+                    // setShouldConfirm(false);
+                    // intervalSaveDraftRef.current = false;
+                    // saveSignalGenerator.next();
+                    previewDisclosureOptions.onClose();
+                    // setAllSignalsToPublished();
+                  }}
+                  variant="flat"
+                  color="primary"
+                  // isLoading={isPending}
+                  isLoading={isDraftSaving}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  isDisabled={isPending}
+                  className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
+                  onClick={() => {
+                    handleSaveSignal();
+                  }}
                   variant="flat"
                   color="primary"
                   isLoading={isPending}
                   // isLoading={isPending && !isDraftSaving}
                 >
-                  <IoIosCreate />
-                  <span>
-                    {isPending && !isDraftSaving
-                      ? "Saving..."
-                      : getButtonLabel(requestedSignal)}
-                  </span>
+                  Approve
                 </Button>
-                <DropdownTrigger
-                  className={
-                    "!scale-100 " +
-                    (requestedSignal?.status === "published" ? " !hidden" : "")
-                  }
-                >
-                  <div className="font-featureHeadline !h-[40px] !min-w-[unset] !border-l-0 email_button flex items-center justify-center !bg-appBlue !text-primary">
-                    <FaCaretDown />
-                  </div>
-                </DropdownTrigger>
-              </div>
-              <DropdownMenu
-                classNames={{
-                  list: "p-0 m-0 divide-y divide-dashed divide-[#f9f9f95e] !gap-0",
-                  base: "!p-[0_5px]",
-                }}
-              >
-                <DropdownItem
-                  onClick={() => {
-                    // disclosureOptions.onOpen();
-                  }}
-                  className="!p-[12px_9px_9px] !pl-1 !rounded-none !bg-transparent"
-                >
-                  <p
-                    className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
-                    style={{
-                      fontWeight: 600,
-                      fontVariationSettings: '"wght" 700,"opsz" 10',
-                    }}
-                  >
-                    <MdScheduleSend />
-                    <span>
-                      {/* {currentPost?.status === "scheduled" */}
-                      {/* ? "UPDATE SCHEDULE" */}
-                      SCHEDULE POST
-                    </span>
-                  </p>
-                </DropdownItem>
-                {/* <DropdownItem
-                    onClick={() => {
-                      handleSaveAsDraft();
-                    }}
-                    className="!p-[10px_9px_12px] !pl-1 !rounded-none !bg-transparent"
-                  >
-                    <p
-                      className="text-[13px] grid grid-cols-[13px_1fr] items-center gap-3 bg-appBlue text-primary uppercase"
-                      style={{
-                        fontWeight: 600,
-                        fontVariationSettings: '"wght" 700,"opsz" 10',
-                      }}
-                    >
-                      <MdDrafts />
-                      <span>SAVE AS DRAFT</span>
-                    </p>
-                  </DropdownItem> */}
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div>
-          <SignalJodit preSignal={requestedSignal} ref={joditRef} />
-        </div>
+              </>
+            }
+          />
+        )}
       </div>
     )
   );

@@ -42,12 +42,12 @@ export async function generateMetadata(
   const title = "Minerva";
   const description = "This is a sample description of the web page.";
 
-  const imageUrl = `https://pustack-blog.vercel.app/minerva.svg`;
+  const imageUrl = `https://minerva.news/minerva.svg`;
 
-  const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
-  const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
-  const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
-  const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}`;
+  const processedImageUrl2 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl3 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
+  const processedImageUrl4 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
 
   return {
     title,
@@ -55,7 +55,7 @@ export async function generateMetadata(
     openGraph: {
       title,
       description,
-      url: "https://pustack-blog.vercel.app/",
+      url: "https://minerva.news/",
       siteName: "Minerva",
       images: [
         {

@@ -24,6 +24,7 @@ import AppImage from "../shared/AppImage";
 import Linkify from "linkify-react";
 import EventMap from "./EventMap";
 import RSVPNowButton from "../shared/RSVPNowButton";
+import { pstDayjs } from "@/lib/dayjsConfig";
 
 const DateTimeIcon = (props: any) => (
   <svg
@@ -452,7 +453,7 @@ export default function EventDetailsMobile({
               <ShareLinks
                 title={event.title}
                 id={event.id}
-                url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
+                url={`https://minerva.news/events?event_id=${event.id}`}
                 appendClassName="mt-3"
               />
             )}
@@ -595,37 +596,34 @@ export default function EventDetailsMobile({
                   <p>Date & Time</p>
                 </div>
                 <div className="mt-2">
-                  <div className="flex items-center divide-x divide-dashed divide-[#1f1d1a19]">
+                  <div className="flex items-start divide-x divide-dashed divide-[#1f1d1a19]">
                     <div className="flex-1">
                       <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                        Starts On:
+                        Date:
                       </p>
                       <p>
                         <b>
-                          {dayjs(event.startTime.toDate()).format(
+                          {pstDayjs(event.startTime.toDate()).format(
                             "MMMM DD, YYYY"
                           )}
                         </b>
                       </p>
-                      <p>
+                      {/* <p>
                         <b>
                           {dayjs(event.startTime.toDate()).format("hh:mm A")}
                         </b>
-                      </p>
+                      </p> */}
                     </div>
                     <div className="flex-1 pl-4">
                       <p className="text-sm mb-1 text-appBlack text-opacity-60">
-                        Ends On:
+                        Time:
                       </p>
                       <p>
                         <b>
-                          {dayjs(event.endTime.toDate()).format(
-                            "MMMM DD, YYYY"
-                          )}
+                          {pstDayjs(event.startTime.toDate()).format("hh:mm A")}{" "}
+                          - {pstDayjs(event.endTime.toDate()).format("hh:mm A")}{" "}
+                          | PST
                         </b>
-                      </p>
-                      <p>
-                        <b>{dayjs(event.endTime.toDate()).format("hh:mm A")}</b>
                       </p>
                     </div>
                   </div>
@@ -706,23 +704,27 @@ export default function EventDetailsMobile({
                     //     </Link>
                     //   </div>
                     // </div>
-                    <Link target="_blank" href={event.venue.meetingLink ?? "#"}>
-                      <div className="flex-1 flex items-center gap-3 cursor-pointer">
-                        <div>
-                          {getMeetLinkDetails(event.venue.meetingLink).icon}
-                        </div>
-                        <div>
-                          <p className="text-lg font-featureHeadline">
-                            Online Meeting
-                          </p>
+
+                    <div className="flex-1 flex items-center gap-3 cursor-pointer">
+                      <div>
+                        {getMeetLinkDetails(event.venue.meetingLink).icon}
+                      </div>
+                      <div>
+                        <p className="text-lg font-featureHeadline">
+                          Online Meeting
+                        </p>
+                        <Link
+                          target="_blank"
+                          href={event.venue.meetingLink ?? "#"}
+                        >
                           <p className="text-xs">
                             Join{" "}
                             {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
                             Link
                           </p>
-                        </div>
+                        </Link>
                       </div>
-                    </Link>
+                    </div>
                   )}
                 </div>
               </div>
@@ -753,12 +755,12 @@ export default function EventDetailsMobile({
                   >
                     <b>{event.organizer.email}</b>
                   </Link>
-                  <Link
+                  {/* <Link
                     href={"tel:" + event.organizer.contact}
                     className="leading-[120%] text-appBlue cursor-pointer mt-2 block"
                   >
                     <b>{event.organizer.contact}</b>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>

@@ -27,7 +27,7 @@ import {
 import Lottie from "lottie-react-web";
 import { greenTickLottie } from "@/assets";
 import { Spinner } from "@nextui-org/spinner";
-import { useUpdateUser } from "@/api/user";
+import { useGetAppRating, useUpdateAppRating, useUpdateUser } from "@/api/user";
 import { useUser } from "@/context/UserContext";
 import PhoneInput, { CountryData } from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -105,6 +105,11 @@ export function AccountStepOne({
       // activeField.current = undefined;
     },
   });
+
+  const { mutate: postUpdateAppRating, error } = useUpdateAppRating();
+  const { data: appRating, error: error1 } = useGetAppRating(user?.uid);
+
+  console.log("Error-  ", error, error1);
 
   const onSubscriptionChange = (checked: boolean, event: any) => {
     setIsSubscribed(checked);
@@ -257,7 +262,7 @@ export function AccountStepOne({
                 </h6>
                 <StarRatings
                   name="rating"
-                  rating={user?.app_rating ?? 0}
+                  rating={appRating?.app_rating ?? 0}
                   numberOfStars={5}
                   starSpacing="2px"
                   starDimension="20px"
@@ -266,9 +271,13 @@ export function AccountStepOne({
                   starRatedColor="#fec107"
                   changeRating={(rating: number) => {
                     if (user) {
-                      postUpdateUser({
-                        app_rating: rating,
+                      // postUpdateUser({
+                      //   app_rating: rating,
+                      //   userId: user.uid,
+                      // });
+                      postUpdateAppRating({
                         userId: user.uid,
+                        rating,
                       });
                     } else {
                       console.error("User not found");

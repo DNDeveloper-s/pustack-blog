@@ -606,7 +606,13 @@ function JoditWrapper(
         <ImageCropper ref={imageCropperRef} thumbnail={prePost?.thumbnail} />
       </div>
       <div className="mt-5">
-        <SubTitleComponent ref={subTitleInputRef} onChange={onChange} />
+        <SubTitleComponent
+          title={titleValue}
+          topic={topic}
+          customTopic={customTopicValue}
+          ref={subTitleInputRef}
+          onChange={onChange}
+        />
       </div>
     </div>
   );

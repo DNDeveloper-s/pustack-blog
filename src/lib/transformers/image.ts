@@ -32,7 +32,7 @@ export async function prepareThumbnailVariantsByCropData(
 
     if (cropItem.baseImageUrl) delete cropItem.baseImageUrl;
 
-    const imageUrl = `https://pustack-blog.vercel.app/api/resize-image?${searchParams.toString()}`;
+    const imageUrl = `https://minerva.news/api/resize-image?${searchParams.toString()}`;
 
     let blurData = null;
 
@@ -69,7 +69,7 @@ export async function prepareThumbnailVariantsByCropData(
 
   //   return {
   //     ...cropItem,
-  //     url: `https://pustack-blog.vercel.app/api/resize-image?${searchParams.toString()}`,
+  //     url: `https://minerva.news/api/resize-image?${searchParams.toString()}`,
   //   };
   // });
 

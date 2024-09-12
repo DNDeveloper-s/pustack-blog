@@ -15,7 +15,7 @@ export class Section {
     this.title = title;
     this.icon = icon
       ? icon
-      : "https://pustack-blog.vercel.app/assets/images/furtherreading.png";
+      : "https://minerva.news/assets/images/furtherreading.png";
     this.content = content;
   }
 

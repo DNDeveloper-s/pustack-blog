@@ -31,11 +31,11 @@ export async function generateMetadata(
         openGraph: {
           title: "Minerva",
           description: "Minerva",
-          url: "https://pustack-blog.vercel.app/",
+          url: "https://minerva.news/",
           siteName: "Minerva",
           images: [
             {
-              url: "https://pustack-blog.vercel.app/minerva.svg",
+              url: "https://minerva.news/minerva.svg",
             },
           ],
           locale: "en_US",
@@ -51,16 +51,16 @@ export async function generateMetadata(
     );
     const data = await getDoc(docRef);
 
-  const event = flattenDocumentData(data);
+    const event = flattenDocumentData(data);
 
     const _imageUrl = event.displayImage;
 
     const imageUrl = encodeURIComponent(_imageUrl ?? "");
 
-    const processedImageUrl = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}`;
-    const processedImageUrl2 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
-    const processedImageUrl3 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
-    const processedImageUrl4 = `https://pustack-blog.vercel.app/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}`;
+    const processedImageUrl2 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=450&height=235&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl3 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=400&height=400&overlayWidth=200&overlayHeight=200`;
+    const processedImageUrl4 = `https://minerva.news/api/generate-image?imageUrl=${imageUrl}&width=514&height=269&overlayWidth=200&overlayHeight=200`;
 
     // optionally access and extend (rather than replace) parent metadata
     // const previousImages = (await parent).openGraph?.images || [];
@@ -71,7 +71,7 @@ export async function generateMetadata(
       openGraph: {
         title: event.title,
         description: event.description,
-        url: "https://pustack-blog.vercel.app/",
+        url: "https://minerva.news/",
         siteName: "Minerva",
         images: [
           {
@@ -101,11 +101,11 @@ export async function generateMetadata(
       openGraph: {
         title: "Minerva",
         description: "Minerva",
-        url: "https://pustack-blog.vercel.app/",
+        url: "https://minerva.news/",
         siteName: "Minerva",
         images: [
           {
-            url: "https://pustack-blog.vercel.app/minerva.svg",
+            url: "https://minerva.news/minerva.svg",
           },
         ],
         locale: "en_US",

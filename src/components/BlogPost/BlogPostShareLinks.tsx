@@ -1,7 +1,7 @@
 import { Post as PostV1 } from "@/firebase/post";
 import { Post } from "@/firebase/post-v2";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BlogPostShareLinksProps extends React.HTMLAttributes<HTMLDivElement> {
   post: Post | PostV1;
@@ -109,6 +109,9 @@ export function ShareLinks({
             navigator.clipboard.writeText(url).then(
               () => {
                 setCopied(true);
+                setTimeout(() => {
+                  setCopied(false);
+                }, 3000);
                 console.log("Async: Copying to clipboard was successful!");
               },
               (err) => {
@@ -178,7 +181,7 @@ export default function BlogPostShareLinks({
     <div className={"flex gap-6 items-center " + appendClassName} {...props}>
       <Link
         href={`https://twitter.com/intent/tweet?url=${
-          "https://pustack-blog.vercel.app/posts/" + post?.id
+          "https://minerva.news/posts/" + post?.id
         }&text=${post?.snippetData?.title}`}
         target="_blank"
       >
@@ -201,7 +204,7 @@ export default function BlogPostShareLinks({
       </Link>
       <Link
         href={`mailto:?subject=${post?.snippetData?.title}&body=${
-          "https://pustack-blog.vercel.app/posts/" + post?.id
+          "https://minerva.news/posts/" + post?.id
         }`}
         target="_blank"
       >
@@ -231,7 +234,7 @@ export default function BlogPostShareLinks({
       </Link>
       <Link
         href={`https://wa.me/?text=${post?.snippetData?.title} ${
-          "https://pustack-blog.vercel.app/posts/" + post?.id
+          "https://minerva.news/posts/" + post?.id
         }`}
         target="_blank"
       >
@@ -269,7 +272,7 @@ export default function BlogPostShareLinks({
           className="flex gap-1 items-center cursor-pointer"
           onClick={() => {
             navigator.clipboard
-              .writeText("https://pustack-blog.vercel.app/posts/" + post?.id)
+              .writeText("https://minerva.news/posts/" + post?.id)
               .then(
                 () => {
                   setCopied(true);

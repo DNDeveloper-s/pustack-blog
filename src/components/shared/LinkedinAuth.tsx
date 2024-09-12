@@ -37,7 +37,7 @@ export function linkedinAuth() {
     window.addEventListener("message", handleMessage);
 
     const linkedInAuth = () => {
-      const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86t7tfffgkiqe8&redirect_uri=https://pustack-blog.vercel.app/api/linkedin&scope=openid%20profile%20email`;
+      const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86t7tfffgkiqe8&redirect_uri=https://minerva.news/api/linkedin&scope=openid%20profile%20email`;
 
       const width = 600;
       const height = 600;
@@ -111,7 +111,7 @@ export default function LinkedinAuth(props: LinkedinAuthProps) {
   }, []);
 
   const linkedInAuth = () => {
-    const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86t7tfffgkiqe8&redirect_uri=https://pustack-blog.vercel.app/api/linkedin&scope=openid%20profile%20email`;
+    const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86t7tfffgkiqe8&redirect_uri=https://minerva.news/api/linkedin&scope=openid%20profile%20email`;
 
     const width = 600;
     const height = 600;

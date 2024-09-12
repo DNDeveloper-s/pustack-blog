@@ -321,7 +321,7 @@ const DropdownMenu = () => {
           type: "section-header",
           title: "",
           id: Date.now().toString(),
-          icon: "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+          icon: "https://minerva.news/assets/images/furtherreading.png",
           children: [{ text: "" }],
         };
       } else if (option.isEmbedVideo) {

@@ -551,7 +551,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                     className="mt-4 w-[77%] cover-figure"
                     src={
                       event?.displayImage
-                      // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                      // `https://minerva.news/api/fetch-image?imageUrl=` +
                       // encodeURIComponent(post?.snippetData?.image)
                     }
                     style={{
@@ -566,7 +566,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                   <ShareLinks
                     title={event.title}
                     id={event.id}
-                    url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
+                    url={`https://minerva.news/events?event_id=${event.id}`}
                     appendClassName="mt-4"
                   />
                 )}

@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar/Navbar";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DocumentData } from "firebase/firestore";
 import useScreenSize from "@/hooks/useScreenSize";
 import EventSidebar, { EventFetchState } from "./EventSidebar";
@@ -28,12 +28,28 @@ export default function EventDetailDesktopPage({
   const [eventFetchStatus, setEventFetchStatus] =
     useState<EventFetchState>("loading");
 
+  const [showShimmer, setShowShimmer] = useState(false);
   // max-w-[1440px]
 
   const onStateChange = (state: EventFetchState) => {
     console.log("state - ", state);
     setEventFetchStatus(state);
+    if (state === "loading") setShowShimmer(true);
+    else setShowShimmer(false);
   };
+
+  useEffect(() => {
+    if (_event) {
+      setShowShimmer(true);
+      const timeoutId = setTimeout(() => {
+        setShowShimmer(false);
+      }, 500);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [_event]);
 
   return (
     // <main
@@ -88,7 +104,7 @@ export default function EventDetailDesktopPage({
                 <EventSidebar onStateChange={onStateChange} />
               </div>
             )}
-            {eventFetchStatus === "loading" ? (
+            {showShimmer ? (
               <EventDetailDesktopShimmer />
             ) : _event ? (
               <EventDetailsDesktop _event={_event} />

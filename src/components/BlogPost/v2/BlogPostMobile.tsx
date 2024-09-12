@@ -462,7 +462,7 @@ export default function BlogPostMobile({ _post }: { _post?: DocumentData }) {
       const shareData = {
         title: "Minerva",
         text: post?.snippetData?.title,
-        url: "https://pustack-blog.vercel.app/" + post?.id,
+        url: "https://minerva.news/" + post?.id,
       };
       await navigator.share(shareData);
       console.log("Successfully shared");

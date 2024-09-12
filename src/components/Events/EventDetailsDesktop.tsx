@@ -399,7 +399,7 @@ export function EventDetailDesktopShimmer() {
             />
           </div>
         </div>
-        <div className="pt-5 lg:pt-0 lg:pl-5 flex flex-col gap-6 justify-between">
+        <div className="pt-5 lg:pt-0 h-[350px] lg:pl-5 flex flex-col gap-6 justify-between">
           <ShimmerThumbnail
             height={110}
             className="m-0 !w-full !min-w-[unset]"
@@ -583,7 +583,7 @@ export default function EventDetailsDesktop({
                 className="mt-4 w-[77%] max-w-[315px] cover-figure"
                 src={
                   event?.displayImage
-                  // `https://pustack-blog.vercel.app/api/fetch-image?imageUrl=` +
+                  // `https://minerva.news/api/fetch-image?imageUrl=` +
                   // encodeURIComponent(post?.snippetData?.image)
                 }
                 style={{
@@ -602,7 +602,7 @@ export default function EventDetailsDesktop({
               <ShareLinks
                 title={event.title}
                 id={event.id}
-                url={`https://pustack-blog.vercel.app/events?event_id=${event.id}`}
+                url={`https://minerva.news/events?event_id=${event.id}`}
                 appendClassName="mt-4"
               />
             )}
@@ -794,14 +794,16 @@ export default function EventDetailsDesktop({
                   </p>
                   <p>
                     <b>
-                      {dayjs(event.startTime.toDate()).format("MMMM DD, YYYY")}
+                      {pstDayjs(event.startTime.toDate()).format(
+                        "MMMM DD, YYYY"
+                      )}
                     </b>
                   </p>
-                  <p>
+                  {/* <p>
                     <b>
                       {dayjs(event.endTime.toDate()).format("MMMM DD, YYYY")}
                     </b>
-                  </p>
+                  </p> */}
                 </div>
                 <div className="flex-1 pl-4">
                   <p className="text-sm mb-1 text-appBlack text-opacity-60">
@@ -809,15 +811,15 @@ export default function EventDetailsDesktop({
                   </p>
                   <p>
                     <b>
-                      {pstDayjs(event.startTime.toDate()).format("hh:mm A")} |
-                      PST
-                    </b>
-                  </p>
-                  <p>
-                    <b>
+                      {pstDayjs(event.startTime.toDate()).format("hh:mm A")} -{" "}
                       {pstDayjs(event.endTime.toDate()).format("hh:mm A")} | PST
                     </b>
                   </p>
+                  {/* <p>
+                    <b>
+                      {pstDayjs(event.endTime.toDate()).format("hh:mm A")} | PST
+                    </b>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -897,22 +899,25 @@ export default function EventDetailsDesktop({
                 //     </Link>
                 //   </div>
                 // </div>
-                <Link target="_blank" href={event.venue.meetingLink ?? "#"}>
-                  <div className="flex-1 flex items-center gap-3 cursor-pointer">
-                    <div>
-                      {getMeetLinkDetails(event.venue.meetingLink).icon}
-                    </div>
-                    <div>
-                      <p className="text-lg font-featureHeadline">
-                        Online Meeting
-                      </p>
+
+                <div className="flex-1 flex items-center gap-3">
+                  <div>{getMeetLinkDetails(event.venue.meetingLink).icon}</div>
+                  <div>
+                    <p className="text-lg font-featureHeadline">
+                      Online Meeting
+                    </p>
+                    <Link
+                      target="_blank"
+                      className="text-appBlue"
+                      href={event.venue.meetingLink ?? "#"}
+                    >
                       <p className="text-xs">
                         Join {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
                         Link
                       </p>
-                    </div>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               )}
             </div>
           </div>
@@ -943,12 +948,12 @@ export default function EventDetailsDesktop({
               >
                 <b>{event.organizer.email}</b>
               </Link>
-              <Link
+              {/* <Link
                 href={"tel:" + event.organizer.contact}
                 className="leading-[120%] text-appBlue cursor-pointer mt-2 block"
               >
                 <b>{event.organizer.contact}</b>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

@@ -54,7 +54,7 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
     new Section(
       0,
       "",
-      "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+      "https://minerva.news/assets/images/furtherreading.png",
       ""
     ),
   ]);
@@ -112,7 +112,7 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
         new Section(
           0,
           "",
-          "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+          "https://minerva.news/assets/images/furtherreading.png",
           ""
         ),
       ]
@@ -149,7 +149,7 @@ function PostSections(props: { sections?: Section[] }, ref: any) {
       new Section(
         c.length,
         "",
-        "https://pustack-blog.vercel.app/assets/images/furtherreading.png",
+        "https://minerva.news/assets/images/furtherreading.png",
         ""
       ),
     ]);

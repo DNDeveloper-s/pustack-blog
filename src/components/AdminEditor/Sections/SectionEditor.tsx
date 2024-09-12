@@ -47,7 +47,7 @@ function getAvailableIcons() {
   ];
 
   const imageUrls = imageNames.map((name) => {
-    return `https://pustack-blog.vercel.app/assets/images/svgs/${name}.svg`;
+    return `https://minerva.news/assets/images/svgs/${name}.svg`;
   });
 
   const pngImageNames = [
@@ -67,7 +67,7 @@ function getAvailableIcons() {
   ];
 
   const pngImageUrls = pngImageNames.map((name) => {
-    return `https://pustack-blog.vercel.app/assets/images/${name}.png`;
+    return `https://minerva.news/assets/images/${name}.png`;
   });
 
   return [...imageUrls, ...pngImageUrls];

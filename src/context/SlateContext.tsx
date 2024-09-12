@@ -26,6 +26,7 @@ export interface ISlateConfig {
   toolbars?: Partial<Record<ToolWithIconType, ToolConfig>>;
   dropdowns?: DropdownConfig;
   fontSize?: FontSizeConfig;
+  onPreview?: () => void;
 }
 
 export const SlateContext = createContext<UseSlateContextType>({});

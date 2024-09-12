@@ -152,11 +152,13 @@ export default function FontSize() {
   };
   const editor = useSlate();
 
+  console.log("fontSizeConfig - ", fontSizeConfig);
+
   useEffect(() => {
     setFontSize(
       getFontSizeInSelection(editor, fontSizeConfig?.defaultFontSize)
     );
-  }, [editor, editor.selection]);
+  }, [editor, editor.selection, fontSizeConfig?.defaultFontSize]);
 
   function handleChangeSize(size: string) {
     if (!getTopmostElement(editor)) return;

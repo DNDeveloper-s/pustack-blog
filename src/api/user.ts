@@ -1,16 +1,30 @@
 "use client";
 
 import { linkedinAuth } from "@/components/shared/LinkedinAuth";
+import { API_QUERY } from "@/config/api-query";
 import { useUser } from "@/context/UserContext";
 import { auth, db, linkedinProvider } from "@/lib/firebase";
-import { UseMutationOptions, useMutation } from "@tanstack/react-query";
+import {
+  QueryFunctionContext,
+  UseMutationOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   GoogleAuthProvider,
   OAuthProvider,
   User,
   reauthenticateWithPopup,
 } from "firebase/auth";
-import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { omitBy } from "lodash";
 
 interface UseUpdateUserOptions {
@@ -119,6 +133,82 @@ export const useDeleteAccount = (
   return useMutation({
     mutationFn: deleteUser,
     onSettled: () => {},
+    ...options,
+  });
+};
+
+interface AppRatingDocument {
+  app_rating: number;
+  app_rating_history: {
+    rate_ts: Timestamp;
+    rating: number;
+  }[];
+  has_rated_app: boolean;
+}
+
+export const useGetAppRating = (userId?: string) => {
+  const getAppRating = async ({ queryKey }: QueryFunctionContext) => {
+    const [, userId] = queryKey;
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    const ratingRef = doc(db, "app_rating", userId as string);
+    const ratingSnap = await getDoc(ratingRef);
+    const ratingData = ratingSnap.data();
+    return ratingData as AppRatingDocument;
+  };
+
+  return useQuery({
+    queryKey: API_QUERY.APP_RATING(userId),
+    queryFn: getAppRating,
+    enabled: !!userId,
+  });
+};
+
+export const useUpdateAppRating = (
+  options?: UseMutationOptions<any, Error, { userId: string; rating: number }>
+) => {
+  const qc = useQueryClient();
+  const updateAppRating = async ({
+    userId,
+    rating,
+  }: {
+    userId: string;
+    rating: number;
+  }) => {
+    if (!userId) {
+      throw new Error("User ID is required");
+    }
+
+    console.log("userId - ", userId);
+    console.log("rating - ", rating);
+
+    const ratingRef = doc(db, "app_rating", userId);
+    const ratingSnap = await getDoc(ratingRef);
+    const ratingData = ratingSnap.data() as AppRatingDocument;
+
+    const newRating = {
+      app_rating: rating,
+      app_rating_history: [
+        ...(ratingData?.app_rating_history ?? []),
+        {
+          rate_ts: Timestamp.now(),
+          rating,
+        },
+      ],
+    };
+
+    await setDoc(ratingRef, newRating, { merge: true });
+  };
+
+  return useMutation({
+    mutationFn: updateAppRating,
+    onSettled: (data, error, variables) => {
+      qc.invalidateQueries({
+        queryKey: API_QUERY.APP_RATING(variables?.userId),
+      });
+    },
     ...options,
   });
 };

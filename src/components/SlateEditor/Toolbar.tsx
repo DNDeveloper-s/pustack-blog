@@ -350,7 +350,7 @@ interface ToolbarProps {
 }
 export default function Toolbar(props: ToolbarProps) {
   const editor = useSlate();
-  const { toolbars } = useSlateConfig();
+  const { toolbars, onPreview } = useSlateConfig();
   const { isTabletScreen, isMobileScreen } = useScreenSize();
 
   return (
@@ -411,24 +411,36 @@ export default function Toolbar(props: ToolbarProps) {
           </>
         )}
         <div className="flex-1"></div>
-        <label
-          htmlFor="1"
-          className="flex cursor-pointer items-center justify-end gap-2 px-2"
-        >
-          <Checkbox
-            onChange={(checked: boolean) => {
-              // console.log(
-              //   "slateEditorRef.current?.getValue(); - ",
-              //   slateEditorRef.current?.getValue()
-              // );
-              props.setReadonly?.(checked);
+        {onPreview ? (
+          <label
+            htmlFor="1"
+            className="flex cursor-pointer text-appBlue items-center justify-end gap-2 px-2"
+            onClick={() => {
+              onPreview();
             }}
-            defaultValue={false}
-            id="1"
-            style={{ zoom: 0.74 }}
-          />
-          <span className="text-[12px]">Preview Mode</span>
-        </label>
+          >
+            <span className="text-[12px]">Preview Mode</span>
+          </label>
+        ) : (
+          <label
+            htmlFor="1"
+            className="flex cursor-pointer items-center justify-end gap-2 px-2"
+          >
+            <Checkbox
+              onChange={(checked: boolean) => {
+                // console.log(
+                //   "slateEditorRef.current?.getValue(); - ",
+                //   slateEditorRef.current?.getValue()
+                // );
+                props.setReadonly?.(checked);
+              }}
+              defaultValue={false}
+              id="1"
+              style={{ zoom: 0.74 }}
+            />
+            <span className="text-[12px]">Preview Mode</span>
+          </label>
+        )}
       </div>
     </div>
   );

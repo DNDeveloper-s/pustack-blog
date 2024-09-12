@@ -55,9 +55,10 @@ function isValidURL(string: string) {
 
 interface SignalJoditProps {
   preSignal?: Signal;
+  openPreview?: () => void;
 }
 function SignalJodit(props: SignalJoditProps, ref: any) {
-  const { preSignal } = props;
+  const { openPreview, preSignal } = props;
 
   // Local State
   const [error, setError] = useState<string | null>(null);
@@ -202,7 +203,7 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
         </h4>
         <input
           // disabled={isPending}
-          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] placeholder:text-black placeholder:text-opacity-30"
           placeholder="Enter the Signal Title"
           type="text"
           style={{
@@ -219,7 +220,7 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
         </h4>
         <input
           // disabled={isPending}
-          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] placeholder:text-black placeholder:text-opacity-30"
           placeholder="Enter Source Name"
           type="text"
           style={{
@@ -236,7 +237,7 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
         </h4>
         <input
           // disabled={isPending}
-          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
+          className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2] placeholder:text-black placeholder:text-opacity-30"
           placeholder="Enter Source Link"
           type="text"
           style={{
@@ -286,6 +287,7 @@ function SignalJodit(props: SignalJoditProps, ref: any) {
               dropdowns: {
                 enabledItems: ["image"],
               },
+              onPreview: openPreview,
             }}
           >
             <SlateEditor

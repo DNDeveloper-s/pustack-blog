@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 // Initialize the CORS middleware with the allowed origin
 const cors = Cors({
-  origin: "http://pustack-blog.vercel.app", // Replace with your domain
+  origin: "http://minerva.news", // Replace with your domain
   methods: ["POST"],
 });
 
@@ -25,10 +25,7 @@ export async function POST(request: Request, response: any) {
   try {
     // Set CORS headers manually
     const origin = request.headers.get("origin") ?? "";
-    const allowedOrigins = [
-      "https://pustack-blog.vercel.app",
-      "http://localhost:3000",
-    ]; // Your allowed origins
+    const allowedOrigins = ["https://minerva.news", "http://localhost:3000"]; // Your allowed origins
 
     if (allowedOrigins.includes(origin)) {
       const response = NextResponse.next();

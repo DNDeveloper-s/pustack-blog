@@ -85,6 +85,9 @@ function ImageCropperRef(
   useEffect(() => {
     if (props.thumbnail) {
       setImageCropData(props.thumbnail.variants);
+      EventEmitter.emit("thumbnail-change", {
+        url: props.thumbnail.baseImageUrl,
+      });
       setBaseImageUrl(props.thumbnail.baseImageUrl);
     }
   }, [props.thumbnail]);
@@ -135,6 +138,8 @@ function ImageCropperRef(
     const objectUrl = URL.createObjectURL(blob);
 
     console.log("objectUrl - ", objectUrl);
+
+    EventEmitter.emit("thumbnail-change", { url: objectUrl });
 
     setBaseImageUrl(objectUrl);
   };
