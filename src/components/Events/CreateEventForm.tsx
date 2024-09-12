@@ -745,7 +745,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <input
                   // disabled={isPending}
                   className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter the Name of the Host"
+                  placeholder="Enter the Host Name"
                   type="text"
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
@@ -835,7 +835,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <input
                   // disabled={isPending}
                   className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter contact email"
+                  placeholder="Enter Contact Email"
                   type="text"
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
@@ -860,7 +860,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                 <input
                   // disabled={isPending}
                   className="border text-[16px] w-full flex-1 flex-shrink py-1 px-2 bg-lightPrimary focus:outline-appBlack focus:outline-offset-[-2]"
-                  placeholder="Enter contact phone"
+                  placeholder="Enter Contact Phone"
                   type="text"
                   style={{
                     fontVariationSettings: '"wght" 400,"opsz" 10',
