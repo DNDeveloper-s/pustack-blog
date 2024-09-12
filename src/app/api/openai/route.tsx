@@ -25,7 +25,11 @@ export async function POST(request: Request, response: any) {
   try {
     // Set CORS headers manually
     const origin = request.headers.get("origin") ?? "";
-    const allowedOrigins = ["https://minerva.news", "http://localhost:3000"]; // Your allowed origins
+    const allowedOrigins = [
+      "https://minerva.news",
+      "https://www.minerva.news",
+      "http://localhost:3000",
+    ]; // Your allowed origins
 
     if (allowedOrigins.includes(origin)) {
       const response = NextResponse.next();
