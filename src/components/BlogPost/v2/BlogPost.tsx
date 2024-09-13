@@ -289,7 +289,7 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
     if (!!searchParams.get("post_drawer_id"))
       return <BlogPostMobile _post={_post} />;
     else {
-      router.push("/?post_drawer_id=" + _post?.id);
+      router.replace("/?post_drawer_id=" + _post?.id);
       return null;
     }
   }
