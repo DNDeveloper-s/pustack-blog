@@ -95,14 +95,11 @@ function DashboardDesktop({
     }
 
     const onScroll = () => {
-      console.log(
-        "scrollPosition | added - ",
-        document.body.scrollTop.toString()
-      );
-      sessionStorage.setItem(
-        "scrollPosition",
-        document.body.scrollTop.toString()
-      );
+      document.body.scrollTop > 0 &&
+        sessionStorage.setItem(
+          "scrollPosition",
+          document.body.scrollTop.toString()
+        );
     };
 
     document.body.addEventListener("scroll", onScroll);

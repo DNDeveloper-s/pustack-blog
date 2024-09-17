@@ -173,7 +173,7 @@ export const useDeleteAccount = (
           await deleteAuthUser(auth.currentUser);
           return;
         } else {
-          throw new Error("User not re-authenticated");
+          throw new Error("User not re-authenticated"); 
         }
       }
       throw e;
