@@ -26,6 +26,7 @@ interface AccountsModalProps {
 }
 export default function AccountsModal(props: AccountsModalProps) {
   const accountStepTwoRef = useRef<any>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
   const {
     isPending,
@@ -70,10 +71,12 @@ export default function AccountsModal(props: AccountsModalProps) {
         document.body.style.overflow = "auto";
       }}
       onOpenChange={(open) => {
+        setIsOpen(open);
         if (open) {
           document.body.style.overflow = "hidden";
         }
       }}
+      isOpen={isOpen}
       //   isOpen={openRow}
       //   onOpenChange={handleOpenRowChange}
     >
@@ -86,7 +89,13 @@ export default function AccountsModal(props: AccountsModalProps) {
         {props.Trigger}
       </PopoverTrigger>
       <PopoverContent>
-        <div className="w-[350px] h-auto bg-primary rounded-lg text-appBlack">
+        <div
+          className="w-[350px] h-auto rounded-lg text-appBlack"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, rgb(255 253 228) 0%, rgb(226 220 161) 100%)",
+          }}
+        >
           {/* <Carousel
             slide={slide.toString()}
             ref={carouselRef}
@@ -111,11 +120,13 @@ export default function AccountsModal(props: AccountsModalProps) {
               }}
               handleGearClick={goNext}
               handleBackClick={() => {}}
+              closePopover={() => setIsOpen(false)}
             />
             <AccountStepTwo
               deleteAccountDisclosure={props.deleteAccountDisclosure}
               handleBackClick={goPrev}
               ref={accountStepTwoRef}
+              closePopover={() => setIsOpen(false)}
             />
           </SwipeableViews>
           {/* </Carousel> */}
@@ -169,7 +180,13 @@ function AccountsDrawerRef(props: { deleteAccountDisclosure: any }, ref: any) {
         body: "!p-0",
       }}
     >
-      <div className="w-screen h-screen bg-primary">
+      <div
+        className={"w-screen h-screen"}
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, rgb(255 253 228) 0%, rgb(226 220 161) 100%)",
+        }}
+      >
         <SwipeableViews index={slide} onChangeIndex={onChange}>
           <AccountStepOne
             userDetails={{

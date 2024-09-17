@@ -160,8 +160,8 @@ function SignalsEntry({ authorId }: { authorId?: string }) {
       )}
       {!hasSignals && !isLoading && (
         <div className="flex flex-col gap-5 items-center justify-center text-lg py-4 font-featureRegular text-gray-600">
-          <Image alt="No Signals Found" src={emptyBox} className="w-[150px]" />
-          <p>No Signals Found</p>
+          <Image alt="No Signals Found" src={emptyBox} className="w-[80px]" />
+          <p className="text-base text-appBlack text-opacity-65">No Signals</p>
         </div>
       )}
       {(hasNextPage || isFetching || isLoading) && (
@@ -179,11 +179,6 @@ function SignalsEntry({ authorId }: { authorId?: string }) {
             label="Fetching more signals..."
           />
         </div>
-      )}
-      {!hasNextPage && !isFetching && !isLoading && (
-        <>
-          <MoreFromMinerva />
-        </>
       )}
     </div>
   );
@@ -329,45 +324,60 @@ export default function AuthorDetailsPage({ authorId }: { authorId?: string }) {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4 w-full">
-          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#00B3A6] border border-white">
+          <div
+            className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md transition-all bg-[#F4D6C6]"
+            style={{
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.05)",
+            }}
+          >
             <div className="flex items-center gap-2">
               <DocumentIcon
                 width={isSmallScreen ? 17 : 22}
                 height={isSmallScreen ? 17 : 22}
               />
-              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+              <h4 className="text-[14px] md:text-[16px] text-[#3D3D3D] text-opacity-75 font-bold font-helvetica">
                 Posts
               </h4>
             </div>
-            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-black">
+            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-[#3D3D3D]">
               {author?.articleCount ?? 0}
             </p>
           </div>
-          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#FFB400] border border-white">
+          <div
+            className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md transition-all bg-[#B8A899]"
+            style={{
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.05)",
+            }}
+          >
             <div className="flex items-center gap-2">
               <SignalIcon
                 width={isSmallScreen ? 17 : 22}
                 height={isSmallScreen ? 17 : 22.2}
               />
-              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+              <h4 className="text-[14px] md:text-[16px] text-[#3D3D3D] text-opacity-75 font-bold font-helvetica">
                 Signals
               </h4>
             </div>
-            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-black">
+            <p className="text-[20px] md:text-[24px] font-helvetica ml-[30px] font-bold text-[#3D3D3D]">
               {author?.signalCount ?? 0}
             </p>
           </div>
-          <div className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md shadow-md hover:shadow-lg transition-all bg-[#a487f1] border border-white">
+          <div
+            className="h-[90px] md:h-[120px] w-full flex flex-col justify-evenly px-3 md:px-7 py-2 md:py-5 rounded-md transition-all bg-[#D2BBA4]"
+            style={{
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.05)",
+            }}
+          >
             <div className="flex items-center gap-2">
               <EventIcon
                 width={isSmallScreen ? 17 : 22}
                 height={isSmallScreen ? 17 : 22}
               />
-              <h4 className="text-[14px] md:text-[16px] text-black text-opacity-75 font-bold font-helvetica">
+              <h4 className="text-[14px] md:text-[16px] text-[#3D3D3D] text-opacity-75 font-bold font-helvetica">
                 Events
               </h4>
             </div>
-            <p className="text-[20px] md:text-[24px] font-helvetica font-bold ml-[30px] text-black">
+            <p className="text-[20px] md:text-[24px] font-helvetica font-bold ml-[30px] text-[#3D3D3D]">
               {author?.eventCount ?? 0}
             </p>
           </div>

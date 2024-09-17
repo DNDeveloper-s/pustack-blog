@@ -152,8 +152,6 @@ export default function FontSize() {
   };
   const editor = useSlate();
 
-  console.log("fontSizeConfig - ", fontSizeConfig);
-
   useEffect(() => {
     setFontSize(
       getFontSizeInSelection(editor, fontSizeConfig?.defaultFontSize)

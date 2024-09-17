@@ -138,8 +138,13 @@ const MathQuill = ({
                   // Calculate the previous path
 
                   // Remove the current node
-                  Transforms.removeNodes(editor, { at: path });
+                  // ReactEditor.blur(editor);
                   if (!element.isInnerLevel) {
+                    Transforms.removeNodes(editor, {
+                      at: path,
+                      // @ts-ignore
+                      match: (n) => n.type === "math-block",
+                    });
                     Transforms.insertNodes(
                       editor,
                       {
@@ -153,12 +158,19 @@ const MathQuill = ({
                     Transforms.select(editor, end);
                     ReactEditor.focus(editor);
                   } else {
-                    if (path[0] == 0) {
+                    console.log("path - ", path);
+                    if (path[0] == 0 && path.at(-1) === 0) {
+                      Transforms.removeNodes(editor, {
+                        at: path,
+                        // @ts-ignore
+                        match: (n) => n.type === "math-block-container",
+                      });
                       // If the current node is the first node in the editor, return
                       Transforms.insertNodes(editor, defaultElement, {
                         at: [0],
                       });
                       Transforms.select(editor, [0]);
+                      ReactEditor.focus(editor);
                       return;
                     }
                     if (path.at(-1) === 0) {
@@ -175,6 +187,11 @@ const MathQuill = ({
                       ReactEditor.focus(editor);
                       return;
                     }
+                    Transforms.removeNodes(editor, {
+                      at: path,
+                      // @ts-ignore
+                      match: (n) => n.type === "math-block",
+                    });
                     const previousPath = Path.previous(path);
                     // Check if the previous path exists
                     if (Node.has(editor, previousPath)) {
@@ -217,6 +234,7 @@ const MathQuill = ({
                   {
                     type: "math-block",
                     latex: "",
+                    // @ts-ignore
                     isInnerLevel: element.isInnerLevel,
                     children: [{ text: "" }],
                   },

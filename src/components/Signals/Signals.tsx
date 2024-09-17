@@ -151,10 +151,11 @@ function Signals(
       }
       style={{
         overflow: isMobileScreen ? "unset" : "auto",
+        paddingBottom: "50px",
       }}
       ref={ref}
     >
-      <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[80px] mb-2">
+      <div className="w-full max-w-[720px] mx-auto pt-[40px] pb-[10px] mb-2">
         {hasSignals && (
           <>
             <div className={classes.signal_blue_header}>
@@ -219,12 +220,12 @@ function Signals(
             />
           </div>
         )}
-        {!hasNextPage && !isFetching && !isLoading && (
-          <>
-            <MoreFromMinerva />
-          </>
-        )}
       </div>
+      {!hasNextPage && !isFetching && !isLoading && (
+        <>
+          <MoreFromMinerva />
+        </>
+      )}
     </div>
   );
 }

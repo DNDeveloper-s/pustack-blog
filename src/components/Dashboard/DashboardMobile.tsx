@@ -98,7 +98,7 @@ export default function DashboardMobile({
   useEffect(() => {
     const scrollPosition = sessionStorage.getItem("scrollPosition");
     if (scrollPosition) {
-      window.scrollTo({
+      document.body.scrollTo({
         left: 0,
         top: parseInt(scrollPosition),
         behavior: "instant",
@@ -109,15 +109,18 @@ export default function DashboardMobile({
 
     const onScroll = () => {
       console.log("scrollPosition | added - ", scrollPosition);
-      sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+      sessionStorage.setItem(
+        "scrollPosition",
+        document.body.scrollTop.toString()
+      );
     };
 
-    addEventListener("scroll", onScroll);
+    document.body.addEventListener("scroll", onScroll);
 
     return () => {
       // console.log("scrollPosition | added - ", scrollPosition);
       // sessionStorage.setItem("scrollPosition", window.scrollY.toString());
-      removeEventListener("scroll", onScroll);
+      document.body.removeEventListener("scroll", onScroll);
     };
   }, [searchParams]); // Run effect when query parameters change
 

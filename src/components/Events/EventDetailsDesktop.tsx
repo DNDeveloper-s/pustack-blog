@@ -485,6 +485,7 @@ export default function EventDetailsDesktop({
           organizer: _event.organizer,
           venue: _event.venue,
           displayImage: _event.displayImage,
+          displayImageBlurData: _event.displayImageBlurData,
           isAllDay: _event.isAllDay,
           background: _event.background,
           timestamp: _event.timestamp,
@@ -516,68 +517,29 @@ export default function EventDetailsDesktop({
         className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_20rem] my-6 gap-4 lg:gap-0"
       >
         <div className="pb-5 lg:pb-0 lg:pr-5">
-          <div className="flex items-end justify-between">
-            <div className="mr-2">
-              <img
-                className="w-[38px] h-[38px]"
-                src={
-                  event?.organizer?.photoURL
-                    ? event?.organizer?.photoURL
-                    : avatar.src
-                }
-                alt="avatar"
-              />
+          <div>
+            <div className="flex items-center justify-between">
+              <h2
+                className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
+                style={{
+                  fontSize: "32px",
+                  fontWeight: "395",
+                  fontVariationSettings: '"wght" 495,"opsz" 10',
+                }}
+              >
+                {event?.title}
+              </h2>
+              <div className="flex items-center gap-3">
+                {(user?.uid === event?.author.uid || user?.is_admin) && (
+                  <MdModeEdit
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push("/events/create?event_id=" + event?.id)
+                    }
+                  />
+                )}
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="leading-[120%] text-[17px] group-hover:text-appBlue">
-                {event?.organizer?.name}
-              </h3>
-              {/* <p
-                  className="leading-[120%] text-[15px] text-tertiary group-hover:text-appBlue font-helvetica uppercase"
-                  style={{
-                    fontWeight: "300",
-                    fontVariationSettings: '"wght" 400,"opsz" 10',
-                  }}
-                >
-                  POLITICS
-                </p> */}
-            </div>
-            <div className="flex items-center gap-3">
-              {(user?.uid === event?.author.uid || user?.is_admin) && (
-                <MdModeEdit
-                  className="cursor-pointer"
-                  onClick={() =>
-                    router.push("/events/create?event_id=" + event?.id)
-                  }
-                />
-              )}
-            </div>
-          </div>
-          <hr className="border-dashed border-[#1f1d1a4d] my-2" />
-          <div className="flex gap-5 items-center justify-between">
-            <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
-              <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                {pstDayjs(event?.timestamp).format("MMM DD, YYYY, H:mm a") +
-                  " " +
-                  " PST "}
-              </p>
-              {/* <p className="text-[13px] text-[#53524c] font-helvetica uppercase leading-[14px]">
-                    {post?.topic}
-                  </p> */}
-            </div>
-            {/* <NavigatorShare handleShare={handleShare} /> */}
-          </div>
-          <div className="mt-4">
-            <h2
-              className="font-featureHeadline line-clamp-2 leading-[120%] group-hover:text-appBlue bg-animation group-hover:bg-hover-animation"
-              style={{
-                fontSize: "32px",
-                fontWeight: "395",
-                fontVariationSettings: '"wght" 495,"opsz" 10',
-              }}
-            >
-              {event?.title}
-            </h2>
             {event?.displayImage && (
               <BlogImage
                 className="mt-4 w-[77%] max-w-[315px] cover-figure"
@@ -592,6 +554,9 @@ export default function EventDetailsDesktop({
                 imageProps={{
                   width: 600,
                   height: 600,
+                  // @ts-ignore
+                  placeholder: "blur",
+                  blurDataURL: event?.displayImageBlurData,
                 }}
               />
             )}
@@ -908,13 +873,11 @@ export default function EventDetailsDesktop({
                     </p>
                     <Link
                       target="_blank"
-                      className="text-appBlue"
+                      className="text-appBlue text-xs"
                       href={event.venue.meetingLink ?? "#"}
                     >
-                      <p className="text-xs">
-                        Join {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
-                        Link
-                      </p>
+                      Join {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
+                      Link
                     </Link>
                   </div>
                 </div>
@@ -946,7 +909,7 @@ export default function EventDetailsDesktop({
                 href={"mailto:" + event.organizer.email}
                 className="leading-[120%] text-appBlue cursor-pointer block"
               >
-                <b>{event.organizer.email}</b>
+                {event.organizer.email}
               </Link>
               {/* <Link
                 href={"tel:" + event.organizer.contact}

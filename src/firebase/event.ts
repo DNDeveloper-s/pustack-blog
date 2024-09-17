@@ -1,6 +1,7 @@
 import { API_QUERY } from "@/config/api-query";
 import { db } from "@/lib/firebase";
 import { QueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import {
   DocumentSnapshot,
@@ -99,6 +100,7 @@ interface EventParams {
   };
   venue: EventVenueType;
   displayImage: string;
+  displayImageBlurData?: string;
   isAllDay: boolean;
   background: string;
   timestamp?: string;
@@ -162,6 +164,7 @@ export class Event {
   isAllDay: boolean;
   background: string;
   timestamp?: string | undefined;
+  displayImageBlurData?: string;
   readonly author: Author;
 
   get id(): string | undefined {
@@ -188,6 +191,7 @@ export class Event {
     this.organizer = params.organizer;
     this.venue = params.venue;
     this.displayImage = params.displayImage;
+    this.displayImageBlurData = params.displayImageBlurData;
     this.isAllDay = params.isAllDay;
     this.background = params.background;
     this.timestamp = params.timestamp;
@@ -226,6 +230,12 @@ export class Event {
       eventId
     ).withConverter(eventConverter);
 
+    const res = await axios.get(
+      "/api/get-blur-data-url?imageUrl=" + encodeURIComponent(this.displayImage)
+    );
+
+    this.displayImageBlurData = res.data;
+
     await setDoc(eventRef, this, { merge: true });
 
     return this;
@@ -243,6 +253,12 @@ export class Event {
       "all_events",
       this.id
     ).withConverter(eventConverter);
+
+    const res = await axios.get(
+      "/api/get-blur-data-url?imageUrl=" + encodeURIComponent(this.displayImage)
+    );
+
+    this.displayImageBlurData = res.data;
 
     await setDoc(eventRef, this, { merge: true });
 
@@ -694,6 +710,7 @@ export const eventConverter = {
       },
       venue: event.venue,
       displayImage: event.displayImage,
+      displayImageBlurData: event.displayImageBlurData,
       isAllDay: event.isAllDay,
       background: event.background,
       timestamp: event.timestamp
@@ -715,6 +732,7 @@ export const eventConverter = {
       organizer: data.organizer,
       venue: data.venue,
       displayImage: data.displayImage,
+      displayImageBlurData: data.displayImageBlurData,
       isAllDay: data.isAllDay,
       background: data.background,
       timestamp: data.timestamp.toDate().toISOString(),

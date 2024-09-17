@@ -18,12 +18,17 @@ import {
   reauthenticateWithPopup,
 } from "firebase/auth";
 import {
+  collection,
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
   serverTimestamp,
   setDoc,
   Timestamp,
+  where,
+  writeBatch,
 } from "firebase/firestore";
 import { omitBy } from "lodash";
 
@@ -96,9 +101,54 @@ export const useDeleteAccount = (
   options?: UseMutationOptions<any, Error, void>
 ) => {
   const deleteAuthUser = async (user: User) => {
+    await unsubscribeFromEveryWhere(user.uid, user.email);
     await user.delete();
     const userRef = doc(db, "users", user.uid);
     await deleteDoc(userRef);
+  };
+
+  const unsubscribeFromEveryWhere = async (
+    userId: string,
+    userEmail: string | null
+  ) => {
+    window.sessionStorage.removeItem("sessionEmail");
+
+    // Unsubscribe from all the events
+    const rsvpRef = collection(db, "events", "collections", "rsvp");
+    const _query = query(rsvpRef, where("uid", "==", userId));
+
+    const docs = await getDocs(_query);
+
+    const batch = writeBatch(db);
+
+    docs.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Unsubscribe from all the topics
+    if (userEmail) {
+      const newsLettersRef = collection(db, "newsletters");
+
+      const _docs = await getDocs(newsLettersRef);
+
+      for (let i = 0; i < _docs.docs.length; i++) {
+        const doc = _docs.docs[i];
+
+        const subscriberCollectionRef = collection(doc.ref, "subscribers");
+        const _query = query(
+          subscriberCollectionRef,
+          where("email", "==", userEmail)
+        );
+
+        const docs = await getDocs(_query);
+
+        docs.docs.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+      }
+    }
+
+    await batch.commit();
   };
 
   const deleteUser = async () => {

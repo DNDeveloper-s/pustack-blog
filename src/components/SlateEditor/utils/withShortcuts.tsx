@@ -97,6 +97,57 @@ const withShortcuts = (editor: Editor) => {
 
     console.log("selection - ", selection);
 
+    // if (selection) {
+    //   const [currentNode, currentPath] = Editor.node(
+    //     editor,
+    //     selection.anchor.path
+    //   );
+
+    //   console.log("currentNode - ", currentNode, selection.anchor);
+
+    //   // Check if we're at the start of a block and need to handle a custom block (math-block or container)
+    //   if (selection.anchor.offset === 0 && selection.anchor.path.at(-1) === 0) {
+    //     const currentPathForPrev = getNonZeroPath(selection.anchor.path);
+
+    //     if (currentPathForPrev.length === 0) {
+    //       deleteBackward(...args);
+    //       return;
+    //     }
+
+    //     const prevPath = Path.previous(currentPathForPrev);
+    //     const [prevNode] = Editor.node(editor, prevPath);
+
+    //     // Handle the case where the previous node is a math-block-container or math-block
+    //     if (
+    //       // @ts-ignore
+    //       prevNode.type === "math-block-container" ||
+    //       // @ts-ignore
+    //       prevNode.type === "math-block"
+    //     ) {
+    //       ReactEditor.blur(editor);
+    //       // Prevent default delete action
+    //       Transforms.removeNodes(editor, { at: currentPathForPrev });
+
+    //       // Manually handle focusing the math quill element after deletion
+    //       setTimeout(() => {
+    //         // Find the math quill textarea in the previous node
+    //         const previousEl = ReactEditor.toDOMNode(editor, prevNode);
+    //         const mathQuillTextarea = previousEl?.querySelector(
+    //           ".mq-textarea textarea"
+    //         );
+
+    //         // Focus the math quill element manually
+    //         if (mathQuillTextarea) {
+    //           // @ts-ignore
+    //           mathQuillTextarea.focus();
+    //         }
+    //       }, 10);
+
+    //       return;
+    //     }
+    //   }
+    // }
+
     // Get the element on the selection
     if (selection) {
       const [currentNode, currentPath] = Editor.node(
@@ -119,7 +170,7 @@ const withShortcuts = (editor: Editor) => {
         if (prevNode.type === "math-block-container") {
           // Transforms.deselect(editor);
 
-          // ReactEditor.blur(editor);
+          ReactEditor.blur(editor);
           Transforms.removeNodes(editor, { at: currentPathForPrev });
           // Transforms.select(editor, [0]);
           // console.log("currentPath - ", currentPath);
@@ -130,7 +181,7 @@ const withShortcuts = (editor: Editor) => {
             // //
             const el3 = previousEl?.querySelectorAll(".mq-textarea textarea");
             const lastEl = el3[el3.length - 1];
-            // ReactEditor.focus(editor);
+            ReactEditor.focus(editor);
             // @ts-ignore
             lastEl?.focus();
           }, 10);
@@ -143,7 +194,7 @@ const withShortcuts = (editor: Editor) => {
         if (prevNode.type === "math-block") {
           // Transforms.deselect(editor);
 
-          // ReactEditor.blur(editor);
+          ReactEditor.blur(editor);
           Transforms.removeNodes(editor, { at: currentPathForPrev });
           // Transforms.select(editor, [0]);
           // console.log("currentPath - ", currentPath);
@@ -197,60 +248,6 @@ const withShortcuts = (editor: Editor) => {
         return;
       }
     }
-
-    // if (selection && Range.isCollapsed(selection)) {
-    //   {
-    //     const [start] = Range.edges(selection);
-    //     const { path, offset } = start;
-    //     const node = Node.get(editor, path);
-
-    //     // Get the text before the current cursor position
-    //     // @ts-ignore
-    //     const beforeText = node.text.slice(0, offset);
-    //     const splitted = beforeText.split(" ");
-    //     const textToCheck = splitted[splitted.length - 1];
-
-    //     // Check if there is a slash before the current position
-    //     const slashIndex = textToCheck.lastIndexOf("/");
-
-    //     if (slashIndex !== -1) {
-    //       // Delete the character
-    //       deleteBackward(...args);
-
-    //       // Calculate the query text as everything after the last slash
-    //       const query = textToCheck.slice(slashIndex + 1, -1);
-
-    //       console.log("slashIndex - ", slashIndex);
-    //       if (slashIndex)
-    //         // Show or update the dropdown menu at the initial slash position
-    //         setTimeout(() => {
-    //           if (query === "") {
-    //             editor.showDropdownMenu({
-    //               ...dropdownPosition,
-    //               query: "",
-    //             });
-    //           } else {
-    //             if (!dropdownPosition) {
-    //               const domSelection = window.getSelection();
-    //               if (!domSelection) return;
-    //               const domRange = domSelection.getRangeAt(0);
-    //               const rect = domRange.getBoundingClientRect();
-    //               console.log("setting dropdownPosition -");
-    //               dropdownPosition = {
-    //                 top: rect.top + window.scrollY + 20,
-    //                 left: rect.left + window.scrollX,
-    //               };
-    //             }
-    //             editor.showDropdownMenu({
-    //               ...dropdownPosition,
-    //               query,
-    //             });
-    //           }
-    //         }, 0);
-
-    //       return;
-    //     }
-    //   }
 
     if (selection) {
       const match = Editor.above(editor, {

@@ -70,6 +70,9 @@ export default function ImageScale() {
             centerOnInit={true}
             minScale={0.5} // Set the minimum zoom scale
             maxScale={3} // Set the maximum zoom scale
+            wheel={{
+              disabled: true,
+            }}
           >
             {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
               <>

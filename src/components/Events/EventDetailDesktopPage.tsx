@@ -43,6 +43,7 @@ export default function EventDetailDesktopPage({
       setShowShimmer(true);
       const timeoutId = setTimeout(() => {
         setShowShimmer(false);
+        scrollerRef.current?.scrollTo(0, 0);
       }, 500);
 
       return () => {

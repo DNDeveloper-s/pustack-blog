@@ -377,6 +377,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
           organizer: _event.organizer,
           venue: _event.venue,
           displayImage: _event.displayImage,
+          displayImageBlurData: _event.displayImageBlurData,
           isAllDay: _event.isAllDay,
           background: _event.background,
           timestamp: _event.timestamp,
@@ -462,7 +463,7 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
             className="grid divide-y lg:divide-y-0 divide-x-0 lg:divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-1 lg:grid-cols-[auto_18.3125rem] my-6 gap-4 lg:gap-0"
           >
             <div className="pb-5 lg:pb-0 lg:pr-5">
-              <div className="flex items-end justify-between">
+              {/* <div className="flex items-end justify-between">
                 <div className="mr-2">
                   <img
                     className="w-[38px] h-[38px]"
@@ -479,48 +480,8 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                     {event?.organizer?.name}
                   </h3>
                 </div>
-                {/* <div className="flex items-center gap-3">
-                  {post?.sections && (
-                    <span className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
-                      {
-                        readingTime(
-                          post.nodes
-                            ? extractTextFromEditor(post.nodes)
-                            : Section.mergedContent(post.sections)
-                        ).text
-                      }
-                    </span>
-                  )}
-                  {!isBookMarked ? (
-                    <FaRegStar
-                      className="cursor-pointer"
-                      onClick={() => handleBookMark(true)}
-                    />
-                  ) : (
-                    <FaStar
-                      className="text-[#d9c503] cursor-pointer"
-                      onClick={() => handleBookMark(false)}
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdModeEdit
-                      className="cursor-pointer"
-                      onClick={() =>
-                        router.push("/posts/create?post_id=" + post?.id)
-                      }
-                    />
-                  )}
-                  {user?.email === post?.author.email && (
-                    <MdDelete
-                      className="cursor-pointer"
-                      onClick={() => {
-                        deleteModalRef.current?.handleChangeOpen(true);
-                      }}
-                    />
-                  )}
-                </div> */}
               </div>
-              <hr className="border-dashed border-[#1f1d1a4d] my-2" />
+              <hr className="border-dashed border-[#1f1d1a4d] my-2" /> */}
               <div className="flex gap-5 items-center justify-between">
                 <div className="flex gap-x-8 gap-y-2 items-center flex-wrap">
                   <p className="text-[13px] text-[#53524c] font-helvetica leading-[14px]">
@@ -556,6 +517,11 @@ export default function EventDetails({ _event }: { _event?: DocumentData }) {
                     }
                     style={{
                       aspectRatio: "auto 700 / 453",
+                    }}
+                    imageProps={{
+                      // @ts-ignore
+                      placeholder: "blur",
+                      blurDataURL: event?.displayImageBlurData,
                     }}
                   />
                 )}

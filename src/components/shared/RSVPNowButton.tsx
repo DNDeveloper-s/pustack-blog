@@ -82,7 +82,7 @@ export default function RSVPNowButton({
         <p className="text-sm text-center font-featureHeadline style_intro leading-[120%]">
           See you there! We have emailed you the invitation at{" "}
           <b className="font-featureBold">
-            {user?.email ?? sessionEmail ?? inputRef.current?.value}
+            {inputRef.current?.value ?? sessionEmail ?? user?.email}
           </b>
         </p>
         <button

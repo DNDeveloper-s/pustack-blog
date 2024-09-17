@@ -381,6 +381,7 @@ export default function EventDetailsMobile({
           organizer: _event.organizer,
           venue: _event.venue,
           displayImage: _event.displayImage,
+          displayImageBlurData: _event.displayImageBlurData,
           isAllDay: _event.isAllDay,
           background: _event.background,
           timestamp: _event.timestamp,
@@ -715,13 +716,12 @@ export default function EventDetailsMobile({
                         </p>
                         <Link
                           target="_blank"
+                          className="text-xs text-appBlue"
                           href={event.venue.meetingLink ?? "#"}
                         >
-                          <p className="text-xs">
-                            Join{" "}
-                            {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
-                            Link
-                          </p>
+                          Join{" "}
+                          {getMeetLinkDetails(event.venue.meetingLink).label}{" "}
+                          Link
                         </Link>
                       </div>
                     </div>
@@ -753,7 +753,7 @@ export default function EventDetailsMobile({
                     href={"mailto:" + event.organizer.email}
                     className="leading-[120%] text-appBlue cursor-pointer block"
                   >
-                    <b>{event.organizer.email}</b>
+                    {event.organizer.email}
                   </Link>
                   {/* <Link
                     href={"tel:" + event.organizer.contact}

@@ -47,6 +47,26 @@
   src: url(/assets/fonts/Utopia_Italic.ttf);
 }
 
+@font-face {
+  font-family: MontSerrat;
+  src: url(/assets/fonts/Montserrat-Regular.ttf);
+}
+
+@font-face {
+  font-family: MontSerratSemiBold;
+  src: url(/assets/fonts/Montserrat-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: SourceSans;
+  src: url(/assets/fonts/SourceSans3-Regular.ttf);
+}
+
+@font-face {
+  font-family: SourceSansSemiBold;
+  src: url(/assets/fonts/SourceSans3-SemiBold.ttf);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;

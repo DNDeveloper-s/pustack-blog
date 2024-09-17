@@ -1,14 +1,12 @@
-import LandingPageSectionLayout from "@/components/LandingPage/LandingPageSectionLayout";
-import SiliconValley from "@/components/SiliconValley/SiliconValley";
-import Layout from "@/layout/main";
+import DynamicLayout from "@/components/LandingPage/DynamicLayout";
 
 export default function SiliconValleyPage() {
   return (
-    <div className="mb-6 w-full py-3 flex justify-between items-center">
-      <LandingPageSectionLayout
+    <div className="mb-6 w-full py-3">
+      <DynamicLayout
         label="Silicon Valley"
         topics={["silicon-valley"]}
-        limit={10}
+        limit={40}
         classNames={{ base: "!p-0", wrapper: "!border-none" }}
       />
     </div>

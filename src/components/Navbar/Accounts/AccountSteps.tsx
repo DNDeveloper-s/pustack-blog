@@ -74,6 +74,7 @@ const RSVPIcon = (props: any) => (
 interface AccountStepProps {
   handleGearClick: () => void;
   handleBackClick: () => void;
+  closePopover?: () => void;
   userDetails: {
     name: string;
     email: string;
@@ -89,6 +90,7 @@ export function AccountStepOne({
   onSubscriptionChange: _onSubscriptionChange,
   handleBackClick,
   userDetails,
+  closePopover,
 }: AccountStepProps) {
   const [hasRated, setHasRated] = useState(false);
   const { isMobileScreen } = useScreenSize();
@@ -146,6 +148,9 @@ export function AccountStepOne({
   useEffect(() => {
     setIsSubscribed(!!userDetails.isSubscribed);
   }, [userDetails.isSubscribed]);
+
+  const isAuthor = user?.is_author;
+  const isAdmin = user?.is_admin;
 
   return (
     <div
@@ -237,8 +242,10 @@ export function AccountStepOne({
 
           <div className="absolute bottom-0 flex justify-between w-full py-2 px-3">
             <div className="text-xs">
-              <h2 className="text-base font-medium">{userDetails.name}</h2>
-              <p>{userDetails.email}</p>
+              <h2 className="text-base font-sourceSansSemiBold uppercase">
+                {userDetails.name}
+              </h2>
+              <p className="font-sourceSansSemiBold">{userDetails.email}</p>
             </div>
             <div className="flex items-center justify-center flex-col text-xs">
               <Image
@@ -249,7 +256,9 @@ export function AccountStepOne({
                 draggable={false}
                 priority
               />
-              <h6>{dayjs(userDetails.sign_up_ts).year()}</h6>
+              <h6 className="font-sourceSansSemiBold">
+                {dayjs(userDetails.sign_up_ts).year()}
+              </h6>
             </div>
           </div>
         </div>
@@ -301,19 +310,27 @@ export function AccountStepOne({
           </div>
         </div>
         <div className="divide-y">
-          <Link
-            href={"/me/publications"}
-            className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
-          >
-            <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
-              <GiOpenBook />
-            </div>
-            <div>
-              <span>My Publications</span>
-            </div>
-          </Link>
+          {isAuthor && (
+            <Link
+              href={"/me/publications"}
+              onClick={() => {
+                closePopover && closePopover();
+              }}
+              className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
+            >
+              <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
+                <GiOpenBook />
+              </div>
+              <div>
+                <span>My Publications</span>
+              </div>
+            </Link>
+          )}
           <Link
             href={"/saved"}
+            onClick={() => {
+              closePopover && closePopover();
+            }}
             className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
           >
             <div className="bg-appBlack rounded p-2 text-primary flex items-center justify-center">
@@ -342,6 +359,9 @@ export function AccountStepOne({
           </div>
           <Link
             href={"/rsvp"}
+            onClick={() => {
+              closePopover && closePopover();
+            }}
             className="grid grid-cols-[32px_1fr] items-center gap-2 text-appBlack font-featureBold font-medium py-3"
           >
             <div className="bg-appBlack rounded p-2 text-primary w-full h-full flex items-center justify-center">
@@ -620,6 +640,7 @@ function ImagePicker({ url, setUrl }: ImagePickerProps) {
 
 interface AccountStepTwoProps {
   handleBackClick: () => void;
+  closePopover?: () => void;
   deleteAccountDisclosure: ReturnType<typeof useDisclosure>;
 }
 function AccountStepTwoRef(
@@ -674,6 +695,10 @@ function AccountStepTwoRef(
   const handleCompleteAnimation = () => {
     setActiveField(undefined);
   };
+
+  const isAuthor = user?.is_author;
+  const isAdmin = user?.is_admin;
+  const isEventCreator = user?.is_event_creator;
 
   return (
     user?.uid && (
@@ -858,27 +883,30 @@ function AccountStepTwoRef(
                 placeholder="Enter here"
                 value={user?.company}
                 ref={companyInputRef}
+                noBottomBorder={!isAuthor && !isAdmin}
               />
             </div>
-            <div>
-              <FormInput
-                label="About"
-                onUpdate={(value: string) => {
-                  setActiveField("about");
-                  postUpdateUser({
-                    about: value,
-                    userId: user?.uid,
-                  });
-                }}
-                onCompleteAnimation={handleCompleteAnimation}
-                isPending={activeField === "about" && isPending}
-                isSuccess={activeField === "about" && isSuccess}
-                placeholder="Enter here"
-                value={user?.about}
-                noBottomBorder
-                ref={aboutInputRef}
-              />
-            </div>
+            {(isAuthor || isAdmin) && (
+              <div>
+                <FormInput
+                  label="About"
+                  onUpdate={(value: string) => {
+                    setActiveField("about");
+                    postUpdateUser({
+                      about: value,
+                      userId: user?.uid,
+                    });
+                  }}
+                  onCompleteAnimation={handleCompleteAnimation}
+                  isPending={activeField === "about" && isPending}
+                  isSuccess={activeField === "about" && isSuccess}
+                  placeholder="Enter here"
+                  value={user?.about}
+                  noBottomBorder
+                  ref={aboutInputRef}
+                />
+              </div>
+            )}
           </div>
           <hr className="border-dashed border-[#1f1d1a4d] mb-2 mt-0.5" />
           <div className="flex flex-col text-sm font-medium text-appBlue divide-y divide-dashed divide-[#1f1d1a4d]">

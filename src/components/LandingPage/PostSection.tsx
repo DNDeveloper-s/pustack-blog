@@ -156,3 +156,52 @@ export default function PostSection({ posts }: PostSectionProps) {
     </div>
   );
 }
+
+
+export function PostMobileSection({ posts }: PostSectionProps) {
+  let content = null;
+
+  const chunkedPosts = useMemo(() => {
+    if (!posts) return [];
+    return chunk(posts, 2);
+  }, [posts]);
+
+  content = (
+    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] py-2 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
+      <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+        {chunkedPosts?.map((postChunkOf2, i) => {
+          const gridClassName =
+            postChunkOf2.length === 1 ? "grid-cols-1" : "grid-cols-2";
+          return (
+            <div
+              key={i}
+              className={
+                "grid divide-x divide-dashed divide-[#1f1d1a4d] py-3 " +
+                gridClassName
+              }
+            >
+              {postChunkOf2.map((post: any, j) => (
+                <div key={post.id} className={j % 2 === 0 ? "pr-3" : "pl-3"}>
+                  <DesignedBlog
+                    href={`/?post_drawer_id=${post.id}`}
+                    linkClassName={"h-full block"}
+                    size="sm"
+                    post={post}
+                    variant={postChunkOf2.length === 1 ? "short" : "very_short"}
+                  />
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={"py-3"}>
+      <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
+      {content}
+    </div>
+  );
+}

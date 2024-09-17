@@ -3,7 +3,7 @@ import Flagship from "@/components/Blogs/Flagship";
 import SignUpForNewsLetters from "../SignUpForNewsLetters/SignUpForNewsLetters";
 import { Post, SnippetPosition } from "@/firebase/post-v2";
 import { chunk, compact, difference, sortBy } from "lodash";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import DesignedBlog from "../Blogs/DesignedBlog";
 import { useQueryPosts } from "@/api/post";
 import { useGetFlagshipSignal, useQuerySignals } from "@/api/signal";
@@ -81,6 +81,38 @@ function DashboardDesktop({
     }),
     limit: 40,
   });
+
+  useEffect(() => {
+    const scrollPosition = sessionStorage.getItem("scrollPosition");
+    if (scrollPosition) {
+      document.body.scrollTo({
+        left: 0,
+        top: parseInt(scrollPosition),
+        behavior: "instant",
+      });
+      console.log("scrollPosition | removed - ", scrollPosition);
+      sessionStorage.removeItem("scrollPosition");
+    }
+
+    const onScroll = () => {
+      console.log(
+        "scrollPosition | added - ",
+        document.body.scrollTop.toString()
+      );
+      sessionStorage.setItem(
+        "scrollPosition",
+        document.body.scrollTop.toString()
+      );
+    };
+
+    document.body.addEventListener("scroll", onScroll);
+
+    return () => {
+      // console.log("scrollPosition | added - ", scrollPosition);
+      // sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+      document.body.removeEventListener("scroll", onScroll);
+    };
+  }, []); // Run effect when query parameters change
 
   const postsByPosition = useMemo(() => {
     if (!posts) {

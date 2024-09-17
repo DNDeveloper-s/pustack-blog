@@ -1,14 +1,12 @@
-import ArtificialIntelligence from "@/components/ArtificialIntelligence/ArtificialIntelligence";
-import LandingPageSectionLayout from "@/components/LandingPage/LandingPageSectionLayout";
-import Layout from "@/layout/main";
+import DynamicLayout from "@/components/LandingPage/DynamicLayout";
 
 export default function ArtificialIntelligencePage() {
   return (
-    <div className="mb-6 w-full py-3 flex justify-between items-center">
-      <LandingPageSectionLayout
+    <div className="mb-6 w-full py-3">
+      <DynamicLayout
         label="Artificial Intelligence"
         topics={["artificial-intelligence"]}
-        limit={10}
+        limit={40}
         classNames={{ base: "!p-0", wrapper: "!border-none" }}
       />
     </div>

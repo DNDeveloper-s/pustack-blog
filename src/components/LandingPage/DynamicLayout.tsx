@@ -16,7 +16,7 @@ import BlogImage from "../shared/BlogImage";
 import Link from "next/link";
 import { SnippetPosition } from "@/firebase/post";
 import { breakdownArray } from "@/lib/transformers/array";
-import PostSection from "./PostSection";
+import PostSection, { PostMobileSection } from "./PostSection";
 
 type topicId =
   | "product-management"
@@ -31,6 +31,88 @@ type label =
   | "Technology"
   | "Silicon Valley"
   | "Others";
+
+const WebShimmer = () => {
+  return (
+    <div
+      className={
+        "grid py-4 divide-y md:divide-y-0 grid-cols-[2fr_1fr] md:divide-x divide-dashed divide-[#1f1d1a4d] w-full"
+      }
+    >
+      <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+        <div
+          className={
+            "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 pb-3 "
+          }
+        >
+          <div className="pr-3">
+            <BlogWithAuthorShimmer noImage />
+          </div>
+          <div className="pl-3">
+            <BlogWithAuthorShimmer noImage />
+          </div>
+        </div>
+        <div
+          className={
+            "grid divide-x divide-dashed divide-[#1f1d1a4d] grid-cols-2 pt-3 "
+          }
+        >
+          <div className="pr-3">
+            <BlogWithAuthorShimmer noImage />
+          </div>
+          <div className="pl-3">
+            <BlogWithAuthorShimmer noImage />
+          </div>
+        </div>
+      </div>
+      <div className="pl-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+        <BlogWithAuthorShimmer />
+      </div>
+    </div>
+  );
+};
+
+const MobileShimmer = () => {
+  return (
+    <div className="w-full grid grid-cols-1 md:grid-cols-[2fr_1fr] py-4 divide-y md:divide-y-0 md:divide-x divide-dashed divide-[#1f1d1a4d]">
+      <div className="pr-0 md:pr-3 divide-y divide-dashed divide-[#1f1d1a4d]">
+        <div
+          className={
+            "grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+          }
+        >
+          <div className={"pr-3"}>
+            <BlogWithAuthorShimmer size="sm" />
+          </div>
+          <div className={"pl-3"}>
+            <BlogWithAuthorShimmer size="sm" />
+          </div>
+        </div>
+        <div
+          className={
+            "grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+          }
+        >
+          <div className={"pr-3"}>
+            <BlogWithAuthorShimmer size="sm" />
+          </div>
+          <div className={"pl-3"}>
+            <BlogWithAuthorShimmer size="sm" />
+          </div>
+        </div>
+        <div
+          className={
+            "grid grid-cols-1 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+          }
+        >
+          <div className={"pr-3"}>
+            <BlogWithAuthorShimmer size="sm" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function DynamicLayout({
   limit = 5,
@@ -67,6 +149,16 @@ export default function DynamicLayout({
         rightPosts: [],
         midContentPosts: [],
         listPosts: [],
+      };
+    }
+
+    if (posts.length <= 5) {
+      return {
+        titlePost: null,
+        rightPosts: [],
+        midContentPosts: [],
+        leftPosts: [],
+        listPosts: breakdownArray(sortBy(posts ?? [], "post.timestamp")),
       };
     }
 
@@ -116,95 +208,105 @@ export default function DynamicLayout({
         <h2 className="font-featureHeadline lg:text-[40px] md:text-[30px] text-[26px] leading-[120%] pt-1">
           {label}
         </h2>
-        <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
-        <div className="grid grid-cols-1 md:grid-cols-[25%_46%_29%] relative mt-4">
-          <div className="px-0 md:pr-4 lg:pr-7 md:pl-0 py-2">
-            {/* <div className="mt-5">
+        {isLoading && (isSmallScreen ? <MobileShimmer /> : <WebShimmer />)}
+        {!isLoading && postsByPosition?.titlePost && (
+          <>
+            <hr className="border-dashed border-[#1f1d1a4d] mt-6" />
+            <div className="grid grid-cols-1 md:grid-cols-[25%_46%_29%] relative mt-4">
+              <div className="px-0 md:pr-4 lg:pr-7 md:pl-0 py-2">
+                {/* <div className="mt-5">
           <UpcomingEventSection />
         </div> */}
 
-            <div className="grid grid-cols-1 gap-4">
-              {postsByPosition.leftPosts?.map((post) => (
-                <DesignedBlog
-                  size="sm"
-                  linkClassName="block"
-                  key={post.id}
-                  post={post}
-                  variant="short"
-                />
-              ))}
-            </div>
-          </div>
-          <div className="mt-[15px] md:mt-0 md:border-x py-2 border-dashed border-[#1f1d1a4d] px-0 md:px-4 lg:px-10">
-            {postsByPosition.titlePost && (
-              <DesignedBlog
-                linkClassName="block"
-                post={postsByPosition.titlePost as Post}
-                variant="short"
-                classNames={{
-                  wrapper: "!h-auto",
-                }}
-                imageProps={{
-                  width: 650,
-                  height: 500,
-                  // @ts-ignore
-                  priority: true,
-                  layout: "responsive",
-                }}
-              />
-            )}
-            <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
-              {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
-                <div
-                  key={i}
-                  className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
-                >
-                  {postChunkOf2.map((post, j) => (
-                    <div
+                <div className="grid grid-cols-1 gap-4">
+                  {postsByPosition.leftPosts?.map((post) => (
+                    <DesignedBlog
+                      size="sm"
+                      linkClassName="block"
                       key={post.id}
-                      className={j % 2 === 0 ? "pr-3" : "pl-3"}
-                    >
-                      <DesignedBlog
-                        linkClassName={"h-full block"}
-                        size="sm"
-                        post={post}
-                        variant="short"
-                      />
-                    </div>
+                      post={post}
+                      variant="short"
+                    />
                   ))}
                 </div>
-              ))}
-              {/* <div className="pr-3">
+              </div>
+              <div className="mt-[15px] md:mt-0 md:border-x py-2 border-dashed border-[#1f1d1a4d] px-0 md:px-4 lg:px-10">
+                {postsByPosition.titlePost && (
+                  <DesignedBlog
+                    linkClassName="block"
+                    post={postsByPosition.titlePost as Post}
+                    variant="short"
+                    classNames={{
+                      wrapper: "!h-auto",
+                    }}
+                    imageProps={{
+                      width: 650,
+                      height: 500,
+                      // @ts-ignore
+                      priority: true,
+                      layout: "responsive",
+                    }}
+                  />
+                )}
+                <div className="grid divide-y divide-dashed divide-[#1f1d1a4d]">
+                  {postsByPosition.midContentPosts?.map((postChunkOf2, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-2 divide-x divide-dashed divide-[#1f1d1a4d] py-3"
+                    >
+                      {postChunkOf2.map((post, j) => (
+                        <div
+                          key={post.id}
+                          className={j % 2 === 0 ? "pr-3" : "pl-3"}
+                        >
+                          <DesignedBlog
+                            linkClassName={"h-full block"}
+                            size="sm"
+                            post={post}
+                            variant="short"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  {/* <div className="pr-3">
             <BlogWithAuthorV2 size="sm" />
           </div>
           <div className="pl-3">
             <BlogWithAuthor size="sm" />
           </div> */}
-            </div>
-          </div>
-          <div className="px-0 md:pl-4 lg:pl-7 md:pr-0 py-2">
-            {/* <div className="mt-5">
+                </div>
+              </div>
+              <div className="px-0 md:pl-4 lg:pl-7 md:pr-0 py-2">
+                {/* <div className="mt-5">
           <UpcomingEventSection />
         </div> */}
 
-            <div className="grid grid-cols-1 gap-4">
-              {postsByPosition.rightPosts?.map((post) => (
-                <DesignedBlog
-                  size="sm"
-                  linkClassName="block"
-                  key={post.id}
-                  post={post}
-                  variant="short"
-                />
-              ))}
+                <div className="grid grid-cols-1 gap-4">
+                  {postsByPosition.rightPosts?.map((post) => (
+                    <DesignedBlog
+                      size="sm"
+                      linkClassName="block"
+                      key={post.id}
+                      post={post}
+                      variant="short"
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
       <div>
-        {postsByPosition.listPosts?.map((postChunk, i) => (
-          <PostSection key={i} posts={postChunk} />
-        ))}
+        {!isLoading &&
+          postsByPosition.listPosts?.map((postChunk, i) =>
+            isSmallScreen ? (
+              <PostMobileSection key={i} posts={postChunk} />
+            ) : (
+              <PostSection key={i} posts={postChunk} />
+            )
+          )}
       </div>
     </div>
   );

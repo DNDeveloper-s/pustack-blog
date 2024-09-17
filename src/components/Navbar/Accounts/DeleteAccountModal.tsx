@@ -33,7 +33,7 @@ export default function DeleteAccountModal({
   } = useDeleteAccount({
     onSuccess: () => {
       disclosureOptions.onClose();
-      router.push("/");
+      // router.push("/");
       openNotification(
         NotificationPlacements[5],
         {
@@ -44,6 +44,8 @@ export default function DeleteAccountModal({
         },
         "success"
       );
+      // @ts-ignore
+      window.location = "/";
     },
   });
   const onClose = () => {
