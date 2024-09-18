@@ -8,8 +8,8 @@ export async function GET(request: any) {
   const imageUrl = searchParams.get("imageUrl");
   const width = searchParams.get("width");
   const height = searchParams.get("height");
-  const overlayWidth = searchParams.get("overlayWidth");
-  const overlayHeight = searchParams.get("overlayHeight");
+  const overlayWidth = 30;
+  const overlayHeight = 30;
   const overlayTop = searchParams.get("overlayTop");
   const overlayLeft = searchParams.get("overlayLeft");
 
