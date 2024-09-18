@@ -67,8 +67,8 @@ export async function GET(request: any) {
 
   const _width = +(width ?? 450);
   const _height = +(height ?? 300);
-  const _overlayWidth = 200;
-  const _overlayHeight = 200;
+  const _overlayWidth = 30;
+  const _overlayHeight = 30;
 
   // const topPosition = +(height ?? 300) / 2 - +(overlayWidth ?? 300) / 2;
   // const leftPosition = +(width ?? 450) / 2 - +(overlayHeight ?? 300) / 2;
