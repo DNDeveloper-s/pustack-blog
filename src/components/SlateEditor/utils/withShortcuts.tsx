@@ -45,7 +45,7 @@ const getNonZeroPath = (path: Path) => {
 };
 
 const withShortcuts = (editor: Editor) => {
-  const { deleteBackward, insertText, insertBreak } = editor;
+  const { deleteBackward, insertText, insertBreak, select, isVoid } = editor;
 
   editor.insertText = (text) => {
     const { selection } = editor;
@@ -90,6 +90,27 @@ const withShortcuts = (editor: Editor) => {
     }
 
     insertText(text);
+  };
+
+  editor.select = (properties) => {
+    const { selection } = editor;
+
+    if (properties) {
+      // @ts-ignore
+      const [node] = Editor.node(editor, properties.anchor.path.slice(0, -1));
+
+      // @ts-ignore
+      if (node.type === "math-block" || node.type === "math-block-container") {
+        // Prevent selecting the custom element (math-block in this case)
+        return;
+      }
+    }
+
+    select(properties);
+  };
+
+  editor.isVoid = (element) => {
+    return element.type === "math-block" || isVoid(element);
   };
 
   editor.deleteBackward = (...args) => {

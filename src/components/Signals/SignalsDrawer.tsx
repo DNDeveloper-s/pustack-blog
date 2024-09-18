@@ -2,10 +2,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Spinner } from "@nextui-org/spinner";
 import SignalsMobile from "./SignalsMobile";
 import PageDrawer from "../shared/PageDrawer";
+import { useLink } from "@/context/LinkContext";
 
 export default function SignalDrawer({ _signals }: { _signals?: any }) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const { navigationStack } = useLink();
   const router = useRouter();
 
   const signalId = searchParams.get("signal_drawer_id");
@@ -14,6 +15,9 @@ export default function SignalDrawer({ _signals }: { _signals?: any }) {
     // const url = new URLSearchParams(searchParams.toString());
     // url.delete("signal_drawer_id");
     // router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    if (navigationStack.length === 1) {
+      return router.push("/signals");
+    }
     router.back();
   };
 

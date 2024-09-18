@@ -3,7 +3,7 @@
 
 // We can not useState or useRef in a server component, which is why we are
 // extracting this part out into it's own file with 'use client' on top
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { UserProvider } from "@/context/UserContext";
 import { User } from "firebase/auth";
@@ -142,27 +142,31 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <>
-        <NavbarContextProvider>
-          <BlogImageContextProvider>
-            <SlateContextProvider>
-              <NotificationContextProvider
-                openNotification={openNotification}
-                destroy={api.destroy}
-              >
-                <>
-                  {contextHolder}
-                  <UserProvider>
-                    <JoinModalContextProvider>
-                      {children}
-                      <JoinModal />
-                      <ImageScale />
-                    </JoinModalContextProvider>
-                  </UserProvider>
-                </>
-              </NotificationContextProvider>
-            </SlateContextProvider>
-          </BlogImageContextProvider>
-        </NavbarContextProvider>
+        <Suspense fallback={null}>
+          <LinkContextProvider>
+            <NavbarContextProvider>
+              <BlogImageContextProvider>
+                <SlateContextProvider>
+                  <NotificationContextProvider
+                    openNotification={openNotification}
+                    destroy={api.destroy}
+                  >
+                    <>
+                      {contextHolder}
+                      <UserProvider>
+                        <JoinModalContextProvider>
+                          {children}
+                          <JoinModal />
+                          <ImageScale />
+                        </JoinModalContextProvider>
+                      </UserProvider>
+                    </>
+                  </NotificationContextProvider>
+                </SlateContextProvider>
+              </BlogImageContextProvider>
+            </NavbarContextProvider>
+          </LinkContextProvider>
+        </Suspense>
       </>
     </QueryClientProvider>
   );

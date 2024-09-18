@@ -7,6 +7,7 @@ import EventSidebar from "./EventSidebar";
 import PageDrawer from "../shared/PageDrawer";
 import EventDetailMobilePage from "./EventDetailMobilePage";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useLink } from "@/context/LinkContext";
 
 export default function EventListPage({ _event }: { _event: any }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,7 @@ export default function EventListPage({ _event }: { _event: any }) {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { navigationStack } = useLink();
 
   const eventId = searchParams.get("event_id");
 
@@ -59,7 +61,15 @@ export default function EventListPage({ _event }: { _event: any }) {
           <EventSidebar className="!bg-transparent" />
         </div>
       </div>
-      <PageDrawer open={open} onClose={() => router.back()}>
+      <PageDrawer
+        open={open}
+        onClose={() => {
+          if (navigationStack.length === 1) {
+            return router.push("/events");
+          }
+          router.back();
+        }}
+      >
         {_event && <EventDetailMobilePage _event={_event} />}
       </PageDrawer>
     </main>

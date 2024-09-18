@@ -10,6 +10,7 @@ import useScreenSize from "@/hooks/useScreenSize";
 import EventsEntry from "../Events/EventsEntry";
 import { IoChevronBack } from "react-icons/io5";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLink } from "@/context/LinkContext";
 
 export const DocumentIcon = (props: any) => (
   <svg
@@ -87,6 +88,7 @@ export default function Publications() {
   const [mode, setMode] = useState("posts");
   const router = useRouter();
   const { isSmallScreen } = useScreenSize();
+  const { setReplace } = useLink();
 
   useEffect(() => {
     if (searchParams.has("mode")) {
@@ -100,9 +102,10 @@ export default function Publications() {
 
       _searchParams.set("mode", "posts");
 
+      setReplace(true);
       router.replace(pathname + `?${_searchParams.toString()}`);
     }
-  }, [mode, pathname, router, searchParams]);
+  }, [mode, pathname, router, setReplace, searchParams]);
 
   if (isSmallScreen) {
     return (

@@ -240,8 +240,8 @@ const MathQuill = ({
                   },
                   { at: newPath }
                 );
-                Transforms.select(editor, Editor.start(editor, newPath));
-                ReactEditor.focus(editor);
+                // Transforms.select(editor, Editor.start(editor, newPath));
+                // ReactEditor.focus(editor);
                 e.preventDefault();
               }
             }}

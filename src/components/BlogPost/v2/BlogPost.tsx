@@ -86,6 +86,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { API_QUERY } from "@/config/api-query";
 import BlogPostMobile from "./BlogPostMobile";
 import BlogPostDesktop from "./BlogPostDesktop";
+import { useLink } from "@/context/LinkContext";
 const NavigatorShare = dynamic(() => import("../NavigatorShare"), {
   ssr: false,
 });
@@ -284,11 +285,13 @@ export default function BlogPost({ _post }: { _post?: DocumentData }) {
   const { isMobileScreen, isTabletScreen, isDesktopScreen } = useScreenSize();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { setReplace } = useLink();
 
   if (isMobileScreen) {
     if (!!searchParams.get("post_drawer_id"))
       return <BlogPostMobile _post={_post} />;
     else {
+      setReplace(true);
       router.replace("/?post_drawer_id=" + _post?.id);
       return null;
     }

@@ -5,10 +5,11 @@ import { useGetPostById } from "@/api/post";
 import { useEffect, useMemo } from "react";
 import { Post } from "@/firebase/post-v2";
 import { Spinner } from "@nextui-org/spinner";
+import { useLink } from "@/context/LinkContext";
 
 export default function BlogPostDrawer({ _posts }: { _posts?: Post[] }) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
+  const { navigationStack } = useLink();
   const router = useRouter();
 
   const drawerPostId = searchParams.get("post_drawer_id");
@@ -25,6 +26,10 @@ export default function BlogPostDrawer({ _posts }: { _posts?: Post[] }) {
     // const url = new URLSearchParams(searchParams.toString());
     // url.delete("post_drawer_id");
     // router.push(`${pathname}?${url.toString()}`, { scroll: true });
+    console.log("navigationStack - ", navigationStack);
+    if (navigationStack.length === 1) {
+      return router.push("/");
+    }
     router.back();
   };
 
