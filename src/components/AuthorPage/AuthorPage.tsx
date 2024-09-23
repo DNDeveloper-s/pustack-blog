@@ -221,47 +221,42 @@ function EventsEntry({ authorId }: { authorId?: string }) {
         </div>
       )} */}
       {!isLoading && events && events.length > 0 && (
-        <div
-          className={
-            !isSmallScreen ? "grid grid-cols-3 gap-4" : "grid grid-cols-1"
-          }
-        >
-          {events?.map((event) =>
-            !isSmallScreen ? (
-              <EventCardDesktop key={event.id} event={event} />
-            ) : (
-              <div className="flex flex-col gap-4 mt-4" key={event.id}>
-                {eventsArr.map((eventGroup) => (
-                  <div
-                    className="grid grid-cols-[40px_1fr] gap-3"
-                    key={eventGroup.date}
-                  >
-                    <div className="flex items-start">
-                      <div className="flex font-helvetica flex-col items-center text-sm p-2 justify-center bg-appBlack rounded-lg">
-                        <p className="text-white text-opacity-70">
-                          {pstDayjs(eventGroup.date).format("MMM")}
-                        </p>
-                        <p className="text-white text-opacity-100">
-                          {pstDayjs(eventGroup.date).format("D")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {eventGroup.events.map((event) => (
-                        <EventCard
-                          key={event.id}
-                          event={event}
-                          includeDate
-                          stayActive
-                          noShadow
-                        />
-                      ))}
+        <div className={"grid grid-cols-1"}>
+          {events?.map((event) => (
+            <div
+              className="flex flex-col gap-4 mt-4 max-w-[500px] mx-auto w-full"
+              key={event.id}
+            >
+              {eventsArr.map((eventGroup) => (
+                <div
+                  className="grid grid-cols-[40px_1fr] gap-3"
+                  key={eventGroup.date}
+                >
+                  <div className="flex items-start">
+                    <div className="flex font-helvetica flex-col items-center text-sm p-2 justify-center bg-appBlack rounded-lg">
+                      <p className="text-white text-opacity-70">
+                        {pstDayjs(eventGroup.date).format("MMM")}
+                      </p>
+                      <p className="text-white text-opacity-100">
+                        {pstDayjs(eventGroup.date).format("D")}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )
-          )}
+                  <div className="flex flex-col gap-2">
+                    {eventGroup.events.map((event) => (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        includeDate
+                        stayActive
+                        noShadow
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       )}
       {!isLoading && (!events || events.length === 0) && (

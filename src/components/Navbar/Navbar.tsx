@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { topics, url } from "@/constants";
 import { navYouAreHere } from "@/assets";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { useMediaQuery } from "react-responsive";
 import Drawer from "react-modern-drawer";
@@ -1119,6 +1119,7 @@ function NavbarMobile() {
   const disclosureOptions = useDisclosure();
   const { setOpen: openJoinModal } = useJoinModal();
   const bodyRef = useRef<any>(document.body);
+  const router = useRouter();
 
   /** Framer Motion */
   const { scrollY } = useScroll({ container: bodyRef });
@@ -1223,6 +1224,20 @@ function NavbarMobile() {
       // unsubscribe5();
     };
   }, [height, marginTop, opacity, borderWidth, chipMarginTop]);
+
+  const toggleLink = (href: string) => {
+    if (pathname === href) return router.push("/");
+    router.push(href);
+  };
+
+  useEffect(() => {
+    router.prefetch("/");
+    router.prefetch("/artificial-intelligence");
+    router.prefetch("/technology");
+    router.prefetch("/product-management");
+    router.prefetch("/silicon-valley");
+    router.prefetch("/others");
+  }, [router]);
 
   return (
     <motion.div
@@ -1474,9 +1489,8 @@ function NavbarMobile() {
         <span className="text-appBlack leading-[120%]">RESPONSIBLE</span>
       </div>
       <div className="flex gap-x-2 gap-y-1 flex-wrap mt-3" ref={chipRef}>
-        <Link
-          href={"/"}
-          prefetch
+        <button
+          onClick={() => toggleLink("/")}
           className={
             "min-w-[120px] " +
             className +
@@ -1486,48 +1500,43 @@ function NavbarMobile() {
           <span>
             <TiHome className="text-base" />
           </span>
-        </Link>
-        <Link
-          href={"/artificial-intelligence"}
-          prefetch
+        </button>
+        <button
+          onClick={() => toggleLink("/artificial-intelligence")}
           className={
             className +
             (pathname === "/artificial-intelligence" ? activeClassName : "")
           }
         >
           <span>Artificial Intelligence</span>
-        </Link>
-        <Link
-          href={"/technology"}
-          prefetch
+        </button>
+        <button
+          onClick={() => toggleLink("/technology")}
           className={
             className + (pathname === "/technology" ? activeClassName : "")
           }
         >
           <span>Technology</span>
-        </Link>
-        <Link
-          href={"/silicon-valley"}
-          prefetch
+        </button>
+        <button
+          onClick={() => toggleLink("/silicon-valley")}
           className={
             className + (pathname === "/silicon-valley" ? activeClassName : "")
           }
         >
           <span>Silicon Valley</span>
-        </Link>
-        <Link
-          href={"/product-management"}
-          prefetch
+        </button>
+        <button
+          onClick={() => toggleLink("/product-management")}
           className={
             className +
             (pathname === "/product-management" ? activeClassName : "")
           }
         >
           <span>Product Management</span>
-        </Link>
-        <Link
-          href={"/others"}
-          prefetch
+        </button>
+        <button
+          onClick={() => toggleLink("/others")}
           className={
             "min-w-[130px] " +
             className +
@@ -1535,7 +1544,7 @@ function NavbarMobile() {
           }
         >
           <span>Others</span>
-        </Link>
+        </button>
       </div>
       {/* <hr className="border-dashed border-[#1f1d1a4d] mt-0.5" /> */}
 
