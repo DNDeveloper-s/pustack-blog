@@ -95,7 +95,8 @@ const withShortcuts = (editor: Editor) => {
   editor.select = (properties) => {
     const { selection } = editor;
 
-    if (properties) {
+    // @ts-ignore
+    if (properties && properties.anchor) {
       // @ts-ignore
       const [node] = Editor.node(editor, properties.anchor.path.slice(0, -1));
 

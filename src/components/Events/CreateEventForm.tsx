@@ -1,6 +1,7 @@
 import {
   Checkbox,
   DatePicker,
+  TimePicker,
   DatePickerProps,
   GetProp,
   Radio,
@@ -27,6 +28,7 @@ import { Timestamp } from "firebase/firestore";
 import DescriptionEditor from "./DescriptionEditor";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import EventMap from "./EventMap";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -59,7 +61,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
   const { user } = useUser();
 
   // Local State
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | false>(false);
   const [isUploading, setIsUploading] = useState(false);
 
   // React Queries
@@ -139,9 +141,13 @@ export default function CreateEventForm({ event }: { event?: Event }) {
 
   // Watchers
   const venueValue = watch("venue");
-  const isAllDayValue = watch("isAllDay");
+  // const isAllDayValue = watch("isAllDay");
   const startTimeValue = watch("startTime");
   const endTimeValue = watch("endTime");
+  const eventDateValue = watch("eventDate");
+  const mapsLinkValue = watch("venue_maps_link");
+
+  console.log("eventDateValue - ", eventDateValue, getValues("eventDate"));
 
   // UseEffects
   useEffect(() => {
@@ -165,11 +171,12 @@ export default function CreateEventForm({ event }: { event?: Event }) {
       }
     }
   }, [venueValue, event]);
-  useEffect(() => {
-    if (isAllDayValue) {
-      unregister("endTime");
-    }
-  }, [isAllDayValue]);
+
+  // useEffect(() => {
+  //   if (isAllDayValue) {
+  //     unregister("endTime");
+  //   }
+  // }, [isAllDayValue]);
 
   const getAttachment = (key: keyof CreateEventAttachments) => {
     return getValues()[key];
@@ -267,6 +274,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
         id: event?.id ?? undefined,
         title: values.title,
         description: values.description,
+        eventDate: Timestamp.fromDate(dayjs(values.eventDate).toDate()),
         startTime: Timestamp.fromDate(dayjs(values.startTime).toDate()),
         endTime: Timestamp.fromDate(dayjs(values.endTime).toDate()),
         organizer: {
@@ -320,7 +328,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
     (key: keyof CreateEventAttachments): UploadProps["onChange"] =>
     (info) => {
       if (info.file.status === "uploading") {
-        setLoading(true);
+        setLoading(key);
         return;
       }
       if (info.file.status === "done") {
@@ -356,13 +364,13 @@ export default function CreateEventForm({ event }: { event?: Event }) {
   // const disabledDate: DatePickerProps["disabledDate"] = (current) => {
   //   return current && current < dayjs(startTimeValue);
   // };
-  const uploadButton = (label?: string) => (
+  const uploadButton = (label?: string, key?: string) => (
     <button
       style={{ border: 0, background: "none" }}
       className="flex flex-col items-center justify-center py-3"
       type="button"
     >
-      {loading ? (
+      {loading === key ? (
         <Spinner size="md" />
       ) : (
         <TbFileUpload className="text-5xl text-black text-opacity-65" />
@@ -373,31 +381,55 @@ export default function CreateEventForm({ event }: { event?: Event }) {
     </button>
   );
 
-  const disabledDate = (current: any) => {
-    return current && current < dayjs(startTimeValue).startOf("day");
-  };
+  // const disabledDate = (current: any) => {
+  //   return current && current < dayjs(startTimeValue).startOf("day");
+  // };
 
-  const disabledTime = (current: any) => {
-    if (dayjs(startTimeValue).isSame(current, "day")) {
-      return {
-        disabledHours: () =>
-          Array.from({ length: 24 }, (_, i) => i).splice(
-            0,
-            dayjs(startTimeValue).hour()
-          ),
-        disabledMinutes: () =>
-          Array.from({ length: 60 }, (_, i) => i).splice(
-            0,
-            dayjs(startTimeValue).minute()
-          ),
-        disabledSeconds: () =>
-          Array.from({ length: 60 }, (_, i) => i).splice(
-            0,
-            dayjs(startTimeValue).second()
-          ),
-      };
-    }
-    return {};
+  // const disabledTime = (current: any) => {
+  //   if (dayjs(startTimeValue).isSame(current, "day")) {
+  //     return {
+  //       disabledHours: () =>
+  //         Array.from({ length: 24 }, (_, i) => i).splice(
+  //           0,
+  //           dayjs(startTimeValue).hour()
+  //         ),
+  //       disabledMinutes: () =>
+  //         Array.from({ length: 60 }, (_, i) => i).splice(
+  //           0,
+  //           dayjs(startTimeValue).minute()
+  //         ),
+  //       disabledSeconds: () =>
+  //         Array.from({ length: 60 }, (_, i) => i).splice(
+  //           0,
+  //           dayjs(startTimeValue).second()
+  //         ),
+  //     };
+  //   }
+  //   return {};
+  // };
+
+  const disabledEndTime = () => {
+    if (!startTimeValue) return {};
+
+    const startHour = dayjs(startTimeValue).hour();
+    const startMinute = dayjs(startTimeValue).minute();
+
+    return {
+      disabledHours: () => Array.from({ length: startHour }, (_, i) => i),
+      disabledMinutes: (selectedHour: any) => {
+        if (selectedHour === startHour) {
+          return Array.from({ length: startMinute }, (_, i) => i);
+        }
+        return [];
+      },
+      disabledSeconds: (selectedHour: any, selectedMinute: any) => {
+        if (selectedHour === startHour && selectedMinute === startMinute) {
+          const startSecond = dayjs(startTimeValue).second();
+          return Array.from({ length: startSecond }, (_, i) => i);
+        }
+        return [];
+      },
+    };
   };
 
   return (
@@ -441,9 +473,9 @@ export default function CreateEventForm({ event }: { event?: Event }) {
           <div>
             <div className="flex justify-between items-center">
               <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
-                Event Date & Time
+                Event Date
               </h4>
-              <Controller
+              {/* <Controller
                 name="isAllDay"
                 render={({ field, fieldState, formState }) => (
                   <>
@@ -466,20 +498,22 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                     )}
                   </>
                 )}
-              />
+              /> */}
             </div>
             <div className="flex items-stretch gap-2">
               <div className="flex-1">
                 <Controller
-                  name="startTime"
+                  name="eventDate"
                   render={({ field, fieldState, formState }) => (
                     <>
                       <DatePicker
-                        showTime={!isAllDayValue}
                         onOk={(date: any) => {
                           field.onChange(dayjs(date).toISOString());
                         }}
-                        placeholder="Start Time"
+                        onChange={(date: any) => {
+                          field.onChange(dayjs(date).toISOString());
+                        }}
+                        placeholder="Event Date"
                         ref={field.ref}
                         name={field.name}
                         disabled={field.disabled}
@@ -495,7 +529,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                   )}
                 />
               </div>
-              {!isAllDayValue && (
+              {/* {!isAllDayValue && (
                 <Controller
                   name="endTime"
                   render={({ field, fieldState, formState }) => (
@@ -522,7 +556,79 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                     </div>
                   )}
                 />
-              )}
+              )} */}
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between items-center">
+              <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
+                Event Time
+              </h4>
+            </div>
+            <div className="flex items-stretch gap-2">
+              <div className="flex-1">
+                <Controller
+                  name="startTime"
+                  render={({ field, fieldState, formState }) => (
+                    <>
+                      <TimePicker
+                        onOk={(date: any) => {
+                          field.onChange(
+                            dayjs(
+                              `${dayjs(getValues("eventDate")).format(
+                                "YYYY-MM-DD"
+                              )} ${dayjs(date).format("HH:mm:ss")}`
+                            ).toISOString()
+                          );
+                        }}
+                        placeholder="Start Time"
+                        ref={field.ref}
+                        name={field.name}
+                        minuteStep={15}
+                        disabled={field.disabled}
+                        className="ant-picker-minerva-date"
+                        value={field.value ? dayjs(field.value) : undefined}
+                      />
+                      {fieldState.error?.message && (
+                        <p className="text-xs mt-1 text-danger-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+              <Controller
+                name="endTime"
+                render={({ field, fieldState, formState }) => (
+                  <div className="flex-1">
+                    <TimePicker
+                      onOk={(date: any) => {
+                        field.onChange(
+                          dayjs(
+                            `${dayjs(getValues("eventDate")).format(
+                              "YYYY-MM-DD"
+                            )} ${dayjs(date).format("HH:mm:ss")}`
+                          ).toISOString()
+                        );
+                      }}
+                      minuteStep={15}
+                      placeholder="End Time"
+                      disabledTime={disabledEndTime}
+                      ref={field.ref}
+                      name={field.name}
+                      disabled={field.disabled}
+                      className="ant-picker-minerva-date"
+                      value={field.value ? dayjs(field.value) : undefined}
+                    />
+                    {fieldState.error?.message && (
+                      <p className="text-xs mt-1 text-danger-500">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
           </div>
 
@@ -554,7 +660,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
               </div>
             )}
           />
-          <div className="flex flex-col md:row-span-2">
+          <div className="flex flex-col md:row-start-1 md:row-end-4 md:col-start-2 md:col-end-2">
             <h4 className="text-[12px] font-helvetica uppercase ml-1 mb-1 text-appBlack">
               Image
             </h4>
@@ -574,7 +680,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                   style={{ width: "100%" }}
                 />
               ) : (
-                uploadButton()
+                uploadButton("Upload Event Image", "event_image")
               )}
             </Upload>
             {formState.errors.event_image && (
@@ -697,6 +803,11 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                       </div>
                     )}
                   />
+                  {mapsLinkValue && (
+                    <div className="w-full h-auto aspect-video overflow-hidden">
+                      <EventMap mapLink={mapsLinkValue} />
+                    </div>
+                  )}
                   {/* <Upload
                     name="avatar"
                     listType="picture-card"
@@ -806,7 +917,7 @@ export default function CreateEventForm({ event }: { event?: Event }) {
                   style={{ width: "100%" }}
                 />
               ) : (
-                uploadButton("Upload Host Image")
+                uploadButton("Upload Host Image", "organizer_image")
               )}
             </Upload>
             {formState.errors.organizer_image && (

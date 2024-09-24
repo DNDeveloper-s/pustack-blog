@@ -479,6 +479,7 @@ export default function EventDetailsDesktop({
           id: _event.id,
           title: _event.title,
           description: _event.description,
+          eventDate: Timestamp.fromDate(dayjs(_event.eventDate).toDate()),
           startTime: Timestamp.fromDate(dayjs(_event.startTime).toDate()),
           endTime: Timestamp.fromDate(dayjs(_event.endTime).toDate()),
           status: _event.status,

@@ -89,6 +89,7 @@ interface EventParams {
   title: string;
   description: string;
   status?: PostStatus;
+  eventDate: Timestamp;
   startTime: Timestamp;
   endTime: Timestamp;
   organizer: {
@@ -150,6 +151,7 @@ export class Event {
   title: string;
   description: string;
   _status: PostStatus;
+  eventDate: Timestamp;
   startTime: Timestamp;
   endTime: Timestamp;
   organizer: {
@@ -186,6 +188,7 @@ export class Event {
     this.title = params.title;
     this.description = params.description;
     this._status = params.status ?? "draft";
+    this.eventDate = params.eventDate;
     this.startTime = params.startTime;
     this.endTime = params.endTime;
     this.organizer = params.organizer;
@@ -699,6 +702,7 @@ export const eventConverter = {
       id: event.id,
       title: event.title,
       description: event.description,
+      eventDate: event.eventDate,
       startTime: event.startTime,
       endTime: event.endTime,
       organizer: {
@@ -726,6 +730,7 @@ export const eventConverter = {
       id: snapshot.id,
       title: data.title,
       description: data.description,
+      eventDate: data.eventDate,
       startTime: data.startTime,
       endTime: data.endTime,
       status: data.status,

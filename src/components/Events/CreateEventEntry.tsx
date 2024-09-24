@@ -23,6 +23,7 @@ import { SnackbarContent } from "../AdminEditor/AdminPage";
 
 export interface CreateEventFormValues {
   title: string;
+  eventDate: string;
   startTime: string;
   endTime: string;
   description: string;
@@ -43,6 +44,12 @@ export interface CreateEventFormValues {
 
 const createEventSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
+  eventDate: Yup.string()
+    .required("StartTime is required")
+    .matches(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
+      "Date must be in ISO format"
+    ),
   startTime: Yup.string()
     .required("StartTime is required")
     .matches(
@@ -130,6 +137,7 @@ export default function CreateEventEntry() {
     if (event) {
       // Fetch the event details
       methods.setValue("title", event.title);
+      methods.setValue("eventDate", event.eventDate.toDate().toISOString());
       methods.setValue("startTime", event.startTime.toDate().toISOString());
       methods.setValue("endTime", event.endTime?.toDate().toISOString());
       methods.setValue("description", event.description);
