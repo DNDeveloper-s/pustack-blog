@@ -95,6 +95,7 @@ export default function CreateImageCarouselUI({
       file.isUploaded = true;
       setFileList([...fileList]);
     }
+    handlePreviewCarousel(fileList);
     setIsPending(false);
   };
 
@@ -103,7 +104,7 @@ export default function CreateImageCarouselUI({
     return fileList.every((file) => file.isUploaded);
   }, [fileList]);
 
-  const handlePreviewCarousel = () => {
+  const handlePreviewCarousel = (_fileList: UploadFile[]) => {
     const images = fileList.map((file) => ({
       src: file.url as string,
       caption: file.name,
@@ -169,17 +170,20 @@ export default function CreateImageCarouselUI({
             afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
           src={previewImage}
+          alt="Image Carousel"
         />
       )}
       <div className="flex justify-end mt-5">
         <Button
           variant="flat"
           className="py-2 px-6 rounded-lg bg-appBlue text-gray-100"
-          onClick={isAllUploaded ? handlePreviewCarousel : handleSubmit}
+          onClick={() =>
+            isAllUploaded ? handlePreviewCarousel(fileList) : handleSubmit()
+          }
           isLoading={isPending}
           isDisabled={isPending}
         >
-          {isAllUploaded ? "Preview" : "Start Upload"}
+          {isAllUploaded ? "Save" : "Start Upload"}
         </Button>
       </div>
     </div>

@@ -925,7 +925,7 @@ export const postConverter = {
           ? extractTextFromEditor(post.nodes)
           : Section.mergedContent(post.sections)
       ).text,
-      subTextVariants: post.subTextVariants,
+      subTextVariants: post.subTextVariants ?? null,
       sections: Section.toPlainObject(post.sections),
       meta: {
         description: post.snippetData?.content ?? null,
