@@ -648,7 +648,7 @@ export class Post {
     const postsRef = collection(db, "posts").withConverter(postConverter);
     const _query = query(
       postsRef,
-      where("hasTextMeta", "==", true),
+      where("status", "==", "published"),
       orderBy("timestamp", "desc"),
       limit(_limit)
     );

@@ -1,7 +1,7 @@
 import { useMutateOpenAIGenerate } from "@/api/post";
 import EventEmitter from "@/lib/EventEmitter";
 import { Button } from "@nextui-org/button";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Descendant, Editor } from "slate";
 import {
   extractFirstWordsFromPostNodes,
@@ -57,13 +57,17 @@ function BlogWithAuthor({
     }
   }, [status]);
 
-  const handleAccept = () => {
+  const handleAccept = useCallback(() => {
     setStatus("accept");
     EventEmitter.emit("accept-variant", {
       text: textAreaRef.current?.value ?? textContent,
       variant: variant,
     });
-  };
+  }, [variant, textContent]);
+
+  useEffect(() => {
+    handleAccept();
+  }, [handleAccept]);
 
   const content = (
     <div className="py-3 h-full flex flex-col" style={{ zoom: zoom ?? 1 }}>
@@ -114,10 +118,10 @@ function BlogWithAuthor({
           )}
           {status === "accept" && (
             <>
-              <div className="flex flex-col items-center p-1 justify-center text-white bg-green-500 border rounded  border-green-200">
+              {/* <div className="flex flex-col items-center p-1 justify-center text-white bg-green-500 border rounded  border-green-200">
                 <FaCheck className="text-xs" />
                 <p>Accepted</p>
-              </div>
+              </div> */}
               <div
                 className="flex flex-col items-center p-1 justify-center text-slate-500 border rounded bg-lightPrimary border-slate-200 cursor-pointer"
                 onClick={() => setStatus("edit")}
@@ -381,7 +385,7 @@ const SubTitleComponentRef = (
                   itemHoverColor: "#1f1d1a",
                   itemSelectedBg: "#1f1d1a",
                   itemSelectedColor: "#fff",
-                  trackBg: "#fcfae4",
+                  trackBg: "#eeeeee",
                 },
               },
             }}

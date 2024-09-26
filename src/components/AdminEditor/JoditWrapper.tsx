@@ -167,11 +167,6 @@ function JoditWrapper(
     getCustomTopicValue: () => customTopicValue,
     getTitleValue: () => titleValue,
     getSubTitleValue: () => {
-      console.log(
-        "subTitleInputRef.current?.value",
-        subTitleInputRef.current,
-        subTitleInputRef.current?.value
-      );
       return subTitleInputRef.current?.value ?? "";
     },
     getThumbnailData: () => {
@@ -220,7 +215,7 @@ function JoditWrapper(
         });
         inputRef.current?.focus();
       }
-      return { isValid: false, field, message: "Please enter the post title" };
+      return { isValid: false, field, message: "Please enter the Post Title" };
     }
 
     if (field === "subTitle") {
@@ -234,7 +229,7 @@ function JoditWrapper(
       return {
         isValid: false,
         field,
-        message: "Please enter the post sub-title",
+        message: "Please enter the Sub-Text and generate it's Variants.",
       };
     }
 
@@ -246,7 +241,7 @@ function JoditWrapper(
         });
         topicRef.current?.focus();
       }
-      return { isValid: false, field, message: "Please select a topic" };
+      return { isValid: false, field, message: "Please select a Topic" };
     }
 
     if (field === "customTopic") {
@@ -260,7 +255,26 @@ function JoditWrapper(
       return {
         isValid: false,
         field,
-        message: "Please enter the custom topic",
+        message: "Please enter the Custom Topic",
+      };
+    }
+
+    if (!subTextVariants.current) {
+      return {
+        isValid: false,
+        field: "sub-text",
+        message: "Please generate the Sub-Text Variants.",
+      };
+    }
+
+    if (
+      !imageCropperRef.current?.getThumbnail()?.baseImageUrl ||
+      !((imageCropperRef.current?.getThumbnail()?.variants?.length ?? 0) > 0)
+    ) {
+      return {
+        isValid: false,
+        field: "thumbnail",
+        message: "Please add Post Thumbnail",
       };
     }
 
