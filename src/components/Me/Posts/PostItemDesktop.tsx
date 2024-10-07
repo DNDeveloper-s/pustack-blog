@@ -209,7 +209,7 @@ export default function PostItemDesktop({
       <PostActionModalBase
         disclosureOptions={disclosureOptionsUnPublish}
         isLoading={isPending}
-        onConfirm={() => postUnpublishPost(post.id as string)}
+        onConfirm={() => postUnpublishPost(post)}
         error={unpublishError}
         post={post}
         title={"Unpublish Post"}
@@ -225,7 +225,7 @@ export default function PostItemDesktop({
       <PostActionModalBase
         disclosureOptions={disclosureOptionsPublish}
         isLoading={isPublishPending}
-        onConfirm={() => postPublishPost(post.id as string)}
+        onConfirm={() => postPublishPost(post)}
         error={publishError}
         post={post}
         title={"Publish Post"}

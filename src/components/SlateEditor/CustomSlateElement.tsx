@@ -25,6 +25,7 @@ import MathBlockElement from "./MathBlockElement";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import ErrorComponent from "../shared/ErrorComponent";
 import ImageCarouselEntry from "./ImageCarousel";
+import { GridContainerElement, GridItemElement } from "./GridElement";
 
 const allowedTypes = [
   "paragraph",
@@ -392,6 +393,12 @@ const CustomSlateElement = (props: any) => {
     case "image-carousel":
       el = <ImageCarouselEntry {...props} />;
       break;
+    case "grid-container":
+      el = <GridContainerElement {...props} />;
+      break;
+    case "grid-item":
+      return <GridItemElement {...props} />;
+      break;
     case "math-block-container":
       el = (
         <ErrorBoundary errorComponent={ErrorComponent}>
@@ -450,10 +457,10 @@ const CustomSlateElement = (props: any) => {
   }
 
   // Check if the element is a nested list item
-  const isNestedListItem = path.length > 1 && path.some((p) => p !== 0);
+  // const isNestedListItem = path.length > 1 && path.some((p) => p !== 0);
 
   const showSideTools =
-    !isNestedListItem &&
+    // !isNestedListItem &&
     !readonly &&
     !element.isInnerLevel &&
     !["table-row", "table-cell"].includes(element.type);
@@ -487,7 +494,7 @@ const CustomSlateElement = (props: any) => {
   const wrapper = (
     <div
       className={
-        "group/line relative mx-auto " +
+        "slate-line-element relative mx-auto " +
         (readonly
           ? element.isInnerLevel
             ? "w-full my-1"
@@ -512,7 +519,7 @@ const CustomSlateElement = (props: any) => {
       // data-slate-void={element.type === "code-block"}
     >
       {showSideTools && (
-        <div className="group-hover/line:opacity-100 opacity-0 absolute -left-4 top-1/2 transform -translate-y-1/2">
+        <div className="slate-line-element-tool absolute -left-4 top-1/2 transform -translate-y-1/2">
           <div className="flex flex-col text-sm text-gray-400">
             <div
               className="cursor-pointer px-0.5 py-1 transition-all hover:bg-gray-200 rounded"
@@ -530,7 +537,7 @@ const CustomSlateElement = (props: any) => {
         </div>
       )}
       {showSideTools && (
-        <div className="group-hover/line:opacity-100 opacity-0 absolute -right-4 top-1/2 transform -translate-y-1/2">
+        <div className="slate-line-element-tool absolute -right-4 top-1/2 transform -translate-y-1/2">
           <div className="flex flex-col text-base text-gray-400">
             <div
               className="cursor-pointer px-0.5 py-1 transition-all hover:bg-gray-200 rounded"

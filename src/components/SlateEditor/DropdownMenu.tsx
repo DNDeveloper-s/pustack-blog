@@ -14,7 +14,7 @@ import {
   LuHeading6,
   LuQuote,
 } from "react-icons/lu";
-import { IoImageOutline } from "react-icons/io5";
+import { IoGridOutline, IoImageOutline } from "react-icons/io5";
 import { CiViewTable } from "react-icons/ci";
 import { RxSection } from "react-icons/rx";
 import { MdOutlineOndemandVideo, MdOutlineViewCarousel } from "react-icons/md";
@@ -48,6 +48,7 @@ interface OptionItem {
   isImage?: boolean;
   isImageCaraousel?: boolean;
   isDivider?: boolean;
+  isGrid?: boolean;
   isTable?: boolean;
   isSectionHeader?: boolean;
   isEmbedVideo?: boolean;
@@ -62,6 +63,7 @@ interface OptionItem {
 }
 
 export type DropdownItemType =
+  | "grid"
   | "math-block"
   | "math-formula"
   | "code-snippet"
@@ -80,6 +82,12 @@ export type DropdownItemType =
   | "block-quote";
 
 const _options: OptionItem[] = [
+  {
+    id: "grid",
+    label: "Grid",
+    isGrid: true,
+    icon: <IoGridOutline />,
+  },
   {
     id: "math-block",
     label: "Math Block",
@@ -266,13 +274,37 @@ const DropdownMenu = () => {
       let shouldFocus = false;
       let shouldFocusNext = false;
 
+      // Check if the current selection is inside a table cell
+      const tableCellNode = Editor.above(editor, {
+        // @ts-ignore
+        match: (n) => n.type === "table-cell",
+      });
+
+      const gridItemNode = Editor.above(editor, {
+        // @ts-ignore
+        match: (n) => n.type === "grid-item",
+      });
+
       // Replace the current element with the custom element
       let customElement: CustomElement = {
         type: "paragraph",
         children: [{ text: "" }], // Make sure to add children, as Slate expects all nodes to have children
       };
 
-      if (option.isMathBlock) {
+      if (option.isGrid) {
+        customElement = {
+          type: "grid-container",
+          children: Array.from({ length: 4 }, () => ({
+            type: "grid-item",
+            children: [
+              {
+                type: "paragraph",
+                children: [],
+              },
+            ],
+          })),
+        };
+      } else if (option.isMathBlock) {
         customElement = {
           type: "math-block-container",
           align: "left",
@@ -384,22 +416,59 @@ const DropdownMenu = () => {
         };
       }
 
+      const cursorPath = Editor.path(editor, selection.anchor);
+
       Transforms.deselect(editor);
 
-      Transforms.removeNodes(editor, { at: rootPath });
-      Transforms.insertNodes(editor, customElement, { at: rootPath });
-      if (!hasNextPath(editor, rootPath)) {
-        Transforms.insertNodes(editor, defaultElement, {
-          at: Path.next(rootPath),
-        });
+      if (tableCellNode || gridItemNode) {
+        // If inside a table cell, insert custom component into the table cell
+        const cellPath = tableCellNode
+          ? tableCellNode[1]
+          : gridItemNode
+          ? gridItemNode[1]
+          : null; // The path to the current table cell
+
+        if (cellPath) {
+          Transforms.removeNodes(editor, {
+            at: [...cellPath, cursorPath.at(-2) ?? 0],
+          });
+          Transforms.insertNodes(editor, customElement, {
+            at: [...cellPath, cursorPath.at(-2) ?? 0],
+          });
+        }
+      } else {
+        // Default behavior, replace the root node
+        const rootPath = [path[0]];
+        Transforms.removeNodes(editor, { at: rootPath });
+        Transforms.insertNodes(editor, customElement, { at: rootPath });
+        if (!hasNextPath(editor, rootPath)) {
+          Transforms.insertNodes(editor, defaultElement, {
+            at: Path.next(rootPath),
+          });
+        }
+
+        if (shouldFocus) {
+          Transforms.select(editor, Editor.end(editor, rootPath));
+        }
+        if (shouldFocusNext && hasNextPath(editor, rootPath)) {
+          Transforms.select(editor, Editor.start(editor, Path.next(rootPath)));
+        }
       }
 
-      if (shouldFocus) {
-        Transforms.select(editor, Editor.end(editor, rootPath));
-      }
-      if (shouldFocusNext && hasNextPath(editor, rootPath)) {
-        Transforms.select(editor, Editor.start(editor, Path.next(rootPath)));
-      }
+      // Transforms.removeNodes(editor, { at: rootPath });
+      // Transforms.insertNodes(editor, customElement, { at: rootPath });
+      // if (!hasNextPath(editor, rootPath)) {
+      //   Transforms.insertNodes(editor, defaultElement, {
+      //     at: Path.next(rootPath),
+      //   });
+      // }
+
+      // if (shouldFocus) {
+      //   Transforms.select(editor, Editor.end(editor, rootPath));
+      // }
+      // if (shouldFocusNext && hasNextPath(editor, rootPath)) {
+      //   Transforms.select(editor, Editor.start(editor, Path.next(rootPath)));
+      // }
 
       // Move the cursor to the newly created element
       // const newPath = [...rootPath, 0];

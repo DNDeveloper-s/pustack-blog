@@ -210,7 +210,21 @@ export type EnterEmbedVideoUrlUIElement = {
   children: EmptyText[];
 };
 
+export type GridContainerElement = {
+  type: "grid-container";
+  className?: string;
+  style?: React.CSSProperties;
+  children: GridItemElement[];
+};
+
+export type GridItemElement = {
+  type: "grid-item";
+  children: Descendant[];
+};
+
 type CustomElement =
+  | GridContainerElement
+  | GridItemElement
   | BlockQuoteElement
   | HRElement
   | BulletedListElement

@@ -43,6 +43,19 @@ import { handleUploadAsync } from "@/lib/firebase/upload";
 import { prepareThumbnailVariantsByCropData } from "@/lib/transformers/image";
 import axios from "axios";
 
+interface SitemapWithNoChildren {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export interface Sitemap {
+  id: string;
+  name: string;
+  url: string;
+  children: SitemapWithNoChildren[];
+}
+
 export interface Author {
   name: string;
   email: string;
@@ -360,7 +373,191 @@ export class Post {
 
     await setDoc(postRef, this, { merge: true });
 
+    if (this.status === "published") {
+      await this.addPostToHierarchy();
+    } else {
+      await this.deletePostFromHierarchy();
+    }
+
+    // const hierarchyDoc = doc(db, "sitemap", "articles");
+    // const hierarchy = await getDoc(hierarchyDoc);
+
+    // const data = hierarchy.data() ?? { hierarchy: [] };
+
+    // const topic = this.topic;
+
+    // const topicIndex = data?.hierarchy?.findIndex(
+    //   (h: Sitemap) => h.id === topic
+    // );
+
+    // const post = {
+    //   id: postId,
+    //   name: this.title,
+    //   url: `/posts/${postId}`,
+    // };
+
+    // if (topicIndex !== -1) {
+    //   data.hierarchy[topicIndex].children.push(post);
+    // } else {
+    //   data?.hierarchy.push({
+    //     id: topic,
+    //     name: topic,
+    //     url: `/${topic}`,
+    //     children: [post],
+    //   });
+    // }
+
+    // await setDoc(hierarchyDoc, data);
+
     return this;
+  }
+
+  async deletePostFromHierarchy() {
+    const hierarchyDoc = doc(db, "sitemap", "articles");
+
+    const hierarchy = await getDoc(hierarchyDoc);
+
+    const data = hierarchy.data() ?? { hierarchy: [] };
+
+    const topicIndex = data?.hierarchy?.findIndex(
+      (h: Sitemap) => h.id === this.topic
+    );
+
+    // Remove the post item inside the topic
+    if (topicIndex !== -1) {
+      const postIndex = data.hierarchy[topicIndex].children.findIndex(
+        (p: SitemapWithNoChildren) => p.id === this.id
+      );
+
+      if (postIndex !== -1) {
+        data.hierarchy[topicIndex].children.splice(postIndex, 1);
+      }
+
+      await setDoc(hierarchyDoc, data);
+    }
+
+    return this;
+  }
+
+  async addPostToHierarchy() {
+    const hierarchyDoc = doc(db, "sitemap", "articles");
+
+    const hierarchy = await getDoc(hierarchyDoc);
+
+    const data = hierarchy.data() ?? { hierarchy: [] };
+
+    const id = this.id;
+
+    const post = {
+      id: id,
+      name: this.title,
+      url: `/posts/${id}`,
+    };
+
+    if (data?.hierarchy?.length > 0) {
+      const topicIndex = data.hierarchy.findIndex(
+        (h: Sitemap) => h.id === this.topic
+      );
+
+      if (topicIndex !== -1) {
+        // Check if the post already exists in the hierarchy
+        const postIndex = data.hierarchy[topicIndex].children.findIndex(
+          (p: SitemapWithNoChildren) => p.id === id
+        );
+
+        // If post is there then update the name
+        if (postIndex !== -1) {
+          data.hierarchy[topicIndex].children[postIndex].name = this.title;
+        } else {
+          data.hierarchy[topicIndex].children.push(post);
+        }
+      } else {
+        data?.hierarchy.push({
+          id: this.topic,
+          name: this.topic,
+          url: `/${this.topic}`,
+          children: [post],
+        });
+      }
+    } else {
+      if (!data.hierarchy) data.hierarchy = [];
+
+      data?.hierarchy.push({
+        id: this.topic,
+        name: this.topic,
+        url: `/${this.topic}`,
+        children: [post],
+      });
+    }
+
+    await setDoc(hierarchyDoc, data);
+  }
+
+  static async createHierarchyOfExistingPosts() {
+    const hierarchyDoc = doc(db, "sitemap", "articles");
+    const hierarchy = await getDoc(hierarchyDoc);
+
+    const data = hierarchy.data() ?? { hierarchy: [] };
+
+    const posts = await Post.getAll({
+      _flatten: true,
+      status: ["published"],
+      _limit: 100,
+    });
+
+    posts.data.forEach((_post: Post) => {
+      const topic = _post.topic;
+
+      const topicIndex = data?.hierarchy.findIndex(
+        (h: Sitemap) => h.id === topic
+      );
+
+      const post = {
+        id: _post.id,
+        name: _post.title,
+        url: `/posts/${_post.id}`,
+      };
+
+      if (topicIndex !== -1) {
+        data.hierarchy[topicIndex].children.push(post);
+      } else {
+        data?.hierarchy.push({
+          id: topic,
+          name: topic,
+          url: `/${_post.topic}`,
+          children: [post],
+        });
+      }
+    });
+
+    await setDoc(hierarchyDoc, data);
+
+    // const topic = this.topic;
+
+    // const topicIndex = data?.hierarchy.findIndex(
+    //   (h: Sitemap) => h.id === topic
+    // );
+
+    // const post = {
+    //   id: this.id,
+    //   name: this.title,
+    //   url: `/articles/${this.id}`,
+    // };
+
+    // if (topicIndex !== -1) {
+    //   data.hierarchy[topicIndex].children.push(post);
+    // } else {
+    //   data?.hierarchy.push({
+    //     id: topic,
+    //     name: topic,
+    //     url: `/articles/${this.id}`,
+    //     children: [post],
+    //   });
+    // }
+
+    // await setDoc(hierarchyDoc, data);
+
+    // return this;
   }
 
   async makeThumbnailLive() {
@@ -432,6 +629,12 @@ export class Post {
 
     await this.makeThumbnailLive();
 
+    if (this.status === "published") {
+      await this.addPostToHierarchy();
+    } else {
+      await this.deletePostFromHierarchy();
+    }
+
     await setDoc(postRef, this, { merge: true });
 
     return this;
@@ -472,7 +675,8 @@ export class Post {
     return id;
   }
 
-  static async unpublishPostInFirestore(id: string) {
+  async unpublishPostInFirestore() {
+    const id = this.id;
     if (!id) {
       throw new Error("Post id is missing");
     }
@@ -488,10 +692,13 @@ export class Post {
       { merge: true }
     );
 
+    await this.deletePostFromHierarchy();
+
     return id;
   }
 
-  static async publishPostInFirestore(id: string) {
+  async publishPostInFirestore() {
+    const id = this.id;
     if (!id) {
       throw new Error("Post id is missing");
     }
@@ -505,6 +712,8 @@ export class Post {
       },
       { merge: true }
     );
+
+    await this.addPostToHierarchy();
 
     return id;
   }
@@ -901,6 +1110,13 @@ export class Post {
     const docs = await getDocs(_query);
 
     return _flatten ? flattenQueryData(docs) : docs;
+  }
+
+  static async fetchSitemap() {
+    const sitemapRef = collection(db, "sitemap");
+    const articles = doc(sitemapRef, "articles");
+    const data = await getDoc(articles);
+    return data.data()?.hierarchy ?? ([] as Sitemap[]);
   }
 }
 

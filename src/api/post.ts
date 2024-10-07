@@ -333,13 +333,13 @@ export const useDeletePostDraft = (
 };
 
 export const useUnPublishPost = (
-  options?: UseMutationOptions<any, Error, string>
+  options?: UseMutationOptions<any, Error, Post>
 ) => {
   const qc = useQueryClient();
 
-  const unpublishPost = async (postId: string) => {
-    await Post.unpublishPostInFirestore(postId);
-    return postId;
+  const unpublishPost = async (post: Post) => {
+    await post.unpublishPostInFirestore();
+    return post;
   };
 
   return useMutation({
@@ -359,13 +359,13 @@ export const useUnPublishPost = (
 };
 
 export const usePublishPost = (
-  options?: UseMutationOptions<any, Error, string>
+  options?: UseMutationOptions<any, Error, Post>
 ) => {
   const qc = useQueryClient();
 
-  const publishPost = async (postId: string) => {
-    await Post.publishPostInFirestore(postId);
-    return postId;
+  const publishPost = async (post: Post) => {
+    await post.publishPostInFirestore();
+    return post;
   };
 
   return useMutation({

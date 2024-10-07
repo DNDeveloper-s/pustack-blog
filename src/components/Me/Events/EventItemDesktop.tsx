@@ -69,29 +69,7 @@ export default function EventItemDesktop({
   handleSelectChange: (id: string, selected: boolean) => void;
   isSelected: boolean;
 }) {
-  const disclosureOptions = useDisclosure();
   const router = useRouter();
-
-  const disclosureOptionsUnPublish = useDisclosure();
-  const disclosureOptionsPublish = useDisclosure();
-  const {
-    mutate: postUnpublishPost,
-    isPending,
-    error: unpublishError,
-  } = useUnPublishPost({
-    onSuccess: () => {
-      disclosureOptionsUnPublish.onClose();
-    },
-  });
-  const {
-    mutate: postPublishPost,
-    isPending: isPublishPending,
-    error: publishError,
-  } = usePublishPost({
-    onSuccess: () => {
-      disclosureOptionsPublish.onClose();
-    },
-  });
 
   return (
     <div

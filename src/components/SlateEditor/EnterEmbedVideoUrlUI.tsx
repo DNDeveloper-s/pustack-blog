@@ -50,11 +50,11 @@ export default function EnterEmbdedVideoUrlUI({
 
   return (
     <div className="w-full">
-      <div className="w-full flex items-center gap-3">
+      <div className="w-full flex flex-wrap items-center gap-3">
         <input
           type="text"
           placeholder="Enter Youtube Video URL"
-          className="py-2 px-5 rounded-lg border-gray-300 bg-gray-100 flex-1"
+          className="max-w-full py-2 px-5 rounded-lg border-gray-300 bg-gray-100 flex-1"
           ref={inputRef}
         />
         <button
