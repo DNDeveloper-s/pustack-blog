@@ -55,7 +55,7 @@ const allowedTypes = [
 const deleteElementAndFocusNext = (editor: Editor, path: Path) => {
   const nextPath = Path.next(path);
 
-  // Check if there is only one node in the editor
+  // Handle case where the editor has only one node and we are deleting it
   if (editor.children.length === 1 && Path.equals(path, [0])) {
     Transforms.removeNodes(editor, { at: path });
     Transforms.insertNodes(
@@ -70,46 +70,64 @@ const deleteElementAndFocusNext = (editor: Editor, path: Path) => {
     return;
   }
 
-  // Check if the next path exists, otherwise move focus to the previous element
+  // Safely check for the previous path
+  let previousPath;
+  if (path[path.length - 1] > 0) {
+    // Only calculate previousPath if the last index in path is greater than 0
+    previousPath = Path.previous(path);
+  }
+
+  // Check if the next node exists
   if (Node.has(editor, nextPath)) {
     Transforms.removeNodes(editor, { at: path });
-    // Move focus to the next element
     ReactEditor.focus(editor);
-    const node = Node.get(editor, path);
+
+    const node = Node.get(editor, nextPath);
     //@ts-ignore
     const targetNodeType = node.type;
     if (allowedTypes.includes(targetNodeType)) {
-      const end = Editor.end(editor, path);
+      const end = Editor.end(editor, nextPath);
       moveCursorto(editor, end);
     } else {
       Transforms.deselect(editor);
     }
-    // console.log("node - ", elNode, elNode.getAttribute("type"));
-    // Transforms.select(editor, end);
-    // moveCursorto(editor, end);
-  } else {
-    // If next path does not exist, try focusing on the previous element
-    const previousPath = Path.previous(path);
-    Transforms.removeNodes(editor, { at: path });
 
-    if (Node.has(editor, previousPath)) {
-      // Move focus to the previous element
-      ReactEditor.focus(editor);
-      // Transforms.select(editor, previousPath);
-      const node = Node.get(editor, previousPath);
-      //@ts-ignore
-      const targetNodeType = node.type;
-      if (allowedTypes.includes(targetNodeType)) {
-        const end = Editor.end(editor, previousPath);
-        moveCursorto(editor, end);
-      } else {
-        Transforms.deselect(editor);
-      }
-      // moveCursorto(editor, previousPath);
+    // Check if previousPath exists and is valid
+  } else if (previousPath && Node.has(editor, previousPath)) {
+    Transforms.removeNodes(editor, { at: path });
+    ReactEditor.focus(editor);
+
+    const node = Node.get(editor, previousPath);
+    //@ts-ignore
+    const targetNodeType = node.type;
+    if (allowedTypes.includes(targetNodeType)) {
+      const end = Editor.end(editor, previousPath);
+      moveCursorto(editor, end);
     } else {
-      // If no previous element, focus the editor to prevent it from losing focus
-      ReactEditor.focus(editor);
+      Transforms.deselect(editor);
     }
+
+    // If no next or previous path exists, handle empty state
+  } else {
+    Transforms.removeNodes(editor, { at: path });
+    const _path = path.length > 1 ? Path.parent(path) : path; // Get the parent (grid-item) path
+    // Insert an empty paragraph if no nodes are left
+
+    console.log("_path - ", _path, editor.children);
+
+    // if (editor.children.length === 0) {
+    Transforms.insertNodes(
+      editor,
+      {
+        type: "paragraph",
+        children: [{ text: "" }],
+      },
+      { at: [..._path, 0] }
+    );
+    Transforms.select(editor, [..._path, 0]);
+    // } else {
+    //   ReactEditor.focus(editor);
+    // }
   }
 };
 

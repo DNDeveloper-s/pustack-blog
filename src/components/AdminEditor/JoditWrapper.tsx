@@ -626,6 +626,7 @@ function JoditWrapper(
           customTopic={customTopicValue}
           ref={subTitleInputRef}
           onChange={onChange}
+          variantsData={prePost?.subTextVariants}
         />
       </div>
     </div>

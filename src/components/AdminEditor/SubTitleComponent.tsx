@@ -210,9 +210,15 @@ interface SubTitleComponentProps {
   title: string;
   customTopic: string;
   topic: string;
+  variantsData?: {
+    very_short: string;
+    short: string;
+    medium: string;
+    long: string;
+  } | null;
 }
 const SubTitleComponentRef = (
-  { onChange, title, customTopic, topic }: SubTitleComponentProps,
+  { onChange, title, customTopic, topic, variantsData }: SubTitleComponentProps,
   ref: any
 ) => {
   const [subTitleValue, setSubTitleValue] = useState("");
@@ -221,11 +227,13 @@ const SubTitleComponentRef = (
 
   const {
     mutate: postGenerateTextVariants,
-    data: _variantsData,
+    data: generatedVariantsData,
     isSuccess,
     isPending,
     error: _error,
   } = useMutateOpenAIGenerate();
+
+  const _variantsData = generatedVariantsData || variantsData;
 
   const [variantTabs, setVariantTabs] = useState<
     {

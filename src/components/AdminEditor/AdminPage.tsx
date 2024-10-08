@@ -713,10 +713,10 @@ export default function AdminPage({ postId }: { postId?: string }) {
                 isDisabled={isPending}
                 className="font-featureHeadline email_button flex items-center justify-center"
                 onClick={() => {
-                  Post.createHierarchyOfExistingPosts();
-                  // setShouldConfirm(false);
-                  // intervalSaveDraftRef.current = false;
-                  // handleSaveAsDraft(false, newlySavedDraftRef.current?.id);
+                  // Post.createHierarchyOfExistingPosts();
+                  setShouldConfirm(false);
+                  intervalSaveDraftRef.current = false;
+                  handleSaveAsDraft(false, newlySavedDraftRef.current?.id);
                 }}
                 variant="flat"
                 color="primary"

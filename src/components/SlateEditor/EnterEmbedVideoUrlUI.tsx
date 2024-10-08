@@ -12,7 +12,7 @@ export function isYoutubeVideoLink(url: string) {
 function insertEmbeddedVideo(editor: Editor, element: Element, url: string) {
   const path = ReactEditor.findPath(editor, element);
   // Adjust the path to point to the root
-  const rootPath = [path[0]];
+  const rootPath = path;
 
   // Replace the current element with the custom element
   let customElement: CustomElement = {
