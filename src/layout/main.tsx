@@ -26,6 +26,10 @@ const routesConfig: RouteConfigState[] = [
     noPadding: true,
     classNames: { childWrapper: "flex flex-col" },
   },
+  {
+    href: "/contact-us",
+    classNames: { childWrapper: "flex" },
+  },
   { href: "/signals", hideFooter: true },
   { href: "/posts/create", hideFooter: true },
   { href: "/events", hideNavbar: true, hideFooter: true, isSmallScreen: true },

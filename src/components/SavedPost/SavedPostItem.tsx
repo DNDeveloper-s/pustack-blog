@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import useScreenSize from "@/hooks/useScreenSize";
 
-const VerifyIcon = (props: React.SVGProps<SVGSVGElement>) => (
+export const VerifyIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"

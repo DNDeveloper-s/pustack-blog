@@ -18,6 +18,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { MdModeEdit, MdOutlineSettingsBackupRestore } from "react-icons/md";
 import { ConfigProvider, Segmented } from "antd";
 import SwipeableViews from "react-swipeable-views";
+import { VerifyIcon } from "../SavedPost/SavedPostItem";
 
 export type SubTitleVariant = "short" | "medium" | "long" | "very_short";
 
@@ -53,9 +54,12 @@ function BlogWithAuthor({
 
   useEffect(() => {
     if (status === "edit" && textAreaRef.current) {
+      textAreaRef.current.value = textContent;
       textAreaRef.current.focus();
+
+      EventEmitter.emit("reset-variant", variant);
     }
-  }, [status]);
+  }, [status, textContent, variant]);
 
   const handleAccept = useCallback(() => {
     setStatus("accept");
@@ -64,10 +68,6 @@ function BlogWithAuthor({
       variant: variant,
     });
   }, [variant, textContent]);
-
-  useEffect(() => {
-    handleAccept();
-  }, [handleAccept]);
 
   const content = (
     <div className="py-3 h-full flex flex-col" style={{ zoom: zoom ?? 1 }}>
@@ -101,7 +101,7 @@ function BlogWithAuthor({
           {status === "pending" && (
             <>
               <div
-                className="flex flex-col items-center p-1 justify-center text-green-500 border rounded bg-lightPrimary border-green-200 cursor-pointer"
+                className="flex flex-col items-center p-1 justify-center text-blue-500 border rounded bg-lightPrimary border-blue-200 cursor-pointer"
                 onClick={handleAccept}
               >
                 <FaCheck className="text-xs" />
@@ -134,7 +134,7 @@ function BlogWithAuthor({
           {status === "edit" && (
             <>
               <div
-                className="flex flex-col items-center p-1 justify-center text-green-500 border rounded bg-lightPrimary border-green-200 cursor-pointer"
+                className="flex flex-col items-center p-1 justify-center text-blue-500 border rounded bg-lightPrimary border-blue-200 cursor-pointer"
                 onClick={handleAccept}
               >
                 <FaCheck className="text-xs" />
@@ -184,7 +184,6 @@ function BlogWithAuthor({
               style={{
                 paddingTop: size === "sm" ? "8px" : "10px",
               }}
-              value={textContent}
               ref={textAreaRef}
               rows={size === "sm" ? 7 : size === "md" ? 5 : 3}
             ></textarea>
@@ -233,6 +232,8 @@ const SubTitleComponentRef = (
     error: _error,
   } = useMutateOpenAIGenerate();
 
+  console.log("variantsData - ", variantsData);
+
   const _variantsData = generatedVariantsData || variantsData;
 
   const [variantTabs, setVariantTabs] = useState<
@@ -265,6 +266,11 @@ const SubTitleComponentRef = (
   ]);
 
   useEffect(() => {
+    const isAllAccepted = variantTabs.every((tab) => tab.is_accepted);
+    EventEmitter.emit("all-variants-ready", isAllAccepted);
+  }, [variantTabs]);
+
+  useEffect(() => {
     const unsub = EventEmitter.addListener(
       "accept-variant",
       (data: { text: string; variant: SubTitleVariant }) => {
@@ -282,8 +288,26 @@ const SubTitleComponentRef = (
       }
     );
 
+    const unsub2 = EventEmitter.addListener(
+      "reset-variant",
+      (variant: SubTitleVariant) => {
+        setVariantTabs((variantTabs) => {
+          return variantTabs.map((tab) => {
+            if (tab.key === variant) {
+              return {
+                ...tab,
+                is_accepted: false,
+              };
+            }
+            return tab;
+          });
+        });
+      }
+    );
+
     return () => {
       unsub.remove();
+      unsub2.remove();
     };
   }, []);
 
@@ -402,16 +426,11 @@ const SubTitleComponentRef = (
               size={"large"}
               options={variantTabs.map((tab) => ({
                 label: (
-                  <div
-                    className={
-                      "flex justify-center items-center gap-3 " +
-                      (tab.is_accepted ? "text-green-500 " : "")
-                    }
-                  >
+                  <div className={"flex justify-center items-center gap-3"}>
                     <span>{tab.title}</span>
                     {tab.is_accepted && (
                       <span className="ml-1">
-                        <FaCheck />
+                        <VerifyIcon />
                       </span>
                     )}
                   </div>

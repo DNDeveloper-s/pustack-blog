@@ -99,9 +99,20 @@ function JoditWrapper(
   const [titleValue, setTitleValue] = useState<string>("");
   const [customTopicValue, setCustomTopicValue] = useState<string>("");
 
+  const isAllVariantsReady = useRef<boolean>(false);
+
   const subTextVariants = useRef<SubTextVariants>(
     prePost?.subTextVariants as any
   );
+
+  const [subTextVariantsState, setSubTextVariantsState] = useState<
+    SubTextVariants | undefined
+  >(prePost?.subTextVariants as any);
+
+  useEffect(() => {
+    subTextVariants.current = prePost?.subTextVariants as any;
+    setSubTextVariantsState(prePost?.subTextVariants as any);
+  }, [prePost?.subTextVariants]);
 
   useEffect(() => {
     const unsub = EventEmitter.addListener(
@@ -110,17 +121,29 @@ function JoditWrapper(
         console.log("data | 104 - ", data);
         if (subTextVariants.current) {
           subTextVariants.current[data.variant] = data.text;
+
+          setSubTextVariantsState(subTextVariants.current);
         } else {
           // @ts-ignore
           subTextVariants.current = {
             [data.variant]: data.text,
           };
+
+          setSubTextVariantsState(subTextVariants.current);
         }
+      }
+    );
+
+    const unsub2 = EventEmitter.addListener(
+      "all-variants-ready",
+      (isReady: boolean) => {
+        isAllVariantsReady.current = isReady;
       }
     );
 
     return () => {
       unsub.remove();
+      unsub2.remove();
     };
   }, []);
 
@@ -259,7 +282,8 @@ function JoditWrapper(
       };
     }
 
-    if (!subTextVariants.current) {
+    // Check subTextVariants has all the variants
+    if (!subTextVariants.current || !isAllVariantsReady.current) {
       return {
         isValid: false,
         field: "sub-text",
@@ -626,7 +650,7 @@ function JoditWrapper(
           customTopic={customTopicValue}
           ref={subTitleInputRef}
           onChange={onChange}
-          variantsData={prePost?.subTextVariants}
+          variantsData={subTextVariantsState}
         />
       </div>
     </div>

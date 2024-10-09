@@ -27,15 +27,25 @@ import Logo from "./Logo";
  */
 
 const footerData = [
-  { key: "newsletters", label: "Newsletters" },
-  { key: "events", label: "Events" },
-  { key: "youtube", label: "YouTube" },
-  { key: "twitter", label: "Twitter" },
-  { key: "facebook", label: "Facebook" },
-  { key: "about", label: "About" },
-  { key: "careers", label: "Careers" },
-  { key: "privacy", label: "Privacy" },
-  { key: "consentPreferences", label: "Consent Preferences" },
+  { key: "newsletters", href: "/news-letters", label: "Newsletters" },
+  { key: "events", href: "/events", label: "Events" },
+  {
+    key: "youtube",
+    href: "https://www.linkedin.com/company/pustack",
+    target: "_blank",
+    label: "Linkedin",
+  },
+  {
+    key: "twitter",
+    href: "https://twitter.com",
+    target: "_blank",
+    label: "Twitter",
+  },
+  { key: "facebook", href: "/sitemap", label: "Sitemap" },
+  { key: "about", href: "/about", label: "About" },
+  { key: "careers", href: "/careers", label: "Careers" },
+  { key: "privacy", href: "/privacy-policy", label: "Privacy" },
+  { key: "contactus", href: "/contact-us", label: "Contact Us" },
 ];
 
 function MobileFooter() {
@@ -86,15 +96,17 @@ export default function Footer() {
           />
         </div>
         {footerData.map((item) => (
-          <div
+          <a
+            href={item.href}
             key={item.key}
-            className="text-appBlack font-featureHeadline text-[16px]"
+            className="block text-appBlack font-featureHeadline text-[16px]"
             style={{
               fontVariationSettings: '"wght" 500,"opsz" 10',
             }}
+            target={item.target ?? "_self"}
           >
             {item.label}
-          </div>
+          </a>
         ))}
         <div className="pl-4">
           <span>© 2024 Minerva Inc.</span>

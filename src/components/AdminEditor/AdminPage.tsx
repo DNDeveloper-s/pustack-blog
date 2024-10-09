@@ -449,6 +449,29 @@ export default function AdminPage({ postId }: { postId?: string }) {
 
   const isDraftSaving = isPending && isDraftSavingRef.current;
 
+  const [isValid, setIsValid] = useState(false);
+  useEffect(() => {
+    const intervalCount = setInterval(() => {
+      const inputValue = joditRef.current?.getTitleValue() ?? "";
+      const subTitleValue = joditRef.current?.getSubTitleValue() ?? "";
+      const topic = joditRef.current?.getTopicValue() ?? "";
+      const customTopic = joditRef.current?.getCustomTopicValue();
+
+      const _isValid = joditRef.current?.isValid(
+        inputValue,
+        subTitleValue,
+        topic,
+        customTopic,
+        true
+      );
+      setIsValid(_isValid.isValid);
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalCount);
+    };
+  }, []);
+
   async function handleContinuePost() {
     if (!user) return;
     setShouldConfirm(false);
@@ -710,7 +733,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           <div className="flex justify-end gap-4">
             {(!requestedPost || requestedPost?.status === "draft") && (
               <Button
-                isDisabled={isPending}
+                isDisabled={isPending || !isValid}
                 className="font-featureHeadline email_button flex items-center justify-center"
                 onClick={() => {
                   // Post.createHierarchyOfExistingPosts();
@@ -728,7 +751,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
             )}
             <Dropdown
               // disabled={isPending}
-              disabled={requestedPost?.status === "published" || isPending}
+              disabled={
+                requestedPost?.status === "published" || isPending || !isValid
+              }
               classNames={{
                 content: "!bg-appBlack p-0 !rounded-none !min-w-[150px]",
                 base: "!p-[0_4px] !rounded-none",
@@ -741,11 +766,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
               }}
               placement="bottom-end"
               showArrow={true}
-              isDisabled={requestedPost?.status === "published" || isPending}
+              isDisabled={
+                requestedPost?.status === "published" || isPending || !isValid
+              }
             >
               <div className="flex items-start">
                 <Button
-                  isDisabled={isPending}
+                  isDisabled={isPending || !isValid}
                   className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
                   onClick={() => handleSavePost()}
                   variant="flat"
@@ -843,7 +870,7 @@ export default function AdminPage({ postId }: { postId?: string }) {
           <div className="flex w-full justify-end gap-4">
             {(!requestedPost || requestedPost?.status === "draft") && (
               <Button
-                isDisabled={isPending}
+                isDisabled={isPending || !isValid}
                 className="font-featureHeadline email_button flex items-center justify-center"
                 onClick={() => {
                   setShouldConfirm(false);
@@ -860,7 +887,9 @@ export default function AdminPage({ postId }: { postId?: string }) {
             )}
             <Dropdown
               // disabled={isPending}
-              disabled={requestedPost?.status === "published" || isPending}
+              disabled={
+                requestedPost?.status === "published" || isPending || !isValid
+              }
               classNames={{
                 content: "!bg-appBlack p-0 !rounded-none !min-w-[150px]",
                 base: "!p-[0_4px] !rounded-none",
@@ -873,11 +902,13 @@ export default function AdminPage({ postId }: { postId?: string }) {
               }}
               placement="bottom-end"
               showArrow={true}
-              isDisabled={requestedPost?.status === "published" || isPending}
+              isDisabled={
+                requestedPost?.status === "published" || isPending || !isValid
+              }
             >
               <div className="flex items-start">
                 <Button
-                  isDisabled={isPending}
+                  isDisabled={isPending || !isValid}
                   className="font-featureHeadline email_button flex items-center justify-center !bg-appBlack !text-primary"
                   onClick={() => handleSavePost()}
                   variant="flat"
